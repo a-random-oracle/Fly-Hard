@@ -1,4 +1,9 @@
+# Build path and files #
+/src
 *.class
+
+# Classpath #
+.classpath
 
 # Package Files #
 *.jar
