@@ -5,10 +5,10 @@ import lib.jog.graphics;
 public class Waypoint {
 	
 	/**
-	 * Leniancy to allow mouse input to be accepted in a small area around the waypoint
+	 * Leniency to allow mouse input to be accepted in a small area around the waypoint
 	 * For ease of use.
 	 */
-	public final static int MOUSE_LENIANCY = 32;
+	public final static int MOUSE_LENIENCY = 32;
 	
 	final private int WAYPOINT_ICON_RADIUS = 8;
 	private Vector waypoint_location;
@@ -30,6 +30,13 @@ public class Waypoint {
 		waypoint_location  = new Vector(x, y, 0);
 		entry_or_exit = inputEntryOrExit;
 		this.name = name;
+		
+		// Scale points to fit on screen
+		// Entry and exit points are scaled automatically
+		if (!entry_or_exit) {
+			Vector scaledPosition = waypoint_location.remapPosition();
+			waypoint_location = scaledPosition;
+		}
 	}
 	
 	public Waypoint(double x, double y, boolean inputEntryOrExit) {
@@ -55,7 +62,7 @@ public class Waypoint {
 	public boolean isMouseOver(int mx, int my) {
 		double dx = waypoint_location .getX() - mx;
 		double dy = waypoint_location .getY() - my;
-		return dx*dx + dy*dy < MOUSE_LENIANCY*MOUSE_LENIANCY;
+		return dx*dx + dy*dy < MOUSE_LENIENCY*MOUSE_LENIENCY;
 	}
 	
 	/**
