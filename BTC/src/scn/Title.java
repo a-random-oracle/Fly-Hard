@@ -230,8 +230,9 @@ public class Title extends Scene {
 		graphics.print(dateFormat.format(date), window.height() + 8, 20);
 		graphics.print(timeFormat.format(date), window.height() + 8, 36);
 		graphics.line(window.height(), 48, window.width() - 16, 48);
-		graphics.print("Created by: Team FLR", window.height() + 8, 56);
-		graphics.print("Improved by: Team MQV", window.height() + 8, 68);
+		graphics.print("Created by:   Team FLR", window.height() + 8, 56);
+		graphics.print("Improved by:  Team MQV", window.height() + 8, 68);
+		graphics.print("Presented by: Team GOA", window.height() + 8, 80);
 
 		// Draw Buttons
 		for (lib.ButtonText b : buttons) b.draw();
