@@ -121,7 +121,7 @@ public class Vector {
 	 */
 	public Vector remapPosition() {
 		return new Vector((Main.width() / Main.TARGET_WIDTH) * this.x,
-				(Main.height() / Main.TARGET_HEIGHT) * this.y, z);
+				((Main.height() - 140)/ (Main.TARGET_HEIGHT - 140)) * this.y, z);
 	}
 
 }
