@@ -87,8 +87,8 @@ public class Main implements input.EventHandler {
 	 * Creates window, initialises jog classes and sets starting values to variables.
 	 */
 	private void start() {
-		window.initialise(TITLE, (int)(width), (int)(height));
 		window.setIcon(ICON_FILENAMES);
+		window.initialise(TITLE, (int)(width), (int)(height));
 		graphics.initialise();
 		graphics.Font font = graphics.newBitmapFont("gfx" + File.separator
 				+ "font.png", ("ABCDEFGHIJKLMNOPQRSTUVWXYZ " +
