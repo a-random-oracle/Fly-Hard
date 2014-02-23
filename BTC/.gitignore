@@ -1,0 +1,10 @@
+# Build files #
+/bin
+
+# Classpath #
+.classpath
+
+# Eclipse project file #
+# Necessary to set things up
+# so won't ignore for now
+#.project
