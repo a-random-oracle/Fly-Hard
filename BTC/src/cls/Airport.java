@@ -211,5 +211,6 @@ public class Airport extends Waypoint implements EventHandler {
 	public void clear() {
 		aircraft_hangar.clear();
 		time_entered.clear();
+		is_active = false;
 	}
 }
