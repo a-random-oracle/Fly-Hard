@@ -18,7 +18,7 @@ public class Waypoint {
 	/**
 	 * Marks whether the waypoint is a point where planes may enter and exit the game airspace
 	 */
-	private boolean entry_or_exit; //#Please specify what True or False are (just one of them)
+	private boolean entryOrExit; //#Please specify what True or False are (just one of them)
 	
 	/**
 	 * Constructor for waypoints
@@ -28,7 +28,7 @@ public class Waypoint {
 	 */
 	public Waypoint(double x, double y, boolean inputEntryOrExit, String name) {
 		waypointLocation  = new Vector(x, y, 0);
-		entry_or_exit = inputEntryOrExit;
+		entryOrExit = inputEntryOrExit;
 		this.name = name;
 		
 		// Scale points to fit on screen
@@ -40,7 +40,7 @@ public class Waypoint {
 	
 	public Waypoint(double x, double y, boolean inputEntryOrExit) {
 		waypointLocation = new Vector(x, y, 0);
-		entry_or_exit = inputEntryOrExit;
+		entryOrExit = inputEntryOrExit;
 		this.name = "";
 		
 		// Scale points to fit on screen
@@ -75,7 +75,7 @@ public class Waypoint {
 	 * @return Whether or not the waypoint is an entry or exit point.//#What does True mean?
 	 */
 	public boolean isEntryOrExit() {
-		return this.entry_or_exit;
+		return this.entryOrExit;
 	}
 	
 	/**
