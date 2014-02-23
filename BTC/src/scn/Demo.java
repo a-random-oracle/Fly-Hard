@@ -877,7 +877,7 @@ public class Demo extends Scene {
 			
 		
 		// Name
-		String name = "";
+		String name = " ";
 		boolean nameTaken = true;
 		while (nameTaken) {
 			name = "Flight " + (int)(900 * Math.random() + 100);
