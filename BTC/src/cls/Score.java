@@ -7,28 +7,28 @@ import lib.jog.graphics;
 public class Score {
 	
 	
-	private final int MAX_SCORE = 9999999;
-	private final int MAX_DIGITS_IN_SCORE = (int)Math.log10(MAX_SCORE) + 1;
+	private final int maxScore = 9999999;
+	private final int maxDigitsInScore = (int)Math.log10(maxScore) + 1;
 	
-	private int current_digits_in_score;
+	private int currentDigitsInScore;
 	
 	/**
 	 * Records the total score the user has achieved at a given time.
 	 */	
-	private int total_score = 0;
-	private int target_score = 0;
+	private int totalScore = 0;
+	private int targetScore = 0;
 	
 	/**
 	 * Getter for total score in case it is needed outside the Demo class.
 	 * @return totalScore
 	 */	
 	public int getTotalScore() {
-		if (total_score > MAX_SCORE) total_score = MAX_SCORE;
-		return total_score;
+		if (totalScore > maxScore) totalScore = maxScore;
+		return totalScore;
 	}
 	
 	public int getTargetScore() {
-		return target_score;
+		return targetScore;
 	}
 	
 	/**
@@ -37,7 +37,7 @@ public class Score {
 	 */	
 	public void increaseTotalScore(int amount) {
 		if (amount > 0)
-			target_score += amount;
+			targetScore += amount;
 	}
 	
 	/**
@@ -77,14 +77,14 @@ public class Score {
 	 * Set the level at which to fill the multiplier meter on the GUI.
 	 * Used to increase and decrease the multiplier when it exceeds certain bounds -> currently less than 0 and greater than 256.
 	 */
-	private int meter_fill = 0;
+	private int meterFill = 0;
 	
-	private int target_meter_fill = 0;
+	private int targetMeterFill = 0;
 	
 	/**
 	 * This variable determines the current level of the multiplier. Each level has an associated multiplier value
 	 * e.g. multiplier_level = 1 -> multiplier = 1, multiplier_level = 2 -> multiplier = 3, multiplier_level = 3 -> multiplier = 5.
-	 * Increased when meter_fill >= 256, decreased when meter_fill < 0.
+	 * Increased when meterFill >= 256, decreased when meterFill < 0.
 	 * Also used in Demo to vary max_aircraft and aircraft_spawn rates.
 	 */
 	private int multiplierLevel = 1;
@@ -95,11 +95,11 @@ public class Score {
 	public void resetMultiplier() {
 		multiplierLevel = 1;
 		multiplier = 1;
-		target_meter_fill = 0;
-		meter_fill = 0;
+		targetMeterFill = 0;
+		meterFill = 0;
 	} 
 	
-	private boolean meter_draining = false;
+	private boolean meterDraining = false;
 	
 	/**
 	 * Used to get multiplierLevel variable outside of Demo class.
@@ -114,10 +114,10 @@ public class Score {
 	}
 	
 	public int getMeterFill() {
-		return meter_fill;
+		return meterFill;
 	}
 	public int getTargetMeterFill() {
-		return target_meter_fill;
+		return targetMeterFill;
 	}
 	
 	
@@ -168,33 +168,33 @@ public class Score {
 	}
 	
 	private void updateMultiplierLevel() {
-		if (meter_fill >= 256) {
+		if (meterFill >= 256) {
 			if (multiplierLevel != 5) {
 				increaseMultiplierLevel();
-				meter_fill -= 256;
-				target_meter_fill -= 256;
+				meterFill -= 256;
+				targetMeterFill -= 256;
 			}
 			else {
-				meter_fill = 256;
-				target_meter_fill = 256;
+				meterFill = 256;
+				targetMeterFill = 256;
 			}
 		}
 			
-		if (meter_fill < 0) {
+		if (meterFill < 0) {
 			if (multiplierLevel != 1) {
 				decreaseMultiplierLevel();
-				meter_fill += 256;
-				target_meter_fill += 256;
+				meterFill += 256;
+				targetMeterFill += 256;
 			}
 			else {
-				meter_fill = 0;
-				target_meter_fill = 0;
+				meterFill = 0;
+				targetMeterFill = 0;
 			}
 		}	
 	}
 	
 	public void increaseMeterFill(int change_to_meter) {
-		target_meter_fill += change_to_meter;
+		targetMeterFill += change_to_meter;
 	}
 	
 	public void draw() {
@@ -207,8 +207,8 @@ public class Score {
 		 * Takes the maximum possible digits in the score and calculates how many of them are currently 0.
 		 * 
 		 */
-		current_digits_in_score = (getTotalScore() != 0) ? (int)Math.log10(getTotalScore()) + 1 : 0; // exception as log10(0) is undefined.
-		char[] chars = new char[MAX_DIGITS_IN_SCORE - current_digits_in_score];
+		currentDigitsInScore = (getTotalScore() != 0) ? (int)Math.log10(getTotalScore()) + 1 : 0; // exception as log10(0) is undefined.
+		char[] chars = new char[maxDigitsInScore - currentDigitsInScore];
 		Arrays.fill(chars, '0');
 		String zeros = new String(chars);
 		
@@ -234,7 +234,7 @@ public class Score {
 		int red = 0;
 		int green = 128;
 		
-		if (meter_draining) {
+		if (meterDraining) {
 			red = 128;
 			green = 0;
 		}
@@ -242,7 +242,7 @@ public class Score {
 			graphics.setColour(red, green, 0, 64);
 			graphics.rectangle(true, bar_x_offset, bar_y_offset, segment_width, segment_height);
 			graphics.setColour(red, green, 0);
-			drawMultiplierSegment(meter_fill, i, bar_x_offset, bar_y_offset, segment_width, segment_height);
+			drawMultiplierSegment(meterFill, i, bar_x_offset, bar_y_offset, segment_width, segment_height);
 			bar_x_offset += bar_segment_dif;
 		}
 		graphics.setColour(graphics.green);
@@ -254,37 +254,37 @@ public class Score {
 	}
 
 
-	private void drawMultiplierSegment(int meter_fill, int segment_number, int bar_x_offset, int bar_y_offset, int segment_width, int segment_height) {
+	private void drawMultiplierSegment(int meterFill, int segment_number, int bar_x_offset, int bar_y_offset, int segment_width, int segment_height) {
 		int start_x = segment_number*segment_width;
 		int end_x = start_x + segment_width;
 		
-		if ((meter_fill >= start_x) && (meter_fill < end_x)) {
-			graphics.rectangle(true, bar_x_offset, bar_y_offset, (meter_fill - start_x), segment_height);
+		if ((meterFill >= start_x) && (meterFill < end_x)) {
+			graphics.rectangle(true, bar_x_offset, bar_y_offset, (meterFill - start_x), segment_height);
 		}
-		if (meter_fill >= end_x) {
+		if (meterFill >= end_x) {
 			graphics.rectangle(true, bar_x_offset, bar_y_offset, segment_width, segment_height);
 		}
 		else;
 	}
 	
 	public void update() {
-		if (target_score - total_score <= 9) 
-			total_score = target_score;
+		if (targetScore - totalScore <= 9) 
+			totalScore = targetScore;
 		else
-			total_score += multiplier*2 + 1; // Add 1 so it's an odd number and will affect all digits
-		if (target_meter_fill != meter_fill) {
-			if (target_meter_fill > meter_fill) {
-				meter_draining = false;
-				meter_fill++;
+			totalScore += multiplier*2 + 1; // Add 1 so it's an odd number and will affect all digits
+		if (targetMeterFill != meterFill) {
+			if (targetMeterFill > meterFill) {
+				meterDraining = false;
+				meterFill++;
 			} else {
-				meter_draining = true;
-				if (meter_fill - target_meter_fill > 2)
-					meter_fill -= 2;
+				meterDraining = true;
+				if (meterFill - targetMeterFill > 2)
+					meterFill -= 2;
 				else
-					meter_fill--;
+					meterFill--;
 			}
 			updateMultiplierLevel();
 		} else
-			meter_draining = false;
+			meterDraining = false;
 	}
 }
