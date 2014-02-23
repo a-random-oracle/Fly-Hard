@@ -1,5 +1,7 @@
 package cls;
 
+import btc.Main;
+
 /**
  * Simplified 3D vector class with basic operations
  * @author Huw Taylor
@@ -112,6 +114,14 @@ public class Vector {
 	 */
 	public void setZ(double z) {
 		this.z = z;
+	}
+	
+	/**
+	 * Maps between a position on the target screen and the actual screen
+	 */
+	public Vector remapPosition() {
+		return new Vector((Main.width() / Main.TARGET_WIDTH) * this.x,
+				(Main.height() / Main.TARGET_HEIGHT) * this.y, z);
 	}
 
 }
