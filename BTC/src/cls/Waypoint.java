@@ -11,7 +11,7 @@ public class Waypoint {
 	public final static int MOUSE_LENIENCY = 32;
 	
 	final private int WAYPOINT_ICON_RADIUS = 8;
-	private Vector waypoint_location;
+	private Vector waypointLocation;
 	
 	public String name;
 	
@@ -27,31 +27,31 @@ public class Waypoint {
 	 * @param inputEntryOrExit whether the waypoint is a point where planes may enter and leave the airspace
 	 */
 	public Waypoint(double x, double y, boolean inputEntryOrExit, String name) {
-		waypoint_location  = new Vector(x, y, 0);
+		waypointLocation  = new Vector(x, y, 0);
 		entry_or_exit = inputEntryOrExit;
 		this.name = name;
 		
 		// Scale points to fit on screen
 		// Entry and exit points are scaled automatically
 		if (!inputEntryOrExit) {
-			waypoint_location = waypoint_location.remapPosition();
+			waypointLocation = waypointLocation.remapPosition();
 		}
 	}
 	
 	public Waypoint(double x, double y, boolean inputEntryOrExit) {
-		waypoint_location = new Vector(x, y, 0);
+		waypointLocation = new Vector(x, y, 0);
 		entry_or_exit = inputEntryOrExit;
 		this.name = "";
 		
 		// Scale points to fit on screen
 		// Entry and exit points are scaled automatically
 		if (!inputEntryOrExit) {
-			waypoint_location = waypoint_location.remapPosition();
+			waypointLocation = waypointLocation.remapPosition();
 		}
 	}
 	
 	public Vector getLocation() {
-		return waypoint_location ;
+		return waypointLocation ;
 	}
 	
 	public String getName() {
@@ -65,8 +65,8 @@ public class Waypoint {
 	 * @return whether the mouse is considered over the waypoint.
 	 */
 	public boolean isMouseOver(int mx, int my) {
-		double dx = waypoint_location .getX() - mx;
-		double dy = waypoint_location .getY() - my;
+		double dx = waypointLocation .getX() - mx;
+		double dy = waypointLocation .getY() - my;
 		return dx*dx + dy*dy < MOUSE_LENIENCY*MOUSE_LENIENCY;
 	}
 	
@@ -84,7 +84,7 @@ public class Waypoint {
 	 * @return the distance(cost) between the two waypoints
 	 */
 	public double getCost(Waypoint fromPoint) {
-		return waypoint_location .sub(fromPoint.getLocation()).magnitude();
+		return waypointLocation .sub(fromPoint.getLocation()).magnitude();
 	}
 	
 	/**
@@ -113,7 +113,7 @@ public class Waypoint {
 	}
 
 	public void draw() {
-		draw(waypoint_location.getX(), waypoint_location.getY());
+		draw(waypointLocation.getX(), waypointLocation.getY());
 	}
 	
 }
