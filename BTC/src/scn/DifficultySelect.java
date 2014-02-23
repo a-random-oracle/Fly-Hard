@@ -134,8 +134,8 @@ public class DifficultySelect extends Scene {
 	/**
 	 * Updates text box
 	 */
-	public void update(double time_difference) {
-		textBox.update(time_difference);
+	public void update(double timeDifference) {
+		textBox.update(timeDifference);
 	}
 
 	/**
