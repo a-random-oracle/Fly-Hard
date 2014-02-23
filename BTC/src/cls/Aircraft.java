@@ -20,35 +20,35 @@ public class Aircraft {
 	public final static int COMPASS_RADIUS = 64; // How large to draw the bearing circle.
 	private final static audio.Sound WARNING_SOUND = audio.newSoundEffect("sfx" + File.separator + "beep.ogg"); // Used during separation violation
 	
-	private static int minimum_separation_distance; // Depends on difficulty
+	private static int minimumSeparation; // Depends on difficulty
 
 	private graphics.Image image; // The plane image
-	private double turn_speed; // How much the plane can turn per second - in radians.
-	private String flight_name; // Unique and generated randomly - format is Flight followed by a random number between 100 and 900 e.g Flight 404
-	private double creation_time; // Used to calculate how long an aircraft spent in the airspace
-	private double optimal_time; // Optimal time a plane needs to reach its exit point
+	private double turnSpeed; // How much the plane can turn per second - in radians.
+	private String flightName; // Unique and generated randomly - format is Flight followed by a random number between 100 and 900 e.g Flight 404
+	private double creationTime; // Used to calculate how long an aircraft spent in the airspace
+	private double optimalTime; // Optimal time a plane needs to reach its exit point
 	
 	private Vector position, velocity;
-	private boolean is_manually_controlled = false;
-	private boolean has_finished = false; // If destination is airport, must be given a land command bnefore it returns True 
-	public boolean is_waiting_to_land; // If the destination is the airport, True until land() is called. 
-	private double currently_turning_by = 0; // In radians
-	private int altitude_change_speed; // The speed to climb or fall by. Depends on difficulty
-	private FlightPlan flight_plan;
-	private boolean is_landing = false;
+	private boolean isManuallyControlled = false;
+	private boolean hasFinished = false; // If destination is airport, must be given a land command bnefore it returns True 
+	public boolean isWaitingToLand; // If the destination is the airport, True until land() is called. 
+	private double turningBy = 0; // In radians
+	private int verticalVelocity; // The speed to climb or fall by. Depends on difficulty
+	private FlightPlan flightPlan;
+	private boolean isLanding = false;
 	
-	public Vector current_target; // The position the plane is currently flying towards (if not manually controlled).
-	private double manual_bearing_target = Double.NaN;
-	private int current_route_stage = 0;
-	private int altitude_state; // Whether the plane is climbing or falling
+	public Vector currentTarget; // The position the plane is currently flying towards (if not manually controlled).
+	private double manualBearingTarget = Double.NaN;
+	private int currentRouteStage = 0;
+	private int altitudeState; // Whether the plane is climbing or falling
 
-	private double departure_time; // Used when calculating when a label representing the score a particular plane scored should disappear
+	private double departureTime; // Used when calculating when a label representing the score a particular plane scored should disappear
 
-	private boolean collision_warning_sound_flag = false;
+	private boolean collisionWarningSoundFlag = false;
 	
-	private int base_score; // Each plane has its own base score that increases total score when a plane successfully leaves the airspace
-	private int individual_score;
-	private int addition_to_multiplier = 1; // This variable increases the multiplierVariable when a plane successfully leaves the airspace.
+	private int baseScore; // Each plane has its own base score that increases total score when a plane successfully leaves the airspace
+	private int individualScore;
+	private int additionToMultiplier = 1; // This variable increases the multiplierVariable when a plane successfully leaves the airspace.
 	
 	private java.util.ArrayList<Aircraft> planesTooNear = new java.util.ArrayList<Aircraft>(); // Holds a list of planes currently in violation of separation rules with this plane
 	
@@ -65,7 +65,7 @@ public class Aircraft {
 	 * @return Time when aircraft was created.
 	 */
 	public double getTimeOfCreation() {
-		return creation_time;
+		return creationTime;
 	}	
 
 	/**
@@ -73,7 +73,7 @@ public class Aircraft {
 	 * @return Time when aircraft departed.
 	 */
 	public double getTimeOfDeparture() {
-		return departure_time;
+		return departureTime;
 	}
 	
 	/**
@@ -81,7 +81,7 @@ public class Aircraft {
 	 * @return Optimal time for an aircraft to complete its path.
 	 */
 	public double getOptimalTime() {
-		return optimal_time;
+		return optimalTime;
 	}
 	
 	/**
@@ -89,7 +89,7 @@ public class Aircraft {
 	 * @return base score for plane
 	 */
 	public int getBaseScore() {
-		return base_score;
+		return baseScore;
 	}
 
 	/**
@@ -97,7 +97,7 @@ public class Aircraft {
 	 * @return individual score for plane
 	 */
 	public int getScore() {
-		return individual_score;
+		return individualScore;
 	}
 	
 	/**
@@ -105,7 +105,7 @@ public class Aircraft {
 	 * @return additionToMultiplier
 	 */
 	public int getAdditionToMultiplier() {
-		return addition_to_multiplier;
+		return additionToMultiplier;
 	}
 	
 	public Vector getPosition() {
@@ -113,19 +113,19 @@ public class Aircraft {
 	}
 
 	public String getName() {
-		return flight_name;
+		return flightName;
 	}
 
 	public boolean isFinished() { // Returns whether the plane has reached its destination
-		return has_finished;
+		return hasFinished;
 	}
 
 	public boolean isManuallyControlled() {
-		return is_manually_controlled;
+		return isManuallyControlled;
 	}
 
 	public int getAltitudeState() {
-		return altitude_state;
+		return altitudeState;
 	}
 	
 	public double getBearing() {
@@ -137,7 +137,7 @@ public class Aircraft {
 	}
 	
 	public FlightPlan getFlightPlan() {
-		return flight_plan;
+		return flightPlan;
 	}
 	
 	// Setters
@@ -146,14 +146,14 @@ public class Aircraft {
 	 * @param departureTime (system time when a plane departed)
 	 */
 	public void setDepartureTime(double departureTime) {
-		departure_time = departureTime;
+		departureTime = departureTime;
 	} 
 
 	/**
 	 * Sets the score for a specific aircraft.
 	 */
 	public void setScore(int score) {
-		individual_score = score;
+		individualScore = score;
 	}
 
 	/**
@@ -163,25 +163,25 @@ public class Aircraft {
 	public void setAdditionToMultiplier(int multiplierLevel) {
 		switch (multiplierLevel) {
 		case 1:
-			addition_to_multiplier = 64;
+			additionToMultiplier = 64;
 			break;
 		case 2:
-			addition_to_multiplier = 32;
+			additionToMultiplier = 32;
 			break;
 		case 3:
-			addition_to_multiplier = 32;
+			additionToMultiplier = 32;
 			break;
 		case 4:
-			addition_to_multiplier = 16;
+			additionToMultiplier = 16;
 			break;
 		case 5:
-			addition_to_multiplier = 8;
+			additionToMultiplier = 8;
 			break;
 		}
 	}
 	
 	public void setBearing(double newHeading) {
-		manual_bearing_target = newHeading;
+		manualBearingTarget = newHeading;
 	}
 	
 	private void setAltitude(int height) {
@@ -189,7 +189,7 @@ public class Aircraft {
 	}
 	
 	public void setAltitudeState(int state) {
-		this.altitude_state = state; // Either climbing or falling
+		this.altitudeState = state; // Either climbing or falling
 	}
 
 	/**
@@ -205,10 +205,10 @@ public class Aircraft {
 	 * @param difficulty the difficulty the game is set to
 	 */
 	public Aircraft(String name, String nameDestination, String nameOrigin, Waypoint destinationPoint, Waypoint originPoint, graphics.Image img, double speed, Waypoint[] sceneWaypoints, int difficulty) {
-		flight_name = name;		
-		flight_plan = new FlightPlan(sceneWaypoints, nameOrigin, nameDestination, originPoint, destinationPoint);		
+		flightName = name;		
+		flightPlan = new FlightPlan(sceneWaypoints, nameOrigin, nameDestination, originPoint, destinationPoint);		
 		image = img;
-		creation_time = System.currentTimeMillis() / 1000; // System time when aircraft was created in seconds.
+		creationTime = System.currentTimeMillis() / 1000; // System time when aircraft was created in seconds.
 		position = originPoint.getLocation();
 		
 		if (originPoint.getLocation() == Demo.airport.getLocation()) {
@@ -218,12 +218,12 @@ public class Aircraft {
 		position = position.add(new Vector(0, 0, altitudeOffset));
 
 		// Calculate initial velocity (direction)
-		current_target = flight_plan.getRoute()[0].getLocation();
-		double x = current_target.getX() - position.getX();
-		double y = current_target.getY() - position.getY();
+		currentTarget = flightPlan.getRoute()[0].getLocation();
+		double x = currentTarget.getX() - position.getX();
+		double y = currentTarget.getY() - position.getY();
 		velocity = new Vector(x, y, 0).normalise().scaleBy(speed);
 
-		is_waiting_to_land = flight_plan.getDestination().equals(Demo.airport.getLocation());
+		isWaitingToLand = flightPlan.getDestination().equals(Demo.airport.getLocation());
 
 		// Speed up plane for higher difficulties
 		switch (difficulty) {
@@ -231,31 +231,31 @@ public class Aircraft {
 		// 0 has the easiest attributes (slower aircraft, more forgiving separation rules)
 		// 2 has the hardest attributes (faster aircraft, least forgiving separation rules)
 		case Demo.DIFFICULTY_EASY:
-			minimum_separation_distance = 64;
-			turn_speed = Math.PI / 4;
-			altitude_change_speed = 500;
-			base_score = 60;
-			optimal_time = flight_plan.getTotalDistance() / speed;
+			minimumSeparation = 64;
+			turnSpeed = Math.PI / 4;
+			verticalVelocity = 500;
+			baseScore = 60;
+			optimalTime = flightPlan.getTotalDistance() / speed;
 		break;
 
 		case Demo.DIFFICULTY_MEDIUM:
-			minimum_separation_distance = 96;
+			minimumSeparation = 96;
 			velocity = velocity.scaleBy(2);
-			turn_speed = Math.PI / 3;
-			altitude_change_speed = 300;
-			base_score = 150;
-			optimal_time = flight_plan.getTotalDistance() / (speed * 2);
+			turnSpeed = Math.PI / 3;
+			verticalVelocity = 300;
+			baseScore = 150;
+			optimalTime = flightPlan.getTotalDistance() / (speed * 2);
 		break;
 			
 		case Demo.DIFFICULTY_HARD:
-			minimum_separation_distance = 128;
+			minimumSeparation = 128;
 			velocity = velocity.scaleBy(3);
 			// At high velocities, the aircraft is allowed to turn faster - this helps keep the aircraft on track.
-			turn_speed = Math.PI / 2;
-			altitude_change_speed = 200;
-			base_score = 300;
-			addition_to_multiplier = 3;
-			optimal_time = flight_plan.getTotalDistance() / (speed * 3);
+			turnSpeed = Math.PI / 2;
+			verticalVelocity = 200;
+			baseScore = 300;
+			additionToMultiplier = 3;
+			optimalTime = flightPlan.getTotalDistance() / (speed * 3);
 		break;
 
 		default:
@@ -269,10 +269,10 @@ public class Aircraft {
 	 * @return the angle in radians to the plane's current target.
 	 */
 	private double angleToTarget() {
-		if (is_manually_controlled) {
-			return (manual_bearing_target == Double.NaN) ? getBearing(): manual_bearing_target;
+		if (isManuallyControlled) {
+			return (manualBearingTarget == Double.NaN) ? getBearing(): manualBearingTarget;
 		} else {
-			return Math.atan2(current_target.getY() - position.getY(), current_target.getX() - position.getX());
+			return Math.atan2(currentTarget.getY() - position.getY(), currentTarget.getX() - position.getX());
 		}
 	}
 
@@ -289,11 +289,11 @@ public class Aircraft {
 	}
 
 	public boolean isTurningLeft() {
-		return currently_turning_by < 0;
+		return turningBy < 0;
 	}
 
 	public boolean isTurningRight() {
-		return currently_turning_by > 0;
+		return turningBy > 0;
 	}
 	
 	/**
@@ -303,11 +303,11 @@ public class Aircraft {
 	 */
 	public void alterPath(int routeStage, Waypoint newWaypoint) {
 		if (routeStage > -1) {
-			flight_plan.alterPath(routeStage, newWaypoint);
-			if (!is_manually_controlled)
+			flightPlan.alterPath(routeStage, newWaypoint);
+			if (!isManuallyControlled)
 				resetBearing();
-			if (routeStage == current_route_stage) {
-				current_target = newWaypoint.getLocation();
+			if (routeStage == currentRouteStage) {
+				currentTarget = newWaypoint.getLocation();
 				turnTowardsTarget(0);
 			}
 		}
@@ -328,10 +328,10 @@ public class Aircraft {
 	}
 	
 	public boolean isAtDestination() {
-		if (flight_plan.getDestination().equals(Demo.airport.getLocation())) { // At airport
+		if (flightPlan.getDestination().equals(Demo.airport.getLocation())) { // At airport
 			return Demo.airport.isWithinArrivals(position, false); // Within Arrivals rectangle
 		} else {
-			return isAt(flight_plan.getDestination()); // Very close to destination
+			return isAt(flightPlan.getDestination()); // Very close to destination
 		}
 	}
 
@@ -340,18 +340,18 @@ public class Aircraft {
 	 * @param time_difference
 	 */
 	public void update(double time_difference) {
-		if (has_finished) return;
+		if (hasFinished) return;
 		
 		// Update altitude
-		if (is_landing) {
+		if (isLanding) {
 			if (position.getZ() > 100) { 
 				position.setZ(position.getZ() - 2501 * time_difference); // Decrease altitude rapidly (2501/second), ~11 seconds to fully descend
 			} else { // Gone too low, land it now
 				Demo.airport.is_active = false;
-				has_finished = true;
+				hasFinished = true;
 			}
 		} else {
-			switch (altitude_state) {
+			switch (altitudeState) {
 			case -1:
 				fall();
 				break;
@@ -367,20 +367,20 @@ public class Aircraft {
 		Vector dv = velocity.scaleBy(time_difference);
 		position = position.add(dv);
 
-		currently_turning_by = 0;
+		turningBy = 0;
 
 		// Update target		
-		if (current_target.equals(flight_plan.getDestination()) && isAtDestination()) { // At finishing point
-			if (!is_waiting_to_land) { // Ready to land
-				has_finished = true;
-				if (flight_plan.getDestination().equals(Demo.airport.getLocation())) { // Landed at airport
+		if (currentTarget.equals(flightPlan.getDestination()) && isAtDestination()) { // At finishing point
+			if (!isWaitingToLand) { // Ready to land
+				hasFinished = true;
+				if (flightPlan.getDestination().equals(Demo.airport.getLocation())) { // Landed at airport
 					Demo.airport.is_active = false;
 				}
 			}
-		} else if (isAt(current_target)) {
-			current_route_stage++;
+		} else if (isAt(currentTarget)) {
+			currentRouteStage++;
 			// Next target is the destination if you're at the end of the plan, otherwise it's the next waypoint
-			current_target = current_route_stage >= flight_plan.getRoute().length ? flight_plan.getDestination() : flight_plan.getRoute()[current_route_stage].getLocation();
+			currentTarget = currentRouteStage >= flightPlan.getRoute().length ? flightPlan.getDestination() : flightPlan.getRoute()[currentRouteStage].getLocation();
 		}
 
 		// Update bearing
@@ -390,13 +390,13 @@ public class Aircraft {
 	}
 
 	public void turnLeft(double time_difference) {
-		turnBy(time_difference * -turn_speed);
-		manual_bearing_target = Double.NaN;
+		turnBy(time_difference * -turnSpeed);
+		manualBearingTarget = Double.NaN;
 	}
 
 	public void turnRight(double time_difference) {
-		turnBy(time_difference * turn_speed);
-		manual_bearing_target = Double.NaN;
+		turnBy(time_difference * turnSpeed);
+		manualBearingTarget = Double.NaN;
 	}
 
 	/**
@@ -404,7 +404,7 @@ public class Aircraft {
 	 * @param angle the angle by which to turn.
 	 */
 	private void turnBy(double angle) {
-		currently_turning_by = angle;
+		turningBy = angle;
 		double cosA = Math.cos(angle);
 		double sinA = Math.sin(angle);
 		double x = velocity.getX();
@@ -424,7 +424,7 @@ public class Aircraft {
 		int angleDirection = (int) (angleDifference /= Math.abs(angleDifference));
 		if (crossesPositiveNegativeDivide)
 			angleDirection *= -1;
-		double angleMagnitude = Math.min(Math.abs((time_difference * turn_speed)), Math.abs(angleDifference));
+		double angleMagnitude = Math.min(Math.abs((time_difference * turnSpeed)), Math.abs(angleDifference));
 		turnBy(angleMagnitude * angleDirection);
 	}
 
@@ -449,7 +449,7 @@ public class Aircraft {
 		
 		// Draw altitude label
 		graphics.setColour(128, 128, 128, alpha/2.5);
-		graphics.print(String.format("%.0f", position.getZ()) + "+", position.getX()+8, position.getY()-8); // £ displayed as ft
+		graphics.print(String.format("%.0f", position.getZ()) + "+", position.getX()+8, position.getY()-8); // ï¿½ displayed as ft
 		drawWarningCircles();
 	}
 
@@ -478,7 +478,7 @@ public class Aircraft {
 		
 		// Draw the line to the mouse pointer
 		double x, y;
-		if (is_manually_controlled && input.isMouseDown(input.MOUSE_RIGHT)) {
+		if (isManuallyControlled && input.isMouseDown(input.MOUSE_RIGHT)) {
 			graphics.setColour(graphics.green_transp);
 			double r = Math.atan2(input.mouseY() - position.getY(), input.mouseX() - position.getX());
 			x = xpos + (COMPASS_RADIUS * Math.cos(r));
@@ -525,18 +525,18 @@ public class Aircraft {
 			graphics.setColour(0, 128, 128, 128);
 		}
 
-		Waypoint[] route = flight_plan.getRoute();
-		Vector destination = flight_plan.getDestination();
+		Waypoint[] route = flightPlan.getRoute();
+		Vector destination = flightPlan.getDestination();
 		
-		if (current_target != destination) {
+		if (currentTarget != destination) {
 			// Draw line from plane to next waypoint
-			graphics.line(position.getX()-image.width()/2, position.getY()-image.height()/2, route[current_route_stage].getLocation().getX(), route[current_route_stage].getLocation().getY());
+			graphics.line(position.getX()-image.width()/2, position.getY()-image.height()/2, route[currentRouteStage].getLocation().getX(), route[currentRouteStage].getLocation().getY());
 		} else {
 			// Draw line from plane to destination
 			graphics.line(position.getX()-image.width()/2, position.getY()-image.height()/2, destination.getX(), destination.getY());			
 		}
 		
-		for (int i = current_route_stage; i < route.length-1; i++) { // Draw lines between successive waypoints
+		for (int i = currentRouteStage; i < route.length-1; i++) { // Draw lines between successive waypoints
 			graphics.line(route[i].getLocation().getX(), route[i].getLocation().getY(), route[i+1].getLocation().getX(), route[i+1].getLocation().getY());	
 		}
 	}
@@ -549,14 +549,14 @@ public class Aircraft {
 	 */
 	public void drawModifiedPath(int modified, double mouseX, double mouseY) {
 		graphics.setColour(0, 128, 128, 128);
-		Waypoint[] route = flight_plan.getRoute();
-		Vector destination = flight_plan.getDestination();
-		if (current_route_stage > modified - 1) {
+		Waypoint[] route = flightPlan.getRoute();
+		Vector destination = flightPlan.getDestination();
+		if (currentRouteStage > modified - 1) {
 			graphics.line(getPosition().getX(), getPosition().getY(), mouseX, mouseY);
 		} else {
 			graphics.line(route[modified-1].getLocation().getX(), route[modified-1].getLocation().getY(), mouseX, mouseY);
 		}
-		if (current_target == destination) {
+		if (currentTarget == destination) {
 			graphics.line(mouseX, mouseY, destination.getX(), destination.getY());
 		} else {
 			int index = modified + 1;
@@ -581,19 +581,19 @@ public class Aircraft {
 		for (int i = 0; i < aircraftList.size(); i++) {
 			Aircraft plane = aircraftList.get(i);
 			if (plane != this && isWithin(plane, RADIUS)) { // Planes crash
-				has_finished = true;
+				hasFinished = true;
 				return i;
-			} else if (plane != this && isWithin(plane, minimum_separation_distance)) { // Breaching separation distance
+			} else if (plane != this && isWithin(plane, minimumSeparation)) { // Breaching separation distance
 				planesTooNear.add(plane);
 				score.increaseMeterFill(-1); // Punishment for breaching separation rules (applies to all aircraft involved - usually 2)
-				if (!collision_warning_sound_flag) {
-					collision_warning_sound_flag = true;
+				if (!collisionWarningSoundFlag) {
+					collisionWarningSoundFlag = true;
 					WARNING_SOUND.play();
 				}
 			}
 		}
 		if (planesTooNear.isEmpty()) {
-			collision_warning_sound_flag = false;
+			collisionWarningSoundFlag = false;
 		}
 		return -1;
 	}
@@ -612,11 +612,11 @@ public class Aircraft {
 	}
 
 	public void toggleManualControl() {
-		if (is_landing) { // Can't manually control while landing
-			is_manually_controlled = false;
+		if (isLanding) { // Can't manually control while landing
+			isManuallyControlled = false;
 		} else {
-			is_manually_controlled = !is_manually_controlled;
-			if (is_manually_controlled) {
+			isManuallyControlled = !isManuallyControlled;
+			if (isManuallyControlled) {
 				setBearing(getBearing());
 			} 
 			else {
@@ -626,43 +626,43 @@ public class Aircraft {
 	}
 
 	private void resetBearing() {
-		if (current_route_stage < flight_plan.getRoute().length & flight_plan.getRoute()[current_route_stage] != null) {
-			current_target = flight_plan.getRoute()[current_route_stage].getLocation();
+		if (currentRouteStage < flightPlan.getRoute().length & flightPlan.getRoute()[currentRouteStage] != null) {
+			currentTarget = flightPlan.getRoute()[currentRouteStage].getLocation();
 		}
 		turnTowardsTarget(0);
 	}
 
 	private void climb() {
-		if (position.getZ() < 30000 && altitude_state == ALTITUDE_CLIMB)
-			setAltitude(altitude_change_speed);
+		if (position.getZ() < 30000 && altitudeState == ALTITUDE_CLIMB)
+			setAltitude(verticalVelocity);
 		if (position.getZ() >= 30000) {
 			setAltitude(0);
-			altitude_state = ALTITUDE_LEVEL;
+			altitudeState = ALTITUDE_LEVEL;
 			position = new Vector(position.getX(), position.getY(), 30000);
 		}
 	}
 
 	private void fall() {
-		if (position.getZ() > 28000 && altitude_state == ALTITUDE_FALL)
-			setAltitude(-altitude_change_speed);
+		if (position.getZ() > 28000 && altitudeState == ALTITUDE_FALL)
+			setAltitude(-verticalVelocity);
 		if (position.getZ() <= 28000) {
 			setAltitude(0);
-			altitude_state = ALTITUDE_LEVEL;
+			altitudeState = ALTITUDE_LEVEL;
 			position = new Vector(position.getX(), position.getY(), 28000);
 		}
 	}
 
 	public void land() {
-		is_waiting_to_land = false;
-		is_landing = true;
-		is_manually_controlled = false;
+		isWaitingToLand = false;
+		isLanding = true;
+		isManuallyControlled = false;
 		Demo.airport.is_active = true;
 	}
 
 	public void takeOff() {
 		Demo.airport.is_active = true;
 		Demo.takeOffSequence(this);
-		creation_time = System.currentTimeMillis() / 1000; // Reset creation time
+		creationTime = System.currentTimeMillis() / 1000; // Reset creation time
 	}
 
 	/**
