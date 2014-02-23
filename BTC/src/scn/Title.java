@@ -102,8 +102,8 @@ public class Title extends Scene {
 	 * @param time_difference the time since the last update
 	 */
 	@Override
-	public void update(double time_difference) {
-		angle += time_difference * (3d / 4d); //increase the angle of the radar sweep
+	public void update(double timeDifference) {
+		angle += timeDifference * (3d / 4d); //increase the angle of the radar sweep
 
 		//Check the angle of the radar sweep;
 		//If approaching the BTC title string, play the beep
