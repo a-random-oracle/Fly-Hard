@@ -115,37 +115,6 @@ public class Title extends Scene {
 	}
 
 	/**
-	 * Handles mouse pressed input
-	 * Currently unused
-	 */
-	@Override
-	public void mousePressed(int key, int x, int y) {}
-	
-	/**
-	 * Handles mouse release events
-	 * Causes a button to act if clicked by any mouse key
-	 */
-	@Override
-	public void mouseReleased(int key, int mx, int my) {
-		for (lib.ButtonText b : buttons) {
-			if (b.isMouseOver(mx, my)) {
-				b.act();
-			}
-		}
-
-	}
-
-	/**
-	 * Keyboard input methods
-	 * Currently unused
-	 */
-	@Override
-	public void keyPressed(int key) {}
-
-	@Override
-	public void keyReleased(int key) {}
-
-	/**
 	 * Handles drawing of the scene
 	 * Calls drawRadar() and drawMenu() to draw elements of the scene
 	 * Called by Main
@@ -244,15 +213,45 @@ public class Title extends Scene {
 		graphics.line(window.height(), window.height()/2 + 210, window.width() - 16, window.height()/2 + 210);
 	}
 
+
+	/**
+	 * Handles mouse pressed input
+	 * Currently unused
+	 */
 	@Override
-	//#Needed?
+	public void mousePressed(int key, int x, int y) {}
+	
+	/**
+	 * Handles mouse release events
+	 * Causes a button to act if clicked by any mouse key
+	 */
+	@Override
+	public void mouseReleased(int key, int mx, int my) {
+		for (lib.ButtonText b : buttons) {
+			if (b.isMouseOver(mx, my)) {
+				b.act();
+			}
+		}
+
+	}
+
+	/**
+	 * Keyboard input methods
+	 * Currently unused
+	 */
+	@Override
+	public void keyPressed(int key) {}
+
+	@Override
+	public void keyReleased(int key) {}
+	
+	@Override
 	/**
 	 * cleanly exits the title scene
 	 */
 	public void close() {}
 
 	@Override
-	//#Needed?
 	/**
 	 * Plays a requested sound
 	 */
