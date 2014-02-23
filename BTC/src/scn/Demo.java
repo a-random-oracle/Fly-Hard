@@ -700,11 +700,11 @@ public class Demo extends Scene {
 			graphics.setViewport(PLANE_INFO_X, PLANE_INFO_Y, PLANE_INFO_W, PLANE_INFO_H);
 			graphics.printCentred(selectedAircraft.getName(), 0, 5, 2, PLANE_INFO_W);
 			// Altitude
-			String altitude = String.format("%.0f", selectedAircraft.getPosition().getZ()) + "£";
+			String altitude = String.format("%.0f", selectedAircraft.getPosition().getZ()) + "+";
 			graphics.print("Altitude:", 10, 40);
 			graphics.print(altitude, PLANE_INFO_W - 10 - altitude.length()*8, 40);
 			// Speed
-			String speed = String.format("%.2f", selectedAircraft.getSpeed() * 1.687810) + "$";
+			String speed = String.format("%.2f", selectedAircraft.getSpeed() * 1.687810) + "=";
 			graphics.print("Speed:", 10, 55);
 			graphics.print(speed, PLANE_INFO_W - 10 - speed.length()*8, 55);
 			// Origin

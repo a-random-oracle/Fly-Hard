@@ -449,7 +449,7 @@ public class Aircraft {
 		
 		// Draw altitude label
 		graphics.setColour(128, 128, 128, alpha/2.5);
-		graphics.print(String.format("%.0f", position.getZ()) + "£", position.getX()+8, position.getY()-8); // £ displayed as ft
+		graphics.print(String.format("%.0f", position.getZ()) + "+", position.getX()+8, position.getY()-8); // £ displayed as ft
 		drawWarningCircles();
 	}
 
