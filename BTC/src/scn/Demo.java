@@ -121,16 +121,6 @@ public class Demo extends Scene {
 	 * An altimeter to display aircraft altitidue, heading, etc.
 	 */
 	private cls.Altimeter altimeter;
-	/**
-	 * The interval in seconds to generate flights after
-	 */
-	private int getFlightGenerationInterval() {
-		if (difficulty == 1)
-			return (30 / (getMaxAircraft() * 2)); // Planes move 2x faster on medium so this makes them spawn 2 times as often to keep the ratio
-		if (difficulty == 2)
-			return (30 / (getMaxAircraft() * 3) ); // Planes move 3x faster on hard so this makes them spawn 3 times as often to keep the ratio 
-		return (30 / getMaxAircraft());
-	}
 	
 	private cls.AirportControlBox airportControlBox;
 	
@@ -139,18 +129,6 @@ public class Demo extends Scene {
 	 */
 	private double flightGenerationTimeElapsed = 6;
 	
-	/**
-	 * This method provides maximum number of planes using value of multiplier
-	 * @return maximum number of planes
-	 */
-	private int getMaxAircraft() {
-		if (score.getMultiplier() == 1) 
-			return 3;
-		else if (score.getMultiplier() == 3) 
-			return 5;
-		else
-			return score.getMultiplier();
-	}
 	/**
 	 * The current control altitude of the ACTO - initially 30,000
 	 */
@@ -169,6 +147,30 @@ public class Demo extends Scene {
 	 * Demo's instance of the airport class
 	 */
 	public static Airport airport = new Airport("Mosbear Airport");
+	
+	/**
+	 * This method provides maximum number of planes using value of multiplier
+	 * @return maximum number of planes
+	 */
+	private int getMaxAircraft() {
+		if (score.getMultiplier() == 1) 
+			return 3;
+		else if (score.getMultiplier() == 3) 
+			return 5;
+		else
+			return score.getMultiplier();
+	}
+	
+	/**
+	 * The interval in seconds to generate flights after
+	 */
+	private int getFlightGenerationInterval() {
+		if (difficulty == 1)
+			return (30 / (getMaxAircraft() * 2)); // Planes move 2x faster on medium so this makes them spawn 2 times as often to keep the ratio
+		if (difficulty == 2)
+			return (30 / (getMaxAircraft() * 3) ); // Planes move 3x faster on hard so this makes them spawn 3 times as often to keep the ratio 
+		return (30 / getMaxAircraft());
+	}
 	
 	/**
 	 * The set of waypoints in the airspace which are origins / destinations
