@@ -103,12 +103,12 @@ public class GameOver extends Scene {
 	 * If it runs before the explosion has finished, update the explosion
 	 * otherwise, update text box instead
 	 */
-	public void update(double time_difference) {
+	public void update(double timeDifference) {
 		if (explosionAnim.hasFinished()){
-			timer += time_difference;
-			textBox.update(time_difference);
+			timer += timeDifference;
+			textBox.update(timeDifference);
 		} else {
-			explosionAnim.update(time_difference);
+			explosionAnim.update(timeDifference);
 		}
 	}
 
