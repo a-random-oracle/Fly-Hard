@@ -37,7 +37,7 @@ public abstract class Scene implements lib.jog.input.EventHandler {
 	 * Called by main regularly
 	 * @param time_difference the time since the last update was carried out
 	 */
-	abstract public void update(double time_difference);
+	abstract public void update(double timeDifference);
 
 	/**
 	 * Handles drawing of all objects in the scene to the window
