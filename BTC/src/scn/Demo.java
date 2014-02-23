@@ -37,7 +37,7 @@ public class Demo extends Scene {
 	private final int ORDERSBOX_W = window.width() - (ORDERSBOX_X + 16);
 	private final static int ORDERSBOX_H = 112;
 	
-	// Static Final Ints for difficulty settings
+	// Static CONSTANTS for difficulty settings
 	// Difficulty of demo scene determined by difficulty selection scene
 	public final static int DIFFICULTY_EASY = 0;
 	public final static int DIFFICULTY_MEDIUM = 1;
@@ -67,9 +67,16 @@ public class Demo extends Scene {
 		Demo.difficulty = difficulty;
 	}
 	
+	/**
+	 * The score throughout the game
+	 */
 	private cls.Score score; 
 	
+	/**
+	 * Flag to dtermine if aircraft warning message is to be displayed
+	 */
 	private boolean shownAircraftWaitingMessage = false;
+	
 	/**
 	 * Orders box to print orders from ACTO to aircraft to
 	 */
@@ -80,18 +87,22 @@ public class Demo extends Scene {
 	 * Could be used for score
 	 */
 	private static double timeElapsed;
+	
 	/**
 	 * The currently selected aircraft
 	 */
 	private Aircraft selectedAircraft;
+	
 	/**
 	 * The currently selected waypoint
 	 */
 	private Waypoint clickedWaypoint;
+	
 	/**
 	 * Selected path point, in an aircraft's route, used for altering the route
 	 */
 	private int selectedPathpoint;
+	
 	/**
 	 * A list of aircraft present in the airspace
 	 */
@@ -109,35 +120,48 @@ public class Demo extends Scene {
 	 * A button to start and end manual control of an aircraft
 	 */
 	private lib.ButtonText manualOverrideButton;
+	
 	/**
 	 * Tracks if manual heading compass of a manually controlled aircraft has been clicked
 	 */
 	private boolean compassClicked;
+	
 	/**
 	 * Tracks if waypoint of a manually controlled aircraft has been clicked
 	 */
 	private boolean waypointClicked;
+	
 	/**
 	 * An altimeter to display aircraft altitidue, heading, etc.
 	 */
 	private cls.Altimeter altimeter;
-	/**
-	 * The interval in seconds to generate flights after
-	 */
-	private int getFlightGenerationInterval() {
-		if (difficulty == 1)
-			return (30 / (getMaxAircraft() * 2)); // Planes move 2x faster on medium so this makes them spawn 2 times as often to keep the ratio
-		if (difficulty == 2)
-			return (30 / (getMaxAircraft() * 3) ); // Planes move 3x faster on hard so this makes them spawn 3 times as often to keep the ratio 
-		return (30 / getMaxAircraft());
-	}
 	
-	private cls.AirportControlBox airport_control_box;
+	private cls.AirportControlBox airportControlBox;
 	
 	/**
 	 * The time elapsed since the last flight was generated
 	 */
 	private double flightGenerationTimeElapsed = 6;
+	
+	/**
+	 * The current control altitude of the ACTO - initially 30,000
+	 */
+	private int highlightedAltitude = 30000;
+	
+	/**
+	 * Music to play during the game scene
+	 */
+	private audio.Music music;
+	
+	/**
+	 * The background to draw in the airspace.
+	 */
+	private graphics.Image background;
+	
+	/**
+	 * Demo's instance of the airport class
+	 */
+	public static Airport airport = new Airport("Mosbear Airport");
 	
 	/**
 	 * This method provides maximum number of planes using value of multiplier
@@ -151,24 +175,17 @@ public class Demo extends Scene {
 		else
 			return score.getMultiplier();
 	}
-	/**
-	 * The current control altitude of the ACTO - initially 30,000
-	 */
-	private int highlighted_altitude = 30000;
 	
 	/**
-	 * Music to play during the game scene
+	 * The interval in seconds to generate flights after
 	 */
-	private audio.Music music;
-	/**
-	 * The background to draw in the airspace.
-	 */
-	private graphics.Image background;
-	
-	/**
-	 * Demo's instance of the airport class
-	 */
-	public static Airport airport = new Airport("Mosbear Airport");
+	private int getFlightGenerationInterval() {
+		if (difficulty == 1)
+			return (30 / (getMaxAircraft() * 2)); // Planes move 2x faster on medium so this makes them spawn 2 times as often to keep the ratio
+		if (difficulty == 2)
+			return (30 / (getMaxAircraft() * 3) ); // Planes move 3x faster on hard so this makes them spawn 3 times as often to keep the ratio 
+		return (30 / getMaxAircraft());
+	}
 	
 	/**
 	 * The set of waypoints in the airspace which are origins / destinations
@@ -206,6 +223,7 @@ public class Demo extends Scene {
 		locationWaypoints[3],           // 13
 		locationWaypoints[4]			// 14
 	};
+	
 	/**
 	 * Constructor
 	 * @param main the main containing the scene
@@ -249,7 +267,7 @@ public class Demo extends Scene {
 		
 		manualOverrideButton = new lib.ButtonText(" Take Control", manual, (window.width() - 128) / 2, 32, 128, 64, 8, 4);
 		altimeter = new cls.Altimeter(ALTIMETER_X, ALTIMETER_Y, ALTIMETER_W, ALTIMETER_H, ordersBox);
-		airport_control_box = new AirportControlBox(AIRPORT_CONTROL_X, AIRPORT_CONTROL_Y, AIRPORT_CONTROL_W, AIRPORT_CONTROL_H, airport);
+		airportControlBox = new AirportControlBox(AIRPORT_CONTROL_X, AIRPORT_CONTROL_Y, AIRPORT_CONTROL_W, AIRPORT_CONTROL_H, airport);
 		deselectAircraft();
 	}
 	
@@ -290,8 +308,8 @@ public class Demo extends Scene {
 	 * Generate a new flight if flight generation interval has been exceeded.
 	 */
 	@Override
-	public void update(double time_difference) {
-		timeElapsed += time_difference;
+	public void update(double timeDifference) {
+		timeElapsed += timeDifference;
 		score.update();
 		graphics.setColour(graphics.green_transp);
 		if (airport.getLongestTimeInHangar(timeElapsed) > 5) {
@@ -304,9 +322,9 @@ public class Demo extends Scene {
 			shownAircraftWaitingMessage = false;
 		}
 		
-		ordersBox.update(time_difference);
+		ordersBox.update(timeDifference);
 		for (Aircraft aircraft : aircraftInAirspace) {
-			aircraft.update(time_difference);
+			aircraft.update(timeDifference);
 			if (aircraft.isFinished()) {
 				aircraft.setAdditionToMultiplier(score.getMultiplierLevel());
 				score.increaseMeterFill(aircraft.getAdditionToMultiplier());
@@ -331,7 +349,7 @@ public class Demo extends Scene {
 				}
 			}
 		}
-		checkCollisions(time_difference);
+		checkCollisions(timeDifference);
 		for (int i = aircraftInAirspace.size()-1; i >=0; i --) {
 			if (aircraftInAirspace.get(i).isFinished()) {
 				if (aircraftInAirspace.get(i) == selectedAircraft) {
@@ -344,9 +362,9 @@ public class Demo extends Scene {
 		if (selectedAircraft != null) {
 			if (selectedAircraft.isManuallyControlled()) {
 				if (input.keyPressed(new int[]{input.KEY_LEFT, input.KEY_A})) {
-					selectedAircraft.turnLeft(time_difference);
+					selectedAircraft.turnLeft(timeDifference);
 				} else if (input.keyPressed(new int[]{input.KEY_RIGHT, input.KEY_D})) {
-					selectedAircraft.turnRight(time_difference);
+					selectedAircraft.turnRight(timeDifference);
 				}
 			} else if (input.keyPressed(new int[]{input.KEY_LEFT, input.KEY_A, input.KEY_RIGHT, input.KEY_D})) {
 				toggleManualControl();
@@ -364,7 +382,7 @@ public class Demo extends Scene {
 			}	
 		}
 		
-		flightGenerationTimeElapsed += time_difference;
+		flightGenerationTimeElapsed += timeDifference;
 		if(flightGenerationTimeElapsed >= getFlightGenerationInterval()) {
 			flightGenerationTimeElapsed -= getFlightGenerationInterval();
 			if (aircraftInAirspace.size() < getMaxAircraft()) {
@@ -380,20 +398,14 @@ public class Demo extends Scene {
 	 * Catch and handle a resultant game over state
 	 * @param time_difference delta time since last collision check
 	 */
-	private void checkCollisions(double time_difference) {
+	private void checkCollisions(double timeDifference) {
 		for (Aircraft plane : aircraftInAirspace) {
-			int collisionState = plane.updateCollisions(time_difference, aircraftList(), score);
+			int collisionState = plane.updateCollisions(timeDifference, aircraftList(), score);
 			if (collisionState >= 0) {
 				gameOver(plane, aircraftList().get(collisionState));
 				return;
 			}
 		}
-	}
-	
-	@Override
-	public void playSound(audio.Sound sound) {
-		sound.stop();
-		sound.play();
 	}
 	
 	/**
@@ -429,8 +441,8 @@ public class Demo extends Scene {
 	
 	private boolean compassClicked() {
 		if (selectedAircraft != null) {
-			double dx = selectedAircraft.getPosition().getX() - input.mouseX() + airspace_view_offset_x;
-			double dy = selectedAircraft.getPosition().getY() - input.mouseY() + airspace_view_offset_y;
+			double dx = selectedAircraft.getPosition().getX() - input.mouseX() + airspaceViewOffsetX;
+			double dy = selectedAircraft.getPosition().getY() - input.mouseY() + airspaceViewOffsetY;
 			int r = Aircraft.COMPASS_RADIUS;
 			return  dx*dx + dy*dy < r*r;
 		}
@@ -439,7 +451,7 @@ public class Demo extends Scene {
 	
 	private boolean aircraftClicked(int x, int y) {
 		for (Aircraft a : aircraftInAirspace) {
-			if (a.isMouseOver(x-airspace_view_offset_x, y-airspace_view_offset_y)) {
+			if (a.isMouseOver(x - airspaceViewOffsetX, y - airspaceViewOffsetY)) {
 				return true;
 			}
 		}
@@ -448,7 +460,7 @@ public class Demo extends Scene {
 	
 	private Aircraft findClickedAircraft(int x, int y) {
 		for (Aircraft a : aircraftInAirspace) {
-			if (a.isMouseOver(x-airspace_view_offset_x, y-airspace_view_offset_y)) {
+			if (a.isMouseOver(x - airspaceViewOffsetX, y - airspaceViewOffsetY)) {
 				return a;
 			}
 		}
@@ -458,7 +470,7 @@ public class Demo extends Scene {
 	private boolean waypointInFlightplanClicked(int x, int y, Aircraft a) {
 		if (a != null) {
 			for (Waypoint w : airspaceWaypoints) {
-				if (w.isMouseOver(x-airspace_view_offset_x, y-airspace_view_offset_y) && a.getFlightPlan().indexOfWaypoint(w) > -1) {
+				if (w.isMouseOver(x - airspaceViewOffsetX, y - airspaceViewOffsetY) && a.getFlightPlan().indexOfWaypoint(w) > -1) {
 					return true;
 				}
 			}
@@ -468,7 +480,7 @@ public class Demo extends Scene {
 	
 	private Waypoint findClickedWaypoint(int x, int y) {
 		for (Waypoint w : airspaceWaypoints) {
-			if (w.isMouseOver(x-airspace_view_offset_x, y-airspace_view_offset_y)) {
+			if (w.isMouseOver(x - airspaceViewOffsetX, y - airspaceViewOffsetY)) {
 				return w;
 			}
 		}
@@ -488,7 +500,7 @@ public class Demo extends Scene {
 	 */
 	@Override
 	public void mousePressed(int key, int x, int y) {
-		airport_control_box.mousePressed(key, x, y);
+		airportControlBox.mousePressed(key, x, y);
 		altimeter.mousePressed(key, x, y);
 		if (key == input.MOUSE_LEFT) {
 			if (aircraftClicked(x, y)) {
@@ -538,13 +550,13 @@ public class Demo extends Scene {
 	}
 	
 	private boolean manualOverridePressed(int x, int y) {
-		return manualOverrideButton.isMouseOver(x - airspace_view_offset_x, y - airspace_view_offset_y);
+		return manualOverrideButton.isMouseOver(x - airspaceViewOffsetX, y - airspaceViewOffsetY);
 	}
 
 	@Override
 	public void mouseReleased(int key, int x, int y) {
 		airport.mouseReleased(key, x, y);
-		airport_control_box.mouseReleased(key, x, y);
+		airportControlBox.mouseReleased(key, x, y);
 		altimeter.mouseReleased(key, x, y);
 		
 		if (key == input.MOUSE_LEFT) {
@@ -562,15 +574,15 @@ public class Demo extends Scene {
 			clickedWaypoint = null; // Fine to set to null now as will have been dealt with
 		} else if (key == input.MOUSE_RIGHT) {
 			if (compassClicked && selectedAircraft != null) {
-				double dx = input.mouseX() - selectedAircraft.getPosition().getX() + airspace_view_offset_x;
-				double dy = input.mouseY() - selectedAircraft.getPosition().getY() + airspace_view_offset_y;
+				double dx = input.mouseX() - selectedAircraft.getPosition().getX() + airspaceViewOffsetX;
+				double dy = input.mouseY() - selectedAircraft.getPosition().getY() + airspaceViewOffsetY;
 				double newBearing = Math.atan2(dy, dx);
 				selectedAircraft.setBearing(newBearing);
 			}
 		} else if (key == input.MOUSE_WHEEL_UP) {
-			highlighted_altitude = 30000;
+			highlightedAltitude = 30000;
 		} else if (key == input.MOUSE_WHEEL_DOWN){
-			highlighted_altitude = 28000;
+			highlightedAltitude = 28000;
 		}
 	}
 
@@ -609,17 +621,17 @@ public class Demo extends Scene {
 	
 	// Due to the way the airspace elements are drawn (graphics.setviewport) these variables are needed to manually adjust mouse listeners and elements
 	// drawn outside the airspace so that they align with the airspace elements. These variables can be used to adjust the size of the airspace view.
-	public static int airspace_view_offset_x = 16;
-	public static int airspace_view_offset_y = 48;
+	public static int airspaceViewOffsetX = 16;
+	public static int airspaceViewOffsetY = 48;
 	/**
 	 * Draw the scene GUI and all drawables within it, e.g. aircraft and waypoints
 	 */
 	@Override
 	public void draw() {
 		graphics.setColour(graphics.green);
-		graphics.rectangle(false, airspace_view_offset_x, airspace_view_offset_y, window.width() - 32, window.height() - 176);
+		graphics.rectangle(false, airspaceViewOffsetX, airspaceViewOffsetY, window.width() - 32, window.height() - 176);
 		
-		graphics.setViewport(airspace_view_offset_x, airspace_view_offset_y, window.width() - 32, window.height() - 176);
+		graphics.setViewport(airspaceViewOffsetX, airspaceViewOffsetY, window.width() - 32, window.height() - 176);
 		graphics.setColour(255, 255, 255, 48);
 		graphics.draw(background, 0, 0);
 		graphics.setColour(255, 255, 255, 48);
@@ -634,7 +646,7 @@ public class Demo extends Scene {
 		score.draw();
 		ordersBox.draw();
 		altimeter.draw();
-		airport_control_box.draw();
+		airportControlBox.draw();
 		drawPlaneInfo();
 		
 		graphics.setColour(graphics.green);
@@ -654,7 +666,7 @@ public class Demo extends Scene {
 		}
 		graphics.setColour(255, 255, 255);
 		for (Aircraft aircraft : aircraftInAirspace) {
-			aircraft.draw(highlighted_altitude);
+			aircraft.draw(highlightedAltitude);
 			if (aircraft.isMouseOver()) {
 				aircraft.drawFlightPath(false);
 			}
@@ -677,16 +689,16 @@ public class Demo extends Scene {
 		}
 		
 		if (clickedWaypoint != null && selectedAircraft.isManuallyControlled() == false) {
-			selectedAircraft.drawModifiedPath(selectedPathpoint, input.mouseX() - airspace_view_offset_x, input.mouseY() - airspace_view_offset_y);
+			selectedAircraft.drawModifiedPath(selectedPathpoint, input.mouseX() - airspaceViewOffsetX, input.mouseY() - airspaceViewOffsetY);
 		}
 		
 		graphics.setViewport();
 		graphics.setColour(graphics.green);
-		graphics.print(locationWaypoints[0].getName(), locationWaypoints[0].getLocation().getX() + airspace_view_offset_x + 9, locationWaypoints[0].getLocation().getY() + airspace_view_offset_y - 6);
-		graphics.print(locationWaypoints[1].getName(), locationWaypoints[1].getLocation().getX() + airspace_view_offset_x + 9, locationWaypoints[1].getLocation().getY() + airspace_view_offset_y - 6);
-		graphics.print(locationWaypoints[2].getName(), locationWaypoints[2].getLocation().getX() + airspace_view_offset_x - 141, locationWaypoints[2].getLocation().getY() + airspace_view_offset_y - 6);
-		graphics.print(locationWaypoints[3].getName(), locationWaypoints[3].getLocation().getX() + airspace_view_offset_x - 91, locationWaypoints[3].getLocation().getY() + airspace_view_offset_y - 6);
-		graphics.print(locationWaypoints[4].getName(), locationWaypoints[4].getLocation().getX() + airspace_view_offset_x - 20, locationWaypoints[4].getLocation().getY() + airspace_view_offset_y + 25);
+		graphics.print(locationWaypoints[0].getName(), locationWaypoints[0].getLocation().getX() + airspaceViewOffsetX + 9, locationWaypoints[0].getLocation().getY() + airspaceViewOffsetY - 6);
+		graphics.print(locationWaypoints[1].getName(), locationWaypoints[1].getLocation().getX() + airspaceViewOffsetX + 9, locationWaypoints[1].getLocation().getY() + airspaceViewOffsetY - 6);
+		graphics.print(locationWaypoints[2].getName(), locationWaypoints[2].getLocation().getX() + airspaceViewOffsetX - 141, locationWaypoints[2].getLocation().getY() + airspaceViewOffsetY - 6);
+		graphics.print(locationWaypoints[3].getName(), locationWaypoints[3].getLocation().getX() + airspaceViewOffsetX- 91, locationWaypoints[3].getLocation().getY() + airspaceViewOffsetY - 6);
+		graphics.print(locationWaypoints[4].getName(), locationWaypoints[4].getLocation().getX() + airspaceViewOffsetX - 20, locationWaypoints[4].getLocation().getY() + airspaceViewOffsetY + 25);
 
 	}
 	
@@ -767,7 +779,7 @@ public class Demo extends Scene {
 		String timePlayed = String.format("%d:%02d:", hours, minutes) + df.format(seconds); 
 		graphics.print(timePlayed, window.width() - (timePlayed.length() * 8 + 32), 32);
 		int planes = aircraftInAirspace.size();
-		graphics.print(String.valueOf("Highlighted altitude: " + Integer.toString(highlighted_altitude)) , 32, 15);
+		graphics.print(String.valueOf("Highlighted altitude: " + Integer.toString(highlightedAltitude)) , 32, 15);
 		graphics.print(String.valueOf(aircraftInAirspace.size()) + " plane" + (planes == 1 ? "" : "s") + " in the sky.", 32, 32);
 	}
 	
@@ -887,6 +899,12 @@ public class Demo extends Scene {
 			}
 		}
 		return new Aircraft(name, destinationName, originName, destinationPoint, originPoint, aircraftImage, 32 + (int)(10 * Math.random()), airspaceWaypoints, difficulty);
+	}
+	
+	@Override
+	public void playSound(audio.Sound sound) {
+		sound.stop();
+		sound.play();
 	}
 	
 	@Override

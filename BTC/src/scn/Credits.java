@@ -35,28 +35,6 @@ public class Credits extends Scene {
 	}
 	
 	/**
-	 * Input handlers
-	 */
-	@Override
-	public void mousePressed(int key, int x, int y) {}
-
-	@Override
-	public void mouseReleased(int key, int x, int y) {}
-
-	@Override
-	public void keyPressed(int key) {}
-
-	@Override
-	/**
-	 * Exit to the title screen if escape is pressed
-	 */
-	public void keyReleased(int key) {
-		if (key == input.KEY_ESCAPE) {
-			main.closeScene();
-		}
-	}
-	
-	/**
 	 * Initiate music, and the credits text to be offscreen
 	 */
 	@Override
@@ -177,6 +155,28 @@ public class Credits extends Scene {
 		graphics.pop();
 	}
 
+	/**
+	 * Input handlers
+	 */
+	@Override
+	public void mousePressed(int key, int x, int y) {}
+
+	@Override
+	public void mouseReleased(int key, int x, int y) {}
+
+	@Override
+	public void keyPressed(int key) {}
+
+	@Override
+	/**
+	 * Exit to the title screen if escape is pressed
+	 */
+	public void keyReleased(int key) {
+		if (key == input.KEY_ESCAPE) {
+			main.closeScene();
+		}
+	}
+	
 	@Override
 	public void close() {
 		music.stop();
