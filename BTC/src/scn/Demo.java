@@ -488,11 +488,11 @@ public class Demo extends Scene {
 	}
 	
 	private boolean isArrivalsClicked(int x, int y) {
-		return airport.isWithinArrivals(new Vector(x,y,0)) && !airport.is_active;
+		return airport.isWithinArrivals(new Vector(x,y,0)) && !airport.isActive;
 	}
 	
 	private boolean isDeparturesClicked(int x, int y) {
-		return airport.isWithinDepartures(new Vector(x,y,0)) && !airport.is_active;
+		return airport.isWithinDepartures(new Vector(x,y,0)) && !airport.isActive;
 	}
 
 	/**
@@ -518,13 +518,13 @@ public class Demo extends Scene {
 			}
 			
 			if (isArrivalsClicked(x, y) && selectedAircraft != null) {
-				if (selectedAircraft.is_waiting_to_land && selectedAircraft.current_target.equals(airport.getLocation())) {
+				if (selectedAircraft.isWaitingToLand && selectedAircraft.currentTarget.equals(airport.getLocation())) {
 					airport.mousePressed(key, x, y);
 					selectedAircraft.land();
 					deselectAircraft();
 				}
 			} else if (isDeparturesClicked(x, y)) {
-				if (airport.aircraft_hangar.size() > 0) {
+				if (airport.aircraftHangar.size() > 0) {
 					airport.mousePressed(key, x, y);
 					airport.signalTakeOff();
 				}
@@ -806,7 +806,7 @@ public class Demo extends Scene {
 	public static void takeOffSequence(Aircraft aircraft) {
 		aircraftInAirspace.add(aircraft);
 		// Space to implement some animation features?
-		airport.is_active = false;
+		airport.isActive = false;
 	}
 	
 	/**
@@ -819,7 +819,7 @@ public class Demo extends Scene {
 		
 		for (Waypoint entry_point : locationWaypoints) {
 			
-			boolean is_available = true;
+			boolean isAvailable = true;
 			/**
 			 * prevents spawning a plane in waypoint both:
 			 * if any plane is currently going towards it 
@@ -829,12 +829,12 @@ public class Demo extends Scene {
 			for (Aircraft aircraft : aircraftInAirspace) {
 				// Check if any plane is currently going towards the exit point/chosen originPoint
 				// Check if any plane is less than what is defined as too close from the chosen originPoint
-				if (aircraft.current_target.equals(entry_point.getLocation()) || aircraft.isCloseToEntry(entry_point.getLocation())) {
-					is_available = false;
+				if (aircraft.currentTarget.equals(entry_point.getLocation()) || aircraft.isCloseToEntry(entry_point.getLocation())) {
+					isAvailable = false;
 				}	
 			}
 			
-			if (is_available) {
+			if (isAvailable) {
 				available_entry_points.add(entry_point);
 			}	
 		}
@@ -860,7 +860,7 @@ public class Demo extends Scene {
 		java.util.ArrayList<Waypoint> available_origins = getAvailableEntryPoints();
 		
 		if (available_origins.isEmpty()) {
-			if (airport.aircraft_hangar.size() == airport.getHangarSize()) {
+			if (airport.aircraftHangar.size() == airport.getHangarSize()) {
 				return null;
 			} else {
 				originPoint = airport;
