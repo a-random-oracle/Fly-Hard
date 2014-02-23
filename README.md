@@ -21,7 +21,7 @@ _These are not final/rigid. Any issues, update/query as you wish :D_
 |:-------|:----:|:------------|
 | [Wanderlust](http://github.com/a-random-oracle) | Magical Windows | __Various__ |
 | [Mint Choc-Chip](http://github.com/RMCKirby) | Variables | [`scn*`](https://github.com/MWUK/Fly-Hard/tree/master/BTC/src/scn) |
-| [mwuk](http://github.com/MWUK) | Variables | [`Score.java`](https://github.com/MWUK/Fly-Hard/blob/master/BTC/src/cls/Score.java), [`Aircraft.java`](https://github.com/MWUK/Fly-Hard/blob/master/BTC/src/cls/Aircraft.java), and  [`Airport.java`](https://github.com/MWUK/Fly-Hard/blob/master/BTC/src/cls/Airport.java) |
+| [mwuk](http://github.com/MWUK) | Variables | [`Score.java`](https://github.com/MWUK/Fly-Hard/blob/master/BTC/src/cls/Score.java)✔, [`Aircraft.java`](https://github.com/MWUK/Fly-Hard/blob/master/BTC/src/cls/Aircraft.java)✔, and  [`Airport.java`](https://github.com/MWUK/Fly-Hard/blob/master/BTC/src/cls/Airport.java)✔ |
 | [Jaron](http://github.com/JaronAli) | Pondering Life/Variables | _Life_ and [`Waypoint.java`](https://github.com/MWUK/Fly-Hard/blob/master/BTC/src/cls/Waypoint.java) |
 | Emily | Creating an Account | [GitHub](http://github.com/join) |
 | Such Hopkins | Creating an Account | [GitHub](http://github.com/join) |
