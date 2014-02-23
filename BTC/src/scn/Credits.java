@@ -110,8 +110,6 @@ public class Credits extends Scene {
 		
 		currentHeight += gap * 2;
 		
-	
-		
 		graphics.printCentred("Improved by", 0, currentHeight, 2, window.width());
 		graphics.printCentred("___________", 0, currentHeight + 8, 2, window.width());
 		graphics.printCentred("__________", 4, currentHeight + 8, 2, window.width());
@@ -127,6 +125,31 @@ public class Credits extends Scene {
 		graphics.printCentred("Matt Munro", window.width()/3, currentHeight, 2, window.width()/3);
 		graphics.printCentred("Liam Wellacott", 2 * window.width()/3, currentHeight, 2, window.width()/3);
 		
+		currentHeight += gap * 2;
+		
+		graphics.printCentred("Presented by", 0, currentHeight, 2, window.width());
+		graphics.printCentred("___________", 0, currentHeight + 8, 2, window.width());
+		graphics.printCentred("__________", 4, currentHeight + 8, 2, window.width());
+		currentHeight += gap;
+		graphics.printCentred("Team GOA:", 0, currentHeight, 2, window.width());
+		currentHeight += gap;
+		
+		graphics.printCentred("Richard Aickin", 0, currentHeight, 2, window.width()/3);
+		graphics.printCentred("Jaron Ali", window.width()/3, currentHeight, 2, window.width()/3);
+		graphics.printCentred("Emily Hall", 2 * window.width()/3, currentHeight, 2, window.width()/3);
+		currentHeight += gap;
+		graphics.printCentred("Sam Hopkins", 0, currentHeight, 2, window.width()/3);
+		graphics.printCentred("Jon Howell", window.width()/3, currentHeight, 2, window.width()/3);
+		graphics.printCentred("Richard Kirby", 2 * window.width()/3, currentHeight, 2, window.width()/3);
+		
+		currentHeight += gap * 2;
+		
+		graphics.printCentred("Special Mentions", 0, currentHeight, 2, window.width());
+		graphics.printCentred("___________", 0, currentHeight + 8, 2, window.width());
+		graphics.printCentred("__________", 4, currentHeight + 8, 2, window.width());
+		currentHeight += gap;
+		graphics.printCentred("Mark Woosey", 0, currentHeight, 2, window.width());
+
 		currentHeight += gap * 2;
 
 		graphics.printCentred("Music", 0, currentHeight, 2, window.width());
