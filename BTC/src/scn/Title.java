@@ -249,9 +249,7 @@ public class Title extends Scene {
 	/**
 	 * cleanly exits the title scene
 	 */
-	public void close() {
-
-	}
+	public void close() {}
 
 	@Override
 	//#Needed?
