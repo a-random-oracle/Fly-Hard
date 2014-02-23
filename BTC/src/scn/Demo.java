@@ -47,8 +47,8 @@ public class Demo extends Scene {
 	// Necessary for testing
 	
 	/**
-	 * This method should only be used for unit testing (avoiding instantiation of main class). Its purpose is to initialize array where
-	 * aircraft are stored. 
+	 * This method should only be used for unit testing (avoiding instantiation of main class).
+	 * Its purpose is to initialize array where aircraft are stored. 
 	 */	
 	@Deprecated
 	public void initializeAircraftArray() {
