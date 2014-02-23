@@ -26,3 +26,9 @@ _These are not final/rigid. Any issues, update/query as you wish :D_
 | Emily | Creating an Account | [GitHub](http://github.com/join) |
 | Such Hopkins | Creating an Account | [GitHub](http://github.com/join) |
 | [Jon](http://github.com/Lixquid) | N/A | N/A |
+
+## Notes
+
+* `.classpath`s might be a little weird. Check yourself before you wreck yourself.
+* camelCase is ongoing.
+* Ladbrokes has odds on 2/1 for the new requirement being 3D rendering, 3/2 on it being missions, 12/1 on procedural generation, and 19/4 on GTA-style bonus game whereby you can get out of your plane and roam a 3D airport.
