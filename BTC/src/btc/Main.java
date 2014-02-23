@@ -1,8 +1,13 @@
 package btc;
 
+import java.awt.GraphicsEnvironment;	
+import java.awt.Rectangle;
 import java.io.File;
+import java.util.Stack;
 
 import org.lwjgl.Sys;
+
+import scn.Scene;
 
 import lib.jog.*;
 
@@ -22,9 +27,13 @@ public class Main implements input.EventHandler {
 		new Main();
 	}
 	
-	final private String TITLE = "Bear Traffic Controller: MQV Edition";
-	final private int WIDTH = 1280;
-	final private int HEIGHT = 960;
+	final private String TITLE = "Bear Traffic Controller: GOA Edition";
+	
+	final public static double TARGET_WIDTH = 1280;
+	final public static double TARGET_HEIGHT = 960;
+	private static double width;
+	private static double height;
+	
 	final private String[] ICON_FILENAMES = {
 		"gfx" + File.separator + "icon16.png",
 		"gfx" + File.separator + "icon32.png",
@@ -33,8 +42,8 @@ public class Main implements input.EventHandler {
 
 	private double last_frame_time;
 	private double time_difference;
-	private java.util.Stack<scn.Scene> scene_stack;
-	private scn.Scene current_scene;
+	private Stack<scn.Scene> scene_stack;
+	private Scene current_scene;
 	private int fps_counter;
 	private long last_fps_time;
 	
@@ -44,7 +53,28 @@ public class Main implements input.EventHandler {
 	 * the window is closed it releases resources and closes the program
 	 */
 	public Main() {
+		double scale = 1;
+		
+		// Resize window if necessary
+		Rectangle windowBounds = GraphicsEnvironment
+				.getLocalGraphicsEnvironment()
+				.getMaximumWindowBounds();
+
+		int actualWidth = windowBounds.width;
+		int actualHeight = windowBounds.height;
+
+		if (((actualWidth - 50) < TARGET_WIDTH)
+				|| ((actualHeight - 50) < TARGET_HEIGHT)) {
+
+			scale = Math.min((actualWidth - 50) / TARGET_WIDTH,
+					(actualHeight - 50) / TARGET_HEIGHT);
+		}
+
+		width = scale * TARGET_WIDTH;
+		height = scale * TARGET_HEIGHT;
+		
 		start();
+		
 		while(!window.isClosed()) {
 			time_difference = getTimeSinceLastFrame();
 			update(time_difference);
@@ -57,10 +87,12 @@ public class Main implements input.EventHandler {
 	 * Creates window, initialises jog classes and sets starting values to variables.
 	 */
 	private void start() {
-		window.initialise(TITLE, WIDTH, HEIGHT);
+		window.initialise(TITLE, (int)(width), (int)(height));
 		window.setIcon(ICON_FILENAMES);
 		graphics.initialise();
-		graphics.Font font = graphics.newBitmapFont("gfx" + File.separator + "font.png", "ABCDEFGHIJKLMNOPQRSTUVWXYZ abcdefghijklmnopqrstuvwxyz1234567890.,_-!?()[]><#~:;/\\^'\"{}£$@@@@@@@@");
+		graphics.Font font = graphics.newBitmapFont("gfx" + File.separator
+				+ "font.png", ("ABCDEFGHIJKLMNOPQRSTUVWXYZ " +
+						"abcdefghijklmnopqrstuvwxyz1234567890.,_-!?()[]><#~:;/\\^'\"{}+=@@@@@@@@`"));
 		graphics.setFont(font);
 		
 		scene_stack = new java.util.Stack<scn.Scene>();
@@ -145,6 +177,17 @@ public class Main implements input.EventHandler {
 		fps_counter++;
 	}
 	
+	public static double width() {
+		return width;
+	}
+	
+	public static double height() {
+		return height;
+	}
+	
+	public static double getScale() {
+		return width / TARGET_WIDTH;
+	}
 
 	@Override
 	public void mousePressed(int key, int x, int y) {
