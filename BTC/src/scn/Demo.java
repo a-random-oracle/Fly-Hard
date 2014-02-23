@@ -37,7 +37,7 @@ public class Demo extends Scene {
 	private final int ORDERSBOX_W = window.width() - (ORDERSBOX_X + 16);
 	private final static int ORDERSBOX_H = 112;
 	
-	// Static Final Ints for difficulty settings
+	// Static CONSTANTS for difficulty settings
 	// Difficulty of demo scene determined by difficulty selection scene
 	public final static int DIFFICULTY_EASY = 0;
 	public final static int DIFFICULTY_MEDIUM = 1;
@@ -67,9 +67,16 @@ public class Demo extends Scene {
 		Demo.difficulty = difficulty;
 	}
 	
+	/**
+	 * The score throughout the game
+	 */
 	private cls.Score score; 
 	
+	/**
+	 * Flag to dtermine if aircraft warning message is to be displayed
+	 */
 	private boolean shownAircraftWaitingMessage = false;
+	
 	/**
 	 * Orders box to print orders from ACTO to aircraft to
 	 */
@@ -80,18 +87,22 @@ public class Demo extends Scene {
 	 * Could be used for score
 	 */
 	private static double timeElapsed;
+	
 	/**
 	 * The currently selected aircraft
 	 */
 	private Aircraft selectedAircraft;
+	
 	/**
 	 * The currently selected waypoint
 	 */
 	private Waypoint clickedWaypoint;
+	
 	/**
 	 * Selected path point, in an aircraft's route, used for altering the route
 	 */
 	private int selectedPathpoint;
+	
 	/**
 	 * A list of aircraft present in the airspace
 	 */
@@ -109,14 +120,17 @@ public class Demo extends Scene {
 	 * A button to start and end manual control of an aircraft
 	 */
 	private lib.ButtonText manualOverrideButton;
+	
 	/**
 	 * Tracks if manual heading compass of a manually controlled aircraft has been clicked
 	 */
 	private boolean compassClicked;
+	
 	/**
 	 * Tracks if waypoint of a manually controlled aircraft has been clicked
 	 */
 	private boolean waypointClicked;
+	
 	/**
 	 * An altimeter to display aircraft altitidue, heading, etc.
 	 */
@@ -138,6 +152,7 @@ public class Demo extends Scene {
 	 * Music to play during the game scene
 	 */
 	private audio.Music music;
+	
 	/**
 	 * The background to draw in the airspace.
 	 */
@@ -208,6 +223,7 @@ public class Demo extends Scene {
 		locationWaypoints[3],           // 13
 		locationWaypoints[4]			// 14
 	};
+	
 	/**
 	 * Constructor
 	 * @param main the main containing the scene
@@ -390,12 +406,6 @@ public class Demo extends Scene {
 				return;
 			}
 		}
-	}
-	
-	@Override
-	public void playSound(audio.Sound sound) {
-		sound.stop();
-		sound.play();
 	}
 	
 	/**
@@ -889,6 +899,12 @@ public class Demo extends Scene {
 			}
 		}
 		return new Aircraft(name, destinationName, originName, destinationPoint, originPoint, aircraftImage, 32 + (int)(10 * Math.random()), airspaceWaypoints, difficulty);
+	}
+	
+	@Override
+	public void playSound(audio.Sound sound) {
+		sound.stop();
+		sound.play();
 	}
 	
 	@Override
