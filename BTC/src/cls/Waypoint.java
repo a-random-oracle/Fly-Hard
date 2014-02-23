@@ -33,9 +33,8 @@ public class Waypoint {
 		
 		// Scale points to fit on screen
 		// Entry and exit points are scaled automatically
-		if (!entry_or_exit) {
-			Vector scaledPosition = waypoint_location.remapPosition();
-			waypoint_location = scaledPosition;
+		if (!inputEntryOrExit) {
+			waypoint_location = waypoint_location.remapPosition();
 		}
 	}
 	
@@ -43,6 +42,12 @@ public class Waypoint {
 		waypoint_location = new Vector(x, y, 0);
 		entry_or_exit = inputEntryOrExit;
 		this.name = "";
+		
+		// Scale points to fit on screen
+		// Entry and exit points are scaled automatically
+		if (!inputEntryOrExit) {
+			waypoint_location = waypoint_location.remapPosition();
+		}
 	}
 	
 	public Vector getLocation() {
