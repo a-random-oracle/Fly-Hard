@@ -570,7 +570,10 @@ public class Demo extends Scene {
 				manualOverrideButton.act();
 			} else if (waypointClicked && selectedAircraft != null) {
 				Waypoint newWaypoint = findClickedWaypoint(x, y);
-				if (newWaypoint != null) {
+				if (newWaypoint instanceof Airport) {
+					ordersBox.addOrder(">>> " + selectedAircraft.getName() + " please avoid cruising over Mosbear Airport, find a new course.");
+					ordersBox.addOrder("<<< Roger that. Going around.");
+				} else if (newWaypoint != null) {
 					selectedAircraft.alterPath(selectedPathpoint, newWaypoint);
 					ordersBox.addOrder(">>> " + selectedAircraft.getName() + " please alter your course.");
 					ordersBox.addOrder("<<< Roger that. Altering course now.");

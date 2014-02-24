@@ -31,13 +31,16 @@ public class FlightPlan {
 		return originName;
 	}
 	
+	
 	/**
 	 * Edits the plane's path by changing the waypoint it will go to at a certain stage in its route.
 	 * @param routeStage the stage at which the new waypoint will replace the old.
 	 * @param newWaypoint the new waypoint to travel to.
 	 */
 	public void alterPath(int routeStage, Waypoint newWaypoint) {
-		route[routeStage] = newWaypoint;
+		if (!(newWaypoint instanceof Airport)) { 
+			route[routeStage] = newWaypoint;
+		}
 	}
 	
 	/**
