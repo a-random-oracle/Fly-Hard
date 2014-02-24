@@ -9,11 +9,11 @@ This is the new repo for GOA. Please take off your shoes and make yourself at ho
 
 | Item | Remarks | Due |
 |:-----|:--------|----:|
-| Make the thing resize. | | _Whenever_ |
-| Fix variable names. | See [Issues](https://github.com/mwuk/fly-hard/issues/2) | Before the requirments are revealed, _preferably_.
-| Make the game multiplayer-enabled. | | The deadline |
-| Add in a second airport. | | Soon |
-| Add the ability to transfer control of a plane. | | Some time in the forseable future |
+| Fix variable names. | [Issue](https://github.com/mwuk/fly-hard/issues/2) | __March 1st__ |
+| Add in a second airport. | [Milestone](https://github.com/MWUK/Fly-Hard/issues?milestone=2&page=1&sort=created&state=open) | Mid-March |
+| Make the game multiplayer-enabled. | [Milestone](https://github.com/MWUK/Fly-Hard/issues?direction=asc&milestone=3&page=1&sort=created&state=open)| Mid-April |
+| Add the ability to transfer control of a plane. | [Issue](https://github.com/MWUK/Fly-Hard/issues/5) | Late-April |
+| Make the thing resize. | _Might have an alternative solution_ | _Whenever_ |
 
 ### Roles & Responsibilities
 
@@ -21,7 +21,7 @@ _These are not final/rigid. Any issues, update/query as you wish :D_
 
 | Member | Duty | File/Source |
 |:-------|:----:|:------------|
-| [Wanderlust](http://github.com/a-random-oracle) | Magical Windows | __Various__ |
+| [Wanderlust](http://github.com/a-random-oracle) | Making as many changes as is possible so as to achieve the false sense of importance. | __Various__ |
 | [Mint Choc-Chip](http://github.com/RMCKirby) | Variables | [`scn*`](https://github.com/MWUK/Fly-Hard/tree/master/BTC/src/scn) |
 | [mwuk](http://github.com/MWUK) | Variables | [`Score.java`](https://github.com/MWUK/Fly-Hard/blob/master/BTC/src/cls/Score.java)✔, [`Aircraft.java`](https://github.com/MWUK/Fly-Hard/blob/master/BTC/src/cls/Aircraft.java)✔, and  [`Airport.java`](https://github.com/MWUK/Fly-Hard/blob/master/BTC/src/cls/Airport.java)✔ |
 | [Jaron](http://github.com/JaronAli) | Pondering Life/Variables | _Life_ and [`Waypoint.java`](https://github.com/MWUK/Fly-Hard/blob/master/BTC/src/cls/Waypoint.java)✔ |
