@@ -254,6 +254,12 @@ public abstract class graphics {
 		
 		private Texture texture;
 		
+		/** The x-xoordinate of the image */
+		private double x;
+		
+		/** The y-coordinate of the image */
+		private double y;
+		
 		/**
 		 * Constructor for an image.
 		 * @param filepath the path to the image file.
@@ -266,6 +272,42 @@ public abstract class graphics {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
+		}
+		
+		/**
+		 * Constructor for an image that may be scaled
+		 * @param filepath - The path to the image file
+		 * @param x - The x-xoordinate to draw the image at
+		 * @param y - The y-coordinate to draw the image at
+		 * @param scale - The scaling factor to apply to the image
+		 */
+		private Image(String filepath, int x, int y, double scale) {
+			this.x = x*scale;
+			this.y = y*scale;
+			
+			try {
+				String format = filepath.split("\\.")[1].toUpperCase();
+				InputStream in = ResourceLoader.getResourceAsStream(filepath);
+				texture = TextureLoader.getTexture(format, in);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		/**
+		 * Allows access to the x-coordinate of the image
+		 * @return the x-coordinate
+		 */
+		public double getX() {
+			return x;
+		}
+		
+		/**
+		 * Allows access to the y-coordinate of the image
+		 * @return the y-coordinate
+		 */
+		public double getY() {
+			return y;
 		}
 		
 		/**
