@@ -47,16 +47,27 @@ public class Title extends Scene {
 		beep = audio.newSoundEffect("sfx" + File.separator + "beep.ogg");
 		beep.setVolume(0.2f);
 
-		buttons = new lib.ButtonText[4];
+		buttons = new lib.ButtonText[5];
 
-		// Game Button
+		// Single player Button
 		lib.ButtonText.Action demo = new lib.ButtonText.Action() {
 			@Override
 			public void action() {
 				main.setScene(new DifficultySelect(main, DifficultySelect.CREATE_DEMO));
 			}
 		};
-		buttons[0] = new lib.ButtonText("Play Full Game", demo, window.height(),
+		buttons[0] = new lib.ButtonText("Play Single Player Game", demo, window.height(),
+				window.height()/2 + 66, window.width() - window.height(), 24, 8, 6);
+
+		// Multi player Button
+		lib.ButtonText.Action multiplayer = new lib.ButtonText.Action() {
+			@Override
+			public void action() {
+				//main.setScene(new DifficultySelect(main, DifficultySelect.CREATE_DEMO));
+				System.out.println("THIS DOESNT DO ANYTHING YET. IN TIME, ALL THINGS COME TO THOSE WHO WAIT.");
+			}
+		};
+		buttons[1] = new lib.ButtonText("Play Multiplayer Game", multiplayer, window.height(),
 				window.height()/2 + 96, window.width() - window.height(), 24, 8, 6);
 
 		// Credits Button
@@ -66,7 +77,7 @@ public class Title extends Scene {
 				main.setScene(new Credits(main));
 			}
 		};
-		buttons[1] = new lib.ButtonText("Credits", credits, window.height(),
+		buttons[2] = new lib.ButtonText("Credits", credits, window.height(),
 				window.height()/2 + 126, window.width() - window.height(), 24, 8, 6);
 
 		// Help Button
@@ -80,7 +91,7 @@ public class Title extends Scene {
 				}
 			}
 		};
-		buttons[2] = new lib.ButtonText("Help        (Opens user manual PDF)", help,
+		buttons[3] = new lib.ButtonText("Help        (Opens user manual PDF)", help,
 				window.height(), window.height()/2 + 156, window.width() - window.height(), 24, 8, 6);
 		
 		// Exit Button
@@ -90,7 +101,7 @@ public class Title extends Scene {
 				main.quit();
 			}
 		};
-		buttons[3] = new lib.ButtonText("Exit", exit, window.height(), window.height()/2 + 186,
+		buttons[4] = new lib.ButtonText("Exit", exit, window.height(), window.height()/2 + 186,
 				window.width() - window.height(), 24, 8, 6);
 
 		angle = 0;
@@ -206,6 +217,7 @@ public class Title extends Scene {
 		// Draw Buttons
 		for (lib.ButtonText b : buttons) b.draw();
 		graphics.setColour(graphics.green);
+		graphics.line(window.height(), window.height()/2 + 60, window.width() - 16, window.height()/2 + 60);
 		graphics.line(window.height(), window.height()/2 + 90, window.width() - 16, window.height()/2 + 90);
 		graphics.line(window.height(), window.height()/2 + 120, window.width() - 16, window.height()/2 + 120);
 		graphics.line(window.height(), window.height()/2 + 150, window.width() - 16, window.height()/2 + 150);
