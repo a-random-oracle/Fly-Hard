@@ -512,8 +512,14 @@ public class Demo extends Scene {
 			} else if (waypointInFlightplanClicked(x, y, selectedAircraft) && !selectedAircraft.isManuallyControlled()) {
 				clickedWaypoint = findClickedWaypoint(x, y);
 				if (clickedWaypoint != null) {
-					waypointClicked = true; // Flag to mouseReleased
-					selectedPathpoint = selectedAircraft.getFlightPlan().indexOfWaypoint(clickedWaypoint);					
+					if (!clickedWaypoint.isEntryOrExit()) {
+						waypointClicked = true; // Flag to mouseReleased
+						selectedPathpoint = selectedAircraft.getFlightPlan().indexOfWaypoint(clickedWaypoint);
+					} else {
+						// If the clicked waypoint is an entry/exit point, discard it
+						// as we don't want the user to be able to move these points
+						clickedWaypoint = null;
+					}
 				}
 			}
 			
