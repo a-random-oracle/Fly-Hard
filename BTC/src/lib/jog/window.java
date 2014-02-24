@@ -22,9 +22,9 @@ public abstract class window {
 	
 	final private static int FPS = 60;
 	
-	private static int _width;
-	private static int _height;
-	private static boolean _closed;
+	private static int width;
+	private static int height;
+	private static boolean closed;
 	
 	/**
 	 * Creates a new window.
@@ -37,10 +37,10 @@ public abstract class window {
 			setSize(width, height);
 			setTitle(title);
 			Display.create();
-			_closed = false;
+			closed = false;
 		} catch (LWJGLException e) {
 			e.printStackTrace();
-			_closed = true;
+			closed = true;
 		}
 	}
 	
@@ -56,8 +56,8 @@ public abstract class window {
 		try {
 			Display.setDisplayMode(new DisplayMode(width, height));
 			Display.setLocation(192, 10);
-			_width = width;
-			_height = height;
+			window.width = width;
+			window.height = height;
 		} catch (LWJGLException e) {
 			e.printStackTrace();
 		}
@@ -68,7 +68,7 @@ public abstract class window {
 	 * @return the width of the window.
 	 */
 	public static int width() {
-		return _width;
+		return width;
 	}
 	
 	/**
@@ -76,7 +76,7 @@ public abstract class window {
 	 * @return the height of the window.
 	 */
 	public static int height() {
-		return _height;
+		return height;
 	}
 	
 	/**
@@ -84,7 +84,7 @@ public abstract class window {
 	 * @return whether the window is closed.
 	 */
 	public static boolean isClosed() {
-		return _closed;
+		return closed;
 	}
 	
 	/**
@@ -148,8 +148,8 @@ public abstract class window {
 	 * It also updates whether the window has been closed or not.
 	 */
 	public static void update() {
-		_closed = _closed || Display.isCloseRequested();
-		if (_closed) return;
+		closed = closed || Display.isCloseRequested();
+		if (closed) return;
 		Display.update();
 		Display.sync(FPS);
 	}
