@@ -16,7 +16,7 @@ import lib.jog.window;
  */
 public class Aircraft {
 	private final static int RADIUS = 16; // The physical size of the plane in pixels. This determines crashes.
-	private final static int MOUSE_LENIANCY = 32;  // How far away (in pixels) the mouse can be from the plane but still select it.
+	private final static int MOUSE_LENIENCY = 32;  // How far away (in pixels) the mouse can be from the plane but still select it.
 	public final static int COMPASS_RADIUS = 64; // How large to draw the bearing circle.
 	private final static audio.Sound WARNING_SOUND = audio.newSoundEffect("sfx" + File.separator + "beep.ogg"); // Used during separation violation
 	
@@ -146,14 +146,14 @@ public class Aircraft {
 	 * @param departureTime (system time when a plane departed)
 	 */
 	public void setDepartureTime(double departureTime) {
-		departureTime = departureTime;
-	} 
+		this.departureTime = departureTime;
+	}
 
 	/**
 	 * Sets the score for a specific aircraft.
 	 */
 	public void setScore(int score) {
-		individualScore = score;
+		this.individualScore = score;
 	}
 
 	/**
@@ -181,11 +181,11 @@ public class Aircraft {
 	}
 	
 	public void setBearing(double newHeading) {
-		manualBearingTarget = newHeading;
+		this.manualBearingTarget = newHeading;
 	}
 	
 	private void setAltitude(int height) {
-		velocity.setZ(height);
+		this.velocity.setZ(height);
 	}
 	
 	public void setAltitudeState(int state) {
@@ -302,7 +302,7 @@ public class Aircraft {
 	 * @param newWaypoint the new waypoint to travel to.
 	 */
 	public void alterPath(int routeStage, Waypoint newWaypoint) {
-		if (routeStage > -1) {
+		if ((!newWaypoint.isEntryOrExit()) && (routeStage > -1)) {
 			flightPlan.alterPath(routeStage, newWaypoint);
 			if (!isManuallyControlled)
 				resetBearing();
@@ -316,7 +316,7 @@ public class Aircraft {
 	public boolean isMouseOver(int mx, int my) {
 		double dx = position.getX() - mx;
 		double dy = position.getY() - my;
-		return dx * dx + dy * dy < MOUSE_LENIANCY * MOUSE_LENIANCY;
+		return dx * dx + dy * dy < MOUSE_LENIENCY * MOUSE_LENIENCY;
 	}
 
 	/**
@@ -324,7 +324,7 @@ public class Aircraft {
 	 * @return true, if the mouse is close enough to this plane. False, otherwise.
 	 */
 	public boolean isMouseOver() {
-		return isMouseOver(input.mouseX() - Demo.airspace_view_offset_x, input.mouseY() - Demo.airspace_view_offset_y);
+		return isMouseOver(input.mouseX() - Demo.airspaceViewOffsetX, input.mouseY() - Demo.airspaceViewOffsetY);
 	}
 	
 	public boolean isAtDestination() {
@@ -347,7 +347,7 @@ public class Aircraft {
 			if (position.getZ() > 100) { 
 				position.setZ(position.getZ() - 2501 * time_difference); // Decrease altitude rapidly (2501/second), ~11 seconds to fully descend
 			} else { // Gone too low, land it now
-				Demo.airport.is_active = false;
+				Demo.airport.isActive = false;
 				hasFinished = true;
 			}
 		} else {
@@ -374,7 +374,7 @@ public class Aircraft {
 			if (!isWaitingToLand) { // Ready to land
 				hasFinished = true;
 				if (flightPlan.getDestination().equals(Demo.airport.getLocation())) { // Landed at airport
-					Demo.airport.is_active = false;
+					Demo.airport.isActive = false;
 				}
 			}
 		} else if (isAt(currentTarget)) {
@@ -460,8 +460,8 @@ public class Aircraft {
 		graphics.setColour(graphics.green);
 		
 		// Centre positions of aircraft
-		Double xpos = position.getX()-image.width()/2 + Demo.airspace_view_offset_x; 
-		Double ypos = position.getY()-image.height()/2 + Demo.airspace_view_offset_y;
+		Double xpos = position.getX()-image.width()/2 + Demo.airspaceViewOffsetX; 
+		Double ypos = position.getY()-image.height()/2 + Demo.airspaceViewOffsetY;
 		
 		// Draw the compass circle
 		graphics.circle(false, xpos, ypos, COMPASS_RADIUS, 30);
@@ -656,11 +656,11 @@ public class Aircraft {
 		isWaitingToLand = false;
 		isLanding = true;
 		isManuallyControlled = false;
-		Demo.airport.is_active = true;
+		Demo.airport.isActive = true;
 	}
 
 	public void takeOff() {
-		Demo.airport.is_active = true;
+		Demo.airport.isActive = true;
 		Demo.takeOffSequence(this);
 		creationTime = System.currentTimeMillis() / 1000; // Reset creation time
 	}
