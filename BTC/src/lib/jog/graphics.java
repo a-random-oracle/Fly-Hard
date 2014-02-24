@@ -254,6 +254,12 @@ public abstract class graphics {
 		
 		private Texture texture;
 		
+		/** The x-xoordinate of the image */
+		private double x;
+		
+		/** The y-coordinate of the image */
+		private double y;
+		
 		/**
 		 * Constructor for an image.
 		 * @param filepath the path to the image file.
@@ -269,6 +275,42 @@ public abstract class graphics {
 		}
 		
 		/**
+		 * Constructor for an image that may be scaled
+		 * @param filepath - The path to the image file
+		 * @param x - The x-xoordinate to draw the image at
+		 * @param y - The y-coordinate to draw the image at
+		 * @param scale - The scaling factor to apply to the image
+		 */
+		private Image(String filepath, int x, int y, double scale) {
+			this.x = x*scale;
+			this.y = y*scale;
+			
+			try {
+				String format = filepath.split("\\.")[1].toUpperCase();
+				InputStream in = ResourceLoader.getResourceAsStream(filepath);
+				texture = TextureLoader.getTexture(format, in);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		/**
+		 * Allows access to the x-coordinate of the image
+		 * @return the x-coordinate
+		 */
+		public double getX() {
+			return x;
+		}
+		
+		/**
+		 * Allows access to the y-coordinate of the image
+		 * @return the y-coordinate
+		 */
+		public double getY() {
+			return y;
+		}
+		
+		/**
 		 * Allows access of the dimensions of the image.
 		 * @return the width of the image in pixels.
 		 */
@@ -277,11 +319,32 @@ public abstract class graphics {
 		}
 		
 		/**
+		 * Allows access to a scaled value of the width of the image.
+		 * That is, for when the image is to be scaled to fit a screen size
+		 * less than that of the target size
+		 * @return the width of the image in pixels scaled
+		 */
+		public double scaledWidth(double scale) {
+			return texture.getTextureWidth() * scale;
+
+		}
+		
+		/**
 		 * Allows access of the dimensions of the image.
 		 * @return the height of the image in pixels.
 		 */
 		public double height() { 
 			return texture.getTextureHeight(); 
+		}
+		
+		/**
+		 * Allows access to a scaled value of the height of the image.
+		 * That is, for when the image is to be scaled to fit a screen size
+		 * less than that of the target size
+		 * @return the height of the image in pixels scaled
+		 */
+		public double scaledHeight(double scale) {
+			return texture.getTextureHeight() * scale;
 		}
 		
 		/**
@@ -450,6 +513,18 @@ public abstract class graphics {
 	}
 	
 	/**
+	 * Creates and returns a new image that has been scaled
+	 * @param filepath - The pathname of the image
+	 * @param x - The x-coordinate at which to draw the image
+	 * @param y - The y-coordinate at which to draw the image
+	 * @param scale - The scaling factor to scale the image by
+	 * @return the new image
+	 */
+	static public Image newImage(String filepath, int x, int y, double scale) {
+		return new Image(filepath, x, y, scale);
+	}
+	
+	/**
 	 * Creates and returns a new Quad.
 	 * @param x the beginning horizontal coordinate of the quad in pixels.
 	 * @param y the beginning vertical coordinate of the quad in pixels.
@@ -527,7 +602,9 @@ public abstract class graphics {
 	 * @param y the vertical pixel to draw at.
 	 */
 	static public void draw(Image drawable, double x, double y) {
+		drawable.x = x; //Set the x-coordinate of the image drawn by that specified by the x parameter
 		y = window.height() - y;
+		drawable.y = y; //Set the y-coordinate of the image drawn by that specified by the y parameter
 		double w = drawable.width();
 		double h = -drawable.height();
 		
@@ -535,6 +612,29 @@ public abstract class graphics {
     	drawable.texture.bind();
 		glPushMatrix();
 	    glTranslated(x, y, 0);
+		glBegin(GL_QUADS);
+			glTexCoord2d(0, 0);
+			glVertex2d(0, 0);
+			glTexCoord2d(1, 0);
+			glVertex2d(w, 0);
+			glTexCoord2d(1, 1);
+			glVertex2d(w, h);
+			glTexCoord2d(0, 1);
+			glVertex2d(0, h);
+		glEnd();
+		glPopMatrix();
+		glDisable(GL_TEXTURE_2D);
+	}
+	
+	static public void drawScaled(Image drawable, double x, double y, double scale) {
+		y = window.height() - (y);
+		double w = drawable.scaledWidth(scale);
+		double h = -drawable.scaledHeight(scale);
+		
+		glEnable(GL_TEXTURE_2D);
+		drawable.texture.bind();
+		glPushMatrix();
+		glTranslated(x, y, 0);
 		glBegin(GL_QUADS);
 			glTexCoord2d(0, 0);
 			glVertex2d(0, 0);
@@ -734,6 +834,18 @@ public abstract class graphics {
 	}
 	static public void print(String text, double x, double y){
 		print(text, x, y, 1);
+	}
+	
+	/**
+	 * Draws text to the screen that is scaled to the user's screen size
+	 * @param text the characters to be drawn.
+	 * @param x - the x coordinate to draw the text at.
+	 * @param y - the y coordinate to draw the text at.
+	 * @param size - the size to draw the text at.
+	 * @param scale - The scale to be applied to the text
+	 */
+	static public void printScaled(String text, double x, double y, double size, double scale) {
+		print(text, x * scale, y * scale, size * scale);
 	}
 	
 	/**
