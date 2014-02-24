@@ -57,26 +57,26 @@ public class AirportTest {
 	public void testAddToHangar() {
 		// Dependant on hangar_size = 3
 		test_airport.addToHangar(test_aircraft);
-		assertTrue("The size of the hanger = 1", test_airport.aircraft_hangar.size() == 1);
+		assertTrue("The size of the hanger = 1", test_airport.aircraftHangar.size() == 1);
 		
 		test_airport.addToHangar(test_aircraft);
-		assertTrue("The size of the hanger = 2", test_airport.aircraft_hangar.size() == 2);
+		assertTrue("The size of the hanger = 2", test_airport.aircraftHangar.size() == 2);
 		
 		test_airport.addToHangar(test_aircraft);
-		assertTrue("The size of the hanger = 3", test_airport.aircraft_hangar.size() == 3);
+		assertTrue("The size of the hanger = 3", test_airport.aircraftHangar.size() == 3);
 		
 		//this should also be 3 because of the maximum size
 		test_airport.addToHangar(test_aircraft);
-		assertTrue("The size of the hanger = 3", test_airport.aircraft_hangar.size() == 3);
+		assertTrue("The size of the hanger = 3", test_airport.aircraftHangar.size() == 3);
 	}
 	
 	@Test
 	public void testSignalTakeOff() {
 		test_airport.signalTakeOffTesting();
-		assertTrue("The size of the hanger = 0", test_airport.aircraft_hangar.size() == 0);
+		assertTrue("The size of the hanger = 0", test_airport.aircraftHangar.size() == 0);
 		
 		test_airport.addToHangar(test_aircraft);
 		test_airport.signalTakeOffTesting();
-		assertTrue("The size of the hanger = 0", test_airport.aircraft_hangar.size() == 0);
+		assertTrue("The size of the hanger = 0", test_airport.aircraftHangar.size() == 0);
 	}
 }

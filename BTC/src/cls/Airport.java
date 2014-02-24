@@ -1,10 +1,12 @@
 package cls;
 
 import java.io.File;
+import java.util.ArrayList;
 
 import scn.Demo;
 
 import lib.jog.graphics;
+import lib.jog.graphics.Image;
 import lib.jog.input;
 import lib.jog.input.EventHandler;
 import lib.jog.window;
@@ -29,15 +31,15 @@ public class Airport extends Waypoint implements EventHandler {
 	private boolean isArrivalsClicked = false;
 	private boolean isDeparturesClicked = false;
 		
-	private graphics.Image airport;
+	private Image airport;
 	
-	public java.util.ArrayList<Aircraft> aircraftWaitingToLand = new java.util.ArrayList<Aircraft>();
+	public ArrayList<Aircraft> aircraftWaitingToLand = new ArrayList<Aircraft>();
 	/**
 	 * Time entered is directly related to the aircraft hangar and stores the time each aircraft entered the hangar
 	 * this is used to determine score multiplier decrease if aircraft is in the hangar for too long
 	 */
-	public java.util.ArrayList<Aircraft> aircraftHangar = new java.util.ArrayList<Aircraft>();
-	public java.util.ArrayList<Double> timeEntered = new java.util.ArrayList<Double>();
+	public ArrayList<Aircraft> aircraftHangar = new ArrayList<Aircraft>();
+	public ArrayList<Double> timeEntered = new ArrayList<Double>();
 	private int hangarSize = 3;
 	
 	public Airport(String name) {
@@ -113,7 +115,7 @@ public class Airport extends Waypoint implements EventHandler {
 	 * @return true if point is within the rectangle that defines the arrivals portion of the airport
 	 */
 	public boolean isWithinArrivals(Vector position) {
-		return isWithinRect((int)position.getX(), (int)position.getY(),(int)(xArrivalsLocation-airport.width()/2) + Demo.airspace_view_offset_x, (int)(yArrivalsLocation-airport.height()/2) + Demo.airspace_view_offset_y, (int)arrivalsWidth, (int)arrivalsHeight);
+		return isWithinRect((int)position.getX(), (int)position.getY(),(int)(xArrivalsLocation-airport.width()/2) + Demo.airspaceViewOffsetX, (int)(yArrivalsLocation-airport.height()/2) + Demo.airspaceViewOffsetY, (int)arrivalsWidth, (int)arrivalsHeight);
 	}
 	
 	// Used for calculating if an aircraft is within the airspace for landing - offset should not be applied
@@ -127,7 +129,7 @@ public class Airport extends Waypoint implements EventHandler {
 	 * @return true if point is within the rectangle that defines the departures portion of the airport
 	 */
 	public boolean isWithinDepartures(Vector position) {
-		return isWithinRect((int)position.getX(), (int)position.getY(), (int)(xDeparturesLocation-airport.width()/2) + Demo.airspace_view_offset_x, (int)(yDeparturesLocation-airport.height()/2) + Demo.airspace_view_offset_y, (int)departuresWidth, (int)departuresHeight);
+		return isWithinRect((int)position.getX(), (int)position.getY(), (int)(xDeparturesLocation-airport.width()/2) + Demo.airspaceViewOffsetX, (int)(yDeparturesLocation-airport.height()/2) + Demo.airspaceViewOffsetY, (int)departuresWidth, (int)departuresHeight);
 	}
 	
 	public boolean isWithinRect(int test_x, int test_y, int x, int y, int width, int height) {
@@ -161,7 +163,7 @@ public class Airport extends Waypoint implements EventHandler {
 	public void update(Demo demo) {
 		aircraftWaitingToLand.clear();
 		for (Aircraft a : demo.aircraftList()) {
-			if (a.current_target.equals(this.getLocation())) {
+			if (a.currentTarget.equals(this.getLocation())) {
 				aircraftWaitingToLand.add(a);
 			}
 		}

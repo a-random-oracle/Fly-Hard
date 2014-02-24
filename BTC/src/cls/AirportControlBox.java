@@ -63,10 +63,10 @@ public class AirportControlBox implements EventHandler{
 	 */
 	private void drawLabels() {
 		// Draw take off button
-		int opacity = (airport.is_active || airport.aircraft_hangar.size() == 0) ? 128 : 256; // Grey out if not clickable
+		int opacity = (airport.isActive || airport.aircraftHangar.size() == 0) ? 128 : 256; // Grey out if not clickable
 		graphics.setColour(0, 128, 0, opacity);
 		double y = (window.height() - height / number_of_divisions) - (window.height() - (y_position + height));
-		if (!airport.is_active) {
+		if (!airport.isActive) {
 			graphics.print("TAKE OFF", x_position + ((width - 70)/2), y + 9);
 		} else {
 			graphics.print("AIRPORT BUSY", x_position + ((width - 100)/2), y + 9);
@@ -76,13 +76,13 @@ public class AirportControlBox implements EventHandler{
 		// Draw aircraft in hangar
 		double y_position = y + 12;
 		double percentage_complete;
-		for (int i = 0; i < airport.aircraft_hangar.size(); i++) {
+		for (int i = 0; i < airport.aircraftHangar.size(); i++) {
 			y_position -= (height / number_of_divisions);
 			
 			graphics.setColour(graphics.green);
-			graphics.print(airport.aircraft_hangar.get(i).getName(), x_position + ((width - 70)/2), y_position - 3);
+			graphics.print(airport.aircraftHangar.get(i).getName(), x_position + ((width - 70)/2), y_position - 3);
 			
-			percentage_complete = barProgress(airport.time_entered.get(i));
+			percentage_complete = barProgress(airport.timeEntered.get(i));
 			
 			if (percentage_complete == 1) {
 				graphics.setColour(graphics.red);
@@ -124,7 +124,7 @@ public class AirportControlBox implements EventHandler{
 			
 	@Override
 	public void mousePressed(int key, int x, int y) {
-		if (key == input.MOUSE_LEFT && isMouseOverTakeOffButton(x, y) && airport.aircraft_hangar.size() > 0) {
+		if (key == input.MOUSE_LEFT && isMouseOverTakeOffButton(x, y) && airport.aircraftHangar.size() > 0) {
 			clicked = true;
 		}
 	}
@@ -134,7 +134,7 @@ public class AirportControlBox implements EventHandler{
 	public void mouseReleased(int key, int x, int y) {
 		clicked = false;
 		if (key == input.MOUSE_LEFT && isMouseOverTakeOffButton(x, y)) {
-			if (!airport.is_active) {
+			if (!airport.isActive) {
 				airport.signalTakeOff();
 			}
 		}
