@@ -11,7 +11,9 @@ This is the new repo for GOA. Please take off your shoes and make yourself at ho
 |:-----|:--------|----:|
 | Make the thing resize. | | _Whenever_ |
 | Fix variable names. | See [Issues](https://github.com/mwuk/fly-hard/issues/2) | Before the requirments are revealed, _preferably_.
-| Find out what the shit is required for this assignment. | | _Whenever they announce it._ |
+| Make the game multiplayer-enabled. | | The deadline |
+| Add in a second airport. | | Soon |
+| Add the ability to transfer control of a plane. | | Some time in the forseable future |
 
 ### Roles & Responsibilities
 
