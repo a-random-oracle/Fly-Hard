@@ -1,9 +1,13 @@
 Mission Control
 ========
 
-## Welcome
+## Notices
 
-This is the new repo for GOA. Please take off your shoes and make yourself at home xxx
+* Meeting __2014/02/25 14:30GMT__
+* Please declare what classes you're working on, for the benefit of others who might be working concurrently, so as to avoid conflicts.
+ * Preferably via the table at the bottom.
+ * Or by messaging [Mark](http://github.com/MWUK) who'll update the table on your behalf.
+* Any issues with the Tasks table, change (if it is independent of others), or raise on Facebook/with dependent individual directly.
 
 ## To Do
 
@@ -13,21 +17,21 @@ This is the new repo for GOA. Please take off your shoes and make yourself at ho
 | Add in a second airport. | [Milestone](https://github.com/MWUK/Fly-Hard/issues?milestone=2&page=1&sort=created&state=open) | Mid-March |
 | Make the game multiplayer-enabled. | [Milestone](https://github.com/MWUK/Fly-Hard/issues?direction=asc&milestone=3&page=1&sort=created&state=open)| Mid-April |
 | Add the ability to transfer control of a plane. | [Issue](https://github.com/MWUK/Fly-Hard/issues/5) | Late-April |
-| Make the thing resize. | _Might have an alternative solution_ | _Whenever_ |
+| Make the thing resize. | _Requires discussion_ | _Whenever_ |
 
-### Roles & Responsibilities
+### Individual Tasks, Roles, Responsibilities, and other information of note.
 
 _These are not final/rigid. Any issues, update/query as you wish :D_
 
-| Member | Duty | File/Source |
+| Member | Tasks | File/Source |
 |:-------|:----:|:------------|
-| [Wanderlust](http://github.com/a-random-oracle) | Making as many changes as is possible so as to achieve the false sense of importance. | __Various__ |
-| [Mint Choc-Chip](http://github.com/RMCKirby) | Variables | [`scn*`](https://github.com/MWUK/Fly-Hard/tree/master/BTC/src/scn) |
-| [mwuk](http://github.com/MWUK) | Variables | [`Score.java`](https://github.com/MWUK/Fly-Hard/blob/master/BTC/src/cls/Score.java)✔, [`Aircraft.java`](https://github.com/MWUK/Fly-Hard/blob/master/BTC/src/cls/Aircraft.java)✔, and  [`Airport.java`](https://github.com/MWUK/Fly-Hard/blob/master/BTC/src/cls/Airport.java)✔ |
-| [Jaron](http://github.com/JaronAli) | Pondering Life/Variables | _Life_ and [`Waypoint.java`](https://github.com/MWUK/Fly-Hard/blob/master/BTC/src/cls/Waypoint.java)✔ |
+| [Wanderlust](http://github.com/a-random-oracle) | Fixing resizing and resenting everyone. | __Nothing declared__ |
+| [Mint Choc-Chip](http://github.com/RMCKirby) | Fixing and Extending | [`graphics.java`](https://github.com/MWUK/Fly-Hard/blob/master/BTC/src/lib/jog/graphics.java) and [`scn*`](https://github.com/MWUK/Fly-Hard/tree/master/BTC/src/scn) |
+| [mwuk](http://github.com/MWUK) | Administrative Thingamabobs | _None_ |
+| [Jaron](http://github.com/JaronAli) | Idle | _Life_ |
 | Emily | Creating an Account | [GitHub](http://github.com/join) |
 | Such Hopkins | Creating an Account | [GitHub](http://github.com/join) |
-| [Jon](http://github.com/Lixquid) | N/A | N/A |
+| [Jon](http://github.com/Lixquid) | Idle | _None_ |
 
 ## Notes
 
