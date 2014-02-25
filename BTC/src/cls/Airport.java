@@ -9,12 +9,11 @@ import lib.jog.graphics;
 import lib.jog.graphics.Image;
 import lib.jog.input;
 import lib.jog.input.EventHandler;
-import lib.jog.window;
 
 public class Airport extends Waypoint implements EventHandler {
 	// Put the airport in the middle of the airspace
-	private static double xLocation = window.width()/2;
-	private static double yLocation = window.height()/2;		
+	private static double xLocation;
+	private static double yLocation;		
 
 	// All location values are absolute and based on the current version of the airport image.
 	private static double xArrivalsLocation = xLocation + 90;
@@ -42,8 +41,11 @@ public class Airport extends Waypoint implements EventHandler {
 	public ArrayList<Double> timeEntered = new ArrayList<Double>();
 	private int hangarSize = 3;
 	
-	public Airport(String name) {
-		super(xLocation, yLocation, true, name);
+	public Airport(String name, double x, double y) {
+		super(x, y, true, name);
+		
+		xLocation = x;
+		yLocation = y;
 	}
 	
 	public void loadImage() {
@@ -55,53 +57,63 @@ public class Airport extends Waypoint implements EventHandler {
 		// Draw the airport image
 		graphics.draw(airport, xLocation-airport.width()/2, yLocation-airport.height()/2);
 		
-		int green_fine = 128;
-		int green_danger = 0;
-		int red_fine = 0;
-		int red_danger = 128;
+		int greenFine = 128;
+		int greenDanger = 0;
+		int redFine = 0;
+		int redDanger = 128;
 		
 		// Draw the hangar button if plane is waiting (departing flights)
 		if (aircraftHangar.size() > 0) {
 			// Colour fades from green (fine) to red (danger) over 5 seconds as plane is waiting
-			int time_waiting = (int)(Demo.getTime() - timeEntered.get(0));
+			int timeWaiting = (int)(Demo.getTime() - timeEntered.get(0));
 			// Assume it hasn't been waiting
-			int green_now = green_fine; 
-			int red_now = red_fine;
-			if (time_waiting > 0) { // Prevent division by 0
-				if (time_waiting >= 5) { // Cap at 5 seconds
-					green_now = green_danger;
-					red_now = red_danger;
+			int greenNow = greenFine; 
+			int redNow = redFine;
+			if (timeWaiting > 0) { // Prevent division by 0
+				if (timeWaiting >= 5) { // Cap at 5 seconds
+					greenNow = greenDanger;
+					redNow = redDanger;
 				} else {
 					// Colour between fine and danger, scaled by time_waiting
-					green_now = green_fine - (int)(Math.abs(green_fine-green_danger) * (time_waiting/5.0)); 
-					red_now = (int)(Math.abs(red_fine-red_danger) * (time_waiting/5.0));
+					greenNow = greenFine - (int)(Math.abs(greenFine-greenDanger) * (timeWaiting/5.0)); 
+					redNow = (int)(Math.abs(redFine-redDanger) * (timeWaiting/5.0));
 				}
 			}
 
 			// Draw border, draw as filled if clicked
-			graphics.setColour(red_now, green_now, 0, 256);
-			graphics.rectangle(isDeparturesClicked, xDeparturesLocation-airport.width()/2, yDeparturesLocation-airport.height()/2, departuresWidth, departuresHeight);
+			graphics.setColour(redNow, greenNow, 0, 256);
+			graphics.rectangle(isDeparturesClicked, xDeparturesLocation-airport.width()/2,
+					yDeparturesLocation-airport.height()/2, departuresWidth, departuresHeight);
 
 			// Draw box
-			graphics.setColour(red_now, green_now, 0, 64);
-			graphics.rectangle(true, xDeparturesLocation-airport.width()/2 + 1, yDeparturesLocation-airport.height()/2 + 1, departuresWidth - 2, departuresHeight - 2);
+			graphics.setColour(redNow, greenNow, 0, 64);
+			graphics.rectangle(true, xDeparturesLocation-airport.width()/2 + 1,
+					yDeparturesLocation-airport.height()/2 + 1, departuresWidth - 2,
+					departuresHeight - 2);
 			
 			// Print number of aircraft waiting
 			graphics.setColour(255, 255, 255, 128);
-			graphics.print(Integer.toString(aircraftHangar.size()), xDeparturesLocation-airport.width()/2 + 23, yDeparturesLocation-airport.height()/2 + 15);
+			graphics.print(Integer.toString(aircraftHangar.size()),
+					xDeparturesLocation-airport.width()/2 + 23,
+					yDeparturesLocation-airport.height()/2 + 15);
 		}
 		graphics.setColour(0, 128, 0, 128);
 		// Draw the arrivals button if at least one plane is waiting (arriving flights)
 		if (aircraftWaitingToLand.size() > 0) {
 			// Draw border, draw as filled if clicked
-			graphics.rectangle(isArrivalsClicked, xArrivalsLocation-airport.width()/2, yArrivalsLocation-airport.height()/2, arrivalsWidth, arrivalsHeight);
+			graphics.rectangle(isArrivalsClicked, xArrivalsLocation-airport.width()/2,
+					yArrivalsLocation-airport.height()/2, arrivalsWidth, arrivalsHeight);
 			graphics.setColour(128, 128, 0, 64);			
 			// Draw box
-			graphics.rectangle(true, xArrivalsLocation-airport.width()/2 + 1, yArrivalsLocation-airport.height()/2 + 1, arrivalsWidth -2, arrivalsHeight -2);
+			graphics.rectangle(true, xArrivalsLocation-airport.width()/2 + 1,
+					yArrivalsLocation-airport.height()/2 + 1, arrivalsWidth -2,
+					arrivalsHeight -2);
 			
 			// Print number of aircraft waiting
 			graphics.setColour(255, 255, 255, 128);
-			graphics.print(Integer.toString(aircraftWaitingToLand.size()), xArrivalsLocation-airport.width()/2 + 50, yArrivalsLocation-airport.height()/2 + 26);
+			graphics.print(Integer.toString(aircraftWaitingToLand.size()),
+					xArrivalsLocation-airport.width()/2 + 50,
+					yArrivalsLocation-airport.height()/2 + 26);
 		}		
 	}
 	
