@@ -8,6 +8,7 @@ Mission Control
  * Preferably via the table at the bottom.
  * Or by messaging [Mark](http://github.com/MWUK) who'll update the table on your behalf.
 * Any issues with the Tasks table, change (if it is independent of others), or raise on Facebook/with dependent individual directly.
+* [Mark](https://github.com/MWUK) has started documenting all the variables (inc. name changes amongst other info) because he really resents fun and has developed sudden OCD.
 
 ## To Do
 
@@ -18,6 +19,7 @@ Mission Control
 | Make the game multiplayer-enabled. | [Milestone](https://github.com/MWUK/Fly-Hard/issues?direction=asc&milestone=3&page=1&sort=created&state=open)| Mid-April |
 | Add the ability to transfer control of a plane. | [Issue](https://github.com/MWUK/Fly-Hard/issues/5) | Late-April |
 | Make the thing resize. | _Requires discussion_ | _Whenever_ |
+| Replace `rectangle.java` | | Tomorrow |
 
 ### Individual Tasks, Roles, Responsibilities, and other information of note.
 
@@ -27,7 +29,7 @@ _These are not final/rigid. Any issues, update/query as you wish :D_
 |:-------|:----:|:------------|
 | [Wanderlust](http://github.com/a-random-oracle) | Fixing resizing. | __Nothing declared__ |
 | [Mint Choc-Chip](http://github.com/RMCKirby) | Fixing and Extending | [`graphics.java`](https://github.com/MWUK/Fly-Hard/blob/master/BTC/src/lib/jog/graphics.java) and [`scn*`](https://github.com/MWUK/Fly-Hard/tree/master/BTC/src/scn) |
-| [mwuk](http://github.com/MWUK) | Administrative Thingamabobs | _None_ |
+| [mwuk](http://github.com/MWUK) | Administrative thingamabobs and wiki page(s) of supreme superfluousness.  | [Wiki](https://github.com/MWUK/Fly-Hard/wiki/) |
 | [Jaron](http://github.com/JaronAli) | Idle | _Life_ |
 | Emily | Creating an Account | [GitHub](http://github.com/join) |
 | Such Hopkins | Creating an Account | [GitHub](http://github.com/join) |
