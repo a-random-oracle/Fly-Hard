@@ -1,6 +1,5 @@
 package cls;
 
-import java.io.File;
 import java.util.ArrayList;
 
 import btc.Main;
@@ -13,7 +12,6 @@ import lib.jog.input;
 import lib.jog.input.EventHandler;
 
 public class Airport extends Waypoint implements EventHandler {
-	// Put the airport in the middle of the airspace
 	private static double xLocation;
 	private static double yLocation;		
 
@@ -32,7 +30,7 @@ public class Airport extends Waypoint implements EventHandler {
 	private boolean isArrivalsClicked = false;
 	private boolean isDeparturesClicked = false;
 		
-	private Image airport;
+	private Image image;
 	
 	public ArrayList<Aircraft> aircraftWaitingToLand = new ArrayList<Aircraft>();
 	
@@ -44,31 +42,33 @@ public class Airport extends Waypoint implements EventHandler {
 	public ArrayList<Double> timeEntered = new ArrayList<Double>();
 	private int hangarSize = 3;
 	
-	public Airport(String name, double x, double y) {
-		super(x, y, true, name);
+	public Airport(String name, double x, double y, Image image) {
+		super(((x + 90 + 51) * Main.getScale()) - image.scaledWidth(Main.getScale())/2,
+				((y + 36 + 26) * Main.getScale()) - image.scaledHeight(Main.getScale())/2,
+				true, name);
+		
+		this.image = image;
 		
 		xLocation = x * Main.getScale();
 		yLocation = y * Main.getScale();
 		
 		xArrivalsLocation = (x + 90) * Main.getScale();
-		yArrivalsLocation = (y + 83) * Main.getScale();
+		yArrivalsLocation = (y + 36) * Main.getScale();
 		arrivalsWidth = 105 * Main.getScale();
 		arrivalsHeight = 52 * Main.getScale();
 		
 		xDeparturesLocation = (x + 2) * Main.getScale();
-		yDeparturesLocation = (y + 50) * Main.getScale();
+		yDeparturesLocation = (y + 3) * Main.getScale();
 		departuresWidth = 50 * Main.getScale();
 		departuresHeight = 36 * Main.getScale();
-	}
-	
-	public void loadImage() {
-		airport = graphics.newImage("gfx" + File.separator + "Airport.png");
 	}
 	
 	@Override
 	public void draw() { 
 		// Draw the airport image
-		graphics.draw(airport, xLocation-airport.width()/2, yLocation-airport.height()/2);
+		graphics.drawScaled(image, xLocation-image.width()/2, yLocation-image.height()/2, Main.getScale());
+
+		graphics.circle(true, this.getLocation().getX(), this.getLocation().getY(), 10);
 		
 		int greenFine = 128;
 		int greenDanger = 0;
@@ -95,38 +95,38 @@ public class Airport extends Waypoint implements EventHandler {
 
 			// Draw border, draw as filled if clicked
 			graphics.setColour(redNow, greenNow, 0, 256);
-			graphics.rectangle(isDeparturesClicked, xDeparturesLocation-airport.width()/2,
-					yDeparturesLocation-airport.height()/2, departuresWidth, departuresHeight);
+			graphics.rectangle(isDeparturesClicked, xDeparturesLocation-image.width()/2,
+					yDeparturesLocation-image.height()/2, departuresWidth, departuresHeight);
 
 			// Draw box
 			graphics.setColour(redNow, greenNow, 0, 64);
-			graphics.rectangle(true, xDeparturesLocation-airport.width()/2 + 1,
-					yDeparturesLocation-airport.height()/2 + 1, departuresWidth - 2,
+			graphics.rectangle(true, xDeparturesLocation-image.width()/2 + 1,
+					yDeparturesLocation-image.height()/2 + 1, departuresWidth - 2,
 					departuresHeight - 2);
 			
 			// Print number of aircraft waiting
 			graphics.setColour(255, 255, 255, 128);
 			graphics.print(Integer.toString(aircraftHangar.size()),
-					xDeparturesLocation-airport.width()/2 + 23,
-					yDeparturesLocation-airport.height()/2 + 15);
+					xDeparturesLocation-image.width()/2 + 23,
+					yDeparturesLocation-image.height()/2 + 15);
 		}
 		graphics.setColour(0, 128, 0, 128);
 		// Draw the arrivals button if at least one plane is waiting (arriving flights)
 		if (aircraftWaitingToLand.size() > 0) {
 			// Draw border, draw as filled if clicked
-			graphics.rectangle(isArrivalsClicked, xArrivalsLocation-airport.width()/2,
-					yArrivalsLocation-airport.height()/2, arrivalsWidth, arrivalsHeight);
+			graphics.rectangle(isArrivalsClicked, xArrivalsLocation-image.width()/2,
+					yArrivalsLocation-image.height()/2, arrivalsWidth, arrivalsHeight);
 			graphics.setColour(128, 128, 0, 64);			
 			// Draw box
-			graphics.rectangle(true, xArrivalsLocation-airport.width()/2 + 1,
-					yArrivalsLocation-airport.height()/2 + 1, arrivalsWidth -2,
+			graphics.rectangle(true, xArrivalsLocation-image.width()/2 + 1,
+					yArrivalsLocation-image.height()/2 + 1, arrivalsWidth -2,
 					arrivalsHeight -2);
 			
 			// Print number of aircraft waiting
 			graphics.setColour(255, 255, 255, 128);
 			graphics.print(Integer.toString(aircraftWaitingToLand.size()),
-					xArrivalsLocation-airport.width()/2 + 50,
-					yArrivalsLocation-airport.height()/2 + 26);
+					xArrivalsLocation-image.width()/2 + 50,
+					yArrivalsLocation-image.height()/2 + 26);
 		}		
 	}
 	
@@ -141,16 +141,16 @@ public class Airport extends Waypoint implements EventHandler {
 	 */
 	public boolean isWithinArrivals(Vector position) {
 		return isWithinRect((int)position.getX(), (int)position.getY(),
-				(int)(xArrivalsLocation-airport.width()/2) + Demo.airspaceViewOffsetX,
-				(int)(yArrivalsLocation-airport.height()/2) + Demo.airspaceViewOffsetY,
+				(int)(xArrivalsLocation-image.width()/2) + Demo.airspaceViewOffsetX,
+				(int)(yArrivalsLocation-image.height()/2) + Demo.airspaceViewOffsetY,
 				(int)arrivalsWidth, (int)arrivalsHeight);
 	}
 	
 	// Used for calculating if an aircraft is within the airspace for landing - offset should not be applied
 	public boolean isWithinArrivals(Vector position, boolean applyOffset) {
 		return (applyOffset ? isWithinArrivals(position) : isWithinRect((int)position.getX(),
-				(int)position.getY(),(int)(xArrivalsLocation-airport.width()/2),
-				(int)(yArrivalsLocation-airport.height()/2), (int)arrivalsWidth, (int)arrivalsHeight));
+				(int)position.getY(),(int)(xArrivalsLocation-image.width()/2),
+				(int)(yArrivalsLocation-image.height()/2), (int)arrivalsWidth, (int)arrivalsHeight));
 	}
 	
 	/**
@@ -160,8 +160,8 @@ public class Airport extends Waypoint implements EventHandler {
 	 */
 	public boolean isWithinDepartures(Vector position) {
 		return isWithinRect((int)position.getX(), (int)position.getY(),
-				(int)(xDeparturesLocation-airport.width()/2) + Demo.airspaceViewOffsetX,
-				(int)(yDeparturesLocation-airport.height()/2) + Demo.airspaceViewOffsetY,
+				(int)(xDeparturesLocation-image.width()/2) + Demo.airspaceViewOffsetX,
+				(int)(yDeparturesLocation-image.height()/2) + Demo.airspaceViewOffsetY,
 				(int)departuresWidth, (int)departuresHeight);
 	}
 	
@@ -190,7 +190,8 @@ public class Airport extends Waypoint implements EventHandler {
 	}
 	  
 	/** 
-	 * Decides whether to draw the radius around the airport by checking if any aircraft which are landing are close
+	 * Decides whether to draw the radius around the airport by checking if
+	 * any aircraft which are landing are close
 	 * @param demo For getting aircraft list
 	 */
 	public void update(Demo demo) {
