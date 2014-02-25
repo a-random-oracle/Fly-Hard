@@ -756,6 +756,38 @@ public abstract class graphics {
 	}
 	
 	/**
+	 * Draws a scaled rectangle.
+	 * @param fill whether to fill with colour (false just draws the lines).
+	 * @param x the x coordinate of the rectangle.
+	 * @param y the y coordinate of the rectangle.
+	 * @param width the width of the rectangle.
+	 * @param height the height of the rectangle.
+	 */
+	static public void rectangleScaled(boolean fill, double x, double y, double width, double height, double scale) {
+		x *= scale;
+		y *= scale;
+		y = window.height() - y;
+		height = -height;
+		
+		glPushMatrix();
+	    glTranslated(x, y, 0);
+	    if (fill) {
+		    glBegin(GL_QUADS);
+	    } else {
+	    	glBegin(GL_LINE_STRIP);
+	    }
+        glVertex2d(0, 0);
+        glVertex2d(width, 0);
+        glVertex2d(width, height);
+        glVertex2d(0, height);
+	    if (!fill) {
+	        glVertex2d(0, 0);
+	    }
+	    glEnd();
+	    glPopMatrix();
+	}
+	
+	/**
 	 * Draws an arc. That is, a portion of a circle. A curve.
 	 * @param fill whether to fill with colour (false just draws a curved line).
 	 * @param x the x coordinate of where the centre of circle would be if an arc of 2pi radians were drawn.
