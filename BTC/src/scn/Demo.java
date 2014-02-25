@@ -202,7 +202,7 @@ public class Demo extends Scene {
 		new Waypoint(8, window.height() - ORDERSBOX_H - 72, true, "100 Acre Woods"), //bottom left
 		new Waypoint(window.width() - 40, 8, true, "City of Rightson"), // top right
 		new Waypoint(window.width() - 40, window.height() - ORDERSBOX_H - 72, true, "South Sea"), //bottom right
-		airport
+		null
 	};
 
 	/**
@@ -227,7 +227,7 @@ public class Demo extends Scene {
 		locationWaypoints[1],           // 11
 		locationWaypoints[2],           // 12
 		locationWaypoints[3],           // 13
-		locationWaypoints[4]			// 14
+		null							// 14
 	};
 	
 	/**
@@ -257,6 +257,8 @@ public class Demo extends Scene {
 		airportImage = graphics.newImage("gfx" + File.separator + "Airport.png");
 		
 		airport = new Airport("Mosbear Airport", window.width()/2, window.height()/2, airportImage);
+		locationWaypoints[locationWaypoints.length-1] = airport;
+		airspaceWaypoints[airspaceWaypoints.length-1] = airport;
 		
 		lib.ButtonText.Action manual = new lib.ButtonText.Action() {
 			@Override
@@ -916,6 +918,7 @@ public class Demo extends Scene {
 				if (a.getName() == name) nameTaken = true;
 			}
 		}
+		
 		return new Aircraft(name, destinationName, originName, destinationPoint, originPoint, aircraftImage, 32 + (int)(10 * Math.random()), airspaceWaypoints, difficulty);
 	}
 	
