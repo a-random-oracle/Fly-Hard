@@ -18,7 +18,7 @@ Mission Control
 | Add in a second airport. | [Milestone](https://github.com/MWUK/Fly-Hard/issues?milestone=2&page=1&sort=created&state=open) | Mid-March |
 | Make the game multiplayer-enabled. | [Milestone](https://github.com/MWUK/Fly-Hard/issues?direction=asc&milestone=3&page=1&sort=created&state=open)| Mid-April |
 | Add the ability to transfer control of a plane. | [Issue](https://github.com/MWUK/Fly-Hard/issues/5) | Late-April |
-| Make the thing resize. | _Requires discussion_ | _Whenever_ |
+| Make the thing resize. |  | _Whenever_ |
 | Replace `rectangle.java` | | Tomorrow |
 
 ### Individual Tasks, Roles, Responsibilities, and other information of note.
