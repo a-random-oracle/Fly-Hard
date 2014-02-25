@@ -3,6 +3,8 @@ package cls;
 import java.io.File;
 import java.util.ArrayList;
 
+import btc.Main;
+
 import scn.Demo;
 
 import lib.jog.graphics;
@@ -16,15 +18,15 @@ public class Airport extends Waypoint implements EventHandler {
 	private static double yLocation;		
 
 	// All location values are absolute and based on the current version of the airport image.
-	private static double xArrivalsLocation = xLocation + 90;
-	private static double yArrivalsLocation = yLocation + 83;
-	private static double arrivalsWidth = 105;
-	private static double arrivalsHeight = 52;
+	private static double xArrivalsLocation;
+	private static double yArrivalsLocation;
+	private static double arrivalsWidth;
+	private static double arrivalsHeight;
 	
-	private static double xDeparturesLocation = xLocation + 2;
-	private static double yDeparturesLocation = yLocation + 50;
-	private static double departuresWidth = 50;
-	private static double departuresHeight = 36;
+	private static double xDeparturesLocation;
+	private static double yDeparturesLocation;
+	private static double departuresWidth;
+	private static double departuresHeight;
 	
 	public boolean isActive = false; // True if there is an aircraft Landing/Taking off
 	private boolean isArrivalsClicked = false;
@@ -33,6 +35,7 @@ public class Airport extends Waypoint implements EventHandler {
 	private Image airport;
 	
 	public ArrayList<Aircraft> aircraftWaitingToLand = new ArrayList<Aircraft>();
+	
 	/**
 	 * Time entered is directly related to the aircraft hangar and stores the time each aircraft entered the hangar
 	 * this is used to determine score multiplier decrease if aircraft is in the hangar for too long
@@ -44,8 +47,18 @@ public class Airport extends Waypoint implements EventHandler {
 	public Airport(String name, double x, double y) {
 		super(x, y, true, name);
 		
-		xLocation = x;
-		yLocation = y;
+		xLocation = x * Main.getScale();
+		yLocation = y * Main.getScale();
+		
+		xArrivalsLocation = (x + 90) * Main.getScale();
+		yArrivalsLocation = (y + 83) * Main.getScale();
+		arrivalsWidth = 105 * Main.getScale();
+		arrivalsHeight = 52 * Main.getScale();
+		
+		xDeparturesLocation = (x + 2) * Main.getScale();
+		yDeparturesLocation = (y + 50) * Main.getScale();
+		departuresWidth = 50 * Main.getScale();
+		departuresHeight = 36 * Main.getScale();
 	}
 	
 	public void loadImage() {
@@ -74,7 +87,7 @@ public class Airport extends Waypoint implements EventHandler {
 					greenNow = greenDanger;
 					redNow = redDanger;
 				} else {
-					// Colour between fine and danger, scaled by time_waiting
+					// Colour between fine and danger, scaled by timeWaiting
 					greenNow = greenFine - (int)(Math.abs(greenFine-greenDanger) * (timeWaiting/5.0)); 
 					redNow = (int)(Math.abs(redFine-redDanger) * (timeWaiting/5.0));
 				}
@@ -127,12 +140,17 @@ public class Airport extends Waypoint implements EventHandler {
 	 * @return true if point is within the rectangle that defines the arrivals portion of the airport
 	 */
 	public boolean isWithinArrivals(Vector position) {
-		return isWithinRect((int)position.getX(), (int)position.getY(),(int)(xArrivalsLocation-airport.width()/2) + Demo.airspaceViewOffsetX, (int)(yArrivalsLocation-airport.height()/2) + Demo.airspaceViewOffsetY, (int)arrivalsWidth, (int)arrivalsHeight);
+		return isWithinRect((int)position.getX(), (int)position.getY(),
+				(int)(xArrivalsLocation-airport.width()/2) + Demo.airspaceViewOffsetX,
+				(int)(yArrivalsLocation-airport.height()/2) + Demo.airspaceViewOffsetY,
+				(int)arrivalsWidth, (int)arrivalsHeight);
 	}
 	
 	// Used for calculating if an aircraft is within the airspace for landing - offset should not be applied
-	public boolean isWithinArrivals(Vector position, boolean apply_offset) {
-		return (apply_offset ? isWithinArrivals(position) : isWithinRect((int)position.getX(), (int)position.getY(),(int)(xArrivalsLocation-airport.width()/2), (int)(yArrivalsLocation-airport.height()/2), (int)arrivalsWidth, (int)arrivalsHeight));
+	public boolean isWithinArrivals(Vector position, boolean applyOffset) {
+		return (applyOffset ? isWithinArrivals(position) : isWithinRect((int)position.getX(),
+				(int)position.getY(),(int)(xArrivalsLocation-airport.width()/2),
+				(int)(yArrivalsLocation-airport.height()/2), (int)arrivalsWidth, (int)arrivalsHeight));
 	}
 	
 	/**
@@ -141,11 +159,14 @@ public class Airport extends Waypoint implements EventHandler {
 	 * @return true if point is within the rectangle that defines the departures portion of the airport
 	 */
 	public boolean isWithinDepartures(Vector position) {
-		return isWithinRect((int)position.getX(), (int)position.getY(), (int)(xDeparturesLocation-airport.width()/2) + Demo.airspaceViewOffsetX, (int)(yDeparturesLocation-airport.height()/2) + Demo.airspaceViewOffsetY, (int)departuresWidth, (int)departuresHeight);
+		return isWithinRect((int)position.getX(), (int)position.getY(),
+				(int)(xDeparturesLocation-airport.width()/2) + Demo.airspaceViewOffsetX,
+				(int)(yDeparturesLocation-airport.height()/2) + Demo.airspaceViewOffsetY,
+				(int)departuresWidth, (int)departuresHeight);
 	}
 	
-	public boolean isWithinRect(int test_x, int test_y, int x, int y, int width, int height) {
-		return x <= test_x && test_x <= x + width && y <= test_y && test_y <= y + height;
+	public boolean isWithinRect(int testX, int testY, int x, int y, int width, int height) {
+		return x <= testX && testX <= x + width && y <= testY && testY <= y + height;
 	}
 	
 	/**
