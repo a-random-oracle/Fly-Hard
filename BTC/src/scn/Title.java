@@ -121,7 +121,7 @@ public class Title extends Scene {
 		double beepTimer = (angle * 4) + (Math.PI * 4 / 5); 
 		beepTimer %= (2 * Math.PI);
 		if ( beepTimer <= 0.1 ) {
-			playSound(beep);
+			//playSound(beep); <- Driving me absolutely crazy so it can go for now.
 		}
 	}
 
