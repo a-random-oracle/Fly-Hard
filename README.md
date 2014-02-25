@@ -29,7 +29,7 @@ _These are not final/rigid. Any issues, update/query as you wish :D_
 |:-------|:-----|:------------|
 | [Wanderlust](http://github.com/a-random-oracle) | Fixing resizing. | __Nothing declared__ |
 | [Mint Choc-Chip](http://github.com/RMCKirby) | Fixing and Extending | [`graphics.java`](https://github.com/MWUK/Fly-Hard/blob/master/BTC/src/lib/jog/graphics.java) and [`scn*`](https://github.com/MWUK/Fly-Hard/tree/master/BTC/src/scn) |
-| [mwuk](http://github.com/MWUK) | Administrative thingamabobs and wiki page(s) of supreme superfluousness.  | [Wiki](https://github.com/MWUK/Fly-Hard/wiki/) |
+| [mwuk](http://github.com/MWUK) | [Erroneous message](https://github.com/mwuk/fly-hard/issues/7) and wiki page(s) of supreme superfluousness.  | [`Demo.java`](https://github.com/MWUK/Fly-Hard/blob/master/BTC/src/scn/Demo.java) and [Wiki](https://github.com/MWUK/Fly-Hard/wiki/) |
 | [Jaron](http://github.com/JaronAli) | Idle | _Life_ |
 | Emily | Creating an Account | [GitHub](http://github.com/join) |
 | Such Hopkins | Creating an Account | [GitHub](http://github.com/join) |
