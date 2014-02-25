@@ -161,7 +161,8 @@ public class Demo extends Scene {
 	/**
 	 * Demo's instance of the airport class
 	 */
-	public static Airport airport = new Airport("Mosbear Airport");
+	public static Airport airport = new Airport("Mosbear Airport",
+			window.width()/2, window.height()/2);
 	
 	/**
 	 * This method provides maximum number of planes using value of multiplier
@@ -638,9 +639,8 @@ public class Demo extends Scene {
 	@Override
 	public void draw() {
 		graphics.setColour(graphics.green);
-		graphics.rectangle(false, airspaceViewOffsetX, airspaceViewOffsetY, window.width() - 32, window.height() - 176);
-		
 		graphics.setViewport(airspaceViewOffsetX, airspaceViewOffsetY, window.width() - 32, window.height() - 176);
+		graphics.rectangleScaled(false, -1, -1, window.width() - 32, window.height() - 176, Main.getScale());
 		graphics.setColour(255, 255, 255, 48);
 		graphics.draw(background, 0, 0);
 		graphics.setColour(255, 255, 255, 48);
