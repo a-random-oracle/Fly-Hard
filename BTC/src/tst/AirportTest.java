@@ -1,6 +1,7 @@
 package tst;
 
 import static org.junit.Assert.*;
+import lib.jog.window;
 
 import org.junit.Test;
 import org.junit.Before;
@@ -17,7 +18,7 @@ public class AirportTest {
 	
 	@Before
 	public void setUp() {
-		test_airport = new Airport("");
+		test_airport = new Airport("", window.width(), window.height());
 		Waypoint[] waypointList = new Waypoint[]{new Waypoint(0, 0, true), new Waypoint(100, 100, true), new Waypoint(25, 75, false), new Waypoint(75, 25, false), new Waypoint(50,50, false)};
 		test_aircraft = new Aircraft("testAircraft", "Berlin", "Dublin", new Waypoint(100,100, true), new Waypoint(0,0, true), null, 10.0, waypointList, 1);			
 	}
