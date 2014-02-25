@@ -5,6 +5,7 @@ import java.io.File;
 import lib.RandomNumber;
 import lib.jog.audio;
 import lib.jog.graphics;
+import lib.jog.graphics.Image;
 import lib.jog.input;
 import lib.jog.window;
 import cls.Aircraft;
@@ -111,6 +112,11 @@ public class Demo extends Scene {
 	public java.util.ArrayList<Aircraft> recentlyDepartedAircraft;
 	
 	/**
+	 * An image to be used for airports
+	 */
+	private Image airportImage;
+	
+	/**
 	 * An image to be used for aircraft
 	 * Expand to list of images for multiple aircraft appearances
 	 */
@@ -161,8 +167,7 @@ public class Demo extends Scene {
 	/**
 	 * Demo's instance of the airport class
 	 */
-	public static Airport airport = new Airport("Mosbear Airport",
-			window.width()/2, window.height()/2);
+	public static Airport airport;
 	
 	/**
 	 * This method provides maximum number of planes using value of multiplier
@@ -233,7 +238,6 @@ public class Demo extends Scene {
 	public Demo(Main main, int difficulty) {
 		super(main);
 		Demo.difficulty = difficulty;
-		airport.loadImage();
 	}
 	
 	@Override
@@ -248,7 +252,12 @@ public class Demo extends Scene {
 		ordersBox = new cls.OrdersBox(ORDERSBOX_X, ORDERSBOX_Y, ORDERSBOX_W, ORDERSBOX_H, 6);
 		aircraftInAirspace = new java.util.ArrayList<Aircraft>();
 		recentlyDepartedAircraft = new java.util.ArrayList<Aircraft>();
+		
 		aircraftImage = graphics.newImage("gfx" + File.separator + "plane.png");
+		airportImage = graphics.newImage("gfx" + File.separator + "Airport.png");
+		
+		airport = new Airport("Mosbear Airport", window.width()/2, window.height()/2, airportImage);
+		
 		lib.ButtonText.Action manual = new lib.ButtonText.Action() {
 			@Override
 			public void action() {
