@@ -8,7 +8,7 @@ Mission Control
  * Preferably via the table at the bottom.
  * Or by messaging [Mark](http://github.com/MWUK) who'll update the table on your behalf.
 * Any issues with the Tasks table, change (if it is independent of others), or raise on Facebook/with dependent individual directly.
-* [Mark](https://github.com/MWUK) has started documenting all the variables (inc. name changes amongst other info) because he really loathes fun and has developed sudden OCD.
+* [Mark](https://github.com/MWUK) has started documenting all the [variables](https://github.com/MWUK/Fly-Hard/wiki/Variables) (inc. name changes amongst other info) because he really loathes fun and has developed sudden OCD.
 
 ## To Do
 
