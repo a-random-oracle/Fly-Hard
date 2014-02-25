@@ -25,7 +25,7 @@ _These are not final/rigid. Any issues, update/query as you wish :D_
 
 | Member | Tasks | File/Source |
 |:-------|:----:|:------------|
-| [Wanderlust](http://github.com/a-random-oracle) | Fixing resizing and resenting everyone. | __Nothing declared__ |
+| [Wanderlust](http://github.com/a-random-oracle) | Fixing resizing. | __Nothing declared__ |
 | [Mint Choc-Chip](http://github.com/RMCKirby) | Fixing and Extending | [`graphics.java`](https://github.com/MWUK/Fly-Hard/blob/master/BTC/src/lib/jog/graphics.java) and [`scn*`](https://github.com/MWUK/Fly-Hard/tree/master/BTC/src/scn) |
 | [mwuk](http://github.com/MWUK) | Administrative Thingamabobs | _None_ |
 | [Jaron](http://github.com/JaronAli) | Idle | _Life_ |
