@@ -3,7 +3,8 @@ Mission Control
 
 ## Notices
 
-* Meeting __2014/02/25 14:30GMT__
+* Tim Meeting __2014/02/28 15:30UTC__
+* Super SEPR Saturday Shenanigans __2014/03/01 14:30UTC__ 
 * Please declare what classes you're working on, for the benefit of others who might be working concurrently, so as to avoid conflicts.
  * Preferably via the table at the bottom.
  * Or by messaging [Mark](http://github.com/MWUK) who'll update the table on your behalf.
