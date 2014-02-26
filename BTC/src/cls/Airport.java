@@ -50,8 +50,6 @@ public class Airport extends Waypoint implements EventHandler {
 		
 		this.image = image;
 		
-		System.out.println(Main.getScale());
-		
 		xLocation = x;
 		yLocation = y;
 		
@@ -82,8 +80,8 @@ public class Airport extends Waypoint implements EventHandler {
 	@Override
 	public void draw() { 
 		// Draw the airport image
-		//graphics.drawScaled(image, xLocation-image.width()/2, yLocation-image.height()/2, Main.getScale());
-		graphics.drawScaled(image, xLocation, yLocation, Main.getScale());
+		//graphics.drawScaled(image, xLocation-image.width()/2, yLocation-image.height()/2, Math.min(Main.getXScale(), Main.getYScale()));
+		graphics.drawScaled(image, xLocation, yLocation, Math.min(Main.getXScale(), Main.getYScale()));
 		
 		graphics.circle(true, this.getLocation().getX(), this.getLocation().getY(), 6);
 		graphics.circle(true, xLocation, yLocation, 6);

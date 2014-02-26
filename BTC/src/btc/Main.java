@@ -41,8 +41,11 @@ public class Main implements input.EventHandler {
 	/** The default size of the gap between the window edge and the top edge of the screen */
 	final public static int HEIGHT_GAP = 50;
 	
-	/** The scale the game has been resized to */
-	private static double scale = 1;
+	/** The scale the game has been resized to in the horizontal plane */
+	private static double xScale = 1;
+	
+	/** The scale the game has been resized to in the vertical plane */
+	private static double yScale = 1;
 	
 	/** THe locations of the icon files */
 	final private String[] ICON_FILENAMES = {
@@ -66,7 +69,7 @@ public class Main implements input.EventHandler {
 	public Main() {
 		double xOffset = 0;
 		double yOffset = 0;
-		boolean fullscreen = false;
+		boolean fullscreen = true;
 		
 		// Get screen dimensions
 		Rectangle windowBounds = GraphicsEnvironment
@@ -80,22 +83,17 @@ public class Main implements input.EventHandler {
 		double height = actualHeight;
 
 		if (fullscreen) {
-			// Set scale to be the minimum of the ratios between the actual and target
-			// width and height
-			scale = Math.min(actualWidth / TARGET_WIDTH, actualHeight / TARGET_HEIGHT);
+			yScale = actualWidth / TARGET_WIDTH;
+			xScale = actualHeight / TARGET_HEIGHT;
 		} else {
-			// Set scale to be the minimum of the ratios between the actual and target
-			// width and height, including a boundary region
-			scale = Math.min((actualWidth - (WIDTH_GAP * 2)) / TARGET_WIDTH,
-					(actualHeight - (HEIGHT_GAP * 2)) / TARGET_HEIGHT);
+			yScale = (actualWidth - (WIDTH_GAP * 2)) / TARGET_WIDTH;
+			xScale = (actualHeight - (HEIGHT_GAP * 2)) / TARGET_HEIGHT;
 			
-			System.out.println(scale);
+			// Scale the width and height by the values derived above
+			width = (TARGET_WIDTH - (WIDTH_GAP * 2)) * xScale;
+			height = (TARGET_HEIGHT - (HEIGHT_GAP * 2)) * yScale;
 			
-			// Scale the width and height by the value derived above
-			width = (TARGET_WIDTH - (WIDTH_GAP * 2)) * scale;
-			height = (TARGET_HEIGHT - (HEIGHT_GAP * 2)) * scale;
-			
-			// Scale the X and Y offsets by the value derived above
+			// Scale the X and Y offsets by the values derived above
 			xOffset = (int)((actualWidth - width) / 2);
 			yOffset = (int)((actualHeight - height) / 2);
 		}
@@ -203,8 +201,12 @@ public class Main implements input.EventHandler {
 		fpsCounter++;
 	}
 	
-	public static double getScale() {
-		return scale;
+	public static double getXScale() {
+		return xScale;
+	}
+	
+	public static double getYScale() {
+		return yScale;
 	}
 
 	@Override

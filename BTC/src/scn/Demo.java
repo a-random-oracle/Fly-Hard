@@ -651,7 +651,8 @@ public class Demo extends Scene {
 	public void draw() {
 		graphics.setColour(graphics.green);
 		graphics.setViewport(airspaceViewOffsetX, airspaceViewOffsetY, window.width() - 32, window.height() - 176);
-		graphics.rectangleScaled(false, -1, -1, window.width() - 32, window.height() - 176, Main.getScale());
+		graphics.rectangleScaled(false, -1, -1, window.width() - 32,
+				window.height() - 176, Math.min(Main.getXScale(), Main.getYScale()));
 		graphics.setColour(255, 255, 255, 48);
 		graphics.draw(background, 0, 0);
 		graphics.setColour(255, 255, 255, 48);
