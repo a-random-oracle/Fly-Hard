@@ -31,10 +31,15 @@ public abstract class window {
 	 * @param title the title of the window.
 	 * @param width the width of the window.
 	 * @param height the height of the window.
+	 * @param fullscreen should the window be displayed full-screen
 	 */
-	public static void initialise(String title, int width, int height) {
+	public static void initialise(String title, int width, int height, boolean fullscreen) {
 		try {
-			setSize(width, height);
+			if (fullscreen) {
+				setFullscreen();
+			} else {
+				setSize(width, height);
+			}
 			setTitle(title);
 			Display.create();
 			closed = false;
@@ -58,6 +63,20 @@ public abstract class window {
 			Display.setLocation(192, 10);
 			window.width = width;
 			window.height = height;
+		} catch (LWJGLException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	/** 
+	 * Sets the window to be full-screen.
+	 */
+	public static void setFullscreen() {
+		try {
+			Display.setFullscreen(true);
+			Display.setVSyncEnabled(true);
+			window.width = Display.getWidth();
+			window.height = Display.getHeight();
 		} catch (LWJGLException e) {
 			e.printStackTrace();
 		}
