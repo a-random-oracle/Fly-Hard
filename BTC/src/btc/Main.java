@@ -33,6 +33,7 @@ public class Main implements input.EventHandler {
 	final public static double TARGET_HEIGHT = 960;
 	private static double width;
 	private static double height;
+	private static double scale;
 	
 	final private String[] ICON_FILENAMES = {
 		"gfx" + File.separator + "icon16.png",
@@ -53,8 +54,8 @@ public class Main implements input.EventHandler {
 	 * the window is closed it releases resources and closes the program
 	 */
 	public Main() {
-		double scale = 1;
 		boolean fullscreen = true;
+		scale = 1;
 		
 		// Resize window if necessary
 		Rectangle windowBounds = GraphicsEnvironment
@@ -67,6 +68,7 @@ public class Main implements input.EventHandler {
 		if (fullscreen) {
 			width = actualWidth;
 			height = actualHeight;
+			scale = 1;
 		} else {
 			if (((actualWidth - 50) < TARGET_WIDTH)
 					|| ((actualHeight - 50) < TARGET_HEIGHT)) {
@@ -197,7 +199,7 @@ public class Main implements input.EventHandler {
 	}
 	
 	public static double getScale() {
-		return width / TARGET_WIDTH;
+		return scale;
 	}
 
 	@Override
