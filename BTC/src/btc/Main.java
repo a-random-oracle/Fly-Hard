@@ -13,8 +13,10 @@ import lib.jog.*;
 
 /**
  * <h1>Main</h1>
- * <p>Main class that is run when game is run. 
- * Handles the scenes (gamestates).</p>
+ * <p>
+ * Main class that is run when game is run. 
+ * Handles the scenes (game states).
+ * </p>
  */
 public class Main implements input.EventHandler {
 
