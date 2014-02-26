@@ -33,12 +33,13 @@ public abstract class window {
 	 * @param height the height of the window.
 	 * @param fullscreen should the window be displayed full-screen
 	 */
-	public static void initialise(String title, int width, int height, boolean fullscreen) {
+	public static void initialise(String title, int width, int height,
+			int xOffset, int yOffset, boolean fullscreen) {
 		try {
 			if (fullscreen) {
 				setFullscreen();
 			} else {
-				setSize(width, height);
+				setSize(width, height, xOffset, yOffset);
 			}
 			setTitle(title);
 			Display.create();
@@ -57,10 +58,10 @@ public abstract class window {
 	 * @param width the new width for the window.
 	 * @param height the new height for the window.
 	 */
-	public static void setSize(int width, int height) {
+	public static void setSize(int width, int height, int xOffset, int yOffset) {
 		try {
 			Display.setDisplayMode(new DisplayMode(width, height));
-			Display.setLocation(192, 10);
+			Display.setLocation(xOffset, yOffset);
 			window.width = width;
 			window.height = height;
 		} catch (LWJGLException e) {
