@@ -54,6 +54,7 @@ public class Main implements input.EventHandler {
 	 */
 	public Main() {
 		double scale = 1;
+		boolean fullscreen = true;
 		
 		// Resize window if necessary
 		Rectangle windowBounds = GraphicsEnvironment
@@ -63,17 +64,22 @@ public class Main implements input.EventHandler {
 		int actualWidth = windowBounds.width;
 		int actualHeight = windowBounds.height;
 
-		if (((actualWidth - 50) < TARGET_WIDTH)
-				|| ((actualHeight - 50) < TARGET_HEIGHT)) {
+		if (fullscreen) {
+			width = actualWidth;
+			height = actualHeight;
+		} else {
+			if (((actualWidth - 50) < TARGET_WIDTH)
+					|| ((actualHeight - 50) < TARGET_HEIGHT)) {
 
-			scale = Math.min((actualWidth - 50) / TARGET_WIDTH,
-					(actualHeight - 50) / TARGET_HEIGHT);
+				scale = Math.min((actualWidth - 50) / TARGET_WIDTH,
+						(actualHeight - 50) / TARGET_HEIGHT);
+			}
+
+			width = scale * TARGET_WIDTH;
+			height = scale * TARGET_HEIGHT;
 		}
 
-		width = scale * TARGET_WIDTH;
-		height = scale * TARGET_HEIGHT;
-		
-		start();
+		start(fullscreen);
 		
 		while(!window.isClosed()) {
 			time_difference = getTimeSinceLastFrame();
@@ -86,9 +92,14 @@ public class Main implements input.EventHandler {
 	/**
 	 * Creates window, initialises jog classes and sets starting values to variables.
 	 */
-	private void start() {
+	private void start(boolean fullscreen) {
 		window.setIcon(ICON_FILENAMES);
-		window.initialise(TITLE, (int)(width), (int)(height));
+		
+		if (fullscreen) {
+			window.initialise(TITLE, (int)(1366), (int)(768), fullscreen);
+		} else {
+			window.initialise(TITLE, (int)(width), (int)(height), fullscreen);
+		}
 		graphics.initialise();
 		graphics.Font font = graphics.newBitmapFont("gfx" + File.separator
 				+ "font.png", ("ABCDEFGHIJKLMNOPQRSTUVWXYZ " +
