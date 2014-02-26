@@ -57,13 +57,13 @@ public class Airport extends Waypoint implements EventHandler {
 		
 		xArrivalsLocation = (x + 91);
 		yArrivalsLocation = (y + 36);
-		arrivalsWidth = 105;
-		arrivalsHeight = 52;
+		arrivalsWidth = 102;
+		arrivalsHeight = 53;
 		
 		xDeparturesLocation = (x + 2);
 		yDeparturesLocation = (y + 3);
 		departuresWidth = 50;
-		departuresHeight = 36;
+		departuresHeight = 37;
 		
 		/*xLocation = x * Main.getScale();
 		yLocation = y * Main.getScale();
