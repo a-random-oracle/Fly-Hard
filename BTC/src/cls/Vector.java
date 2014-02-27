@@ -120,8 +120,6 @@ public class Vector {
 	 * Maps between a position on the target screen and the actual screen
 	 */
 	public Vector remapPosition() {
-		System.out.println(((((Main.TARGET_HEIGHT * Main.getYScale()) - 160))
-						/ (Main.TARGET_HEIGHT - 160)));
 		return new Vector(this.x * Main.getXScale(),
 				(((Main.TARGET_HEIGHT * Main.getYScale()) - 160)
 						/ (Main.TARGET_HEIGHT - 160)) * this.y, this.z);
