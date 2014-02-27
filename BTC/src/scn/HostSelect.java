@@ -1,8 +1,12 @@
 package scn;
 
 import btc.Main;
+import lib.jog.graphics;
+import lib.jog.input;
 import lib.jog.window;
 import lib.jog.audio.Sound;
+
+import lib.ButtonText;
 
 public class HostSelect extends Scene {
 
@@ -15,6 +19,8 @@ public class HostSelect extends Scene {
 	private final int CONNECT_BUTTON_H = HOST_BUTTON_H;
 	private final int CONNECT_BUTTON_X = 3*window.width()/4 - (CONNECT_BUTTON_W / 2);
 	private final int CONNECT_BUTTON_Y = HOST_BUTTON_Y;
+	
+	private ButtonText[] buttons;
 
 	//To allow the difficulty selection to work with multiple potential game scenes, e.g. separate Demo and a Full Game
 	private int scene;
@@ -38,9 +44,15 @@ public class HostSelect extends Scene {
 	}
 
 	@Override
+	/**
+	 * Causes a button to act if mouse released over it
+	 */
 	public void mouseReleased(int key, int x, int y) {
-		// TODO Auto-generated method stub
-		
+		for (lib.ButtonText b : buttons) {
+			if (b.isMouseOver(x, y)) {
+				b.act();
+			}
+		}
 	}
 
 	@Override
@@ -50,9 +62,13 @@ public class HostSelect extends Scene {
 	}
 
 	@Override
+	/**
+	 * Quits back to title scene on escape button
+	 */
 	public void keyReleased(int key) {
-		// TODO Auto-generated method stub
-		
+		if (key == input.KEY_ESCAPE) {
+			main.closeScene();
+		}
 	}
 
 	@Override
@@ -63,8 +79,20 @@ public class HostSelect extends Scene {
 
 	@Override
 	public void draw() {
-		// TODO Auto-generated method stub
-		
+		String chooseHost = " ";
+
+		graphics.setColour(0,128,0);
+		//graphics.printCentred(chooseHost, window.width()/2 - 50,
+				//window.height()/2 + 50, 1, 100);
+
+		graphics.rectangle(false, HOST_BUTTON_X, HOST_BUTTON_Y,
+				HOST_BUTTON_W, HOST_BUTTON_H);
+		graphics.rectangle(false, CONNECT_BUTTON_X, CONNECT_BUTTON_Y,
+				CONNECT_BUTTON_W, CONNECT_BUTTON_H);
+
+		for (lib.ButtonText b : buttons) {
+			b.draw();
+		}
 	}
 
 	@Override
