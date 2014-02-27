@@ -34,7 +34,7 @@ _These are not final/rigid. Any issues, update/query as you wish :D_
 | [Jaron](http://github.com/JaronAli) | Idle / Scenarios | _Life_ |
 | [Emily](http://github.com/Emily-Hall) | Idle / Scenarios | _None_ |
 | [Such Hopkins](http://github.com/Salvner) | Idle / Scenarios | _None_ |
-| [Jon](http://github.com/Lixquid) | Idle / Scenarios | _None_ |
+| [Jon](http://github.com/Lixquid) | [Bad Altitude](https://github.com/MWUK/Fly-Hard/issues/9) | [`Altimeter.java`](https://github.com/MWUK/Fly-Hard/blob/0e9ae302e57ee77d547914c5dab11ea7e280b2ab/BTC/src/cls/Altimeter.java) and [`Aircraft.java`](https://github.com/MWUK/Fly-Hard/blob/master/BTC/src/scn/Aircraft.java) |
 
 ## Notes
 
