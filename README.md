@@ -30,7 +30,7 @@ _These are not final/rigid. Any issues, update/query as you wish :D_
 | Member | Tasks | File/Source |
 |:-------|:-----|:------------|
 | [Wanderlust](http://github.com/a-random-oracle) | Full-scream | [`fullscreen branch`](https://github.com/MWUK/Fly-Hard/tree/fullscreen) |
-| [Mint Choc-Chip](http://github.com/RMCKirby) | Fixing and Extending | [`graphics.java`](https://github.com/MWUK/Fly-Hard/blob/master/BTC/src/lib/jog/graphics.java) and [`scn*`](https://github.com/MWUK/Fly-Hard/tree/master/BTC/src/scn) |
+| [Mint Choc-Chip](http://github.com/RMCKirby) | Networking and Extending | ['Networking branch'](https://github.com/MWUK/Fly-Hard/tree/networking)| [`graphics.java`](https://github.com/MWUK/Fly-Hard/blob/master/BTC/src/lib/jog/graphics.java) and [`scn*`](https://github.com/MWUK/Fly-Hard/tree/master/BTC/src/scn) |
 | [mwuk](http://github.com/MWUK) | [Erroneous message](https://github.com/mwuk/fly-hard/issues/7) and wiki page(s) of supreme superfluousness.  | [`Demo.java`](https://github.com/MWUK/Fly-Hard/blob/master/BTC/src/scn/Demo.java), [`Aircraft.java`](https://github.com/MWUK/Fly-Hard/blob/master/BTC/src/scn/Aircraft.java) and [Wiki](https://github.com/MWUK/Fly-Hard/wiki/) |
 | [Jaron](http://github.com/JaronAli) | [Search and Rescue](https://github.com/MWUK/FlyHard/issues/10) | [`Aircraft.java`](https://github.com/MWUK/Fly-Hard/blob/master/BTC/src/scn/Aircraft.java) |
 | [Emily](http://github.com/Emily-Hall) | Idle / Scenarios | _None_ |
