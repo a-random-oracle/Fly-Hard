@@ -279,13 +279,13 @@ public class Aircraft {
 	public boolean isOutOfAirspaceBounds() {
 		double x = position.getX();
 		double y = position.getY();
-		return (x < RADIUS || x > window.width() + RADIUS - 32 || y < RADIUS || y > window.height() + RADIUS - 176);
+		return (x < (RADIUS/2) || x > window.width() - (RADIUS/2) || y < (RADIUS/2) || y > window.height() + RADIUS - 176);
 	}
 
 	public boolean isAt(Vector point) {
 		double dy = point.getY() - position.getY();
 		double dx = point.getX() - position.getX();
-		return dy*dy + dx*dx < 4*4;
+		return dy*dy + dx*dx < 6;
 	}
 
 	public boolean isTurningLeft() {

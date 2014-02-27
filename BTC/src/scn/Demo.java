@@ -392,9 +392,11 @@ public class Demo extends Scene {
 				ordersBox.addOrder("<<< Roger that. Altering altitude now.");
 			}
 				
-			if (selectedAircraft.isOutOfAirspaceBounds()) {
-				ordersBox.addOrder(">>> " + selectedAircraft.getName() + " out of bounds, returning to route");
-				deselectAircraft();
+			if (!(selectedAircraft.isAtDestination())) {
+				if (selectedAircraft.isOutOfAirspaceBounds()) {
+					ordersBox.addOrder(">>> " + selectedAircraft.getName() + " out of bounds, returning to route");
+					deselectAircraft();
+				}
 			}	
 		}
 		

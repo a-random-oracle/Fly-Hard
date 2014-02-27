@@ -24,6 +24,8 @@ public class HostSelect extends Scene {
 
 	//To allow the difficulty selection to work with multiple potential game scenes, e.g. separate Demo and a Full Game
 	private int scene;
+	//static ints for clarity of reading. Implement more to allow more game scenes.
+		public final static int CREATE_DEMO = 0;
 	
 	protected HostSelect(Main main, int scn) {
 		super(main);
@@ -33,8 +35,13 @@ public class HostSelect extends Scene {
 	
 	@Override
 	public void start() {
-		// TODO Auto-generated method stub
+		buttons = new ButtonText[2];
 		
+		buttons[0] = new lib.ButtonText("HOST", null, HOST_BUTTON_X, HOST_BUTTON_Y,
+				HOST_BUTTON_W, HOST_BUTTON_H);
+		
+		buttons[1] = new lib.ButtonText("CONNECT", null, CONNECT_BUTTON_X, CONNECT_BUTTON_Y,
+				CONNECT_BUTTON_W, CONNECT_BUTTON_H);
 	}
 
 	@Override
