@@ -13,6 +13,7 @@ public class Altimeter implements EventHandler {
 	private cls.Aircraft currentAircraft; // The current aircraft associated with the altimeter	
 	private double positionX, positionY, width, height;	
 	private cls.OrdersBox ordersBox;
+	private double iconLerp = 0;
 	
 	/**
 	 * Constructor for the altimeter
@@ -123,21 +124,20 @@ public class Altimeter implements EventHandler {
 	 */
 	private void drawPlaneIcon() {
 		// Angle to draw plane
-		double r = 0;
 		if (currentAircraft.isTurningLeft()) {
-			r = -Math.PI / 12;
+			iconLerp = iconLerp + ( -Math.PI / 8 - iconLerp ) / 10;
 		} else if (currentAircraft.isTurningRight()) {
-			r = Math.PI / 12;
+			iconLerp = iconLerp + ( Math.PI / 8 - iconLerp ) / 25;
+		} else {
+			iconLerp = iconLerp  - iconLerp / 50;
 		}
 		double x = positionX + (width / 2);
 		double y = positionY + (height / 2);
 		double wingLength = width / 3 - 8;
 		double tailLength = width / 9;
-		graphics.line(x, y, x + wingLength * Math.cos(r), y + wingLength * Math.sin(r));
-		r -= Math.PI / 2;
-		graphics.line(x, y, x + tailLength * Math.cos(r), y + tailLength * Math.sin(r));
-		r -= Math.PI / 2;
-		graphics.line(x, y, x + wingLength * Math.cos(r), y + wingLength * Math.sin(r));
+		graphics.line(x, y, x + wingLength * Math.cos(iconLerp), y + wingLength * Math.sin(iconLerp));
+		graphics.line(x, y, x + tailLength * Math.cos(iconLerp- Math.PI / 2), y + tailLength * Math.sin(iconLerp- Math.PI / 2));
+		graphics.line(x, y, x + wingLength * Math.cos(iconLerp- Math.PI), y + wingLength * Math.sin(iconLerp- Math.PI));
 		graphics.setColour(graphics.black);
 		graphics.circle(true, x, y, 4);
 		graphics.setColour(graphics.green);
