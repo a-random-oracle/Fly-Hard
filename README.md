@@ -3,7 +3,7 @@ Mission Control
 
 ## Notices
 
-* __Please use issue numbers when committing changes/fixes relating to defined issues, it makes everything more trackable__ (also you don't have to be as descriptive, i.e. `#n resolved` would be easier and as descriptive than `I fixed the issue where everything explodes if you click the middle mouse button`)
+* __Please use issue numbers when committing changes/fixes relating to defined issues, it makes everything more trackable__ (also you don't have to be as descriptive, i.e. `Fixed #n` would be easier and as descriptive than `I fixed the issue where everything explodes if you click the middle mouse button`)
 * Tim Time __2014/02/28 15:30UTC__
 * Super SEPR Saturday Shenanigans __2014/03/01 14:30UTC__ 
 * Please declare what classes you're working on, for the benefit of others who might be working concurrently, so as to avoid conflicts.
