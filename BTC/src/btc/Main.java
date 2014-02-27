@@ -83,11 +83,11 @@ public class Main implements input.EventHandler {
 		double height = actualHeight;
 
 		if (fullscreen) {
-			yScale = actualWidth / TARGET_WIDTH;
-			xScale = actualHeight / TARGET_HEIGHT;
+			xScale = actualWidth / TARGET_WIDTH;
+			yScale = actualHeight / TARGET_HEIGHT;
 		} else {
-			yScale = (actualWidth - (WIDTH_GAP * 2)) / TARGET_WIDTH;
-			xScale = (actualHeight - (HEIGHT_GAP * 2)) / TARGET_HEIGHT;
+			xScale = (actualWidth - (WIDTH_GAP * 2)) / TARGET_WIDTH;
+			yScale = (actualHeight - (HEIGHT_GAP * 2)) / TARGET_HEIGHT;
 			
 			// Scale the width and height by the values derived above
 			width = (TARGET_WIDTH - (WIDTH_GAP * 2)) * xScale;
