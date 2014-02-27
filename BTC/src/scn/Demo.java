@@ -640,20 +640,20 @@ public class Demo extends Scene {
 		}
 	}
 	
-	// Due to the way the airspace elements are drawn (graphics.setviewport) these variables are needed to manually adjust mouse listeners and elements
-	// drawn outside the airspace so that they align with the airspace elements. These variables can be used to adjust the size of the airspace view.
+	// Due to the way the airspace elements are drawn (graphics.setviewport) these variables are needed to manually
+	// adjust mouse listeners and elements drawn outside the airspace so that they align with the airspace elements.
+	// These variables can be used to adjust the size of the airspace view.
 	public static int airspaceViewOffsetX = 16;
 	public static int airspaceViewOffsetY = 48;
+	
 	/**
 	 * Draw the scene GUI and all drawables within it, e.g. aircraft and waypoints
 	 */
 	@Override
 	public void draw() {
 		graphics.setColour(graphics.green);
-		graphics.rectangle(false, airspaceViewOffsetX, airspaceViewOffsetY,
-				window.width() - 32, window.height() - 176);
-		graphics.setViewport(airspaceViewOffsetX, airspaceViewOffsetY,
-				window.width() - 32, window.height() - 176);
+		graphics.rectangle(false, airspaceViewOffsetX, airspaceViewOffsetY, window.width() - 32, window.height() - 176);
+		graphics.setViewport(airspaceViewOffsetX, airspaceViewOffsetY, window.width() - 32, window.height() - 176);
 		graphics.setColour(255, 255, 255, 48);
 		graphics.drawScaled(background, 0, 0, Math.max(Main.getXScale(), Main.getYScale()));
 		graphics.setColour(255, 255, 255, 48);
