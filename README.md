@@ -39,4 +39,5 @@ _These are not final/rigid. Any issues, update/query as you wish :D_
 
 ## Notes
 
-* `.classpath`s might be a little weird. Check yourself before you wreck yourself. A copy should be on Facebook - just make sure you call the project 'Fly Hard'.
+* `.classpath`s might be a little weird. Check yourself before you wreck yourself. 
+ * A copy should be on Facebook - just make sure you call the project 'Fly Hard'.
