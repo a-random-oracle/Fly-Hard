@@ -35,7 +35,7 @@ _These are not final/rigid. Any issues, update/query as you wish :D_
 | [50% Jaron](http://github.com/JaronAli) | [Search and Rescue](https://github.com/MWUK/FlyHard/issues/10) | [`Aircraft.java`](https://github.com/MWUK/Fly-Hard/blob/master/BTC/src/scn/Aircraft.java) |
 | [I Can't Believe It's Not Emily](http://github.com/Emily-Hall) | Idle / Scenarios | _None_ |
 | [Such Hopkins](http://github.com/Salvner) | Idle / Scenarios | _None_ |
-| [git --Jon](http://github.com/Lixquid) | [Bad Altitude](https://github.com/MWUK/Fly-Hard/issues/9) | [`Altimeter.java`](https://github.com/MWUK/Fly-Hard/blob/0e9ae302e57ee77d547914c5dab11ea7e280b2ab/BTC/src/cls/Altimeter.java) and [`Aircraft.java`](https://github.com/MWUK/Fly-Hard/blob/master/BTC/src/scn/Aircraft.java) |
+| [git --Jon](http://github.com/Lixquid) |  | _None_ |
 
 ## Notes
 
