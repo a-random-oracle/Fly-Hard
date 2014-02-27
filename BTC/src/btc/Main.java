@@ -35,7 +35,7 @@ public class Main implements input.EventHandler {
 	final public static int TARGET_WIDTH = 1280;
 	
 	/** The target window height */
-	final public static int TARGET_HEIGHT = 780;
+	final public static int TARGET_HEIGHT = 960;
 	
 	/** The default size of the gap between the window edge and the left edge of the screen */
 	final public static int WIDTH_GAP = 50;

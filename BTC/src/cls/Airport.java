@@ -31,6 +31,7 @@ public class Airport extends Waypoint implements EventHandler {
 	private boolean isDeparturesClicked = false;
 		
 	private Image image;
+	private static double scale = Math.min(Main.getXScale(), Main.getYScale());
 	
 	public ArrayList<Aircraft> aircraftWaitingToLand = new ArrayList<Aircraft>();
 	
@@ -43,14 +44,12 @@ public class Airport extends Waypoint implements EventHandler {
 	private int hangarSize = 3;
 	
 	public Airport(String name, double x, double y, Image image) {
-		/*super(((x + 90 + 51) * Main.getScale()) - image.scaledWidth(Main.getScale())/2,
-				((y + 36 + 26) * Main.getScale()) - image.scaledHeight(Main.getScale())/2,
-				true, name);*/
-		super(x + 90 + 51, y + 36 + 26, true, name);
+		super(((x + 90 + (105/2)) * scale), ((y + 36 + (52/2)) * scale), true, name);
+		//super(x + 90 + 51, y + 36 + 26, true, name);
 		
 		this.image = image;
 		
-		xLocation = x;
+		/*xLocation = x;
 		yLocation = y;
 		
 		xArrivalsLocation = (x + 91);
@@ -61,20 +60,20 @@ public class Airport extends Waypoint implements EventHandler {
 		xDeparturesLocation = (x + 2);
 		yDeparturesLocation = (y + 3);
 		departuresWidth = 50;
-		departuresHeight = 37;
+		departuresHeight = 37;*/
 		
-		/*xLocation = x * Main.getScale();
-		yLocation = y * Main.getScale();
+		xLocation = x * scale;
+		yLocation = y * scale;
 		
-		xArrivalsLocation = (x + 90) * Main.getScale();
-		yArrivalsLocation = (y + 36) * Main.getScale();
-		arrivalsWidth = 105 * Main.getScale();
-		arrivalsHeight = 52 * Main.getScale();
+		xArrivalsLocation = (x + 90) * scale;
+		yArrivalsLocation = (y + 36) * scale;
+		arrivalsWidth = 105 * scale;
+		arrivalsHeight = 52 * scale;
 		
-		xDeparturesLocation = (x + 2) * Main.getScale();
-		yDeparturesLocation = (y + 3) * Main.getScale();
-		departuresWidth = 50 * Main.getScale();
-		departuresHeight = 36 * Main.getScale();*/
+		xDeparturesLocation = (x + 2) * scale;
+		yDeparturesLocation = (y + 3) * scale;
+		departuresWidth = 50 * scale;
+		departuresHeight = 36 * scale;
 	}
 	
 	@Override
