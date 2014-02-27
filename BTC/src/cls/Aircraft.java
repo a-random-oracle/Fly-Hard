@@ -308,7 +308,7 @@ public class Aircraft {
 				resetBearing();
 			if (routeStage == currentRouteStage) {
 				currentTarget = newWaypoint.getLocation();
-				turnTowardsTarget(0);
+				//turnTowardsTarget(0);
 			}
 		}
 	}
