@@ -382,10 +382,14 @@ public class Demo extends Scene {
 				toggleManualControl();
 			}
 			
-			if (input.keyPressed(new int[]{input.KEY_S, input.KEY_DOWN})) {
+			if (input.keyPressed(new int[]{input.KEY_S, input.KEY_DOWN})&& selectedAircraft.getPosition().getZ() > 28000) {
 				selectedAircraft.setAltitudeState(Aircraft.ALTITUDE_FALL);
-			} else if (input.keyPressed(new int[]{input.KEY_W, input.KEY_UP})) {
+				ordersBox.addOrder(">>> " + selectedAircraft.getName() + ", please adjust your altitude.");
+				ordersBox.addOrder("<<< Roger that. Altering altitude now.");
+			} else if (input.keyPressed(new int[]{input.KEY_W, input.KEY_UP})&&selectedAircraft.getPosition().getZ() < 30000) {
 				selectedAircraft.setAltitudeState(Aircraft.ALTITUDE_CLIMB);
+				ordersBox.addOrder(">>> " + selectedAircraft.getName() + ", please adjust your altitude.");
+				ordersBox.addOrder("<<< Roger that. Altering altitude now.");
 			}
 				
 			if (selectedAircraft.isOutOfAirspaceBounds()) {

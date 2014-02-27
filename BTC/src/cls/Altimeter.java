@@ -79,9 +79,9 @@ public class Altimeter implements EventHandler {
 	public void mouseReleased(int key, int mx, int my) {
 		if (!isVisible) return;
 		if (key == input.MOUSE_LEFT) {
-			if (mouseOverTopArrow(mx, my) && currentAircraft.getAltitudeState() != Aircraft.ALTITUDE_CLIMB) {
+			if (mouseOverTopArrow(mx, my) && currentAircraft.getAltitudeState() != Aircraft.ALTITUDE_CLIMB && currentAircraft.getPosition().getZ() < 30000) {
 				currentAircraft.setAltitudeState(Aircraft.ALTITUDE_CLIMB);
-			} else if (mouseOverBottomArrow(mx, my) && currentAircraft.getAltitudeState() != Aircraft.ALTITUDE_FALL) {
+			} else if (mouseOverBottomArrow(mx, my) && currentAircraft.getAltitudeState() != Aircraft.ALTITUDE_FALL && currentAircraft.getPosition().getZ() > 28000) {
 				currentAircraft.setAltitudeState(Aircraft.ALTITUDE_FALL);
 			} else {
 				return; // Don't print messages
