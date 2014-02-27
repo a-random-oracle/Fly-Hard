@@ -376,9 +376,11 @@ public class Demo extends Scene {
 				selectedAircraft.setAltitudeState(Aircraft.ALTITUDE_CLIMB);
 			}
 				
-			if (selectedAircraft.isOutOfAirspaceBounds()) {
-				ordersBox.addOrder(">>> " + selectedAircraft.getName() + " out of bounds, returning to route");
-				deselectAircraft();
+			if (!(selectedAircraft.isAtDestination())) {
+				if (selectedAircraft.isOutOfAirspaceBounds()) {
+					ordersBox.addOrder(">>> " + selectedAircraft.getName() + " out of bounds, returning to route");
+					deselectAircraft();
+				}
 			}	
 		}
 		
