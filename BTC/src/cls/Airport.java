@@ -1,5 +1,6 @@
 package cls;
 
+import java.io.File;
 import java.util.ArrayList;
 
 import btc.Main;
@@ -12,11 +13,12 @@ import lib.jog.input;
 import lib.jog.input.EventHandler;
 
 public class Airport extends Waypoint implements EventHandler {
+	
 	/** The airport's x position (measured to the top-left of the image) */
-	private static double xLocation;
+	private double xLocation;
 	
 	/** The airport's y position (measured to the top-left of the image) */
-	private static double yLocation;		
+	private double yLocation;		
 
 	/** The distance between the left edge of the airport image, and the arrivals area */
 	private final static double relativeArrivalsX = 91;
@@ -25,16 +27,22 @@ public class Airport extends Waypoint implements EventHandler {
 	private final static double relativeArrivalsY = 36;
 	
 	/** The absolute distance from the map edge to the left of the arrivals area */
-	private static double arrivalsX;
+	private double arrivalsX;
 	
 	/** The absolute distance from the map edge to the top of the arrivals area */
-	private static double arrivalsY;
+	private double arrivalsY;
+	
+	/** The relative width of the arrivals area */
+	private final static double relativeArrivalsWidth = 102;
+	
+	/** The relative height of the arrivals area */
+	private final static double relativeArrivalsHeight = 53;
 	
 	/** The width of the arrivals area */
-	private static double arrivalsWidth = 102;
+	private double arrivalsWidth;
 	
 	/** The height of the arrivals area */
-	private static double arrivalsHeight = 53;
+	private double arrivalsHeight;
 	
 	/** The distance between the left edge of the airport image, and the departures area */
 	private final static double relativeDeparturesX = 2;
@@ -43,16 +51,22 @@ public class Airport extends Waypoint implements EventHandler {
 	private final static double relativeDeparturesY = 3;
 	
 	/** The absolute distance from the map edge to the left of the departures area */
-	private static double departuresX;
+	private double departuresX;
 	
 	/** The absolute distance from the map edge to the top of the departures area */
-	private static double departuresY;
+	private double departuresY;
+	
+	/** The relative width of the departures area */
+	private final static double relativeDeparturesWidth = 52;
+	
+	/** The relative height of the departures area */
+	private final static double relativeDeparturesHeight = 37;
 	
 	/** The width of the departures area */
-	private static double departuresWidth = 52;
+	private double departuresWidth;
 	
 	/** The height of the departures area */
-	private static double departuresHeight = 37;
+	private double departuresHeight;
 	
 	/** Whether the airport currently in use - i.e. whether an aircraft is either
 	 * arriving or departing */
@@ -65,7 +79,7 @@ public class Airport extends Waypoint implements EventHandler {
 	private boolean isDeparturesClicked = false;
 	
 	/** The image used to represent the airport */
-	private Image image;
+	private static Image image = graphics.newImage("gfx" + File.separator + "Airport.png");
 	
 	/** The scaling factor to apply to cause the airport to 'fit in' with the map size
 	 * this is taken to be the lower (and hence smaller) of the height and width scales */
@@ -92,30 +106,41 @@ public class Airport extends Waypoint implements EventHandler {
 	 * @param name the airport's name
 	 * @param x the x position to display the top-left corner of the airport at
 	 * @param y the y position to display the top-left corner of the airport at
-	 * @param image the image to use for the airport
 	 */
-	public Airport(String name, double x, double y, Image image) {
-		super(((x + relativeArrivalsX + (arrivalsWidth/2))),
-				((y + relativeArrivalsY + (arrivalsHeight/2))), true, name);
-		
-		// Set the airport image
-		this.image = image;
-		
-		// Scale the x and y co-ords by the scaling factor
-		xLocation = x * scale;
-		yLocation = y * scale;
+	public Airport(String name, double x, double y) {
+		//super(((x + relativeArrivalsX + (relativeArrivalsWidth/2))),
+		//		((y + relativeArrivalsY + (relativeArrivalsHeight/2))), true, name);
+		super(x, y, true, name);
+
+		xLocation = x;
+		yLocation = y;
 		
 		// Scale the arrivals rectangle by the scaling factor
-		arrivalsX = (x + relativeArrivalsX) * scale;
-		arrivalsY = (y + relativeArrivalsY) * scale;
-		arrivalsWidth *= scale;
-		arrivalsHeight *= scale;
+		Vector arrivalsScaled = (new Vector(relativeArrivalsX,
+				relativeArrivalsY, 0)).scaleBy(scale);
+		arrivalsX = x + arrivalsScaled.getX();
+		arrivalsY = y + arrivalsScaled.getY();
+		arrivalsWidth = relativeArrivalsWidth * scale;
+		arrivalsHeight = relativeArrivalsHeight * scale;
 		
 		// Scale the departures rectangle by the scaling factor
-		departuresX = (x + relativeDeparturesX) * scale;
-		departuresY = (y + relativeDeparturesY) * scale;
-		departuresWidth *= scale;
-		departuresHeight *= scale;
+		Vector departuresScaled = (new Vector(relativeDeparturesX,
+				relativeDeparturesY, 0)).scaleBy(scale);
+		departuresX = x + departuresScaled.getX();
+		departuresY = y + departuresScaled.getY();
+		departuresWidth = relativeDeparturesWidth * scale;
+		departuresHeight = relativeDeparturesHeight * scale;
+	}
+	
+	public static Airport create(String name, double x, double y) {
+		Vector rescaledPosition = (new Vector(
+				(x - relativeArrivalsX - (relativeArrivalsWidth/2)),
+				(y - relativeArrivalsY - (relativeArrivalsHeight/2)),
+				0)).scaleBy(scale);
+		
+		return new Airport(name,
+				rescaledPosition.getX(),// - ((image.width() * scale)/2),
+				rescaledPosition.getY());// - ((image.height() * scale)/2));
 	}
 	  
 	/** 
@@ -143,6 +168,11 @@ public class Airport extends Waypoint implements EventHandler {
 	public void draw() { 
 		// Draw the airport image, applying the scale factor
 		graphics.drawScaled(image, xLocation, yLocation, scale);
+		
+		graphics.circle(true, getLocation().getX(), getLocation().getY(), 5);
+		graphics.circle(true, xLocation, yLocation, 5);
+		graphics.circle(true, arrivalsX, arrivalsY, 5);
+		graphics.circle(true, departuresX, departuresY, 5);
 		
 		int greenFine = 128;
 		int greenDanger = 0;

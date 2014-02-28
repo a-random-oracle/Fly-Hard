@@ -118,7 +118,7 @@ public class Vector {
 	}
 	
 	/**
-	 * Maps between a position on the target screen and the actual screen
+	 * Maps between a position on the target screen and the actual screen.
 	 */
 	public Vector remapPosition() {
 		double newX = (((Main.TARGET_WIDTH * Main.getXScale()) - (2 * Demo.airspaceViewOffsetX))

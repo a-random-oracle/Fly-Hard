@@ -12,6 +12,7 @@ import lib.jog.window;
 import cls.Aircraft;
 import cls.Airport;
 import cls.AirportControlBox;
+import cls.Altimeter;
 import cls.OrdersBox;
 import cls.Score;
 import cls.Vector;
@@ -56,29 +57,6 @@ public class Demo extends Scene {
 	public final static int DIFFICULTY_HARD = 2;
 	public static int difficulty = DIFFICULTY_EASY;
 	
-	// Necessary for testing
-	
-	/**
-	 * This method should only be used for unit testing (avoiding instantiation of main class).
-	 * Its purpose is to initialize array where aircraft are stored. 
-	 */	
-	@Deprecated
-	public void initializeAircraftArray() {
-		aircraftInAirspace = new java.util.ArrayList<Aircraft>();
-	}
-	
-	// Additional constructor for testing purposes
-	 
-	/**
-	 * This constructor should only be used for unit testing. Its purpose is to allow an instance
-	 * of demo class to be created without an instance of Main class (effectively launching the game)
-	 * @param difficulty
-	 */	
-	@Deprecated
-	public Demo(int difficulty) {
-		Demo.difficulty = difficulty;
-	}
-	
 	/** The score throughout the game */
 	private Score score; 
 	
@@ -105,15 +83,7 @@ public class Demo extends Scene {
 	
 	public ArrayList<Aircraft> recentlyDepartedAircraft;
 	
-	/**
-	 * An image to be used for airports
-	 */
-	private Image airportImage;
-	
-	/**
-	 * An image to be used for aircraft
-	 * Expand to list of images for multiple aircraft appearances
-	 */
+	/** An image to be used for aircraft */
 	private graphics.Image aircraftImage;
 	
 	/** A button to start and end manual control of an aircraft */
@@ -126,9 +96,9 @@ public class Demo extends Scene {
 	private boolean waypointClicked;
 	
 	/** An altimeter to display aircraft altitidue, heading, etc. */
-	private cls.Altimeter altimeter;
+	private Altimeter altimeter;
 	
-	private cls.AirportControlBox airportControlBox;
+	private AirportControlBox airportControlBox;
 	
 	/** The time elapsed since the last flight was generated */
 	private double flightGenerationTimeElapsed = 6;
@@ -176,6 +146,9 @@ public class Demo extends Scene {
 		null							// 14
 	};
 	
+	/** Is the game paused */
+	private boolean paused = false;
+	
 	/**
 	 * Constructor
 	 * @param main the main containing the scene
@@ -184,6 +157,26 @@ public class Demo extends Scene {
 	public Demo(Main main, int difficulty) {
 		super(main);
 		Demo.difficulty = difficulty;
+	}
+	
+	// Additional constructor for testing purposes
+	/**
+	 * This constructor should only be used for unit testing. Its purpose is to allow an instance
+	 * of demo class to be created without an instance of Main class (effectively launching the game)
+	 * @param difficulty
+	 */	
+	@Deprecated
+	public Demo(int difficulty) {
+		Demo.difficulty = difficulty;
+	}
+	
+	/**
+	 * This method should only be used for unit testing (avoiding instantiation of main class).
+	 * Its purpose is to initialize array where aircraft are stored. 
+	 */	
+	@Deprecated
+	public void initializeAircraftArray() {
+		aircraftInAirspace = new ArrayList<Aircraft>();
 	}
 	
 	/**
@@ -200,7 +193,7 @@ public class Demo extends Scene {
 	}
 	
 	/**
-	 * The interval in seconds to generate flights after
+	 * The interval in seconds to generate flights after.
 	 */
 	private int getFlightGenerationInterval() {
 		switch (difficulty) {
@@ -227,13 +220,17 @@ public class Demo extends Scene {
 		music = audio.newMusic("sfx" + File.separator + "Gypsy_Shoegazer.ogg");
 		//music.play();
 		ordersBox = new cls.OrdersBox(ORDERSBOX_X, ORDERSBOX_Y, ORDERSBOX_W, ORDERSBOX_H, 6);
-		aircraftInAirspace = new java.util.ArrayList<Aircraft>();
-		recentlyDepartedAircraft = new java.util.ArrayList<Aircraft>();
+		aircraftInAirspace = new ArrayList<Aircraft>();
+		recentlyDepartedAircraft = new ArrayList<Aircraft>();
 		
 		aircraftImage = graphics.newImage("gfx" + File.separator + "plane.png");
-		airportImage = graphics.newImage("gfx" + File.separator + "Airport.png");
 		
-		airport = new Airport("Mosbear Airport", window.width()/2, window.height()/2, airportImage);
+		// Set airport to be in the middle of the screen TODO
+		airport = Airport.create("Mosbear Airport",
+				(window.width() - (2 * airspaceViewOffsetX)) / 2,
+				(window.height() - PLANE_INFO_H) / 2);
+		
+		// Add the airport in to the list of waypoints
 		locationWaypoints[locationWaypoints.length-1] = airport;
 		airspaceWaypoints[airspaceWaypoints.length-1] = airport;
 		
@@ -261,7 +258,7 @@ public class Demo extends Scene {
 	}
 	
 	/**
-	 * Getter for aircraft list
+	 * Getter for aircraft list.
 	 * @return the arrayList of aircraft in the airspace
 	 */
 	public ArrayList<Aircraft> aircraftList() {
@@ -278,7 +275,7 @@ public class Demo extends Scene {
 	}
 	
 	/**
-	 * Causes an aircraft to call methods to handle deselection
+	 * Causes an aircraft to call methods to handle deselection.
 	 */
 	private void deselectAircraft() {
 		if (selectedAircraft != null && selectedAircraft.isManuallyControlled()) {
@@ -298,6 +295,8 @@ public class Demo extends Scene {
 	 */
 	@Override
 	public void update(double timeDifference) {
+		if (paused) return;
+		
 		timeElapsed += timeDifference;
 		score.update();
 		graphics.setColour(graphics.green_transp);
@@ -599,26 +598,29 @@ public class Demo extends Scene {
 	@Override
 	public void keyReleased(int key) {
 		switch (key) {
+			case input.KEY_P :
+				paused = !paused;
+				break;
 		
 			case input.KEY_SPACE :
 				toggleManualControl();
-			break;
+				break;
 			
 			case input.KEY_LCRTL :
 				generateFlight();
-			break;
+				break;
 			
 			case input.KEY_ESCAPE :
 				aircraftInAirspace.clear();
 				airport.clear();
 				main.closeScene();
-			break;
+				break;
 			
 			case input.KEY_F5 :
 				Aircraft a1 = createAircraft();
 				Aircraft a2 = createAircraft();
 				gameOver(a1, a2);
-			break;
+				break;
 		}
 	}
 	
@@ -626,7 +628,7 @@ public class Demo extends Scene {
 	 * Draw the scene GUI and all drawables within it, e.g. aircraft and waypoints
 	 */
 	@Override
-	public void draw() { //																	TODO <- Place Marker
+	public void draw() {
 		graphics.setColour(graphics.green);
 		graphics.rectangle(false, airspaceViewOffsetX, airspaceViewOffsetY,
 				window.width() - (2 * airspaceViewOffsetX), window.height() - 176);
@@ -814,8 +816,8 @@ public class Demo extends Scene {
 	 * also it is not too close to any plane). 
 	 * @param aircraft
 	 */	
-	private java.util.ArrayList<Waypoint> getAvailableEntryPoints() {
-		java.util.ArrayList<Waypoint> available_entry_points = new java.util.ArrayList<Waypoint>();
+	private ArrayList<Waypoint> getAvailableEntryPoints() {
+		ArrayList<Waypoint> available_entry_points = new ArrayList<Waypoint>();
 		
 		for (Waypoint entry_point : locationWaypoints) {
 			
@@ -857,7 +859,7 @@ public class Demo extends Scene {
 		 * Chooses two waypoints randomly and then checks if they satisfy the rules, if not, it tries until it finds good ones. 
 		 **/
 	
-		java.util.ArrayList<Waypoint> available_origins = getAvailableEntryPoints();
+		ArrayList<Waypoint> available_origins = getAvailableEntryPoints();
 		
 		if (available_origins.isEmpty()) {
 			if (airport.aircraftHangar.size() == airport.getHangarSize()) {
@@ -899,7 +901,8 @@ public class Demo extends Scene {
 			}
 		}
 		
-		return new Aircraft(name, destinationName, originName, destinationPoint, originPoint, aircraftImage, 32 + (int)(10 * Math.random()), airspaceWaypoints, difficulty);
+		return new Aircraft(name, destinationName, originName, destinationPoint, originPoint,
+				aircraftImage, 32 + (int)(10 * Math.random()), airspaceWaypoints, difficulty);
 	}
 	
 	@Override
