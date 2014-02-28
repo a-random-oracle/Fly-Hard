@@ -2,6 +2,7 @@ package cls;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Timer;
 
 import scn.Demo;
 import lib.RandomNumber;
@@ -36,6 +37,7 @@ public class Aircraft {
 	private int verticalVelocity; // The speed to climb or fall by. Depends on difficulty
 	private FlightPlan flightPlan;
 	private boolean isLanding = false;
+	private int turningCumulative = 0;
 	
 	public Vector currentTarget; // The position the plane is currently flying towards (if not manually controlled).
 	private double manualBearingTarget = Double.NaN;
@@ -283,6 +285,7 @@ public class Aircraft {
 	}
 
 	public boolean isAt(Vector point) {
+		turningCumulative = 0;
 		double dy = point.getY() - position.getY();
 		double dx = point.getX() - position.getX();
 		return dy*dy + dx*dx < 6;
@@ -329,6 +332,7 @@ public class Aircraft {
 	
 	public boolean isAtDestination() {
 		if (flightPlan.getDestination().equals(Demo.airport.getLocation())) { // At airport
+			turningCumulative = 0;
 			return Demo.airport.isWithinArrivals(position, false); // Within Arrivals rectangle
 		} else {
 			return isAt(flightPlan.getDestination()); // Very close to destination
@@ -425,6 +429,7 @@ public class Aircraft {
 		if (crossesPositiveNegativeDivide)
 			angleDirection *= -1;
 		double angleMagnitude = Math.min(Math.abs((time_difference * turnSpeed)), Math.abs(angleDifference));
+		if (Math.abs(angleToTarget()) >= (Math.PI / 2)) angleMagnitude *= 1.75;
 		turnBy(angleMagnitude * angleDirection);
 	}
 
