@@ -7,6 +7,7 @@ import java.io.IOException;
 import lib.jog.audio;
 import lib.jog.audio.Sound;
 import lib.jog.graphics;
+import lib.jog.input;
 import lib.jog.window;
 import btc.Main;
 
@@ -256,7 +257,13 @@ public class Title extends Scene {
 	public void keyPressed(int key) {}
 
 	@Override
-	public void keyReleased(int key) {}
+	public void keyReleased(int key) {
+		// Exit if ESC key pressed
+		// Added for testing TODO - remove this for release
+		if (key == input.KEY_ESCAPE) {
+			main.quit();
+		}
+	}
 	
 	@Override
 	/**
