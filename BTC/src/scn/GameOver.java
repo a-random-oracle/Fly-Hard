@@ -13,65 +13,66 @@ import lib.jog.window;
 import btc.Main;
 
 public class GameOver extends Scene {
-	/**
-	 * Text box to write the details of the game failure
-	 */
+	
+	/** Text box to write the details of the game failure */
 	private lib.TextBox textBox;
 	
-	/**
-	 * Used to position the explosion, and provide graphical feedback of how and where the player failed
-	 */
+	// Used to position the explosion, and provide graphical feedback of how and where the player failed
+	/** The first plane involved in the collision */
 	private Aircraft crashedPlane1;
+	
+	/** The second plane involved in the collision */
 	private Aircraft crashedPlane2;
-	/**
-	 * A random number of deaths caused by the crash
-	 */
+	
+	/** A random number of deaths caused by the crash */
 	private int deaths;
 	
+	/** The score the player achieved */
 	private int score; //passed in when game is over;
 	
-	/**
-	 * The position of the crash - the vector midpoint of the positions of the two crashed planes
-	 */
+	/** The position of the crash - the vector midpoint of the positions of the two crashed planes */
 	private Vector crash;
-	/**
-	 * A sprite animation to handle the frame by frame drawing of the explosion
-	 */
+	
+	/** A sprite animation to handle the frame by frame drawing of the explosion */
 	private SpriteAnimation explosionAnim;
-	/**
-	 * The explosion image to use for the animation
-	 */
+	
+	/** The explosion image to use for the animation */
 	private Image explosion;
 	
 	private int keyPressed;
 	
-	/**
-	 * Timer to allow for explosion and plane to be shown for a period, followed by the text box.
-	 */
+	/** Timer to allow for explosion and plane to be shown for a period, followed by the text box */
 	private double timer;
 	
 	/**
-	 * Constructor for the Game Over scene
+	 * Constructor for the Game Over scene.
 	 * @param main main containing the scene
 	 * @param plane1 the first plane involved in the crash
 	 * @param plane2 the second plane involved in the crash
+	 * @param score the score achieved during gameplay
 	 */
 	public GameOver(Main main, Aircraft plane1, Aircraft plane2, int score) {
 		super(main);
 		crashedPlane1 = plane1;
 		crashedPlane2 = plane2;
-		crash = new Vector(plane1.getPosition().getX(), plane1.getPosition().getY(), 0);
+		crash = new Vector(plane1.getPosition().getX(), plane1.getPosition().getY(), 0).remapPosition();
 		int framesAcross = 8;
 		int framesDown = 4;
 		this.score = score;
 		explosion = graphics.newImage("gfx" + File.separator + "explosionFrames.png");
-		Vector midPoint = crashedPlane1.getPosition().add(crashedPlane2.getPosition()).scaleBy(0.5);
-		Vector explosionPos = midPoint.sub( new Vector(explosion.width()/(framesAcross*2), explosion.height()/(framesDown*2), 0) );
-		explosionAnim = new SpriteAnimation(explosion, (int)explosionPos.getX(), (int)explosionPos.getY(), 6, 16, framesAcross, framesDown, false);
+		Vector midPoint = crashedPlane1.getPosition().add(crashedPlane2.getPosition())
+				.scaleBy(0.5).remapPosition();
+		Vector explosionPos = midPoint.sub(new Vector(explosion.width()/(framesAcross*2),
+				explosion.height()/(framesDown*2), 0)).remapPosition();
+		
+		explosionAnim = new SpriteAnimation(explosion,
+				(int)explosionPos.getX(), (int)explosionPos.getY(),
+				6, 16, framesAcross, framesDown, false);
 	}
 	
 	/**
-	 * initialises the random number of deaths, timer, and text box with strings to be written about the game failure
+	 * Initialises the random number of deaths, timer, and text box with strings
+	 * to be written about the game failure.
 	 */
 	@Override
 	public void start() {
@@ -98,11 +99,11 @@ public class GameOver extends Scene {
 		textBox.addText("Game Over.");
 	}
 
-	@Override
 	/**
 	 * If it runs before the explosion has finished, update the explosion
-	 * otherwise, update text box instead
+	 * otherwise, update text box instead.
 	 */
+	@Override
 	public void update(double timeDifference) {
 		if (explosionAnim.hasFinished()){
 			timer += timeDifference;
@@ -118,17 +119,17 @@ public class GameOver extends Scene {
 	@Override
 	public void mouseReleased(int key, int x, int y) {}
 
-	@Override
 	/**
-	 * Tracks if any keys are pressed when the game over screen begins
-	 * Prevents the scene instantly ending due to a key press from previous scene
+	 * Tracks if any keys are pressed when the game over screen begins.
+	 * Prevents the scene instantly ending due to a key press from previous scene.
 	 */
+	@Override
 	public void keyPressed(int key) {
 		keyPressed = key;
 	}
 
 	/**
-	 * Ends the scene if any key is released
+	 * Ends the scene if any key is released.
 	 */
 	@Override
 	public void keyReleased(int key) {
@@ -141,19 +142,19 @@ public class GameOver extends Scene {
 	@Override
 	/**
 	 * Draws game over
-	 * If explosion has finished, draw the textbox
-	 * Otherwise, draw the planes and explosion
+	 * If explosion has finished, draw the textbox; otherwise, draw the planes and explosion.
 	 */
 	public void draw() {
 		graphics.setColour(graphics.green);
-		graphics.printCentred(crashedPlane1.getName() + " crashed into " + crashedPlane2.getName() + ".", 0, 32, 2, window.width());
+		graphics.printCentred(crashedPlane1.getName() + " crashed into " + crashedPlane2.getName()
+				+ ".", 0, 32, 2, window.width());
 		graphics.printCentred("Total score: " + String.valueOf(score), 0, 64, 4, window.width());
 		if (explosionAnim.hasFinished()) {
 			textBox.draw();
 		} else {
 			crashedPlane1.draw((int) crashedPlane1.getPosition().getZ());
 			crashedPlane2.draw((int) crashedPlane1.getPosition().getZ());
-			Vector midPoint = crash.add(crashedPlane2.getPosition()).scaleBy(0.5);
+			Vector midPoint = crash.add(crashedPlane2.getPosition()).scaleBy(0.5).remapPosition();
 			double radius = 20; // Radius of explosion
 			graphics.setColour(graphics.red);
 			graphics.circle(false, midPoint.getX(), midPoint.getY(), radius);

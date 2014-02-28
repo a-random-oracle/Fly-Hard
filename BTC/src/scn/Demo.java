@@ -42,7 +42,7 @@ public class Demo extends Scene {
 	private final int ORDERSBOX_W = window.width() - (ORDERSBOX_X + 16);
 	private final static int ORDERSBOX_H = 112;
 	
-	private final static int SIDE_BOUNDARY = 120;
+	private final static int SIDE_BOUNDARY = 180;
 	
 	// Due to the way the airspace elements are drawn (graphics.setviewport) these variables are needed to manually
 	// adjust mouse listeners and elements drawn outside the airspace so that they align with the airspace elements.

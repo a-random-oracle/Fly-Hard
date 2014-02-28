@@ -108,9 +108,8 @@ public class Airport extends Waypoint implements EventHandler {
 	 * @param y the y position to display the top-left corner of the airport at
 	 */
 	public Airport(String name, double x, double y) {
-		//super(((x + relativeArrivalsX + (relativeArrivalsWidth/2))),
-		//		((y + relativeArrivalsY + (relativeArrivalsHeight/2))), true, name);
-		super(x, y, true, name);
+		super((x + (relativeArrivalsX + (relativeArrivalsWidth/2)) * scale),
+				(y + (relativeArrivalsY + (relativeArrivalsHeight/2)) * scale), true, name);
 
 		xLocation = x;
 		yLocation = y;
@@ -132,15 +131,20 @@ public class Airport extends Waypoint implements EventHandler {
 		departuresHeight = relativeDeparturesHeight * scale;
 	}
 	
+	/**
+	 * Creates an airport at the given location.
+	 * <p>
+	 * This method applies the necessary scaling to position the airport
+	 * relative to the map.
+	 * </p>
+	 * @param name the name of the airport
+	 * @param x the position at which the centre of the airport should be located
+	 * @param y the position at which the centre of the airport should be located
+	 */
 	public static Airport create(String name, double x, double y) {
-		Vector rescaledPosition = (new Vector(
-				(x - relativeArrivalsX - (relativeArrivalsWidth/2)),
-				(y - relativeArrivalsY - (relativeArrivalsHeight/2)),
-				0)).scaleBy(scale);
-		
 		return new Airport(name,
-				rescaledPosition.getX(),// - ((image.width() * scale)/2),
-				rescaledPosition.getY());// - ((image.height() * scale)/2));
+				(x - relativeArrivalsX - (relativeArrivalsWidth/2)),
+				(y - relativeArrivalsY - (relativeArrivalsHeight/2)));
 	}
 	  
 	/** 
@@ -168,11 +172,6 @@ public class Airport extends Waypoint implements EventHandler {
 	public void draw() { 
 		// Draw the airport image, applying the scale factor
 		graphics.drawScaled(image, xLocation, yLocation, scale);
-		
-		graphics.circle(true, getLocation().getX(), getLocation().getY(), 5);
-		graphics.circle(true, xLocation, yLocation, 5);
-		graphics.circle(true, arrivalsX, arrivalsY, 5);
-		graphics.circle(true, departuresX, departuresY, 5);
 		
 		int greenFine = 128;
 		int greenDanger = 0;
