@@ -95,8 +95,8 @@ public class Airport extends Waypoint implements EventHandler {
 	 * @param image the image to use for the airport
 	 */
 	public Airport(String name, double x, double y, Image image) {
-		super(((x + relativeArrivalsX + (arrivalsWidth/2)) * scale),
-				((y + relativeArrivalsY + (arrivalsHeight/2)) * scale), true, name);
+		super(((x + relativeArrivalsX + (arrivalsWidth/2))),
+				((y + relativeArrivalsY + (arrivalsHeight/2))), true, name);
 		
 		// Set the airport image
 		this.image = image;
