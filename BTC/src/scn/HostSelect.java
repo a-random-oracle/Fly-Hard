@@ -45,10 +45,7 @@ public class HostSelect extends Scene {
 	}
 
 	@Override
-	public void mousePressed(int key, int x, int y) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void mousePressed(int key, int x, int y) {}
 
 	@Override
 	/**
@@ -63,10 +60,7 @@ public class HostSelect extends Scene {
 	}
 
 	@Override
-	public void keyPressed(int key) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void keyPressed(int key) {}
 
 	@Override
 	/**
@@ -79,16 +73,18 @@ public class HostSelect extends Scene {
 	}
 
 	@Override
-	public void update(double timeDifference) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void update(double timeDifference) {}
 
 	@Override
 	public void draw() {
+		graphics.setColour(0,128,0); //GREEN
+		
 		String chooseHost = " ";
+		
+		graphics.print("You have chosen to play multiplayer", window.width() / 6, window.height() -920, 3);
+		graphics.print("Choose to host a game or join a host", window.width() / 6, window.height() - 850, 3);
 
-		graphics.setColour(0,128,0);
+
 		//graphics.printCentred(chooseHost, window.width()/2 - 50,
 				//window.height()/2 + 50, 1, 100);
 
@@ -103,15 +99,9 @@ public class HostSelect extends Scene {
 	}
 
 	@Override
-	public void close() {
-		// TODO Auto-generated method stub
-		
-	}
+	public void close() {}
 
 	@Override
-	public void playSound(Sound sound) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void playSound(Sound sound) {}
 
 }
