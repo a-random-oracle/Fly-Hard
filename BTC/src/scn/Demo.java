@@ -347,7 +347,7 @@ public class Demo extends Scene {
 				aircraftInAirspace.remove(i);
 			}
 		}
-		airport.update(this);
+		airport.update(aircraftInAirspace);
 		if (selectedAircraft != null) {
 			if (selectedAircraft.isManuallyControlled()) {
 				if (input.keyPressed(new int[]{input.KEY_LEFT, input.KEY_A})) {
