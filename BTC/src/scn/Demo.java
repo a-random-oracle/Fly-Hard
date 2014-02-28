@@ -1,6 +1,7 @@
 package scn;
 
 import java.io.File;
+import java.util.ArrayList;
 
 import lib.RandomNumber;
 import lib.jog.audio;
@@ -11,6 +12,8 @@ import lib.jog.window;
 import cls.Aircraft;
 import cls.Airport;
 import cls.AirportControlBox;
+import cls.OrdersBox;
+import cls.Score;
 import cls.Vector;
 import cls.Waypoint;
 import btc.Main;
@@ -21,7 +24,7 @@ public class Demo extends Scene {
 	private final int PLANE_INFO_X = 16;
 	private final int PLANE_INFO_Y = window.height() - 120;
 	private final int PLANE_INFO_W = window.width()/4 - 16;
-	private final int PLANE_INFO_H = 112;
+	private final static int PLANE_INFO_H = 112;
 	
 	private final int ALTIMETER_X = PLANE_INFO_X + PLANE_INFO_W + 8;
 	private final int ALTIMETER_Y = window.height() - 120;
@@ -34,9 +37,17 @@ public class Demo extends Scene {
 	private final int AIRPORT_CONTROL_H = 112;
 	
 	private final int ORDERSBOX_X = AIRPORT_CONTROL_X + AIRPORT_CONTROL_W + 8;
-	private final static int ORDERSBOX_Y = window.height() - 120;
+	private final int ORDERSBOX_Y = window.height() - 120;
 	private final int ORDERSBOX_W = window.width() - (ORDERSBOX_X + 16);
 	private final static int ORDERSBOX_H = 112;
+	
+	private final static int SIDE_BOUNDARY = 120;
+	
+	// Due to the way the airspace elements are drawn (graphics.setviewport) these variables are needed to manually
+	// adjust mouse listeners and elements drawn outside the airspace so that they align with the airspace elements.
+	// These variables can be used to adjust the size of the airspace view.
+	public static int airspaceViewOffsetX = 16 + SIDE_BOUNDARY;
+	public static int airspaceViewOffsetY = 48;
 	
 	// Static CONSTANTS for difficulty settings
 	// Difficulty of demo scene determined by difficulty selection scene
@@ -68,48 +79,31 @@ public class Demo extends Scene {
 		Demo.difficulty = difficulty;
 	}
 	
-	/**
-	 * The score throughout the game
-	 */
-	private cls.Score score; 
+	/** The score throughout the game */
+	private Score score; 
 	
-	/**
-	 * Flag to dtermine if aircraft warning message is to be displayed
-	 */
+	/** Flag to determine if aircraft warning message is to be displayed */
 	private boolean shownAircraftWaitingMessage = false;
 	
-	/**
-	 * Orders box to print orders from ACTO to aircraft to
-	 */
-	private cls.OrdersBox ordersBox;
+	/** Orders box to print orders from ACTO to aircraft to */
+	private OrdersBox ordersBox;
 	
-	/**
-	 * Time since the scene began
-	 * Could be used for score
-	 */
+	/** Time since the scene began */
 	private static double timeElapsed;
 	
-	/**
-	 * The currently selected aircraft
-	 */
+	/** The currently selected aircraft */
 	private Aircraft selectedAircraft;
 	
-	/**
-	 * The currently selected waypoint
-	 */
+	/** The currently selected waypoint */
 	private Waypoint clickedWaypoint;
 	
-	/**
-	 * Selected path point, in an aircraft's route, used for altering the route
-	 */
+	/** Selected path point, in an aircraft's route, used for altering the route */
 	private int selectedPathpoint;
 	
-	/**
-	 * A list of aircraft present in the airspace
-	 */
-	public static java.util.ArrayList<Aircraft> aircraftInAirspace;
+	/** A list of aircraft present in the airspace */
+	public static ArrayList<Aircraft> aircraftInAirspace;
 	
-	public java.util.ArrayList<Aircraft> recentlyDepartedAircraft;
+	public ArrayList<Aircraft> recentlyDepartedAircraft;
 	
 	/**
 	 * An image to be used for airports
@@ -122,95 +116,47 @@ public class Demo extends Scene {
 	 */
 	private graphics.Image aircraftImage;
 	
-	/**
-	 * A button to start and end manual control of an aircraft
-	 */
+	/** A button to start and end manual control of an aircraft */
 	private lib.ButtonText manualOverrideButton;
 	
-	/**
-	 * Tracks if manual heading compass of a manually controlled aircraft has been clicked
-	 */
+	/** Tracks if manual heading compass of a manually controlled aircraft has been clicked */
 	private boolean compassClicked;
 	
-	/**
-	 * Tracks if waypoint of a manually controlled aircraft has been clicked
-	 */
+	/** Tracks if waypoint of a manually controlled aircraft has been clicked */
 	private boolean waypointClicked;
 	
-	/**
-	 * An altimeter to display aircraft altitidue, heading, etc.
-	 */
+	/** An altimeter to display aircraft altitidue, heading, etc. */
 	private cls.Altimeter altimeter;
 	
 	private cls.AirportControlBox airportControlBox;
 	
-	/**
-	 * The time elapsed since the last flight was generated
-	 */
+	/** The time elapsed since the last flight was generated */
 	private double flightGenerationTimeElapsed = 6;
 	
-	/**
-	 * The current control altitude of the ACTO - initially 30,000
-	 */
+	/** The current control altitude of the ACTO - initially 30,000 */
 	private int highlightedAltitude = 30000;
 	
-	/**
-	 * Music to play during the game scene
-	 */
+	/** Music to play during the game scene */
 	private audio.Music music;
 	
-	/**
-	 * The background to draw in the airspace.
-	 */
-	private graphics.Image background;
+	/** The background to draw in the airspace. */
+	private Image background;
 	
-	/**
-	 * Demo's instance of the airport class
-	 */
+	/** Demo's instance of the airport class */
 	public static Airport airport;
 	
-	/**
-	 * This method provides maximum number of planes using value of multiplier
-	 * @return maximum number of planes
-	 */
-	private int getMaxAircraft() {
-		if (score.getMultiplier() == 1) 
-			return 3;
-		else if (score.getMultiplier() == 3) 
-			return 5;
-		else
-			return score.getMultiplier();
-	}
-	
-	/**
-	 * The interval in seconds to generate flights after
-	 */
-	private int getFlightGenerationInterval() {
-		if (difficulty == 1)
-			return (30 / (getMaxAircraft() * 2)); // Planes move 2x faster on medium so this makes them spawn 2 times as often to keep the ratio
-		if (difficulty == 2)
-			return (30 / (getMaxAircraft() * 3) ); // Planes move 3x faster on hard so this makes them spawn 3 times as often to keep the ratio 
-		return (30 / getMaxAircraft());
-	}
-	
-	/**
-	 * The set of waypoints in the airspace which are origins / destinations
-	 */
+	/** The set of waypoints in the airspace which are origins / destinations */
 	public static Waypoint[] locationWaypoints = new Waypoint[] {
 		/* A set of Waypoints which are origin / destination points */
 		new Waypoint(8, 8, true, "North West Top Leftonia"), //top left
 		new Waypoint(8, window.height() - ORDERSBOX_H - 72, true, "100 Acre Woods"), //bottom left
-		new Waypoint(window.width() - 40, 8, true, "City of Rightson"), // top right
-		new Waypoint(window.width() - 40, window.height() - ORDERSBOX_H - 72, true, "South Sea"), //bottom right
+		new Waypoint(window.width() - (2 * airspaceViewOffsetX) - 4, 8, true, "City of Rightson"), // top right
+		new Waypoint(window.width() - (2 * airspaceViewOffsetX) - 4, window.height() - ORDERSBOX_H - 72, true, "South Sea"), //bottom right
 		null
 	};
 
-	/**
-	 * All waypoints in the airspace, INCLUDING locationWaypoints.
-	 */
-	public static Waypoint[] airspaceWaypoints = new Waypoint[] {		
-		/* All waypoints in the airspace, including location Way Points*/
-	
+	/** All waypoints in the airspace, including locationWaypoints */
+	public static Waypoint[] airspaceWaypoints = new Waypoint[] {
 		// Airspace waypoints
 		new Waypoint(125, 70, false),   // 0
 		new Waypoint(700, 100, false),  // 1
@@ -240,11 +186,42 @@ public class Demo extends Scene {
 		Demo.difficulty = difficulty;
 	}
 	
-	@Override
+	/**
+	 * This method provides maximum number of planes using value of multiplier
+	 * @return maximum number of planes
+	 */
+	private int getMaxAircraft() {
+		if (score.getMultiplier() == 1) 
+			return 3;
+		else if (score.getMultiplier() == 3) 
+			return 5;
+		else
+			return score.getMultiplier();
+	}
+	
+	/**
+	 * The interval in seconds to generate flights after
+	 */
+	private int getFlightGenerationInterval() {
+		switch (difficulty) {
+		case 1:
+			// Planes move 2x faster on medium so this makes them spawn
+			// 2 times as often to keep the ratio
+			return (30 / (getMaxAircraft() * 2));
+		case 2:
+			// Planes move 3x faster on hard so this makes them spawn
+			// 3 times as often to keep the ratio 
+			return (30 / (getMaxAircraft() * 3) );
+		default:
+			return (30 / getMaxAircraft());
+		}	
+	}
+	
 	/**
 	 * Initialise and begin music, init background image and scene variables.
 	 * Shorten flight generation timer according to difficulty
 	 */
+	@Override
 	public void start() {
 		background = graphics.newImage("gfx" + File.separator + "background_base.png");
 		music = audio.newMusic("sfx" + File.separator + "Gypsy_Shoegazer.ogg");
@@ -268,7 +245,7 @@ public class Demo extends Scene {
 			}
 		};
 		
-		score = new cls.Score();
+		score = new Score();
 		
 		manualOverrideButton = new lib.ButtonText("Take Control", manual, (window.width() - 128) / 2, 32, 128, 64, 8, 4);
 		timeElapsed = 0;
@@ -287,7 +264,7 @@ public class Demo extends Scene {
 	 * Getter for aircraft list
 	 * @return the arrayList of aircraft in the airspace
 	 */
-	public java.util.ArrayList<Aircraft> aircraftList() {
+	public ArrayList<Aircraft> aircraftList() {
 		return aircraftInAirspace;
 	}
 	
@@ -614,13 +591,12 @@ public class Demo extends Scene {
 	}
 
 	@Override
-	public void keyPressed(int key) {
-	}
+	public void keyPressed(int key) {}
 
-	@Override
 	/**
-	 * handle keyboard input
+	 * Handle keyboard input
 	 */
+	@Override
 	public void keyReleased(int key) {
 		switch (key) {
 		
@@ -646,20 +622,16 @@ public class Demo extends Scene {
 		}
 	}
 	
-	// Due to the way the airspace elements are drawn (graphics.setviewport) these variables are needed to manually
-	// adjust mouse listeners and elements drawn outside the airspace so that they align with the airspace elements.
-	// These variables can be used to adjust the size of the airspace view.
-	public static int airspaceViewOffsetX = 16;
-	public static int airspaceViewOffsetY = 48;
-	
 	/**
 	 * Draw the scene GUI and all drawables within it, e.g. aircraft and waypoints
 	 */
 	@Override
-	public void draw() {
+	public void draw() { //																	TODO <- Place Marker
 		graphics.setColour(graphics.green);
-		graphics.rectangle(false, airspaceViewOffsetX, airspaceViewOffsetY, window.width() - 32, window.height() - 176);
-		graphics.setViewport(airspaceViewOffsetX, airspaceViewOffsetY, window.width() - 32, window.height() - 176);
+		graphics.rectangle(false, airspaceViewOffsetX, airspaceViewOffsetY,
+				window.width() - (2 * airspaceViewOffsetX), window.height() - 176);
+		graphics.setViewport(airspaceViewOffsetX, airspaceViewOffsetY,
+				window.width() - (2 * airspaceViewOffsetX), window.height() - 176);
 		graphics.setColour(255, 255, 255, 48);
 		graphics.drawScaled(background, 0, 0, Math.max(Main.getXScale(), Main.getYScale()));
 		graphics.setColour(255, 255, 255, 48);
@@ -805,7 +777,7 @@ public class Demo extends Scene {
 		double seconds = timeElapsed % 60;
 		java.text.DecimalFormat df = new java.text.DecimalFormat("00.00");
 		String timePlayed = String.format("%d:%02d:", hours, minutes) + df.format(seconds); 
-		graphics.print(timePlayed, window.width() - (timePlayed.length() * 8 + 32), 32);
+		graphics.print(timePlayed, window.width() - Demo.airspaceViewOffsetX - (timePlayed.length() * 8 + 32), 32);
 		int planes = aircraftInAirspace.size();
 		graphics.print(String.valueOf("Highlighted altitude: " + Integer.toString(highlightedAltitude)) , 32, 15);
 		graphics.print(String.valueOf(aircraftInAirspace.size()) + " plane" + (planes == 1 ? "" : "s") + " in the sky.", 32, 32);
@@ -946,5 +918,9 @@ public class Demo extends Scene {
 
 	public static double getTime() {
 		return timeElapsed;
+	}
+	
+	public static double getPlaneInfoHeight() {
+		return PLANE_INFO_H;
 	}
 }
