@@ -1,5 +1,6 @@
 package cls;
 
+import scn.Demo;
 import btc.Main;
 
 /**
@@ -120,9 +121,13 @@ public class Vector {
 	 * Maps between a position on the target screen and the actual screen
 	 */
 	public Vector remapPosition() {
-		return new Vector(this.x * Main.getXScale(),
-				(((Main.TARGET_HEIGHT * Main.getYScale()) - 160)
-						/ (Main.TARGET_HEIGHT - 160)) * this.y, this.z);
+		double newX = (((Main.TARGET_WIDTH * Main.getXScale()) - (2 * Demo.airspaceViewOffsetX))
+				/ (Main.TARGET_WIDTH - Demo.airspaceViewOffsetX)) * this.x;
+		
+		double newY = (((Main.TARGET_HEIGHT * Main.getYScale()) - Demo.getPlaneInfoHeight() - 20)
+				/ (Main.TARGET_HEIGHT - Demo.getPlaneInfoHeight() - 20)) * this.y;
+		
+		return new Vector(newX, newY, this.z);
 	}
 
 }
