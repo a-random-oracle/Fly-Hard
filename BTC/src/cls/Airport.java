@@ -79,7 +79,7 @@ public class Airport extends Waypoint implements EventHandler {
 	private boolean isDeparturesClicked = false;
 	
 	/** The image used to represent the airport */
-	private static Image image = graphics.newImage("gfx" + File.separator + "Airport.png");
+	private Image image = graphics.newImage("gfx" + File.separator + "Airport.png");
 	
 	/** The scaling factor to apply to cause the airport to 'fit in' with the map size
 	 * this is taken to be the lower (and hence smaller) of the height and width scales */
@@ -265,6 +265,14 @@ public class Airport extends Waypoint implements EventHandler {
 
 	@Override
 	public void keyReleased(int key) {}
+	
+	public boolean isArrivalsClicked(int x, int y) {
+		return isWithinArrivals(new Vector(x,y,0)) && !isActive;
+	}
+	
+	public boolean isDeparturesClicked(int x, int y) {
+		return isWithinDepartures(new Vector(x,y,0)) && !isActive;
+	}
 	
 	/**
 	 * Checks whether the specified testX and testY coordinates are within a region.

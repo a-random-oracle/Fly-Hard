@@ -5,12 +5,14 @@ import java.util.ArrayList;
 public class FlightPlan {	
 	private Waypoint[] route;
 	private String originName;
+	private Vector origin;
 	private String destinationName;
 	private Vector destination;
 	
 	FlightPlan(Waypoint[] route, String originName, String destinationName, Waypoint originPoint, Waypoint destinationPoint) {
 		this.route = findGreedyRoute(originPoint, destinationPoint, route);
 		this.originName = originName;
+		this.origin = originPoint.getLocation();
 		this.destinationName = destinationName;
 		this.destination = destinationPoint.getLocation();
 	}
@@ -21,6 +23,10 @@ public class FlightPlan {
 	
 	public Vector getDestination() {
 		return destination;
+	}
+	
+	public Vector getOrigin() {
+		return origin;
 	}
 	
 	public String getDestinationName() {

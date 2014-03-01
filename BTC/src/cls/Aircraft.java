@@ -213,9 +213,13 @@ public class Aircraft {
 		creationTime = System.currentTimeMillis() / 1000; // System time when aircraft was created in seconds.
 		position = originPoint.getLocation();
 		
-		if (originPoint.getLocation() == Demo.airport.getLocation()) {
-			position = position.add(new Vector(-100, -70, 0)); // Start at departures
+		// Find the airport the aircraft is at, and start at its departures area
+		for (Airport airport : Demo.airports) {
+			if (originPoint.getLocation() == airport.getLocation()) {
+				position = position.add(new Vector(-100, -70, 0)); //TODO (rescale?)
+			}
 		}
+		
 		int altitudeOffset = RandomNumber.randInclusiveInt(0, 1) == 0 ? 28000 : 30000;
 		position = position.add(new Vector(0, 0, altitudeOffset));
 
@@ -225,7 +229,12 @@ public class Aircraft {
 		double y = currentTarget.getY() - position.getY();
 		velocity = new Vector(x, y, 0).normalise().scaleBy(speed);
 
-		isWaitingToLand = flightPlan.getDestination().equals(Demo.airport.getLocation());
+		isWaitingToLand = false;
+		for (Airport airport : Demo.airports) {
+			if (flightPlan.getDestination().equals(airport.getLocation())) {
+				isWaitingToLand = true;
+			}
+		}
 
 		// Speed up plane for higher difficulties
 		switch (difficulty) {
@@ -331,12 +340,15 @@ public class Aircraft {
 	}
 	
 	public boolean isAtDestination() {
-		if (flightPlan.getDestination().equals(Demo.airport.getLocation())) { // At airport
-			turningCumulative = 0;
-			return Demo.airport.isWithinArrivals(position, false); // Within Arrivals rectangle
-		} else {
-			return isAt(flightPlan.getDestination()); // Very close to destination
+		for (Airport airport : Demo.airports) {
+			if (flightPlan.getDestination().equals(airport.getLocation())) { // At airport
+				turningCumulative = 0;
+				return airport.isWithinArrivals(position, false); // Within Arrivals rectangle
+			} else {
+				return isAt(flightPlan.getDestination()); // Very close to destination
+			}
 		}
+		return false;
 	}
 
 	/**
@@ -348,11 +360,17 @@ public class Aircraft {
 		
 		// Update altitude
 		if (isLanding) {
-			if (position.getZ() > 100) { 
-				position.setZ(position.getZ() - 2501 * time_difference); // Decrease altitude rapidly (2501/second), ~11 seconds to fully descend
-			} else { // Gone too low, land it now
-				Demo.airport.isActive = false;
-				hasFinished = true;
+			if (position.getZ() > 100) {
+				 // Decrease altitude rapidly (2501/second),
+				// ~11 seconds to fully descend
+				position.setZ(position.getZ() - 2501 * time_difference);
+			} else { // Gone too low, land it now TODO (check this)
+				for (Airport airport : Demo.airports) {
+					if (flightPlan.getDestination().equals(airport.getLocation())) {
+						airport.isActive = false;
+						hasFinished = true;
+					}
+				}
 			}
 		} else {
 			switch (altitudeState) {
@@ -377,8 +395,10 @@ public class Aircraft {
 		if (currentTarget.equals(flightPlan.getDestination()) && isAtDestination()) { // At finishing point
 			if (!isWaitingToLand) { // Ready to land
 				hasFinished = true;
-				if (flightPlan.getDestination().equals(Demo.airport.getLocation())) { // Landed at airport
-					Demo.airport.isActive = false;
+				for (Airport airport : Demo.airports) {
+					if (flightPlan.getDestination().equals(airport.getLocation())) { // Landed at airport
+						airport.isActive = false;
+					}
 				}
 			}
 		} else if (isAt(currentTarget)) {
@@ -661,11 +681,20 @@ public class Aircraft {
 		isWaitingToLand = false;
 		isLanding = true;
 		isManuallyControlled = false;
-		Demo.airport.isActive = true;
+		for (Airport airport : Demo.airports) {
+			if (flightPlan.getDestination().equals(airport.getLocation())) {
+				airport.isActive = true;
+			}
+		}
 	}
 
 	public void takeOff() {
-		Demo.airport.isActive = true;
+		for (Airport airport : Demo.airports) {
+			if (flightPlan.getDestination().equals(airport.getLocation())) {
+				airport.isActive = true;
+			}
+		}
+		
 		Demo.takeOffSequence(this);
 		creationTime = System.currentTimeMillis() / 1000; // Reset creation time
 	}
