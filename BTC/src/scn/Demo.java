@@ -244,16 +244,19 @@ public class Demo extends Scene {
 		
 		score = new Score();
 		
-		manualOverrideButton = new lib.ButtonText("Take Control", manual, (window.width() - 128) / 2, 32, 128, 64, 8, 4);
+		manualOverrideButton = new lib.ButtonText("Take Control", manual,
+				(window.width() -128 - 2*airspaceViewOffsetX) / 2, 32, 128, 32, 8, 4);
 		timeElapsed = 0;
 		compassClicked = false;
 		selectedAircraft = null;
 		clickedWaypoint = null;
 		selectedPathpoint = -1;
 		
-		manualOverrideButton = new lib.ButtonText(" Take Control", manual, (window.width() - 128) / 2, 32, 128, 64, 8, 4);
+		manualOverrideButton = new lib.ButtonText(" Take Control", manual,
+				(window.width() - 128 - 2*airspaceViewOffsetX) / 2, 32, 128, 32, 8, 4);
 		altimeter = new cls.Altimeter(ALTIMETER_X, ALTIMETER_Y, ALTIMETER_W, ALTIMETER_H, ordersBox);
-		airportControlBox = new AirportControlBox(AIRPORT_CONTROL_X, AIRPORT_CONTROL_Y, AIRPORT_CONTROL_W, AIRPORT_CONTROL_H, airport);
+		airportControlBox = new AirportControlBox(AIRPORT_CONTROL_X, AIRPORT_CONTROL_Y,
+				AIRPORT_CONTROL_W, AIRPORT_CONTROL_H, airport);
 		deselectAircraft();
 	}
 	
@@ -680,9 +683,9 @@ public class Demo extends Scene {
 			graphics.setColour(graphics.green);
 			// Override Button
 			graphics.setColour(graphics.black);
-			graphics.rectangle(true, (window.width() - 128) / 2, 16, 128, 32);
+			graphics.rectangle(true, (window.width() - 128 - 2*airspaceViewOffsetX) / 2, 32, 128, 32);
 			graphics.setColour(graphics.green);
-			graphics.rectangle(false, (window.width() - 128) / 2, 16, 128, 32);
+			graphics.rectangle(false, (window.width() - 128 - 2*airspaceViewOffsetX) / 2, 32, 128, 32);
 			manualOverrideButton.draw();
 			
 			selectedAircraft.drawFlightPath(true);
