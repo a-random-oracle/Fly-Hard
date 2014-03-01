@@ -294,8 +294,8 @@ public class Airport extends Waypoint implements EventHandler {
 		return isWithinRect(
 				(int)position.getX(),
 				(int)position.getY(),
-				(int)(arrivalsX) + Demo.airspaceViewOffsetX,
-				(int)(arrivalsY) + Demo.airspaceViewOffsetY,
+				(int)(arrivalsX) + Demo.xOffset,
+				(int)(arrivalsY) + Demo.yOffset,
 				(int)arrivalsWidth,
 				(int)arrivalsHeight);
 	}
@@ -328,8 +328,8 @@ public class Airport extends Waypoint implements EventHandler {
 		return isWithinRect(
 				(int)position.getX(),
 				(int)position.getY(),
-				(int)(departuresX) + Demo.airspaceViewOffsetX,
-				(int)(departuresY) + Demo.airspaceViewOffsetY,
+				(int)(departuresX) + Demo.xOffset,
+				(int)(departuresY) + Demo.yOffset,
 				(int)departuresWidth,
 				(int)departuresHeight);
 	}
