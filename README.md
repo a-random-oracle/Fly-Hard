@@ -2,8 +2,6 @@ Mission Control
 ========
 
 ## Notices
-* __Richard will be merging fullscreen back into master tonight. Please note that this will involve changes to many classes. The full list of classes which _may_ be modified is here: [_classes which may be modified_](https://github.com/MWUK/Fly-Hard/compare/fullscreen#files_bucket)__
-
 * __Please use issue numbers when committing changes/fixes relating to defined issues, it makes everything more trackable__ (also you don't have to be as descriptive, i.e. `Fixed #n` would be easier and as descriptive than `I fixed the issue where everything explodes if you click the middle mouse button`)
 * [Tim Time happened](https://github.com/MWUK/Fly-Hard/blob/master/Docs/Tim%20Time/28-2-14.md).
 * Super SEPR Saturday Shenanigans __2014/03/01 14:30UTC__ 
@@ -30,7 +28,7 @@ _These are not final/rigid. Any issues, update/query as you wish :D_
 
 | Member | Tasks | File/Source |
 |:-------|:-----|:------------|
-| [Wanderlust](http://github.com/a-random-oracle) | Full-scream | [_fullscreen branch_](https://github.com/MWUK/Fly-Hard/tree/fullscreen) |
+| [Wanderlust](http://github.com/a-random-oracle) | Full-scream | [_fullscreen bugs_](https://github.com/MWUK/Fly-Hard/issues?milestone=5&state=open) |
 | [200% Richard](http://github.com/RMCKirby) | Networking | [`graphics.java`](https://github.com/MWUK/Fly-Hard/blob/master/BTC/src/lib/jog/graphics.java), [`scn*`](https://github.com/MWUK/Fly-Hard/tree/master/BTC/src/scn), and [_networking branch_](https://github.com/MWUK/Fly-Hard/tree/networking) |
 | [Bonus Mark](http://github.com/MWUK) | Wandering Planes (issue to follow) |  [`Aircraft.java`](https://github.com/MWUK/Fly-Hard/blob/master/BTC/src/scn/Aircraft.java) |
 | [50% Jaron](http://github.com/JaronAli) | [Search and Rescue](https://github.com/MWUK/FlyHard/issues/10) | [`Aircraft.java`](https://github.com/MWUK/Fly-Hard/blob/master/BTC/src/scn/Aircraft.java) |
