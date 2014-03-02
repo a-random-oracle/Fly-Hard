@@ -2,12 +2,13 @@ package cls;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Timer;
+import java.util.Random;
 
 import scn.Demo;
-import lib.RandomNumber;
 import lib.jog.audio;
+import lib.jog.audio.Sound;
 import lib.jog.graphics;
+import lib.jog.graphics.Image;
 import lib.jog.input;
 import lib.jog.window;
 
@@ -19,11 +20,11 @@ public class Aircraft {
 	private final static int RADIUS = 16; // The physical size of the plane in pixels. This determines crashes.
 	private final static int MOUSE_LENIENCY = 32;  // How far away (in pixels) the mouse can be from the plane but still select it.
 	public final static int COMPASS_RADIUS = 64; // How large to draw the bearing circle.
-	private final static audio.Sound WARNING_SOUND = audio.newSoundEffect("sfx" + File.separator + "beep.ogg"); // Used during separation violation
+	private final static Sound WARNING_SOUND = audio.newSoundEffect("sfx" + File.separator + "beep.ogg"); // Used during separation violation
 	
 	private static int minimumSeparation; // Depends on difficulty
 
-	private graphics.Image image; // The plane image
+	private Image image; // The plane image
 	private double turnSpeed; // How much the plane can turn per second - in radians.
 	private String flightName; // Unique and generated randomly - format is Flight followed by a random number between 100 and 900 e.g Flight 404
 	private double creationTime; // Used to calculate how long an aircraft spent in the airspace
@@ -37,7 +38,6 @@ public class Aircraft {
 	private int verticalVelocity; // The speed to climb or fall by. Depends on difficulty
 	private FlightPlan flightPlan;
 	private boolean isLanding = false;
-	private int turningCumulative = 0;
 	
 	public Vector currentTarget; // The position the plane is currently flying towards (if not manually controlled).
 	private double manualBearingTarget = Double.NaN;
@@ -52,7 +52,7 @@ public class Aircraft {
 	private int individualScore;
 	private int additionToMultiplier = 1; // This variable increases the multiplierVariable when a plane successfully leaves the airspace.
 	
-	private java.util.ArrayList<Aircraft> planesTooNear = new java.util.ArrayList<Aircraft>(); // Holds a list of planes currently in violation of separation rules with this plane
+	private ArrayList<Aircraft> planesTooNear = new ArrayList<Aircraft>(); // Holds a list of planes currently in violation of separation rules with this plane
 	
 	/**
 	 * Static ints for use where altitude state is to be changed.
@@ -142,7 +142,6 @@ public class Aircraft {
 		return flightPlan;
 	}
 	
-	// Setters
 	/**
 	 * Used outside of Aircraft class to assign a (system) time to a plane that successfully left airspace
 	 * @param departureTime (system time when a plane departed)
@@ -220,7 +219,7 @@ public class Aircraft {
 			}
 		}
 		
-		int altitudeOffset = RandomNumber.randInclusiveInt(0, 1) == 0 ? 28000 : 30000;
+		int altitudeOffset = ((new Random()).nextInt(2)) == 0 ? 28000 : 30000;
 		position = position.add(new Vector(0, 0, altitudeOffset));
 
 		// Calculate initial velocity (direction)
@@ -247,7 +246,7 @@ public class Aircraft {
 			verticalVelocity = 500;
 			baseScore = 60;
 			optimalTime = flightPlan.getTotalDistance() / speed;
-		break;
+			break;
 
 		case Demo.DIFFICULTY_MEDIUM:
 			minimumSeparation = 96;
@@ -256,8 +255,8 @@ public class Aircraft {
 			verticalVelocity = 300;
 			baseScore = 150;
 			optimalTime = flightPlan.getTotalDistance() / (speed * 2);
-		break;
-			
+			break;
+
 		case Demo.DIFFICULTY_HARD:
 			minimumSeparation = 128;
 			velocity = velocity.scaleBy(3);
@@ -267,7 +266,7 @@ public class Aircraft {
 			baseScore = 300;
 			additionToMultiplier = 3;
 			optimalTime = flightPlan.getTotalDistance() / (speed * 3);
-		break;
+			break;
 
 		default:
 			Exception e = new Exception("Invalid Difficulty: " + difficulty + ".");
@@ -290,11 +289,13 @@ public class Aircraft {
 	public boolean isOutOfAirspaceBounds() {
 		double x = position.getX();
 		double y = position.getY();
-		return (x < (RADIUS/2) || x > window.width() - (RADIUS/2) || y < (RADIUS/2) || y > window.height() + RADIUS - 176);
+		return (x < (RADIUS/2)
+				|| x > window.width() - (RADIUS/2)
+				|| y < (RADIUS/2)
+				|| y > window.height() + RADIUS - 176);
 	}
 
 	public boolean isAt(Vector point) {
-		turningCumulative = 0;
 		double dy = point.getY() - position.getY();
 		double dx = point.getX() - position.getX();
 		return dy*dy + dx*dx < 6;
@@ -342,7 +343,6 @@ public class Aircraft {
 	public boolean isAtDestination() {
 		for (Airport airport : Demo.airports) {
 			if (flightPlan.getDestination().equals(airport.getLocation())) { // At airport
-				turningCumulative = 0;
 				return airport.isWithinArrivals(position, false); // Within Arrivals rectangle
 			} else {
 				return isAt(flightPlan.getDestination()); // Very close to destination
@@ -404,7 +404,8 @@ public class Aircraft {
 		} else if (isAt(currentTarget)) {
 			currentRouteStage++;
 			// Next target is the destination if you're at the end of the plan, otherwise it's the next waypoint
-			currentTarget = currentRouteStage >= flightPlan.getRoute().length ? flightPlan.getDestination() : flightPlan.getRoute()[currentRouteStage].getLocation();
+			currentTarget = (currentRouteStage >= flightPlan.getRoute().length)
+					? flightPlan.getDestination() : flightPlan.getRoute()[currentRouteStage].getLocation();
 		}
 
 		// Update bearing
@@ -555,14 +556,23 @@ public class Aircraft {
 		
 		if (currentTarget != destination) {
 			// Draw line from plane to next waypoint
-			graphics.line(position.getX()-image.width()/2, position.getY()-image.height()/2, route[currentRouteStage].getLocation().getX(), route[currentRouteStage].getLocation().getY());
+			graphics.line(position.getX()-image.width()/2,
+					position.getY()-image.height()/2,
+					route[currentRouteStage].getLocation().getX(),
+					route[currentRouteStage].getLocation().getY());
 		} else {
 			// Draw line from plane to destination
-			graphics.line(position.getX()-image.width()/2, position.getY()-image.height()/2, destination.getX(), destination.getY());			
+			graphics.line(position.getX()-image.width()/2,
+					position.getY()-image.height()/2,
+					destination.getX(),
+					destination.getY());			
 		}
 		
 		for (int i = currentRouteStage; i < route.length-1; i++) { // Draw lines between successive waypoints
-			graphics.line(route[i].getLocation().getX(), route[i].getLocation().getY(), route[i+1].getLocation().getX(), route[i+1].getLocation().getY());	
+			graphics.line(route[i].getLocation().getX(),
+					route[i].getLocation().getY(),
+					route[i+1].getLocation().getX(),
+					route[i+1].getLocation().getY());	
 		}
 	}
 
@@ -601,7 +611,7 @@ public class Aircraft {
 	 * @param global score object used to decrement score if separation is breached
 	 * @return index of plane breaching separation distance with this plane, or -1 if no planes are in violation.
 	 */
-	public int updateCollisions(double time_difference,	ArrayList<Aircraft> aircraftList, Score score) {
+	public int updateCollisions(double time_difference,	ArrayList<Aircraft> aircraftList) {
 		planesTooNear.clear();
 		for (int i = 0; i < aircraftList.size(); i++) {
 			Aircraft plane = aircraftList.get(i);
@@ -610,7 +620,6 @@ public class Aircraft {
 				return i;
 			} else if (plane != this && isWithin(plane, minimumSeparation)) { // Breaching separation distance
 				planesTooNear.add(plane);
-				score.increaseMeterFill(-1); // Punishment for breaching separation rules (applies to all aircraft involved - usually 2)
 				if (!collisionWarningSoundFlag) {
 					collisionWarningSoundFlag = true;
 					WARNING_SOUND.play();

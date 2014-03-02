@@ -3,9 +3,9 @@ package scn;
 import java.io.File;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Random;
 
 import lib.ButtonText;
-import lib.RandomNumber;
 import lib.jog.audio;
 import lib.jog.audio.Music;
 import lib.jog.graphics;
@@ -15,7 +15,6 @@ import lib.jog.window;
 
 import cls.Aircraft;
 import cls.Airport;
-import cls.Score;
 import cls.Waypoint;
 
 import btc.Main;
@@ -34,9 +33,6 @@ public class Demo extends Scene {
 	public final static int DIFFICULTY_MEDIUM = 1;
 	public final static int DIFFICULTY_HARD = 2;
 	public static int difficulty = DIFFICULTY_EASY;
-	
-	/** The score throughout the game */
-	private Score score;
 	
 	/** Time since the scene began */
 	private static double timeElapsed;
@@ -125,12 +121,7 @@ public class Demo extends Scene {
 	 * @return maximum number of planes
 	 */
 	private int getMaxAircraft() {
-		if (score.getMultiplier() == 1) 
-			return 3;
-		else if (score.getMultiplier() == 3) 
-			return 5;
-		else
-			return score.getMultiplier();
+		return 4; //TODO
 	}
 	
 	/**
@@ -248,8 +239,6 @@ public class Demo extends Scene {
 			}
 		};
 		
-		score = new Score();
-		
 		manualOverrideButton = new lib.ButtonText("Take Control", manual,
 				(window.width() -128 - 2*xOffset) / 2, 32, 128, 32, 8, 4);
 		timeElapsed = 0;
@@ -303,22 +292,11 @@ public class Demo extends Scene {
 		if (paused) return;
 		
 		timeElapsed += timeDifference;
-		score.update();
 		graphics.setColour(graphics.green_transp);
-		
-		for (Airport airport : airports) {
-			if (airport.getLongestTimeInHangar(timeElapsed) > 5) {
-				score.increaseMeterFill(-1);
-			}
-		}
 		
 		for (Aircraft aircraft : aircraftInAirspace) {
 			aircraft.update(timeDifference);
 			if (aircraft.isFinished()) {
-				aircraft.setAdditionToMultiplier(score.getMultiplierLevel());
-				score.increaseMeterFill(aircraft.getAdditionToMultiplier());
-				aircraft.setScore(score.calculateAircraftScore(aircraft));
-				score.increaseTotalScore(score.getMultiplier() * aircraft.getScore());
 				aircraft.setDepartureTime(System.currentTimeMillis());
 				recentlyDepartedAircraft.add(aircraft);
 			}
@@ -407,7 +385,6 @@ public class Demo extends Scene {
 		
 		graphics.setColour(graphics.green);
 		drawAdditional();
-		drawPlaneScoreLabels();
 		
 		if (selectedAircraft != null) {//HERE
 			graphics.line(input.mouseX(),
@@ -429,7 +406,7 @@ public class Demo extends Scene {
 	 */
 	private void checkCollisions(double timeDifference) {
 		for (Aircraft plane : aircraftInAirspace) {
-			int collisionState = plane.updateCollisions(timeDifference, aircraftList(), score);
+			int collisionState = plane.updateCollisions(timeDifference, aircraftList());
 			if (collisionState >= 0) {
 				gameOver(plane, aircraftList().get(collisionState));
 				return;
@@ -452,7 +429,7 @@ public class Demo extends Scene {
 		
 		// playSound(audio.newSoundEffect("sfx" + File.separator + "crash.ogg"));
 		main.closeScene();
-		main.setScene(new GameOver(main, plane1, plane2, score.getTotalScore()));
+		main.setScene(new GameOver(main, plane1, plane2, 0)); //TODO
 	}
 	
 	/**
@@ -723,42 +700,6 @@ public class Demo extends Scene {
 	}
 	
 	/**
-	 * Draws points scored for a plane when it successfully leaves the airspace. The points the
-	 * plane scored are displayed just above the plane.
-	 */
-	private void drawPlaneScoreLabels() {
-		Aircraft aircraftToRemove = null;
-		int displayedFor = 2000; // How long the label will be displayed for
-		if (recentlyDepartedAircraft.size() != 0) {
-			for (Aircraft plane : recentlyDepartedAircraft) {
-				if (plane != null) {
-					double currentTime = System.currentTimeMillis(); // Current (system) time
-					double departureTime = plane.getTimeOfDeparture(); // Time when the plane successfully left airspace 
-					double leftAirspaceFor = currentTime - departureTime; // How long since the plane left airspace
-					if (leftAirspaceFor > displayedFor) {
-						aircraftToRemove = plane;
-					}
-					else {
-						int scoreTextAlpha =  (int)((displayedFor - leftAirspaceFor)/displayedFor * 255); // Transparency of the label, 255 is opaque
-						String planeScoreValue = String.valueOf(plane.getScore() * score.getMultiplier());
-						// Drawing the score
-						int scoreTextX = (int) plane.getFlightPlan().getRoute()[plane.getFlightPlan().getRoute().length -1].getLocation().getX();
-						int scoreTextY = (int) plane.getFlightPlan().getRoute()[plane.getFlightPlan().getRoute().length -1].getLocation().getY();
-						graphics.setColour(255, 255, 255, scoreTextAlpha);
-						if (scoreTextX < 40) scoreTextX += 50;
-						if (scoreTextY < 40) scoreTextY += 50;
-						if (scoreTextX > 1000) scoreTextX -= 50;
-						if (scoreTextY > 1000) scoreTextY -= 50;
-						graphics.print(planeScoreValue, scoreTextX, scoreTextY, 2);
-					}
-				}
-			} 
-			if (aircraftToRemove != null)
-				recentlyDepartedAircraft.remove(aircraftToRemove);
-		}
-	}
-	
-	/**
 	 * Draw a readout of the time the game has been played for, and number of planes in the sky.
 	 */
 	private void drawAdditional() {
@@ -865,7 +806,8 @@ public class Demo extends Scene {
 				}
 			}
 		} else {
-			originPoint = availableOrigins.get(RandomNumber.randInclusiveInt(0, availableOrigins.size()-1));
+			originPoint = availableOrigins.get((new Random())
+					.nextInt((availableOrigins.size() - 1) + 1));
 			for (int i = 0; i < locationWaypoints.length; i++) {
 				if (locationWaypoints[i].equals(originPoint)) {
 					originName = locationWaypoints[i].getName();
@@ -875,12 +817,12 @@ public class Demo extends Scene {
 		}
 		
 		// Work out destination
-		int destination = RandomNumber.randInclusiveInt(0, locationWaypoints.length - 1);
+		int destination = (new Random()).nextInt((locationWaypoints.length - 1) + 1);
 		destinationName = locationWaypoints[destination].getName();
 		destinationPoint = locationWaypoints[destination];
 		
 		while (locationWaypoints[destination].getName() == originName) {
-			destination = RandomNumber.randInclusiveInt(0, locationWaypoints.length - 1);
+			destination = (new Random()).nextInt((locationWaypoints.length - 1) + 1);
 			destinationName = locationWaypoints[destination].getName();
 			destinationPoint = locationWaypoints[destination];
 		}
