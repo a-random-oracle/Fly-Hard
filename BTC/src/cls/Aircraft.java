@@ -336,7 +336,7 @@ public class Aircraft {
 	 * @return true, if the mouse is close enough to this plane. False, otherwise.
 	 */
 	public boolean isMouseOver() {
-		return isMouseOver(input.mouseX() - Demo.airspaceViewOffsetX, input.mouseY() - Demo.airspaceViewOffsetY);
+		return isMouseOver(input.mouseX() - Demo.xOffset, input.mouseY() - Demo.yOffset);
 	}
 	
 	public boolean isAtDestination() {
@@ -485,8 +485,8 @@ public class Aircraft {
 		graphics.setColour(graphics.green);
 		
 		// Centre positions of aircraft
-		Double xpos = position.getX()-image.width()/2 + Demo.airspaceViewOffsetX; 
-		Double ypos = position.getY()-image.height()/2 + Demo.airspaceViewOffsetY;
+		Double xpos = position.getX()-image.width()/2 + Demo.xOffset; 
+		Double ypos = position.getY()-image.height()/2 + Demo.yOffset;
 		
 		// Draw the compass circle
 		graphics.circle(false, xpos, ypos, COMPASS_RADIUS, 30);
