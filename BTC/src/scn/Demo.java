@@ -333,6 +333,7 @@ public class Demo extends Scene {
 		timeElapsed += timeDifference;
 		score.update();
 		graphics.setColour(graphics.green_transp);
+		
 		if (airport.getLongestTimeInHangar(timeElapsed) > 5) {
 			score.increaseMeterFill(-1);
 			if (!shownAircraftWaitingMessage) {
@@ -344,6 +345,7 @@ public class Demo extends Scene {
 		}
 		
 		ordersBox.update(timeDifference);
+		
 		for (Aircraft aircraft : aircraftInAirspace) {
 			aircraft.update(timeDifference);
 			if (aircraft.isFinished()) {
@@ -370,7 +372,9 @@ public class Demo extends Scene {
 				}
 			}
 		}
+		
 		checkCollisions(timeDifference);
+		
 		for (int i = aircraftInAirspace.size()-1; i >=0; i --) {
 			if (aircraftInAirspace.get(i).isFinished()) {
 				if (aircraftInAirspace.get(i) == selectedAircraft) {
@@ -379,7 +383,9 @@ public class Demo extends Scene {
 				aircraftInAirspace.remove(i);
 			}
 		}
+		
 		airport.update(aircraftInAirspace);
+		
 		if (selectedAircraft != null) {
 			if (selectedAircraft.isManuallyControlled()) {
 				if (input.keyPressed(new int[]{input.KEY_LEFT, input.KEY_A})) {
@@ -416,8 +422,8 @@ public class Demo extends Scene {
 				generateFlight();
 			}
 		}
-		if (aircraftInAirspace.size() == 0)
-			generateFlight();
+		
+		if (aircraftInAirspace.size() == 0) generateFlight();
 	}
 	
 	/**
@@ -452,18 +458,6 @@ public class Demo extends Scene {
 		graphics.setColour(graphics.green);
 		drawAdditional();
 		drawPlaneScoreLabels();
-		
-		if (selectedAircraft != null) {//HERE
-			graphics.line(input.mouseX(),
-					input.mouseY(),
-					selectedAircraft.getPosition().getX() + Demo.xOffset - 16/2,
-					selectedAircraft.getPosition().getY() + Demo.yOffset - 16/2);
-			
-			graphics.line(selectedAircraft.getPosition().getX() + Demo.xOffset - 16/2,
-					selectedAircraft.getPosition().getY() + Demo.yOffset - 16/2,
-					selectedAircraft.getPosition().getX() + Demo.xOffset - 16/2 + (Math.cos(selectedAircraft.getBearing()) * 100),
-					selectedAircraft.getPosition().getY() + Demo.yOffset - 16/2 + (Math.sin(selectedAircraft.getBearing()) * 100));
-		}
 	}
 	
 	/**
@@ -573,6 +567,8 @@ public class Demo extends Scene {
 	 */
 	@Override
 	public void mousePressed(int key, int x, int y) {
+		if (paused) return;
+		
 		airportControlBox.mousePressed(key, x, y);
 		altimeter.mousePressed(key, x, y);
 		if (key == input.MOUSE_LEFT) {
@@ -634,6 +630,8 @@ public class Demo extends Scene {
 
 	@Override
 	public void mouseReleased(int key, int x, int y) {
+		if (paused) return;
+		
 		airport.mouseReleased(key, x, y);
 		airportControlBox.mouseReleased(key, x, y);
 		altimeter.mouseReleased(key, x, y);
@@ -654,20 +652,12 @@ public class Demo extends Scene {
 				selectedPathpoint = -1;
 			}
 			clickedWaypoint = null; // Fine to set to null now as will have been dealt with
-		} else if (key == input.MOUSE_RIGHT) { //TODO
+		} else if (key == input.MOUSE_RIGHT) {
 			if (compassClicked && selectedAircraft != null) {
 				double dx = input.mouseX() - selectedAircraft.getPosition().getX() + xOffset - 8;
 				double dy = input.mouseY() - selectedAircraft.getPosition().getY() + yOffset - 8;
 				double newBearing = Math.atan2(dy, dx);
 				selectedAircraft.setBearing(newBearing);
-				graphics.circle(true,
-						selectedAircraft.getPosition().getX() + xOffset - 8,
-						selectedAircraft.getPosition().getY() + yOffset - 8,
-						8);
-				graphics.circle(true,
-						input.mouseX(),
-						input.mouseY(),
-						8);
 			}
 		} else if (key == input.MOUSE_WHEEL_UP) {
 			highlightedAltitude = 30000;
@@ -677,18 +667,25 @@ public class Demo extends Scene {
 	}
 
 	@Override
-	public void keyPressed(int key) {}
+	public void keyPressed(int key) {
+		if (paused) return;
+	}
 
 	/**
 	 * Handle keyboard input
 	 */
 	@Override
 	public void keyReleased(int key) {
-		switch (key) {
-			case input.KEY_P :
-				paused = !paused;
-				break;
+		// Ensure p and escape still work when paused
+		if (key == input.KEY_P) {
+			paused = !paused;
+		} else if (key == input.KEY_ESCAPE) {
+			paused = false;
+		}
 		
+		if (paused) return;
+		
+		switch (key) {
 			case input.KEY_SPACE :
 				toggleManualControl();
 				break;
@@ -712,8 +709,8 @@ public class Demo extends Scene {
 	}
 	
 	/**
-	 * draw waypoints, and route of a selected aircraft between waypoints
-	 * print waypoint names next to waypoints
+	 * Draw waypoints, and route of a selected aircraft between waypoints,
+	 * and print waypoint names next to waypoints.
 	 */
 	private void drawMap() {
 		for (Waypoint waypoint : airspaceWaypoints) {
@@ -746,7 +743,9 @@ public class Demo extends Scene {
 		}
 		
 		if (clickedWaypoint != null && selectedAircraft.isManuallyControlled() == false) {
-			selectedAircraft.drawModifiedPath(selectedPathpoint, input.mouseX() - xOffset, input.mouseY() - yOffset);
+			selectedAircraft.drawModifiedPath(selectedPathpoint,
+					input.mouseX() - xOffset,
+					input.mouseY() - yOffset);
 		}
 		
 		graphics.setViewport();
@@ -769,25 +768,29 @@ public class Demo extends Scene {
 	}
 	
 	/**
-	 * draw the info of a selected plane in the scene GUI
+	 * Draw the info of a selected plane in the scene GUI.
 	 */
-	private void drawPlaneInfo() {
+	public void drawPlaneInfo() {
 		graphics.setColour(graphics.green);
 		graphics.rectangle(false, PLANE_INFO_X, PLANE_INFO_Y, PLANE_INFO_W, PLANE_INFO_H);
 		if (selectedAircraft != null) {
 			graphics.setViewport(PLANE_INFO_X, PLANE_INFO_Y, PLANE_INFO_W, PLANE_INFO_H);
 			graphics.printCentred(selectedAircraft.getName(), 0, 5, 2, PLANE_INFO_W);
+			
 			// Altitude
 			String altitude = String.format("%.0f", selectedAircraft.getPosition().getZ()) + "+";
 			graphics.print("Altitude:", 10, 40);
 			graphics.print(altitude, PLANE_INFO_W - 10 - altitude.length()*8, 40);
+			
 			// Speed
 			String speed = String.format("%.2f", selectedAircraft.getSpeed() * 1.687810) + "=";
 			graphics.print("Speed:", 10, 55);
 			graphics.print(speed, PLANE_INFO_W - 10 - speed.length()*8, 55);
+			
 			// Origin
 			graphics.print("Origin:", 10, 70);
 			graphics.print(selectedAircraft.getFlightPlan().getOriginName(), PLANE_INFO_W - 10 - selectedAircraft.getFlightPlan().getOriginName().length()*8, 70);
+			
 			// Destination
 			graphics.print("Destination:", 10, 85);
 			graphics.print(selectedAircraft.getFlightPlan().getDestinationName(), PLANE_INFO_W - 10 - selectedAircraft.getFlightPlan().getDestinationName().length()*8, 85);
@@ -796,8 +799,8 @@ public class Demo extends Scene {
 	}
 	
 	/**
-	 * Draws points scored for a plane when it successfully leaves the airspace. The points the
-	 * plane scored are displayed just above the plane.
+	 * Draws points scored for a plane when it successfully leaves the airspace.
+	 * The points the plane scored are displayed just above the plane.
 	 */
 	private void drawPlaneScoreLabels() {
 		Aircraft aircraftToRemove = null;
@@ -815,8 +818,10 @@ public class Demo extends Scene {
 						int scoreTextAlpha =  (int)((displayedFor - leftAirspaceFor)/displayedFor * 255); // Transparency of the label, 255 is opaque
 						String planeScoreValue = String.valueOf(plane.getScore() * score.getMultiplier());
 						// Drawing the score
-						int scoreTextX = (int) plane.getFlightPlan().getRoute()[plane.getFlightPlan().getRoute().length -1].getLocation().getX();
-						int scoreTextY = (int) plane.getFlightPlan().getRoute()[plane.getFlightPlan().getRoute().length -1].getLocation().getY();
+						int scoreTextX = (int) plane.getFlightPlan()
+								.getRoute()[plane.getFlightPlan().getRoute().length -1].getLocation().getX();
+						int scoreTextY = (int) plane.getFlightPlan()
+								.getRoute()[plane.getFlightPlan().getRoute().length -1].getLocation().getY();
 						graphics.setColour(255, 255, 255, scoreTextAlpha);
 						if (scoreTextX < 40) scoreTextX += 50;
 						if (scoreTextY < 40) scoreTextY += 50;
@@ -826,15 +831,14 @@ public class Demo extends Scene {
 					}
 				}
 			} 
-			if (aircraftToRemove != null)
-				recentlyDepartedAircraft.remove(aircraftToRemove);
+			if (aircraftToRemove != null) recentlyDepartedAircraft.remove(aircraftToRemove);
 		}
 		
 	}
 		
 	
 	/**
-	 * draw a readout of the time the game has been played for & aircraft in the sky.
+	 * Draw a readout of the time the game has been played for & number of aircraft in the sky.
 	 */
 	private void drawAdditional() {
 		int hours = (int)(timeElapsed / (60 * 60));
@@ -846,7 +850,8 @@ public class Demo extends Scene {
 		graphics.print(timePlayed, window.width() - Demo.xOffset - (timePlayed.length() * 8 + 32), 32);
 		int planes = aircraftInAirspace.size();
 		graphics.print(String.valueOf("Highlighted altitude: " + Integer.toString(highlightedAltitude)) , 32, 15);
-		graphics.print(String.valueOf(aircraftInAirspace.size()) + " plane" + (planes == 1 ? "" : "s") + " in the sky.", 32, 32);
+		graphics.print(String.valueOf(aircraftInAirspace.size())
+				+ " plane" + (planes == 1 ? "" : "s") + " in the sky.", 32, 32);
 	}
 	
 	/**
@@ -856,17 +861,22 @@ public class Demo extends Scene {
 		Aircraft a = createAircraft();
 		if (a != null) {
 			if (a.getFlightPlan().getOriginName().equals(airport.name)) {
-				ordersBox.addOrder("<<< " + a.getName() + " is awaiting take off from " + a.getFlightPlan().getOriginName() + " heading towards " + a.getFlightPlan().getDestinationName() + ".");
+				ordersBox.addOrder("<<< " + a.getName()
+						+ " is awaiting take off from " + a.getFlightPlan().getOriginName()
+						+ " heading towards " + a.getFlightPlan().getDestinationName() + ".");
 				airport.addToHangar(a);
 			} else {
-				ordersBox.addOrder("<<< " + a.getName() + " incoming from " + a.getFlightPlan().getOriginName() + " heading towards " + a.getFlightPlan().getDestinationName() + ".");
+				ordersBox.addOrder("<<< " + a.getName()
+						+ " incoming from " + a.getFlightPlan().getOriginName()
+						+ " heading towards " + a.getFlightPlan().getDestinationName() + ".");
 				aircraftInAirspace.add(a);
 			}
 		}
 	}
 	
 	/**
-	 * Sets the airport to busy, adds the aircraft passed to the airspace, where it begins its flight plan starting at the airport
+	 * Sets the airport to busy, adds the aircraft passed to the airspace,
+	 * where it begins its flight plan starting at the airport.
 	 * @param aircraft
 	 */
 	public static void takeOffSequence(Aircraft aircraft) {
@@ -876,8 +886,9 @@ public class Demo extends Scene {
 	}
 	
 	/**
-	 * Returns array of entry points that are fair to be entry points for a plane (no plane is currently going to exit the airspace there,
-	 * also it is not too close to any plane). 
+	 * Returns array of entry points that are fair to be entry points for a plane
+	 * (no plane is currently going to exit the airspace there, also it is not too
+	 * close to any plane). 
 	 * @param aircraft
 	 */	
 	private ArrayList<Waypoint> getAvailableEntryPoints() {
@@ -886,12 +897,10 @@ public class Demo extends Scene {
 		for (Waypoint entry_point : locationWaypoints) {
 			
 			boolean isAvailable = true;
-			/**
-			 * prevents spawning a plane in waypoint both:
-			 * if any plane is currently going towards it 
-			 * if any plane is less than 250 from it
-			 */
-			
+			// Prevents spawning a plane in waypoint both:
+			//   *if any plane is currently going towards it 
+			//   *if any plane is less than 250 from it
+
 			for (Aircraft aircraft : aircraftInAirspace) {
 				// Check if any plane is currently going towards the exit point/chosen originPoint
 				// Check if any plane is less than what is defined as too close from the chosen originPoint
@@ -919,9 +928,8 @@ public class Demo extends Scene {
 		Waypoint originPoint;
 		Waypoint destinationPoint;
 	
-		/**
-		 * Chooses two waypoints randomly and then checks if they satisfy the rules, if not, it tries until it finds good ones. 
-		 **/
+		// Chooses two waypoints randomly and then checks if they satisfy the rules,
+		// if not, it tries until it finds good ones.
 	
 		ArrayList<Waypoint> available_origins = getAvailableEntryPoints();
 		
@@ -952,7 +960,6 @@ public class Demo extends Scene {
 			destinationName = locationWaypoints[destination].getName();
 			destinationPoint = locationWaypoints[destination];
 		}
-			
 		
 		// Name
 		String name = "";
@@ -975,10 +982,10 @@ public class Demo extends Scene {
 		sound.play();
 	}
 	
-	@Override
 	/**
-	 * cleanly exit by stopping the scene's music
+	 * Cleanly exit by stopping the scene's music
 	 */
+	@Override
 	public void close() {
 		music.stop();
 	}

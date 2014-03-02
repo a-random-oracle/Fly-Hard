@@ -2,7 +2,6 @@ package cls;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Timer;
 
 import scn.Demo;
 import lib.RandomNumber;
@@ -37,7 +36,6 @@ public class Aircraft {
 	private int verticalVelocity; // The speed to climb or fall by. Depends on difficulty
 	private FlightPlan flightPlan;
 	private boolean isLanding = false;
-	private int turningCumulative = 0;
 	
 	public Vector currentTarget; // The position the plane is currently flying towards (if not manually controlled).
 	private double manualBearingTarget = Double.NaN;
@@ -281,11 +279,13 @@ public class Aircraft {
 	public boolean isOutOfAirspaceBounds() {
 		double x = position.getX();
 		double y = position.getY();
-		return (x < (RADIUS/2) || x > window.width() - (RADIUS/2) || y < (RADIUS/2) || y > window.height() + RADIUS - 176);
+		return ((x < (RADIUS/2))
+				|| (x > window.width() - (RADIUS/2) - (2 * Demo.xOffset))
+				|| (y < (RADIUS/2))
+				|| (y > window.height() + (RADIUS/2) - (2 * Demo.yOffset)));
 	}
 
 	public boolean isAt(Vector point) {
-		turningCumulative = 0;
 		double dy = point.getY() - position.getY();
 		double dx = point.getX() - position.getX();
 		return dy*dy + dx*dx < 6;
@@ -332,7 +332,6 @@ public class Aircraft {
 	
 	public boolean isAtDestination() {
 		if (flightPlan.getDestination().equals(Demo.airport.getLocation())) { // At airport
-			turningCumulative = 0;
 			return Demo.airport.isWithinArrivals(position, false); // Within Arrivals rectangle
 		} else {
 			return isAt(flightPlan.getDestination()); // Very close to destination
