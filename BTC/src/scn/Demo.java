@@ -301,7 +301,9 @@ public class Demo extends Scene {
 				recentlyDepartedAircraft.add(aircraft);
 			}
 		}
+		
 		checkCollisions(timeDifference);
+		
 		for (int i = aircraftInAirspace.size()-1; i >=0; i --) {
 			if (aircraftInAirspace.get(i).isFinished()) {
 				if (aircraftInAirspace.get(i) == selectedAircraft) {
@@ -310,7 +312,7 @@ public class Demo extends Scene {
 				aircraftInAirspace.remove(i);
 			}
 		}
-		
+
 		for (Airport airport : airports) {
 			airport.update(aircraftInAirspace);
 		}
@@ -346,8 +348,8 @@ public class Demo extends Scene {
 				generateFlight();
 			}
 		}
-		if (aircraftInAirspace.size() == 0)
-			generateFlight();
+		
+		if (aircraftInAirspace.size() == 0) generateFlight();
 	}
 	
 	/**
@@ -385,18 +387,6 @@ public class Demo extends Scene {
 		
 		graphics.setColour(graphics.green);
 		drawAdditional();
-		
-		if (selectedAircraft != null) {//HERE
-			graphics.line(input.mouseX(),
-					input.mouseY(),
-					selectedAircraft.getPosition().getX() + Demo.xOffset - 16/2,
-					selectedAircraft.getPosition().getY() + Demo.yOffset - 16/2);
-			
-			graphics.line(selectedAircraft.getPosition().getX() + Demo.xOffset - 16/2,
-					selectedAircraft.getPosition().getY() + Demo.yOffset - 16/2,
-					selectedAircraft.getPosition().getX() + Demo.xOffset - 16/2 + (Math.cos(selectedAircraft.getBearing()) * 100),
-					selectedAircraft.getPosition().getY() + Demo.yOffset - 16/2 + (Math.sin(selectedAircraft.getBearing()) * 100));
-		}
 	}
 	
 	/**
@@ -502,8 +492,8 @@ public class Demo extends Scene {
 	 */
 	@Override
 	public void mousePressed(int key, int x, int y) {
-		//airportControlBox.mousePressed(key, x, y);
-		//altimeter.mousePressed(key, x, y);
+		if (paused) return;
+		
 		if (key == input.MOUSE_LEFT) {
 			if (aircraftClicked(x, y)) {
 				Aircraft clickedAircraft = findClickedAircraft(x, y);
@@ -564,12 +554,11 @@ public class Demo extends Scene {
 
 	@Override
 	public void mouseReleased(int key, int x, int y) {
+		if (paused) return;
+		
 		for (Airport airport : airports) {
 			airport.mouseReleased(key, x, y);
 		}
-		
-		//airportControlBox.mouseReleased(key, x, y);
-		//altimeter.mouseReleased(key, x, y);
 		
 		if (key == input.MOUSE_LEFT) {
 			if (manualOverridePressed(x, y)) {
@@ -602,18 +591,25 @@ public class Demo extends Scene {
 	}
 
 	@Override
-	public void keyPressed(int key) {}
+	public void keyPressed(int key) {
+		if (paused) return;
+	}
 
 	/**
 	 * Handle keyboard input
 	 */
 	@Override
 	public void keyReleased(int key) {
-		switch (key) {
-			case input.KEY_P :
-				paused = !paused;
-				break;
+		// Ensure p and escape still work when paused
+		if (key == input.KEY_P) {
+			paused = !paused;
+		} else if (key == input.KEY_ESCAPE) {
+			paused = false;
+		}
 		
+		if (paused) return;
+		
+		switch (key) {
 			case input.KEY_SPACE :
 				toggleManualControl();
 				break;
@@ -677,7 +673,9 @@ public class Demo extends Scene {
 		}
 		
 		if (clickedWaypoint != null && selectedAircraft.isManuallyControlled() == false) {
-			selectedAircraft.drawModifiedPath(selectedPathpoint, input.mouseX() - xOffset, input.mouseY() - yOffset);
+			selectedAircraft.drawModifiedPath(selectedPathpoint,
+					input.mouseX() - xOffset,
+					input.mouseY() - yOffset);
 		}
 		
 		graphics.setViewport();
@@ -712,7 +710,8 @@ public class Demo extends Scene {
 		graphics.print(timePlayed, window.width() - Demo.xOffset - (timePlayed.length() * 8 + 32), 32);
 		int planes = aircraftInAirspace.size();
 		graphics.print(String.valueOf("Highlighted altitude: " + Integer.toString(highlightedAltitude)) , 32, 15);
-		graphics.print(String.valueOf(aircraftInAirspace.size()) + " plane" + (planes == 1 ? "" : "s") + " in the sky.", 32, 32);
+		graphics.print(String.valueOf(aircraftInAirspace.size())
+				+ " plane" + (planes == 1 ? "" : "s") + " in the sky.", 32, 32);
 	}
 	
 	/**
@@ -757,12 +756,10 @@ public class Demo extends Scene {
 		for (Waypoint entryPoint : locationWaypoints) {
 			
 			boolean isAvailable = true;
-			/**
-			 * prevents spawning a plane in waypoint both:
-			 * if any plane is currently going towards it 
-			 * if any plane is less than 250 from it
-			 */
-			
+			// Prevents spawning a plane in waypoint both:
+			//   *if any plane is currently going towards it 
+			//   *if any plane is less than 250 from it
+
 			for (Aircraft aircraft : aircraftInAirspace) {
 				// Check if any plane is currently going towards the exit point/chosen originPoint
 				// Check if any plane is less than what is defined as too close from the chosen originPoint
@@ -790,7 +787,7 @@ public class Demo extends Scene {
 		String originName = "";
 		Waypoint originPoint = null;
 		Waypoint destinationPoint;
-	
+		
 		// Chooses two waypoints randomly and then checks if they satisfy the rules
 		// If not, it tries until it finds good ones
 	
@@ -826,7 +823,6 @@ public class Demo extends Scene {
 			destinationName = locationWaypoints[destination].getName();
 			destinationPoint = locationWaypoints[destination];
 		}
-			
 		
 		// Name
 		String name = "";

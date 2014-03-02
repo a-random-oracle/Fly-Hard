@@ -395,6 +395,12 @@ public class Airport extends Waypoint implements EventHandler {
 		isActive = false;
 	}
 	
+	public Waypoint getArrivalsCentre() {
+		return new Waypoint(departuresX + (departuresWidth / 2),
+				departuresY + (departuresHeight / 2),
+				true);
+	}
+	
 	// Used for testing, to avoid the need to have a demo instance
 	@Deprecated
 	public void signalTakeOffTesting() {

@@ -205,7 +205,9 @@ public class Aircraft {
 	 * @param sceneWaypoints the waypoints on the map.
 	 * @param difficulty the difficulty the game is set to
 	 */
-	public Aircraft(String name, String nameDestination, String nameOrigin, Waypoint destinationPoint, Waypoint originPoint, graphics.Image img, double speed, Waypoint[] sceneWaypoints, int difficulty) {
+	public Aircraft(String name, String nameDestination, String nameOrigin,
+			Waypoint destinationPoint, Waypoint originPoint, Image img,
+			double speed, Waypoint[] sceneWaypoints, int difficulty) {
 		flightName = name;		
 		flightPlan = new FlightPlan(sceneWaypoints, nameOrigin, nameDestination, originPoint, destinationPoint);		
 		image = img;
@@ -289,10 +291,10 @@ public class Aircraft {
 	public boolean isOutOfAirspaceBounds() {
 		double x = position.getX();
 		double y = position.getY();
-		return (x < (RADIUS/2)
-				|| x > window.width() - (RADIUS/2)
-				|| y < (RADIUS/2)
-				|| y > window.height() + RADIUS - 176);
+		return ((x < (RADIUS/2))
+				|| (x > window.width() - (RADIUS/2) - (2 * Demo.xOffset))
+				|| (y < (RADIUS/2))
+				|| (y > window.height() + (RADIUS/2) - (2 * Demo.yOffset)));
 	}
 
 	public boolean isAt(Vector point) {
