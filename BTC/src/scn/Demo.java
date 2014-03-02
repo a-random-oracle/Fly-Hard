@@ -931,17 +931,17 @@ public class Demo extends Scene {
 		// Chooses two waypoints randomly and then checks if they satisfy the rules,
 		// if not, it tries until it finds good ones.
 	
-		ArrayList<Waypoint> available_origins = getAvailableEntryPoints();
+		ArrayList<Waypoint> availableOrigins = getAvailableEntryPoints();
 		
-		if (available_origins.isEmpty()) {
+		if (availableOrigins.isEmpty()) {
 			if (airport.aircraftHangar.size() == airport.getHangarSize()) {
 				return null;
 			} else {
-				originPoint = airport;
+				originPoint = airport.getArrivalsCentre();
 				originName = airport.name;
 			}
 		} else {
-			originPoint = available_origins.get(RandomNumber.randInclusiveInt(0, available_origins.size()-1));
+			originPoint = availableOrigins.get(RandomNumber.randInclusiveInt(0, availableOrigins.size()-1));
 			for (int i = 0; i < locationWaypoints.length; i++) {
 				if (locationWaypoints[i].equals(originPoint)) {
 					originName = locationWaypoints[i].getName();

@@ -7,6 +7,7 @@ import scn.Demo;
 import lib.RandomNumber;
 import lib.jog.audio;
 import lib.jog.graphics;
+import lib.jog.graphics.Image;
 import lib.jog.input;
 import lib.jog.window;
 
@@ -204,16 +205,15 @@ public class Aircraft {
 	 * @param sceneWaypoints the waypoints on the map.
 	 * @param difficulty the difficulty the game is set to
 	 */
-	public Aircraft(String name, String nameDestination, String nameOrigin, Waypoint destinationPoint, Waypoint originPoint, graphics.Image img, double speed, Waypoint[] sceneWaypoints, int difficulty) {
+	public Aircraft(String name, String nameDestination, String nameOrigin,
+			Waypoint destinationPoint, Waypoint originPoint, Image img,
+			double speed, Waypoint[] sceneWaypoints, int difficulty) {
 		flightName = name;		
 		flightPlan = new FlightPlan(sceneWaypoints, nameOrigin, nameDestination, originPoint, destinationPoint);		
 		image = img;
 		creationTime = System.currentTimeMillis() / 1000; // System time when aircraft was created in seconds.
 		position = originPoint.getLocation();
 		
-		if (originPoint.getLocation() == Demo.airport.getLocation()) {
-			position = position.add(new Vector(-100, -70, 0)); // Start at departures
-		}
 		int altitudeOffset = RandomNumber.randInclusiveInt(0, 1) == 0 ? 28000 : 30000;
 		position = position.add(new Vector(0, 0, altitudeOffset));
 
@@ -236,7 +236,7 @@ public class Aircraft {
 			verticalVelocity = 500;
 			baseScore = 60;
 			optimalTime = flightPlan.getTotalDistance() / speed;
-		break;
+			break;
 
 		case Demo.DIFFICULTY_MEDIUM:
 			minimumSeparation = 96;
@@ -245,8 +245,8 @@ public class Aircraft {
 			verticalVelocity = 300;
 			baseScore = 150;
 			optimalTime = flightPlan.getTotalDistance() / (speed * 2);
-		break;
-			
+			break;
+
 		case Demo.DIFFICULTY_HARD:
 			minimumSeparation = 128;
 			velocity = velocity.scaleBy(3);
@@ -256,7 +256,7 @@ public class Aircraft {
 			baseScore = 300;
 			additionToMultiplier = 3;
 			optimalTime = flightPlan.getTotalDistance() / (speed * 3);
-		break;
+			break;
 
 		default:
 			Exception e = new Exception("Invalid Difficulty: " + difficulty + ".");
