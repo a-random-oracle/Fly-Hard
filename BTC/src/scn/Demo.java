@@ -276,7 +276,6 @@ public class Demo extends Scene {
 		for (Aircraft aircraft : aircraftInAirspace) {
 			aircraft.update(timeDifference);
 			if (aircraft.isFinished()) {
-				aircraft.setDepartureTime(System.currentTimeMillis());
 				recentlyDepartedAircraft.add(aircraft);
 			}
 		}
