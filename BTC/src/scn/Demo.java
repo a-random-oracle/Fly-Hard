@@ -21,18 +21,33 @@ import btc.Main;
 
 public class Demo extends Scene {
 	
+	/** The maximum number of aircraft allowed in the airspace simultaneously */
+	private static int maxAircraft = 5;
+	
 	// Due to the way the airspace elements are drawn (graphics.setviewport) these variables are needed to manually
 	// adjust mouse listeners and elements drawn outside the airspace so that they align with the airspace elements.
 	// These variables can be used to adjust the size of the airspace view.
+	
+	/** The distance between the left edge of the screen and the map area */
 	public static int xOffset = 196;
+	
+	/** The distance between the top edge of the screen and the map area */
 	public static int yOffset = 48;
 	
 	// Static constants for difficulty settings
 	// Difficulty of demo scene determined by difficulty selection scene
+	
+	/** The easiest difficulty setting */
 	public final static int DIFFICULTY_EASY = 0;
+	
+	/** The medium difficulty setting */
 	public final static int DIFFICULTY_MEDIUM = 1;
+	
+	/** The hardest difficulty setting */
 	public final static int DIFFICULTY_HARD = 2;
-	public static int difficulty = DIFFICULTY_EASY;
+	
+	/** The current difficulty setting */
+	public static int difficulty;
 	
 	/** Time since the scene began */
 	private static double timeElapsed;
@@ -49,9 +64,10 @@ public class Demo extends Scene {
 	/** A list of aircraft present in the airspace */
 	public static ArrayList<Aircraft> aircraftInAirspace;
 	
+	/** A list of aircraft which have recently left the airspace */
 	public ArrayList<Aircraft> recentlyDepartedAircraft;
 	
-	/** An image to be used for aircraft */
+	/** The image to use for aircraft */
 	private Image aircraftImage;
 	
 	/** A button to start and end manual control of an aircraft */
@@ -66,13 +82,13 @@ public class Demo extends Scene {
 	/** The time elapsed since the last flight was generated */
 	private double flightGenerationTimeElapsed = 6;
 	
-	/** The current control altitude of the ACTO - initially 30,000 */
+	/** The current control altitude of the ATCO - initially 30,000 */
 	private int highlightedAltitude = 30000;
 	
 	/** Music to play during the game scene */
 	private Music music;
 	
-	/** The background to draw in the airspace. */
+	/** The background to draw in the airspace */
 	private Image background;
 	
 	/** Array of the airports in the airspace */
@@ -88,7 +104,7 @@ public class Demo extends Scene {
 	private boolean paused = false;
 	
 	/**
-	 * Constructor
+	 * Constructor for Demo.
 	 * @param main the main containing the scene
 	 * @param difficulty the difficulty the scene is to be initialised with
 	 */
@@ -99,52 +115,17 @@ public class Demo extends Scene {
 
 	/**
 	 * This constructor should only be used for unit testing. Its purpose is to allow an instance
-	 * of demo class to be created without an instance of Main class (effectively launching the game)
-	 * @param difficulty
+	 * of demo class to be created without an instance of Main class (effectively launching the game).
+	 * @param difficulty the difficulty level to run the game at
 	 */	
 	@Deprecated
 	public Demo(int difficulty) {
 		Demo.difficulty = difficulty;
 	}
-
-	/**
-	 * This method should only be used for unit testing (avoiding instantiation of main class).
-	 * Its purpose is to initialize array where aircraft are stored. 
-	 */	
-	@Deprecated
-	public void initializeAircraftArray() {
-		aircraftInAirspace = new ArrayList<Aircraft>();
-	}
-
-	/**
-	 * This method provides maximum number of planes using value of multiplier
-	 * @return maximum number of planes
-	 */
-	private int getMaxAircraft() {
-		return 4; //TODO
-	}
-	
-	/**
-	 * The interval in seconds to generate flights after.
-	 */
-	private int getFlightGenerationInterval() {
-		switch (difficulty) {
-		case 1:
-			// Planes move 2x faster on medium so this makes them spawn
-			// 2 times as often to keep the ratio
-			return (30 / (getMaxAircraft() * 2));
-		case 2:
-			// Planes move 3x faster on hard so this makes them spawn
-			// 3 times as often to keep the ratio 
-			return (30 / (getMaxAircraft() * 3) );
-		default:
-			return (30 / getMaxAircraft());
-		}	
-	}
 	
 	/**
 	 * Initialise and begin music, init background image and scene variables.
-	 * Shorten flight generation timer according to difficulty
+	 * Shorten flight generation timer according to difficulty.
 	 */
 	@Override
 	public void start() {
@@ -156,7 +137,7 @@ public class Demo extends Scene {
 		music = audio.newMusic("sfx" + File.separator + "Gypsy_Shoegazer.ogg");
 		
 		// Start the music
-		//music.play(); TODO <-Add this back in for release
+		//music.play(); TODO <- add this back in for release
 
 		// Set up airports
 		airports = new Airport[2];
@@ -228,45 +209,38 @@ public class Demo extends Scene {
 		}
 		
 		// Set up game components
-		//ordersBox = new cls.OrdersBox(ORDERSBOX_X, ORDERSBOX_Y, ORDERSBOX_W, ORDERSBOX_H, 6);
 		aircraftInAirspace = new ArrayList<Aircraft>();
 		recentlyDepartedAircraft = new ArrayList<Aircraft>();
 
-		lib.ButtonText.Action manual = new lib.ButtonText.Action() {
+		// Create the manual control button
+		ButtonText.Action manual = new ButtonText.Action() {
 			@Override
 			public void action() {
 				toggleManualControl();
 			}
 		};
 		
-		manualOverrideButton = new lib.ButtonText("Take Control", manual,
-				(window.width() -128 - 2*xOffset) / 2, 32, 128, 32, 8, 4);
+		manualOverrideButton = new ButtonText(" Take Control", manual,
+				(window.width() - 128 - (2 * xOffset)) / 2, 32, 128, 32, 8, 4);
+		
+		// Reset game attributes
 		timeElapsed = 0;
 		compassClicked = false;
 		selectedAircraft = null;
 		clickedWaypoint = null;
 		selectedPathpoint = -1;
-		
-		manualOverrideButton = new lib.ButtonText(" Take Control", manual,
-				(window.width() - 128 - 2*xOffset) / 2, 32, 128, 32, 8, 4);
 		deselectAircraft();
 	}
 	
 	/**
-	 * Getter for aircraft list.
-	 * @return the arrayList of aircraft in the airspace
-	 */
-	public ArrayList<Aircraft> aircraftList() {
-		return aircraftInAirspace;
-	}
-	
-	/**
-	 * Causes a selected aircraft to call methods to toggle manual control
+	 * Causes a selected aircraft to call methods to toggle manual control.
 	 */
 	private void toggleManualControl() {
 		if (selectedAircraft == null) return;
+		
 		selectedAircraft.toggleManualControl();
-		manualOverrideButton.setText( (selectedAircraft.isManuallyControlled() ? "Remove" : " Take") + " Control");
+		manualOverrideButton.setText(
+				(selectedAircraft.isManuallyControlled() ? "Remove" : " Take") + " Control");
 	}
 	
 	/**
@@ -277,23 +251,28 @@ public class Demo extends Scene {
 			selectedAircraft.toggleManualControl();
 			manualOverrideButton.setText(" Take Control");
 		}
+		
 		selectedAircraft = null;
 		clickedWaypoint = null; 
 		selectedPathpoint = -1;
 	}
 	
 	/**
-	 * Update all objects within the scene, ie aircraft, orders box altimeter.
-	 * Cause collision detection to occur
-	 * Generate a new flight if flight generation interval has been exceeded.
+	 * Update all objects within the scene, e.g. aircraft.
+	 * <p>
+	 * Also runs collision detection and generates a new flight if flight
+	 * generation interval has been exceeded.
+	 * </p>
 	 */
 	@Override
 	public void update(double timeDifference) {
 		if (paused) return;
 		
 		timeElapsed += timeDifference;
+		
 		graphics.setColour(graphics.green_transp);
 		
+		// Update aircraft
 		for (Aircraft aircraft : aircraftInAirspace) {
 			aircraft.update(timeDifference);
 			if (aircraft.isFinished()) {
@@ -302,9 +281,11 @@ public class Demo extends Scene {
 			}
 		}
 		
+		// Check if any aircraft in the airspace have collided
 		checkCollisions(timeDifference);
 		
-		for (int i = aircraftInAirspace.size()-1; i >=0; i --) {
+		// Deselect and remove any aircraft which have completed their routes
+		for (int i = aircraftInAirspace.size() - 1; i >= 0; i--) {
 			if (aircraftInAirspace.get(i).isFinished()) {
 				if (aircraftInAirspace.get(i) == selectedAircraft) {
 					deselectAircraft();
@@ -313,27 +294,40 @@ public class Demo extends Scene {
 			}
 		}
 
+		// Update the airports
 		for (Airport airport : airports) {
 			airport.update(aircraftInAirspace);
 		}
 		
 		if (selectedAircraft != null) {
 			if (selectedAircraft.isManuallyControlled()) {
+				// Handle directional control for a manually controlled aircraft
 				if (input.keyPressed(new int[]{input.KEY_LEFT, input.KEY_A})) {
+					// Turn left when 'Left' or 'A' key is pressed
 					selectedAircraft.turnLeft(timeDifference);
 				} else if (input.keyPressed(new int[]{input.KEY_RIGHT, input.KEY_D})) {
+					// Turn right when 'Right' or 'D' key is pressed
 					selectedAircraft.turnRight(timeDifference);
 				}
-			} else if (input.keyPressed(new int[]{input.KEY_LEFT, input.KEY_A, input.KEY_RIGHT, input.KEY_D})) {
+			} else if (input.keyPressed(new int[]{
+					input.KEY_LEFT, input.KEY_A, input.KEY_RIGHT, input.KEY_D})) {
+				// If any of the directional keys is pressed, set selected aircraft
+				// to manual control
 				toggleManualControl();
 			}
 			
-			if (input.keyPressed(new int[]{input.KEY_S, input.KEY_DOWN})&& selectedAircraft.getPosition().getZ() > 28000) {
+			// Handle altitude controls
+			if (input.keyPressed(new int[]{input.KEY_S, input.KEY_DOWN})
+					&& (selectedAircraft.getPosition().getZ() > 28000)) {
 				selectedAircraft.setAltitudeState(Aircraft.ALTITUDE_FALL);
-			} else if (input.keyPressed(new int[]{input.KEY_W, input.KEY_UP})&&selectedAircraft.getPosition().getZ() < 30000) {
+			} else if (input.keyPressed(new int[]{input.KEY_W, input.KEY_UP})
+					&& (selectedAircraft.getPosition().getZ() < 30000)) {
 				selectedAircraft.setAltitudeState(Aircraft.ALTITUDE_CLIMB);
 			}
-				
+			
+			// If the aircraft under manual control is out of bounds, deselect it
+			// This ensures that players can't keep controlling aircraft
+			// after they've left the airspace
 			if (!(selectedAircraft.isAtDestination())) {
 				if (selectedAircraft.isOutOfAirspaceBounds()) {
 					deselectAircraft();
@@ -341,53 +335,121 @@ public class Demo extends Scene {
 			}	
 		}
 		
+		// Update the counter used to determine when another flight should enter the airspace
 		flightGenerationTimeElapsed += timeDifference;
 		if(flightGenerationTimeElapsed >= getFlightGenerationInterval()) {
 			flightGenerationTimeElapsed -= getFlightGenerationInterval();
-			if (aircraftInAirspace.size() < getMaxAircraft()) {
+			if (aircraftInAirspace.size() < maxAircraft) {
 				generateFlight();
 			}
 		}
 		
+		// If there are no aircraft in the airspace, generate another aircraft
 		if (aircraftInAirspace.size() == 0) generateFlight();
 	}
 	
 	/**
-	 * Draw the scene GUI and all drawables within it, e.g. aircraft and waypoints
+	 * Draw the scene GUI and all drawables within it, e.g. aircraft and waypoints.
 	 */
 	@Override
 	public void draw() {
+		// Draw the rectangle surrounding the map area
 		graphics.setColour(graphics.green);
 		graphics.rectangle(false, xOffset, yOffset,
 				window.width() - (2 * xOffset),
-				window.height() - (2 * yOffset));// - 176);
+				window.height() - (2 * yOffset));
+		
+		// Set the viewport - this is the boundary used when drawing objects
 		graphics.setViewport(xOffset, yOffset,
 				window.width() - (2 * xOffset),
 				window.height() - (2 * yOffset));// - 176);
+		
+		// Draw the map background
 		graphics.setColour(255, 255, 255, 48);
 		graphics.drawScaled(background, 0, 0, Math.max(Main.getXScale(), Main.getYScale()));
-		graphics.setColour(255, 255, 255, 48);
 		
+		// Draw all the airports
 		for (Airport airport : airports) {
 			graphics.setColour(255, 255, 255, 48);
 			airport.draw();
 		}
 		
-		drawMap();	
+		// Draw the waypoints etc.
+		drawMap();
+		
+		// Reset the viewport
 		graphics.setViewport();
 		
+		// Draw the compass around the selected aircraft,
+		// but only if it is being manually controlled
 		if (selectedAircraft != null && selectedAircraft.isManuallyControlled()) {
 			selectedAircraft.drawCompass();
 		}
 		
-		//score.draw();
-		//ordersBox.draw();
-		//altimeter.draw();
-		//airportControlBox.draw();
-		//drawPlaneInfo();
-		
+		// Draw extra information such as the number of flights in the airspace
 		graphics.setColour(graphics.green);
 		drawAdditional();
+	}
+	
+	/**
+	 * Draw waypoints, and route of a selected aircraft between waypoints.
+	 * <p>
+	 * Also prints waypoint names next to waypoints.
+	 * </p>
+	 */
+	private void drawMap() {
+		for (Waypoint waypoint : airspaceWaypoints) {
+			if (!(waypoint instanceof Airport)) { // Skip the airport
+				waypoint.draw();
+			}
+		}
+		
+		graphics.setColour(255, 255, 255);
+		
+		for (Aircraft aircraft : aircraftInAirspace) {
+			aircraft.draw(highlightedAltitude);
+			if (aircraft.isMouseOver()) {
+				aircraft.drawFlightPath(false);
+			}
+		}
+		
+		if (selectedAircraft != null) {
+			// Flight Path
+			selectedAircraft.drawFlightPath(true);
+			graphics.setColour(graphics.green);
+			// Override Button
+			graphics.setColour(graphics.black);
+			graphics.rectangle(true, (window.width() - 128 - 2*xOffset) / 2, 32, 128, 32);
+			graphics.setColour(graphics.green);
+			graphics.rectangle(false, (window.width() - 128 - 2*xOffset) / 2, 32, 128, 32);
+			manualOverrideButton.draw();
+			selectedAircraft.drawFlightPath(true);
+			graphics.setColour(graphics.green);
+		}
+		
+		if (clickedWaypoint != null && selectedAircraft.isManuallyControlled() == false) {
+			selectedAircraft.drawModifiedPath(selectedPathpoint,
+					input.mouseX() - xOffset,
+					input.mouseY() - yOffset);
+		}
+		
+		graphics.setViewport();
+		graphics.setColour(graphics.green);
+		graphics.print(locationWaypoints[0].getName(),
+				locationWaypoints[0].getLocation().getX() + xOffset + 9,
+				locationWaypoints[0].getLocation().getY() + yOffset - 6);
+		graphics.print(locationWaypoints[1].getName(),
+				locationWaypoints[1].getLocation().getX() + xOffset + 9,
+				locationWaypoints[1].getLocation().getY() + yOffset - 6);
+		graphics.print(locationWaypoints[2].getName(),
+				locationWaypoints[2].getLocation().getX() + xOffset - 141,
+				locationWaypoints[2].getLocation().getY() + yOffset - 6);
+		graphics.print(locationWaypoints[3].getName(),
+				locationWaypoints[3].getLocation().getX() + xOffset- 91,
+				locationWaypoints[3].getLocation().getY() + yOffset - 6);
+		graphics.print(locationWaypoints[4].getName(),
+				locationWaypoints[4].getLocation().getX() + xOffset - 20,
+				locationWaypoints[4].getLocation().getY() + yOffset + 25);
 	}
 	
 	/**
@@ -397,9 +459,9 @@ public class Demo extends Scene {
 	 */
 	private void checkCollisions(double timeDifference) {
 		for (Aircraft plane : aircraftInAirspace) {
-			int collisionState = plane.updateCollisions(timeDifference, aircraftList());
+			int collisionState = plane.updateCollisions(timeDifference, aircraftInAirspace);
 			if (collisionState >= 0) {
-				gameOver(plane, aircraftList().get(collisionState));
+				gameOver(plane, aircraftInAirspace.get(collisionState));
 				return;
 			}
 		}
@@ -418,26 +480,9 @@ public class Demo extends Scene {
 			airport.clear();
 		}
 		
-		// playSound(audio.newSoundEffect("sfx" + File.separator + "crash.ogg"));
+		//playSound(audio.newSoundEffect("sfx" + File.separator + "crash.ogg")); //TODO <- add back in for release
 		main.closeScene();
 		main.setScene(new GameOver(main, plane1, plane2, 0)); //TODO
-	}
-	
-	/**
-	 * Causes the scene to pause execution for the specified number of seconds
-	 * @param seconds the number of seconds to wait.
-	 */
-	@Deprecated
-	public void wait(int seconds){
-		long startTime, endTime;
-		startTime = System.currentTimeMillis();
-		endTime = startTime + (seconds * 1000);
-		
-		while (startTime < endTime){
-			startTime = System.currentTimeMillis();
-		}
-		
-		return;
 	}
 	
 	private boolean compassClicked() {
@@ -638,67 +683,6 @@ public class Demo extends Scene {
 	}
 	
 	/**
-	 * Draw waypoints, and route of a selected aircraft between waypoints.
-	 * <p>
-	 * Also prints waypoint names next to waypoints.
-	 * </p>
-	 */
-	private void drawMap() {
-		for (Waypoint waypoint : airspaceWaypoints) {
-			if (!(waypoint instanceof Airport)) { // Skip the airport
-				waypoint.draw();
-			}
-		}
-		graphics.setColour(255, 255, 255);
-		for (Aircraft aircraft : aircraftInAirspace) {
-			aircraft.draw(highlightedAltitude);
-			if (aircraft.isMouseOver()) {
-				aircraft.drawFlightPath(false);
-			}
-		}
-		
-		if (selectedAircraft != null) {
-			// Flight Path
-			selectedAircraft.drawFlightPath(true);
-			graphics.setColour(graphics.green);
-			// Override Button
-			graphics.setColour(graphics.black);
-			graphics.rectangle(true, (window.width() - 128 - 2*xOffset) / 2, 32, 128, 32);
-			graphics.setColour(graphics.green);
-			graphics.rectangle(false, (window.width() - 128 - 2*xOffset) / 2, 32, 128, 32);
-			manualOverrideButton.draw();
-			
-			selectedAircraft.drawFlightPath(true);
-			graphics.setColour(graphics.green);
-			
-		}
-		
-		if (clickedWaypoint != null && selectedAircraft.isManuallyControlled() == false) {
-			selectedAircraft.drawModifiedPath(selectedPathpoint,
-					input.mouseX() - xOffset,
-					input.mouseY() - yOffset);
-		}
-		
-		graphics.setViewport();
-		graphics.setColour(graphics.green);
-		graphics.print(locationWaypoints[0].getName(),
-				locationWaypoints[0].getLocation().getX() + xOffset + 9,
-				locationWaypoints[0].getLocation().getY() + yOffset - 6);
-		graphics.print(locationWaypoints[1].getName(),
-				locationWaypoints[1].getLocation().getX() + xOffset + 9,
-				locationWaypoints[1].getLocation().getY() + yOffset - 6);
-		graphics.print(locationWaypoints[2].getName(),
-				locationWaypoints[2].getLocation().getX() + xOffset - 141,
-				locationWaypoints[2].getLocation().getY() + yOffset - 6);
-		graphics.print(locationWaypoints[3].getName(),
-				locationWaypoints[3].getLocation().getX() + xOffset- 91,
-				locationWaypoints[3].getLocation().getY() + yOffset - 6);
-		graphics.print(locationWaypoints[4].getName(),
-				locationWaypoints[4].getLocation().getX() + xOffset - 20,
-				locationWaypoints[4].getLocation().getY() + yOffset + 25);
-	}
-	
-	/**
 	 * Draw a readout of the time the game has been played for, and number of planes in the sky.
 	 */
 	private void drawAdditional() {
@@ -720,6 +704,7 @@ public class Demo extends Scene {
 	 */
 	private void generateFlight() {
 		Aircraft a = createAircraft();
+		
 		if (a != null) {
 			for (Airport airport : airports) {
 				if (a.getFlightPlan().getOriginName().equals(airport.name)) {
@@ -739,7 +724,7 @@ public class Demo extends Scene {
 	public static void takeOffSequence(Aircraft aircraft) {
 		aircraftInAirspace.add(aircraft);
 		
-		for (Airport airport : airports) {
+		for (Airport airport : airports) { //TODO <- check logic
 			airport.isActive = false;
 		}
 	}
@@ -795,11 +780,11 @@ public class Demo extends Scene {
 		ArrayList<Waypoint> availableOrigins = getAvailableEntryPoints();
 		
 		if (availableOrigins.isEmpty()) {
-			for (Airport airport : airports) {
+			for (Airport airport : airports) { //TODO <- check logic
 				if (airport.aircraftHangar.size() == airport.getHangarSize()) {
 					return null;
 				} else {
-					originPoint = airport;
+					originPoint = airport.getArrivalsCentre();
 					originName = airport.name;
 				}
 			}
@@ -854,8 +839,47 @@ public class Demo extends Scene {
 		music.stop();
 	}
 
+	/**
+	 * Gets how long the game has been played for.
+	 * @return the length of time the game has been running for
+	 */
 	public static double getTime() {
 		return timeElapsed;
+	}
+	
+	/**
+	 * Getter for aircraft list.
+	 * @return the arrayList of aircraft in the airspace
+	 */
+	public ArrayList<Aircraft> aircraftList() {
+		return aircraftInAirspace;
+	}
+	
+	/**
+	 * This method should only be used for unit testing (avoiding instantiation of main class).
+	 * Its purpose is to initialize array where aircraft are stored. 
+	 */	
+	@Deprecated
+	public void initializeAircraftArray() {
+		aircraftInAirspace = new ArrayList<Aircraft>();
+	}
+	
+	/**
+	 * The interval in seconds to generate flights after.
+	 */
+	private int getFlightGenerationInterval() {
+		switch (difficulty) {
+		case 1:
+			// Planes move 2x faster on medium so this makes them spawn
+			// 2 times as often to keep the ratio
+			return (30 / (maxAircraft * 2));
+		case 2:
+			// Planes move 3x faster on hard so this makes them spawn
+			// 3 times as often to keep the ratio 
+			return (30 / (maxAircraft * 3) );
+		default:
+			return (30 / maxAircraft);
+		}	
 	}
 	
 }
