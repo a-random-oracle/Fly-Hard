@@ -44,7 +44,7 @@ public class FlightPlan {
 	 * @param newWaypoint the new waypoint to travel to.
 	 */
 	public void alterPath(int routeStage, Waypoint newWaypoint) {
-		if (!(newWaypoint instanceof Airport)) { 
+		if (!newWaypoint.isEntryOrExit()) { 
 			route[routeStage] = newWaypoint;
 		}
 	}
