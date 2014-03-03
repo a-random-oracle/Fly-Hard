@@ -177,7 +177,7 @@ public class Demo extends Scene {
 
 		Waypoint topLeft = new Waypoint(8, 8,
 				true, "North West Top Leftonia");
-		Waypoint bottomLeft = new Waypoint(8, window.height() - (2 * xOffset) - 4,
+		Waypoint bottomLeft = new Waypoint(8, window.height() - (2 * yOffset) - 4,
 				true, "100 Acre Woods");
 		Waypoint topRight = new Waypoint(window.width() - (2 * xOffset) - 4, 8,
 				true, "City of Rightson");
@@ -369,6 +369,7 @@ public class Demo extends Scene {
 		graphics.setColour(255, 255, 255, 48);
 		
 		for (Airport airport : airports) {
+			graphics.setColour(255, 255, 255, 48);
 			airport.draw();
 		}
 		
