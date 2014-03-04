@@ -209,7 +209,7 @@ public class Airport extends Waypoint implements EventHandler {
 			// Print number of aircraft waiting
 			graphics.setColour(255, 255, 255, 128);
 			graphics.print(Integer.toString(aircraftHangar.size()),
-					departuresX + 23, departuresY + 15);
+					departuresX + (departuresWidth / 2), departuresY + (departuresHeight / 2));
 		}
 		
 		graphics.setColour(0, 128, 0, 128);
@@ -226,8 +226,7 @@ public class Airport extends Waypoint implements EventHandler {
 			// Print number of aircraft waiting
 			graphics.setColour(255, 255, 255, 128);
 			graphics.print(Integer.toString(aircraftWaitingToLand.size()),
-					arrivalsX + 50,
-					arrivalsY + 26);
+					arrivalsX + (arrivalsWidth / 2), arrivalsY + (arrivalsHeight / 2));
 		}
 	}
 
@@ -395,10 +394,9 @@ public class Airport extends Waypoint implements EventHandler {
 		isActive = false;
 	}
 	
-	public Waypoint getArrivalsCentre() {
+	public Waypoint getDeparturesCentre() {
 		return new Waypoint(departuresX + (departuresWidth / 2),
-				departuresY + (departuresHeight / 2),
-				true);
+				departuresY + (departuresHeight / 2), true);
 	}
 	
 	// Used for testing, to avoid the need to have a demo instance

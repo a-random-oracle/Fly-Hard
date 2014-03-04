@@ -1,5 +1,6 @@
 package cls;
 
+import scn.Demo;
 import lib.jog.graphics;
 
 public class Waypoint {

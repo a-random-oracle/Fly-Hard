@@ -22,9 +22,6 @@ import btc.Main;
 
 public class Demo extends Scene {
 	
-	private OrdersBox out = new OrdersBox(window.width() - xOffset + 20,
-			yOffset, xOffset - 20, window.height() - (2 * yOffset), 30);
-	
 	/** The maximum number of aircraft allowed in the airspace simultaneously */
 	private static int maxAircraft = 5;
 	
@@ -37,6 +34,9 @@ public class Demo extends Scene {
 	
 	/** The distance between the top edge of the screen and the map area */
 	public static int yOffset = 48;
+	
+	public static OrdersBox out = new OrdersBox(window.width() - xOffset + 20,
+			yOffset, xOffset - 40, window.height() - (2 * yOffset), 30);
 	
 	// Static constants for difficulty settings
 	// Difficulty of demo scene determined by difficulty selection scene
@@ -273,9 +273,7 @@ public class Demo extends Scene {
 		}
 
 		// Update the airports
-		for (Airport airport : airports) {
-			airport.update(aircraftInAirspace);
-		}
+		for (Airport airport : airports) airport.update(aircraftInAirspace);
 		
 		if (selectedAircraft != null) {
 			if (selectedAircraft.isManuallyControlled()) {
@@ -314,6 +312,7 @@ public class Demo extends Scene {
 		}
 		
 		// Update the counter used to determine when another flight should enter the airspace
+		// If the counter has reached 0, then spawn a new aircraft
 		flightGenerationTimeElapsed += timeDifference;
 		if(flightGenerationTimeElapsed >= getFlightGenerationInterval()) {
 			flightGenerationTimeElapsed -= getFlightGenerationInterval();
@@ -322,16 +321,8 @@ public class Demo extends Scene {
 			}
 		}
 		
-		// If there are no aircraft in the airspace, generate another aircraft
+		// If there are no aircraft in the airspace, spawn a new aircraft
 		if (aircraftInAirspace.size() == 0) generateFlight();
-		
-		//out.addOrder("" + Math.round(timeElapsed % 1));
-		
-		if ((timeElapsed % 1) == 0) {
-			for (Aircraft a : aircraftInAirspace) {
-				out.addOrder("Aircraft: " + a.getName() + " has speed: " + a.getSpeed());
-			}
-		}
 		
 		// Update debug box
 		out.update(timeDifference);
@@ -390,14 +381,16 @@ public class Demo extends Scene {
 	 * </p>
 	 */
 	private void drawMap() {
+		// Draw all waypoints, except airport waypoints
 		for (Waypoint waypoint : airspaceWaypoints) {
-			if (!(waypoint instanceof Airport)) { // Skip the airport
+			if (!(waypoint instanceof Airport)) {
 				waypoint.draw();
 			}
 		}
 		
 		graphics.setColour(255, 255, 255);
 		
+		// Draw all aircraft, and show their routes if the mouse is hovering above them
 		for (Aircraft aircraft : aircraftInAirspace) {
 			aircraft.draw(highlightedAltitude);
 			if (aircraft.isMouseOver()) {
@@ -406,17 +399,15 @@ public class Demo extends Scene {
 		}
 		
 		if (selectedAircraft != null) {
-			// Flight Path
+			// Draw the selected aircraft's flight path
 			selectedAircraft.drawFlightPath(true);
 			graphics.setColour(graphics.green);
-			// Override Button
+			// Display the manual control button
 			graphics.setColour(graphics.black);
-			graphics.rectangle(true, (window.width() - 128 - 2*xOffset) / 2, 32, 128, 32);
+			graphics.rectangle(true, (window.width() - 128 - (2 * xOffset)) / 2, 32, 128, 32);
 			graphics.setColour(graphics.green);
-			graphics.rectangle(false, (window.width() - 128 - 2*xOffset) / 2, 32, 128, 32);
+			graphics.rectangle(false, (window.width() - 128 - (2 * xOffset)) / 2, 32, 128, 32);
 			manualOverrideButton.draw();
-			selectedAircraft.drawFlightPath(true);
-			graphics.setColour(graphics.green);
 		}
 		
 		if (clickedWaypoint != null && selectedAircraft.isManuallyControlled() == false) {
@@ -425,6 +416,7 @@ public class Demo extends Scene {
 					input.mouseY() - yOffset);
 		}
 		
+		// Draw entry/exit points
 		graphics.setViewport();
 		graphics.setColour(graphics.green);
 		graphics.print(locationWaypoints[0].getName(),
@@ -492,11 +484,7 @@ public class Demo extends Scene {
 	 */
 	public void gameOver(Aircraft plane1, Aircraft plane2) {
 		aircraftInAirspace.clear();
-		
-		for (Airport airport : airports) {
-			airport.clear();
-		}
-		
+		for (Airport airport : airports) airport.clear();
 		//playSound(audio.newSoundEffect("sfx" + File.separator + "crash.ogg")); //TODO <- add back in for release
 		main.closeScene();
 		main.setScene(new GameOver(main, plane1, plane2, 0)); //TODO <- pass score
@@ -562,7 +550,6 @@ public class Demo extends Scene {
 				Aircraft clickedAircraft = findClickedAircraft(x, y);
 				deselectAircraft();
 				selectedAircraft = clickedAircraft;
-				//altimeter.show(selectedAircraft);
 			} else if (waypointInFlightplanClicked(x, y, selectedAircraft) && !selectedAircraft.isManuallyControlled()) {
 				clickedWaypoint = findClickedWaypoint(x, y);
 				if (clickedWaypoint != null) {
@@ -578,8 +565,9 @@ public class Demo extends Scene {
 			}
 			
 			for (Airport airport : airports) {
-				if (airport.isArrivalsClicked(x, y) && selectedAircraft != null) {
-					if (selectedAircraft.isWaitingToLand && selectedAircraft.currentTarget.equals(airport.getLocation())) {
+				if (selectedAircraft != null && airport.isArrivalsClicked(x, y)) {
+					if ((selectedAircraft.isWaitingToLand)
+							&& (selectedAircraft.currentTarget.equals(airport.getLocation()))) {
 						airport.mousePressed(key, x, y);
 						selectedAircraft.land();
 						deselectAircraft();
@@ -628,14 +616,7 @@ public class Demo extends Scene {
 				manualOverrideButton.act();
 			} else if (waypointClicked && selectedAircraft != null) {
 				Waypoint newWaypoint = findClickedWaypoint(x, y);
-				if (newWaypoint instanceof Airport) {
-					//ordersBox.addOrder(">>> " + selectedAircraft.getName() + " please avoid cruising over Mosbear Airport, find a new course.");
-					//ordersBox.addOrder("<<< Roger that. Going around.");
-				} else if (newWaypoint != null) {
-					selectedAircraft.alterPath(selectedPathpoint, newWaypoint);
-					//ordersBox.addOrder(">>> " + selectedAircraft.getName() + " please alter your course.");
-					//ordersBox.addOrder("<<< Roger that. Altering course now.");
-				}
+				if (newWaypoint != null)  selectedAircraft.alterPath(selectedPathpoint, newWaypoint);
 				selectedPathpoint = -1;
 			}
 			clickedWaypoint = null; // Fine to set to null now as will have been dealt with
@@ -683,11 +664,7 @@ public class Demo extends Scene {
 			
 			case input.KEY_ESCAPE :
 				aircraftInAirspace.clear();
-				
-				for (Airport airport : airports) {
-					airport.clear();
-				}
-				
+				for (Airport airport : airports) airport.clear();
 				main.closeScene();
 				break;
 			
@@ -720,16 +697,19 @@ public class Demo extends Scene {
 	 * Creates a new aircraft object and introduces it to the airspace. 
 	 */
 	private void generateFlight() {
-		Aircraft a = createAircraft();
+		Aircraft aircraft = createAircraft();
 		
-		if (a != null) {
+		if (aircraft != null) {
+			// If the aircraft starts at an airport, add it to that airport
 			for (Airport airport : airports) {
-				if (a.getFlightPlan().getOriginName().equals(airport.name)) {
-					airport.addToHangar(a);
-				} else {
-					aircraftInAirspace.add(a);
+				if (aircraft.getFlightPlan().getOriginName().equals(airport.name)) {
+					airport.addToHangar(aircraft);
+					return;
 				}
 			}
+			
+			// Otherwise, add the aircraft to the airspace
+			aircraftInAirspace.add(aircraft);
 		}
 	}
 	
@@ -741,8 +721,11 @@ public class Demo extends Scene {
 	public static void takeOffSequence(Aircraft aircraft) {
 		aircraftInAirspace.add(aircraft);
 		
-		for (Airport airport : airports) { //TODO <- check logic
-			airport.isActive = false;
+		for (Airport airport : airports) {
+			if (aircraft.getFlightPlan().getOriginName().equals(airport.name)) {
+				airport.isActive = false;
+				break;
+			}
 		}
 	}
 	
@@ -802,32 +785,37 @@ public class Demo extends Scene {
 					== airports[randomAirport].getHangarSize()) {
 				return null;
 			} else {
-				originPoint = airports[randomAirport].getArrivalsCentre();
+				originPoint = airports[randomAirport].getDeparturesCentre();
 				originName = airports[randomAirport].name;
 			}
 		} else {
-			originPoint = availableOrigins.get((new Random())
-					.nextInt((availableOrigins.size() - 1) + 1));
-			for (int i = 0; i < locationWaypoints.length; i++) {
-				if (locationWaypoints[i].equals(originPoint)) {
-					originName = locationWaypoints[i].getName();
-					break;
+			originPoint = availableOrigins.get(
+					(new Random()).nextInt((availableOrigins.size() - 1) + 1));
+			
+			// If random point is an airport, use its departures location
+			if (originPoint instanceof Airport) {
+				originName = originPoint.name;
+				originPoint = ((Airport) originPoint).getDeparturesCentre();
+			} else {
+				for (int i = 0; i < locationWaypoints.length; i++) {
+					if (locationWaypoints[i].equals(originPoint)) {
+						originName = locationWaypoints[i].getName();
+						break;
+					}
 				}
 			}
 		}
 		
 		// Work out destination
-		int destination = (new Random()).nextInt((locationWaypoints.length - 1) + 1);
-		destinationName = locationWaypoints[destination].getName();
-		destinationPoint = locationWaypoints[destination];
-		
-		while (locationWaypoints[destination].getName() == originName) {
+		// Keep trying until the random destination is not equal to the chosen origin
+		int destination = 0;
+		do {
 			destination = (new Random()).nextInt((locationWaypoints.length - 1) + 1);
 			destinationName = locationWaypoints[destination].getName();
 			destinationPoint = locationWaypoints[destination];
-		}
+		} while (locationWaypoints[destination].getName() == originName);
 		
-		// Name
+		// Generate a unique, random flight name
 		String name = "";
 		boolean nameTaken = true;
 		while (nameTaken) {
