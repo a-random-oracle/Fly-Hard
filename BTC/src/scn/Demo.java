@@ -724,7 +724,7 @@ public class Demo extends Scene {
 		for (Airport airport : airports) {
 			if (aircraft.getFlightPlan().getOriginName().equals(airport.name)) {
 				airport.isActive = false;
-				break;
+				return;
 			}
 		}
 	}
