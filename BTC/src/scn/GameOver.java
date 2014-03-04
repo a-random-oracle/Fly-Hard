@@ -19,16 +19,19 @@ public class GameOver extends Scene {
 	
 	// Used to position the explosion, and provide graphical feedback of how and where the player failed
 	/** The first plane involved in the collision */
-	private Aircraft crashedPlane1;
+	private Aircraft aircraft1;
 	
 	/** The second plane involved in the collision */
-	private Aircraft crashedPlane2;
+	private Aircraft aircraft2;
+	
+	/** A vector storing the point which distances should be measured relative to */
+	private Vector origin;
 	
 	/** A random number of deaths caused by the crash */
 	private int deaths;
 	
 	/** The score the player achieved */
-	private int score; //passed in when game is over;
+	private int score;
 	
 	/** The position of the crash - the vector midpoint of the positions of the two crashed planes */
 	private Vector crash;
@@ -39,6 +42,7 @@ public class GameOver extends Scene {
 	/** The explosion image to use for the animation */
 	private Image explosion;
 	
+	/** The value corresponding to the key which has most recently been pressed */
 	private int keyPressed;
 	
 	/** Timer to allow for explosion and plane to be shown for a period, followed by the text box */
@@ -53,17 +57,27 @@ public class GameOver extends Scene {
 	 */
 	public GameOver(Main main, Aircraft plane1, Aircraft plane2, int score) {
 		super(main);
-		crashedPlane1 = plane1;
-		crashedPlane2 = plane2;
-		crash = new Vector(plane1.getPosition().getX(), plane1.getPosition().getY(), 0).remapPosition();
+		
+		// The number of frams in each dimension of the animation image
 		int framesAcross = 8;
 		int framesDown = 4;
+		
+		aircraft1 = plane1;
+		aircraft2 = plane2;
+		origin = new Vector(Demo.xOffset, Demo.yOffset, 0);
+		
+		crash = plane1.getPosition().add(new Vector((plane1.getPosition().getX() - plane2.getPosition().getX()) / 2,
+				(plane1.getPosition().getY() - plane2.getPosition().getY()) / 2, 0)).add(origin);
+		
 		this.score = score;
+		
+		// Load explosion animation image
 		explosion = graphics.newImage("gfx" + File.separator + "explosionFrames.png");
-		Vector midPoint = crashedPlane1.getPosition().add(crashedPlane2.getPosition())
-				.scaleBy(0.5).remapPosition();
+		
+		Vector midPoint = aircraft1.getPosition().add(aircraft2.getPosition())
+				.scaleBy(0.5).add(origin);
 		Vector explosionPos = midPoint.sub(new Vector(explosion.width()/(framesAcross*2),
-				explosion.height()/(framesDown*2), 0)).remapPosition();
+				explosion.height()/(framesDown*2), 0));
 		
 		explosionAnim = new SpriteAnimation(explosion,
 				(int)explosionPos.getX(), (int)explosionPos.getY(),
@@ -77,9 +91,11 @@ public class GameOver extends Scene {
 	@Override
 	public void start() {
 		playSound(audio.newSoundEffect("sfx" + File.separator + "crash.ogg"));
-		deaths = (int)( Math.random() * 500) + 300;
+		deaths = (int)(Math.random() * 500) + 300;
 		timer = 0;
-		textBox = new lib.TextBox(64, 186, window.width() - 128, window.height() - 96, 32);
+		textBox = new lib.TextBox(window.width() / 10, 186,
+				window.width() - ((window.width() / 10) * 2), window.height() - 96, 32);
+		
 		textBox.addText(String.valueOf(deaths) + " people died in the crash.");
 		textBox.delay(0.4);
 		textBox.addText("British Bearways is facing heavy legal pressure from the family and loved-ones of the dead and an investigation is underway.");
@@ -146,20 +162,22 @@ public class GameOver extends Scene {
 	 */
 	public void draw() {
 		graphics.setColour(graphics.green);
-		graphics.printCentred(crashedPlane1.getName() + " crashed into " + crashedPlane2.getName()
+		graphics.printCentred(aircraft1.getName() + " crashed into " + aircraft2.getName()
 				+ ".", 0, 32, 2, window.width());
 		graphics.printCentred("Total score: " + String.valueOf(score), 0, 64, 4, window.width());
 		if (explosionAnim.hasFinished()) {
 			textBox.draw();
 		} else {
-			crashedPlane1.draw((int) crashedPlane1.getPosition().getZ());
-			crashedPlane2.draw((int) crashedPlane1.getPosition().getZ());
-			Vector midPoint = crash.add(crashedPlane2.getPosition()).scaleBy(0.5).remapPosition();
+			aircraft1.draw((int) aircraft1.getPosition().getZ(), origin);
+			aircraft2.draw((int) aircraft1.getPosition().getZ(), origin);
+			
 			double radius = 20; // Radius of explosion
 			graphics.setColour(graphics.red);
-			graphics.circle(false, midPoint.getX(), midPoint.getY(), radius);
+			graphics.circle(false, crash.getX() - 5, crash.getY() - 5, radius);
+			
 			explosionAnim.draw();
 		}
+		
 		int opacity = (int)(255 * Math.sin(timer));
 		graphics.setColour(0, 128, 0, opacity);
 		graphics.printCentred("Press any key to continue", 0, window.height() - 256, 1, window.width());

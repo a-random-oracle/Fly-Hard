@@ -49,7 +49,6 @@ public class Aircraft {
 	/** The unique name of the aircraft. Format is Flight followed by a random number between 100 and 900. */
 	private String flightName;
 	
-	/** The aircraft's current position */
 	private Vector position;
 	
 	/** The aircraft's current velocity */
@@ -347,12 +346,16 @@ public class Aircraft {
 		if (Math.abs(angleToTarget()) >= (Math.PI / 2)) angleMagnitude *= 1.75;
 		turnBy(angleMagnitude * angleDirection);
 	}
+	
+	public void draw(int highlightedAltitude) {
+		draw(highlightedAltitude, null);
+	}
 
 	/**
 	 * Draws the plane and any warning circles if necessary.
 	 * @param the altitude to highlight aircraft at
 	 */
-	public void draw(int highlightedAltitude) {
+	public void draw(int highlightedAltitude, Vector offset) {
 		double alpha;
 		if (position.getZ() >= 28000 && position.getZ() <= 29000) { // 28000-29000
 			alpha = highlightedAltitude == 28000 ? 255 : 128; // 255 if highlighted, else 128
@@ -367,15 +370,30 @@ public class Aircraft {
 		
 		// Draw plane image
 		graphics.setColour(128, 128, 128, alpha);
-		graphics.draw(image, scale, position.getX() - (image.width() / 2),
-				position.getY() - (image.height() / 2), getBearing(),
-				(RADIUS / 2), (RADIUS / 2));
+		
+		if (offset != null) {
+			graphics.draw(image, scale, position.getX() - (image.width() / 2) + offset.getX(),
+					position.getY() - (image.height() / 2) + offset.getY(), getBearing(),
+					(RADIUS / 2), (RADIUS / 2));
+		} else {
+			graphics.draw(image, scale, position.getX() - (image.width() / 2),
+					position.getY() - (image.height() / 2), getBearing(),
+					(RADIUS / 2), (RADIUS / 2));
+		}
 		
 		// Draw altitude label
 		graphics.setColour(128, 128, 128, alpha/2.5);
-		graphics.print(String.format("%.0f", position.getZ()) + "+",
-				position.getX() + (RADIUS / 2), position.getY() - (RADIUS / 2));
-		drawWarningCircles();
+		
+		if (offset != null) {
+			graphics.print(String.format("%.0f", position.getZ()) + "+",
+					position.getX() + (RADIUS / 2) + offset.getX(),
+					position.getY() - (RADIUS / 2) + offset.getY());
+		} else {
+			graphics.print(String.format("%.0f", position.getZ()) + "+",
+					position.getX() + (RADIUS / 2), position.getY() - (RADIUS / 2));
+		}
+		
+		drawWarningCircles(offset);
 	}
 
 	/**
@@ -432,12 +450,18 @@ public class Aircraft {
 	/**
 	 * Draws warning circles around this plane and any others that are too near.
 	 */
-	private void drawWarningCircles() {
+	private void drawWarningCircles(Vector offset) {
 		for (Aircraft plane : planesTooNear) {
 			Vector midPoint = position.add(plane.position).scaleBy(0.5);
 			double radius = position.sub(midPoint).magnitude() * 2;
 			graphics.setColour(graphics.red);
-			graphics.circle(false, midPoint.getX(), midPoint.getY(), radius);
+			
+			if (offset != null) {
+				graphics.circle(false, midPoint.getX() + offset.getX(),
+						midPoint.getY() + offset.getY(), radius);
+			} else {
+				graphics.circle(false, midPoint.getX(), midPoint.getY(), radius);
+			}
 		}
 	}
 
