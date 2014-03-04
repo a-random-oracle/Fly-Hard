@@ -21,9 +21,9 @@ import lib.jog.window;
 public class Aircraft {
 	
 	// Static ints for use where altitude state is to be changed
-	public static final int ALTITUDE_CLIMB = 1;
-	public static final int ALTITUDE_FALL = -1;
-	public static final int ALTITUDE_LEVEL = 0;
+	public final static int ALTITUDE_CLIMB = 1;
+	public final static int ALTITUDE_FALL = -1;
+	public final static int ALTITUDE_LEVEL = 0;
 	
 	/** The size of the aircraft in pixels */
 	private final static int RADIUS = 16;

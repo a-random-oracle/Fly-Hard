@@ -15,11 +15,15 @@ import lib.jog.window;
 
 import cls.Aircraft;
 import cls.Airport;
+import cls.OrdersBox;
 import cls.Waypoint;
 
 import btc.Main;
 
 public class Demo extends Scene {
+	
+	private OrdersBox out = new OrdersBox(window.width() - xOffset + 20,
+			yOffset, xOffset - 20, window.height() - (2 * yOffset), 30);
 	
 	/** The maximum number of aircraft allowed in the airspace simultaneously */
 	private static int maxAircraft = 5;
@@ -233,31 +237,6 @@ public class Demo extends Scene {
 	}
 	
 	/**
-	 * Causes a selected aircraft to call methods to toggle manual control.
-	 */
-	private void toggleManualControl() {
-		if (selectedAircraft == null) return;
-		
-		selectedAircraft.toggleManualControl();
-		manualOverrideButton.setText(
-				(selectedAircraft.isManuallyControlled() ? "Remove" : " Take") + " Control");
-	}
-	
-	/**
-	 * Causes an aircraft to call methods to handle deselection.
-	 */
-	private void deselectAircraft() {
-		if (selectedAircraft != null && selectedAircraft.isManuallyControlled()) {
-			selectedAircraft.toggleManualControl();
-			manualOverrideButton.setText(" Take Control");
-		}
-		
-		selectedAircraft = null;
-		clickedWaypoint = null; 
-		selectedPathpoint = -1;
-	}
-	
-	/**
 	 * Update all objects within the scene, e.g. aircraft.
 	 * <p>
 	 * Also runs collision detection and generates a new flight if flight
@@ -345,6 +324,17 @@ public class Demo extends Scene {
 		
 		// If there are no aircraft in the airspace, generate another aircraft
 		if (aircraftInAirspace.size() == 0) generateFlight();
+		
+		//out.addOrder("" + Math.round(timeElapsed % 1));
+		
+		if ((timeElapsed % 1) == 0) {
+			for (Aircraft a : aircraftInAirspace) {
+				out.addOrder("Aircraft: " + a.getName() + " has speed: " + a.getSpeed());
+			}
+		}
+		
+		// Update debug box
+		out.update(timeDifference);
 	}
 	
 	/**
@@ -369,7 +359,7 @@ public class Demo extends Scene {
 		
 		// Draw all the airports
 		for (Airport airport : airports) {
-			graphics.setColour(255, 255, 255, 48);
+			graphics.setColour(255, 255, 255, 64);
 			airport.draw();
 		}
 		
@@ -388,6 +378,9 @@ public class Demo extends Scene {
 		// Draw extra information such as the number of flights in the airspace
 		graphics.setColour(graphics.green);
 		drawAdditional();
+		
+		// Draw debug box
+		out.draw();
 	}
 	
 	/**
@@ -452,6 +445,31 @@ public class Demo extends Scene {
 	}
 	
 	/**
+	 * Causes a selected aircraft to call methods to toggle manual control.
+	 */
+	private void toggleManualControl() {
+		if (selectedAircraft == null) return;
+		
+		selectedAircraft.toggleManualControl();
+		manualOverrideButton.setText(
+				(selectedAircraft.isManuallyControlled() ? "Remove" : " Take") + " Control");
+	}
+	
+	/**
+	 * Causes an aircraft to call methods to handle deselection.
+	 */
+	private void deselectAircraft() {
+		if (selectedAircraft != null && selectedAircraft.isManuallyControlled()) {
+			selectedAircraft.toggleManualControl();
+			manualOverrideButton.setText(" Take Control");
+		}
+		
+		selectedAircraft = null;
+		clickedWaypoint = null; 
+		selectedPathpoint = -1;
+	}
+	
+	/**
 	 * Cause all planes in airspace to update collisions
 	 * Catch and handle a resultant game over state
 	 * @param timeDifference delta time since last collision check
@@ -481,7 +499,7 @@ public class Demo extends Scene {
 		
 		//playSound(audio.newSoundEffect("sfx" + File.separator + "crash.ogg")); //TODO <- add back in for release
 		main.closeScene();
-		main.setScene(new GameOver(main, plane1, plane2, 0)); //TODO
+		main.setScene(new GameOver(main, plane1, plane2, 0)); //TODO <- pass score
 	}
 	
 	private boolean compassClicked() {
@@ -741,9 +759,9 @@ public class Demo extends Scene {
 		for (Waypoint entryPoint : locationWaypoints) {
 			
 			boolean isAvailable = true;
-			// Prevents spawning a plane in waypoint both:
-			//   *if any plane is currently going towards it 
-			//   *if any plane is less than 250 from it
+			// Prevents spawning a plane at a waypoint if:
+			//   any plane is currently going towards it
+			//   or any plane is less than 250 from it
 
 			for (Aircraft aircraft : aircraftInAirspace) {
 				// Check if any plane is currently going towards the exit point/chosen originPoint
@@ -779,13 +797,13 @@ public class Demo extends Scene {
 		ArrayList<Waypoint> availableOrigins = getAvailableEntryPoints();
 		
 		if (availableOrigins.isEmpty()) {
-			for (Airport airport : airports) { //TODO <- check logic
-				if (airport.aircraftHangar.size() == airport.getHangarSize()) {
-					return null;
-				} else {
-					originPoint = airport.getArrivalsCentre();
-					originName = airport.name;
-				}
+			int randomAirport = (new Random()).nextInt((airports.length - 1) + 1);
+			if (airports[randomAirport].aircraftHangar.size()
+					== airports[randomAirport].getHangarSize()) {
+				return null;
+			} else {
+				originPoint = airports[randomAirport].getArrivalsCentre();
+				originName = airports[randomAirport].name;
 			}
 		} else {
 			originPoint = availableOrigins.get((new Random())
@@ -820,8 +838,10 @@ public class Demo extends Scene {
 			}
 		}
 		
+		int speed = 32 + (int)(10 * Math.random());
+		
 		return new Aircraft(name, destinationName, originName, destinationPoint, originPoint,
-				aircraftImage, 32 + (int)(10 * Math.random()), airspaceWaypoints, difficulty);
+				aircraftImage, speed, airspaceWaypoints, difficulty);
 	}
 	
 	@Override
