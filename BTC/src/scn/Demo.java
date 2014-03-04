@@ -35,6 +35,7 @@ public class Demo extends Scene {
 	/** The distance between the top edge of the screen and the map area */
 	public static int yOffset = 48;
 	
+	// PLEASE DO NOT REMOVE - this is very useful for debugging
 	public static OrdersBox out = new OrdersBox(window.width() - xOffset + 20,
 			yOffset, xOffset - 40, window.height() - (2 * yOffset), 30);
 	
@@ -325,6 +326,7 @@ public class Demo extends Scene {
 		if (aircraftInAirspace.size() == 0) generateFlight();
 		
 		// Update debug box
+		// PLEASE DO NOT REMOVE - this is very useful for debugging
 		out.update(timeDifference);
 	}
 	
@@ -371,6 +373,7 @@ public class Demo extends Scene {
 		drawAdditional();
 		
 		// Draw debug box
+		// PLEASE DO NOT REMOVE - this is very useful for debugging
 		out.draw();
 	}
 	
