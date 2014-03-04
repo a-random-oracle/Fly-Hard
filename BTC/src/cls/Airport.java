@@ -149,13 +149,13 @@ public class Airport extends Waypoint implements EventHandler {
 	  
 	/** 
 	 * Decides whether to draw the radius around the airport by checking if
-	 * any aircraft which are landing are close
-	 * @param demo the class containing the list of aircraft to check
+	 * any aircraft which are landing are close.
+	 * @param aircraft the list of aircraft to check
 	 */
 	public void update(ArrayList<Aircraft> aircraft) {
 		aircraftWaitingToLand.clear();
 		for (Aircraft a : aircraft) {
-			if (a.currentTarget.equals(this.getLocation())) {
+			if (a.currentTarget.equals(getLocation())) {
 				aircraftWaitingToLand.add(a);
 			}
 		}
@@ -266,11 +266,11 @@ public class Airport extends Waypoint implements EventHandler {
 	public void keyReleased(int key) {}
 	
 	public boolean isArrivalsClicked(int x, int y) {
-		return isWithinArrivals(new Vector(x,y,0)) && !isActive;
+		return isWithinArrivals(new Vector(x, y, 0)) && !isActive;
 	}
 	
 	public boolean isDeparturesClicked(int x, int y) {
-		return isWithinDepartures(new Vector(x,y,0)) && !isActive;
+		return isWithinDepartures(new Vector(x, y, 0)) && !isActive;
 	}
 	
 	/**
@@ -378,6 +378,11 @@ public class Airport extends Waypoint implements EventHandler {
 		}	
 	}
 	
+	/**
+	 * Calculates the longest amount of time any aircraft has been waiting.
+	 * @param currentTime the current game time
+	 * @return the longest amount of time an aircraft has been waiting for
+	 */
 	public double getLongestTimeInHangar(double currentTime) {
 		return aircraftHangar.isEmpty() ? 0 : currentTime-timeEntered.get(0);
 	}

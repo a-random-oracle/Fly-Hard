@@ -143,24 +143,21 @@ public class Demo extends Scene {
 		
 		// Start the music
 		//music.play(); TODO <- add this back in for release
-
+		
 		// Set up airports
-		airports = new Airport[2];
-
 		Airport airport1 = Airport.create("Mosgrizzly Airport",
 				(window.width() - (2 * xOffset)) / 4,
 				window.height() / 2);
-
+		
 		Airport airport2 = Airport.create("Mosbear Airport",
 				3 * (window.width() - (2 * xOffset)) / 4,
 				window.height() / 2);
-
+		
+		airports = new Airport[2];
 		airports[0] = airport1;
 		airports[1] = airport2;
-
+		
 		// Set up entry/exit points
-		locationWaypoints = new Waypoint[4 + airports.length];
-
 		Waypoint topLeft = new Waypoint(8, 8,
 				true, "North West Top Leftonia");
 		Waypoint bottomLeft = new Waypoint(8, window.height() - (2 * yOffset) - 4,
@@ -170,7 +167,8 @@ public class Demo extends Scene {
 		Waypoint bottomRight = new Waypoint(window.width() - (2 * xOffset) - 4,
 				window.height() - (2 * yOffset) - 4,
 				true, "South Sea");
-
+		
+		locationWaypoints = new Waypoint[4 + airports.length];
 		locationWaypoints[0] = topLeft;
 		locationWaypoints[1] = bottomLeft;
 		locationWaypoints[2] = topRight;
@@ -180,10 +178,8 @@ public class Demo extends Scene {
 		for (int i = 0; i < airports.length; i++) {
 			locationWaypoints[4 + i] = airports[i];
 		}
-
+		
 		// Set up map waypoints
-		airspaceWaypoints = new Waypoint[10 + locationWaypoints.length];
-
 		// Create airspace waypoints
 		Waypoint wp1 = new Waypoint(125, 70, false);
 		Waypoint wp2 = new Waypoint(700, 100, false);
@@ -195,8 +191,9 @@ public class Demo extends Scene {
 		Waypoint wp8 = new Waypoint(500, 655, false);
 		Waypoint wp9 = new Waypoint(800, 750, false);
 		Waypoint wp10 = new Waypoint(1000, 750, false);
-
+		
 		// Add in airspace waypoints
+		airspaceWaypoints = new Waypoint[10 + locationWaypoints.length];
 		airspaceWaypoints[0] = wp1;
 		airspaceWaypoints[1] = wp2;
 		airspaceWaypoints[2] = wp3;
@@ -432,11 +429,14 @@ public class Demo extends Scene {
 				locationWaypoints[2].getLocation().getX() + xOffset - 141,
 				locationWaypoints[2].getLocation().getY() + yOffset - 6);
 		graphics.print(locationWaypoints[3].getName(),
-				locationWaypoints[3].getLocation().getX() + xOffset- 91,
+				locationWaypoints[3].getLocation().getX() + xOffset - 91,
 				locationWaypoints[3].getLocation().getY() + yOffset - 6);
 		graphics.print(locationWaypoints[4].getName(),
 				locationWaypoints[4].getLocation().getX() + xOffset - 20,
 				locationWaypoints[4].getLocation().getY() + yOffset + 25);
+		graphics.print(locationWaypoints[5].getName(),
+				locationWaypoints[5].getLocation().getX() + xOffset - 20,
+				locationWaypoints[5].getLocation().getY() + yOffset + 25);
 	}
 	
 	/**
