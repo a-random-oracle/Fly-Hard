@@ -79,7 +79,7 @@ public class Airport extends Waypoint implements EventHandler {
 	private boolean isDeparturesClicked = false;
 	
 	/** The image used to represent the airport */
-	private Image image = graphics.newImage("gfx" + File.separator + "Airport.png");
+	private Image image;
 	
 	/** The scaling factor to apply to cause the airport to 'fit in' with the map size
 	 * this is taken to be the lower (and hence smaller) of the height and width scales */
@@ -107,10 +107,13 @@ public class Airport extends Waypoint implements EventHandler {
 	 * @param x the x position to display the top-left corner of the airport at
 	 * @param y the y position to display the top-left corner of the airport at
 	 */
-	public Airport(String name, double x, double y) {
+	private Airport(String name, double x, double y, boolean testing) {
 		super((x + (relativeArrivalsX + (relativeArrivalsWidth/2)) * scale),
 				(y + (relativeArrivalsY + (relativeArrivalsHeight/2)) * scale), true, name);
-
+		
+		// Load the aircraft image
+		if (!testing)  image = graphics.newImage("gfx" + File.separator + "Airport.png");
+		
 		xLocation = x;
 		yLocation = y;
 		
@@ -144,7 +147,27 @@ public class Airport extends Waypoint implements EventHandler {
 	public static Airport create(String name, double x, double y) {
 		return new Airport(name,
 				(x - relativeArrivalsX - (relativeArrivalsWidth/2)),
-				(y - relativeArrivalsY - (relativeArrivalsHeight/2)));
+				(y - relativeArrivalsY - (relativeArrivalsHeight/2)), false);
+	}
+	
+	/**
+	 * Creates an airport at the given location.
+	 * <p>
+	 * <b>This should be used for testing ONLY.<b>
+	 * </p>
+	 * <p>
+	 * This method applies the necessary scaling to position the airport
+	 * relative to the map.
+	 * </p>
+	 * @param name the name of the airport
+	 * @param x the position at which the centre of the airport should be located
+	 * @param y the position at which the centre of the airport should be located
+	 */
+	@Deprecated
+	public static Airport create(String name, double x, double y, boolean testing) {
+		return new Airport(name,
+				(x - relativeArrivalsX - (relativeArrivalsWidth/2)),
+				(y - relativeArrivalsY - (relativeArrivalsHeight/2)), testing);
 	}
 	  
 	/** 

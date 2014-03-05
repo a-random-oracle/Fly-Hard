@@ -121,9 +121,12 @@ public class Aircraft {
 		this.velocity = new Vector(x, y, 0).normalise().scaleBy(speed);
 
 		this.isWaitingToLand = false;
-		for (Airport airport : Demo.airports) {
-			if (flightPlan.getDestination().equals(airport.getLocation())) {
-				this.isWaitingToLand = true;
+		
+		if (Demo.airports != null) {
+			for (Airport airport : Demo.airports) {
+				if (flightPlan.getDestination().equals(airport.getLocation())) {
+					this.isWaitingToLand = true;
+				}
 			}
 		}
 

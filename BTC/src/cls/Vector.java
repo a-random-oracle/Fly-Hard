@@ -5,7 +5,6 @@ import btc.Main;
 
 /**
  * Simplified 3D vector class with basic operations
- * @author Huw Taylor
  */
 public class Vector {
 	private double x, y, z;
@@ -33,22 +32,6 @@ public class Vector {
 	
 	public double getZ() {
 		return z;
-	}
-	
-
-	/**
-	 * Checks a vector for equality with this vector.
-	 * @param Object o the object to be tested for equality
-	 * @return a boolean result of the equality test.
-	 */
-	@Override
-	public boolean equals(Object o) {
-		if (o.getClass() != Vector.class) { 
-			return false;
-		} else {
-			Vector v = (Vector) o;
-			return (x == v.getX()) && (y == v.getY()) && (z == v.getZ());
-		}
 	}
 	
 	/**
@@ -128,6 +111,30 @@ public class Vector {
 				/ (Main.TARGET_HEIGHT - Demo.yOffset)) * this.y;
 		
 		return new Vector(newX, newY, this.z);
+	}
+	
+	/**
+	 * Checks a vector for equality with this vector.
+	 * @param o the object to be tested for equality
+	 * @return a boolean result of the equality test
+	 */
+	@Override
+	public boolean equals(Object o) {
+		if (o.getClass() != Vector.class) { 
+			return false;
+		} else {
+			Vector v = (Vector) o;
+			return (x == v.getX()) && (y == v.getY()) && (z == v.getZ());
+		}
+	}
+	
+	/**
+	 * Returns a textual representation of the vector.
+	 * @return a textual representation of the vector
+	 */
+	@Override
+	public String toString() {
+		return "< Vector: X = " + x + " Y = " + y + " Z = " + z + " >";
 	}
 
 }
