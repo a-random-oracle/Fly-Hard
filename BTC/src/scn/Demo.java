@@ -809,14 +809,17 @@ public class Demo extends Scene {
 			}
 		}
 		
-		// Work out destination
+		// Generate a destination
 		// Keep trying until the random destination is not equal to the chosen origin
+		// Also, if origin is an airport, prevent destination from being an airport
 		int destination = 0;
+
 		do {
 			destination = (new Random()).nextInt((locationWaypoints.length - 1) + 1);
 			destinationName = locationWaypoints[destination].getName();
 			destinationPoint = locationWaypoints[destination];
-		} while (locationWaypoints[destination].getName() == originName);
+		} while (destinationName.equals(originName) ||
+				(isAirportName(originName) && isAirportName(destinationName)));
 		
 		// Generate a unique, random flight name
 		String name = "";
@@ -890,6 +893,22 @@ public class Demo extends Scene {
 		default:
 			return (30 / maxAircraft);
 		}	
+	}
+	
+	/**
+	 * Returns whether a given name is an airport or not.
+	 * @param name the name to test
+	 * @return <code>true</code> if the name matches an airport name,
+	 * 			otherwise <code>false</code>
+	 */
+	private boolean isAirportName(String name) {
+		for (Airport airport : airports) {
+			// If a match is found, return true
+			if (airport.name.equals(name)) return true;
+		}
+		
+		// Otherwise
+		return false;
 	}
 	
 }
