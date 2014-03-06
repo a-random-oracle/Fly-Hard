@@ -4,6 +4,10 @@ Mission Control
 ## Notices
 * __Test as you go on!__ Testing should be implemented/considered as code is implemented.
 * __Please use issue numbers when committing changes/fixes relating to defined issues, it makes everything more trackable__ (also you don't have to be as descriptive, i.e. `Fixed #n` would be easier and as descriptive than `I fixed the issue where everything explodes if you click the middle mouse button`)
+* Airspaces will adopt a zoning system a la [ice hockey](http://en.wikipedia.org/wiki/Ice_hockey_rink#Zones).
+* Planes can crash. I think? I don't know what happened or what year this is.
+* Points mean prizes. (Need to consider unit. Perhaps Jeremies?)
+* People should keep ideas for powerups. For example a power-up where all planes turn into Jeremies.
 
 ## To Do
 
