@@ -5,7 +5,7 @@ import java.util.ArrayList;
 
 import btc.Main;
 
-import scn.Demo;
+import scn.Game;
 
 import lib.jog.graphics;
 import lib.jog.graphics.Image;
@@ -204,7 +204,7 @@ public class Airport extends Waypoint implements EventHandler {
 		// Draw the hangar button if plane is waiting (departing flights)
 		if (aircraftHangar.size() > 0) {
 			// Colour fades from green (fine) to red (danger) over 5 seconds as plane is waiting
-			int timeWaiting = (int)(Demo.getTime() - timeEntered.get(0));
+			int timeWaiting = (int)(Game.getTime() - timeEntered.get(0));
 			// Assume it hasn't been waiting
 			int greenNow = greenFine; 
 			int redNow = redFine;
@@ -324,8 +324,8 @@ public class Airport extends Waypoint implements EventHandler {
 		return isWithinRect(
 				(int)position.getX(),
 				(int)position.getY(),
-				(int)(arrivalsX) + Demo.xOffset,
-				(int)(arrivalsY) + Demo.yOffset,
+				(int)(arrivalsX) + Game.xOffset,
+				(int)(arrivalsY) + Game.yOffset,
 				(int)arrivalsWidth,
 				(int)arrivalsHeight);
 	}
@@ -358,8 +358,8 @@ public class Airport extends Waypoint implements EventHandler {
 		return isWithinRect(
 				(int)position.getX(),
 				(int)position.getY(),
-				(int)(departuresX) + Demo.xOffset,
-				(int)(departuresY) + Demo.yOffset,
+				(int)(departuresX) + Game.xOffset,
+				(int)(departuresY) + Game.yOffset,
 				(int)departuresWidth,
 				(int)departuresHeight);
 	}
@@ -386,7 +386,7 @@ public class Airport extends Waypoint implements EventHandler {
 	public void addToHangar(Aircraft aircraft) {
 		if (aircraftHangar.size() < hangarSize) {
 			aircraftHangar.add(aircraft);
-			timeEntered.add(Demo.getTime());
+			timeEntered.add(Game.getTime());
 		}
 	}
 	

@@ -64,7 +64,7 @@ public class GameOver extends Scene {
 		
 		aircraft1 = plane1;
 		aircraft2 = plane2;
-		origin = new Vector(Demo.xOffset, Demo.yOffset, 0);
+		origin = new Vector(Game.xOffset, Game.yOffset, 0);
 		
 		crash = plane1.getPosition().add(new Vector((plane1.getPosition().getX() - plane2.getPosition().getX()) / 2,
 				(plane1.getPosition().getY() - plane2.getPosition().getY()) / 2, 0)).add(origin);

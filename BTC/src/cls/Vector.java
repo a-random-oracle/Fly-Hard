@@ -1,6 +1,6 @@
 package cls;
 
-import scn.Demo;
+import scn.Game;
 import btc.Main;
 
 /**
@@ -104,11 +104,11 @@ public class Vector {
 	 * Maps between a position on the target screen and the actual screen.
 	 */
 	public Vector remapPosition() {
-		double newX = (((Main.TARGET_WIDTH * Main.getXScale()) - (2 * Demo.xOffset))
-				/ (Main.TARGET_WIDTH - Demo.xOffset)) * this.x;
+		double newX = (((Main.TARGET_WIDTH * Main.getXScale()) - (2 * Game.xOffset))
+				/ (Main.TARGET_WIDTH - Game.xOffset)) * this.x;
 		
-		double newY = (((Main.TARGET_HEIGHT * Main.getYScale()) - (2 * Demo.yOffset))
-				/ (Main.TARGET_HEIGHT - Demo.yOffset)) * this.y;
+		double newY = (((Main.TARGET_HEIGHT * Main.getYScale()) - (2 * Game.yOffset))
+				/ (Main.TARGET_HEIGHT - Game.yOffset)) * this.y;
 		
 		return new Vector(newX, newY, this.z);
 	}

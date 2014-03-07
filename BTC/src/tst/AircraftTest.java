@@ -5,7 +5,7 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 import org.junit.Before;
 
-import scn.Demo;
+import scn.Game;
 import cls.Aircraft;
 import cls.Waypoint;
 import cls.Vector;
@@ -121,7 +121,7 @@ public class AircraftTest {
 	// Testing totalDistanceInFlightPlan 
 	@Test
 	public void totalDistanceInFlightPlan() {
-		Demo testDemo = new Demo(1);
+		Game testDemo = new Game(1);
 		testDemo.initializeAircraftArray();
 		testDemo.aircraftList().add(testAircraft);
 		Aircraft plane = testDemo.aircraftList().get(0);

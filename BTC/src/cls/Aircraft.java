@@ -4,7 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Random;
 
-import scn.Demo;
+import scn.Game;
 import lib.jog.audio;
 import lib.jog.audio.Sound;
 import lib.jog.graphics;
@@ -122,8 +122,8 @@ public class Aircraft {
 
 		this.isWaitingToLand = false;
 		
-		if (Demo.airports != null) {
-			for (Airport airport : Demo.airports) {
+		if (Game.airports != null) {
+			for (Airport airport : Game.airports) {
 				if (flightPlan.getDestination().equals(airport.getLocation())) {
 					this.isWaitingToLand = true;
 				}
@@ -146,20 +146,20 @@ public class Aircraft {
 	 */
 	private void setDifficultySettings(int difficulty) {
 		switch (difficulty) {
-		case Demo.DIFFICULTY_EASY:
+		case Game.DIFFICULTY_EASY:
 			minimumSeparation = 64;
 			turnSpeed = Math.PI / 4;
 			verticalVelocity = 500;
 			break;
 
-		case Demo.DIFFICULTY_MEDIUM:
+		case Game.DIFFICULTY_MEDIUM:
 			minimumSeparation = 96;
 			velocity = velocity.scaleBy(2);
 			turnSpeed = Math.PI / 3;
 			verticalVelocity = 300;
 			break;
 
-		case Demo.DIFFICULTY_HARD:
+		case Game.DIFFICULTY_HARD:
 			minimumSeparation = 128;
 			velocity = velocity.scaleBy(3);
 			// At high velocities, the aircraft is allowed to turn faster - this helps keep the aircraft on track.
@@ -187,7 +187,7 @@ public class Aircraft {
 				// ~11 seconds to fully descend
 				position.setZ(position.getZ() - 2501 * time_difference);
 			} else { // Gone too low, land it now TODO (check this)
-				for (Airport airport : Demo.airports) {
+				for (Airport airport : Game.airports) {
 					if (flightPlan.getDestination().equals(airport.getLocation())) {
 						airport.isActive = false;
 						hasFinished = true;
@@ -215,7 +215,7 @@ public class Aircraft {
 		if (currentTarget.equals(flightPlan.getDestination()) && isAtDestination()) { // At finishing point
 			if (!isWaitingToLand) { // Ready to land
 				hasFinished = true;
-				for (Airport airport : Demo.airports) {
+				for (Airport airport : Game.airports) {
 					if (flightPlan.getDestination().equals(airport.getLocation())) { // Landed at airport
 						airport.isActive = false;
 					}
@@ -250,9 +250,9 @@ public class Aircraft {
 		double x = position.getX();
 		double y = position.getY();
 		return ((x < (RADIUS/2))
-				|| (x > window.width() - (RADIUS/2) - (2 * Demo.xOffset))
+				|| (x > window.width() - (RADIUS/2) - (2 * Game.xOffset))
 				|| (y < (RADIUS/2))
-				|| (y > window.height() + (RADIUS/2) - (2 * Demo.yOffset)));
+				|| (y > window.height() + (RADIUS/2) - (2 * Game.yOffset)));
 	}
 
 	public boolean isAt(Vector point) {
@@ -289,11 +289,11 @@ public class Aircraft {
 	 * @return true, if the mouse is close enough to this plane. False, otherwise.
 	 */
 	public boolean isMouseOver() {
-		return isMouseOver(input.mouseX() - Demo.xOffset, input.mouseY() - Demo.yOffset);
+		return isMouseOver(input.mouseX() - Game.xOffset, input.mouseY() - Game.yOffset);
 	}
 	
 	public boolean isAtDestination() {
-		for (Airport airport : Demo.airports) {
+		for (Airport airport : Game.airports) {
 			if (flightPlan.getDestination().equals(airport.getLocation())) { // At airport
 				return airport.isWithinArrivals(position, false); // Within Arrivals rectangle
 			} else {
@@ -406,8 +406,8 @@ public class Aircraft {
 		graphics.setColour(graphics.green);
 		
 		// Centre positions of aircraft
-		Double xpos = position.getX()-image.width()/2 + Demo.xOffset; 
-		Double ypos = position.getY()-image.height()/2 + Demo.yOffset;
+		Double xpos = position.getX()-image.width()/2 + Game.xOffset; 
+		Double ypos = position.getY()-image.height()/2 + Game.yOffset;
 		
 		// Draw the compass circle
 		graphics.circle(false, xpos, ypos, COMPASS_RADIUS, 30);
@@ -635,7 +635,7 @@ public class Aircraft {
 		isWaitingToLand = false;
 		isLanding = true;
 		isManuallyControlled = false;
-		for (Airport airport : Demo.airports) {
+		for (Airport airport : Game.airports) {
 			if (flightPlan.getDestination().equals(airport.getLocation())) {
 				airport.isActive = true;
 			}
@@ -643,13 +643,13 @@ public class Aircraft {
 	}
 
 	public void takeOff() {
-		for (Airport airport : Demo.airports) {
+		for (Airport airport : Game.airports) {
 			if (flightPlan.getDestination().equals(airport.getLocation())) {
 				airport.isActive = true;
 			}
 		}
 		
-		Demo.takeOffSequence(this);
+		Game.takeOffSequence(this);
 	}
 
 	/**
