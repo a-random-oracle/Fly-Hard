@@ -5,7 +5,8 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 import org.junit.Before;
 
-import scn.Game;
+import scn.SinglePlayerGame;
+import scn.Game.DifficultySetting;
 import cls.Aircraft;
 import cls.Waypoint;
 import cls.Vector;
@@ -22,11 +23,11 @@ public class AircraftTest {
 				new Waypoint(100, 100, true),
 				new Waypoint(25, 75, false),
 				new Waypoint(75, 25, false),
-				new Waypoint(50,50, false)};
+				new Waypoint(50, 50, false)};
 		
 		testAircraft = new Aircraft("testAircraft", "Berlin", "Dublin",
-				new Waypoint(100,100, true), new Waypoint(0,0, true),
-				null, 10.0, waypointList, 1);
+				new Waypoint(100, 100, true), new Waypoint(0, 0, true),
+				null, 10.0, waypointList, DifficultySetting.MEDIUM, null);
 	}
 	
 	// Test get functions
@@ -103,8 +104,8 @@ public class AircraftTest {
 				new Waypoint(50,50, false)};
 		
 		testAircraft = new Aircraft("testAircraft", "Berlin", "Dublin",
-				new Waypoint(100,100, true), new Waypoint(0,0, true),
-				null, 10.0, waypointList, 1);
+				new Waypoint(100, 100, true), new Waypoint(0, 0, true),
+				null, 10.0, waypointList, DifficultySetting.MEDIUM, null);
 		
 		assertTrue("Out of bounds = false", testAircraft.isOutOfAirspaceBounds());
 	}
@@ -121,10 +122,10 @@ public class AircraftTest {
 	// Testing totalDistanceInFlightPlan 
 	@Test
 	public void totalDistanceInFlightPlan() {
-		Game testDemo = new Game(1);
+		SinglePlayerGame testDemo = new SinglePlayerGame(null, DifficultySetting.MEDIUM);
 		testDemo.initializeAircraftArray();
-		testDemo.aircraftList().add(testAircraft);
-		Aircraft plane = testDemo.aircraftList().get(0);
+		testDemo.getAircraftList().add(testAircraft);
+		Aircraft plane = testDemo.getAircraftList().get(0);
 		int distance = 0;
 		
 		for (int i = 0; i < plane.getFlightPlan().getRoute().length - 1; i++) {
@@ -146,8 +147,8 @@ public class AircraftTest {
 				new Waypoint(530,520, false)};
 		
 		testAircraft = new Aircraft("testAircraft", "Berlin", "Dublin",
-				new Waypoint(100,100, true), new Waypoint(0,0, true),
-				null, 10.0, waypointList, 1);
+				new Waypoint(100, 100, true), new Waypoint(0, 0, true),
+				null, 10.0, waypointList, DifficultySetting.MEDIUM, null);
 		
 		assertTrue(testAircraft.isCloseToEntry(waypointList[0].getLocation()));			
 		assertTrue(testAircraft.isCloseToEntry(waypointList[1].getLocation()));

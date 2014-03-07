@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Random;
 
 import scn.Game;
+import scn.Game.DifficultySetting;
 import lib.jog.audio;
 import lib.jog.audio.Sound;
 import lib.jog.graphics;
@@ -105,12 +106,16 @@ public class Aircraft {
 	 */
 	public Aircraft(String name, String nameDestination, String nameOrigin,
 			Waypoint destinationPoint, Waypoint originPoint, Image image,
-			double speed, Waypoint[] sceneWaypoints, int difficulty) {
+			double speed, Waypoint[] sceneWaypoints, DifficultySetting difficulty,
+			Airport airport) {
 		this.flightName = name;		
-		this.flightPlan = new FlightPlan(sceneWaypoints, nameOrigin, nameDestination, originPoint, destinationPoint);		
+		this.flightPlan = new FlightPlan(sceneWaypoints, nameOrigin,
+				nameDestination, originPoint, destinationPoint, airport);		
 		this.image = image;
 		this.position = originPoint.getLocation();
+		this.isWaitingToLand = (airport != null);
 		
+		// Set aircraft's altitude to a random height
 		int altitudeOffset = ((new Random()).nextInt(2)) == 0 ? 28000 : 30000;
 		this.position = position.add(new Vector(0, 0, altitudeOffset));
 
@@ -119,17 +124,7 @@ public class Aircraft {
 		double x = currentTarget.getX() - position.getX();
 		double y = currentTarget.getY() - position.getY();
 		this.velocity = new Vector(x, y, 0).normalise().scaleBy(speed);
-
-		this.isWaitingToLand = false;
 		
-		if (Game.airports != null) {
-			for (Airport airport : Game.airports) {
-				if (flightPlan.getDestination().equals(airport.getLocation())) {
-					this.isWaitingToLand = true;
-				}
-			}
-		}
-
 		// Set the aircraft's difficulty settings
 		// e.g. the minimum separation distance, turning speed, velocity
 		setDifficultySettings(difficulty);
@@ -144,22 +139,22 @@ public class Aircraft {
 	 * 2 has the hardest attributes (faster aircraft, least forgiving separation rules)
 	 * </p>
 	 */
-	private void setDifficultySettings(int difficulty) {
+	private void setDifficultySettings(DifficultySetting difficulty) {
 		switch (difficulty) {
-		case Game.DIFFICULTY_EASY:
+		case EASY:
 			minimumSeparation = 64;
 			turnSpeed = Math.PI / 4;
 			verticalVelocity = 500;
 			break;
 
-		case Game.DIFFICULTY_MEDIUM:
+		case MEDIUM:
 			minimumSeparation = 96;
 			velocity = velocity.scaleBy(2);
 			turnSpeed = Math.PI / 3;
 			verticalVelocity = 300;
 			break;
 
-		case Game.DIFFICULTY_HARD:
+		case HARD:
 			minimumSeparation = 128;
 			velocity = velocity.scaleBy(3);
 			// At high velocities, the aircraft is allowed to turn faster - this helps keep the aircraft on track.
@@ -187,11 +182,9 @@ public class Aircraft {
 				// ~11 seconds to fully descend
 				position.setZ(position.getZ() - 2501 * time_difference);
 			} else { // Gone too low, land it now TODO (check this)
-				for (Airport airport : Game.airports) {
-					if (flightPlan.getDestination().equals(airport.getLocation())) {
-						airport.isActive = false;
-						hasFinished = true;
-					}
+				if (flightPlan.getAirport() != null) {
+					flightPlan.getAirport().isActive = false;
+					hasFinished = true;
 				}
 			}
 		} else {
@@ -215,10 +208,8 @@ public class Aircraft {
 		if (currentTarget.equals(flightPlan.getDestination()) && isAtDestination()) { // At finishing point
 			if (!isWaitingToLand) { // Ready to land
 				hasFinished = true;
-				for (Airport airport : Game.airports) {
-					if (flightPlan.getDestination().equals(airport.getLocation())) { // Landed at airport
-						airport.isActive = false;
-					}
+				if (flightPlan.getAirport() != null) { // Landed at airport
+					flightPlan.getAirport().isActive = false;
 				}
 			}
 		} else if (isAt(currentTarget)) {
@@ -250,9 +241,9 @@ public class Aircraft {
 		double x = position.getX();
 		double y = position.getY();
 		return ((x < (RADIUS/2))
-				|| (x > window.width() - (RADIUS/2) - (2 * Game.xOffset))
+				|| (x > window.width() - (RADIUS/2) - (2 * Game.getXOffset()))
 				|| (y < (RADIUS/2))
-				|| (y > window.height() + (RADIUS/2) - (2 * Game.yOffset)));
+				|| (y > window.height() + (RADIUS/2) - (2 * Game.getYOffset())));
 	}
 
 	public boolean isAt(Vector point) {
@@ -262,7 +253,8 @@ public class Aircraft {
 	}
 	
 	/**
-	 * Edits the plane's path by changing the waypoint it will go to at a certain stage in its route.
+	 * Edits the plane's path by changing the waypoint it will go to at
+	 * a certain stage in its route.
 	 * @param routeStage the stage at which the new waypoint will replace the old
 	 * @param newWaypoint the new waypoint to travel to
 	 */
@@ -285,22 +277,22 @@ public class Aircraft {
 	}
 
 	/**
-	 * Calls {@link isMouseOver()} using {@link input.mouseX()} and {@link input.mouseY()} as the arguments.
-	 * @return true, if the mouse is close enough to this plane. False, otherwise.
+	 * Calls {@link isMouseOver()} using {@link input.mouseX()} and
+	 * {@link input.mouseY()} as the arguments.
+	 * @return <code>true</code> if the mouse is close enough to this plane,
+	 * 			otherwise <code>false</code>
 	 */
 	public boolean isMouseOver() {
-		return isMouseOver(input.mouseX() - Game.xOffset, input.mouseY() - Game.yOffset);
+		return isMouseOver(input.mouseX() - Game.getXOffset(),
+				input.mouseY() - Game.getYOffset());
 	}
 	
 	public boolean isAtDestination() {
-		for (Airport airport : Game.airports) {
-			if (flightPlan.getDestination().equals(airport.getLocation())) { // At airport
-				return airport.isWithinArrivals(position, false); // Within Arrivals rectangle
-			} else {
-				return isAt(flightPlan.getDestination()); // Very close to destination
-			}
+		if (flightPlan.getAirport() != null) { // At airport
+			return flightPlan.getAirport().isWithinArrivals(position, false); // Within Arrivals rectangle
+		} else {
+			return isAt(flightPlan.getDestination()); // Very close to destination
 		}
-		return false;
 	}	
 	
 	public void turnLeft(double time_difference) {
@@ -406,8 +398,8 @@ public class Aircraft {
 		graphics.setColour(graphics.green);
 		
 		// Centre positions of aircraft
-		Double xpos = position.getX()-image.width()/2 + Game.xOffset; 
-		Double ypos = position.getY()-image.height()/2 + Game.yOffset;
+		Double xpos = position.getX()-image.width()/2 + Game.getXOffset(); 
+		Double ypos = position.getY()-image.height()/2 + Game.getYOffset();
 		
 		// Draw the compass circle
 		graphics.circle(false, xpos, ypos, COMPASS_RADIUS, 30);
@@ -635,18 +627,14 @@ public class Aircraft {
 		isWaitingToLand = false;
 		isLanding = true;
 		isManuallyControlled = false;
-		for (Airport airport : Game.airports) {
-			if (flightPlan.getDestination().equals(airport.getLocation())) {
-				airport.isActive = true;
-			}
+		if (flightPlan.getAirport() != null) {
+			flightPlan.getAirport().isActive = true;
 		}
 	}
 
 	public void takeOff() {
-		for (Airport airport : Game.airports) {
-			if (flightPlan.getDestination().equals(airport.getLocation())) {
-				airport.isActive = true;
-			}
+		if (flightPlan.getAirport() != null) {
+			flightPlan.getAirport().isActive = true;
 		}
 		
 		Game.takeOffSequence(this);

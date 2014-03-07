@@ -7,9 +7,7 @@ import java.util.Random;
 
 import lib.ButtonText;
 import lib.jog.audio;
-import lib.jog.audio.Music;
 import lib.jog.graphics;
-import lib.jog.graphics.Image;
 import lib.jog.input;
 import lib.jog.window;
 
@@ -22,64 +20,15 @@ import btc.Main;
 
 public class SinglePlayerGame extends Game {
 	
-	/** The current difficulty setting */
-	public static int difficulty;
-	
-	/** Time since the scene began */
-	private static double timeElapsed;
-	
-	/** The currently selected aircraft */
-	private Aircraft selectedAircraft;
-	
-	/** The currently selected waypoint */
-	private Waypoint clickedWaypoint;
-	
-	/** Selected path point, in an aircraft's route, used for altering the route */
-	private int selectedPathpoint;
-	
-	/** A list of aircraft present in the airspace */
-	public static ArrayList<Aircraft> aircraftInAirspace;
-	
-	/** A list of aircraft which have recently left the airspace */
-	public ArrayList<Aircraft> recentlyDepartedAircraft;
-	
-	/** The image to use for aircraft */
-	private Image aircraftImage;
-	
-	/** A button to start and end manual control of an aircraft */
-	private ButtonText manualOverrideButton;
-	
-	/** Tracks if manual heading compass of a manually controlled aircraft has been clicked */
-	private boolean compassClicked;
-	
-	/** Tracks if waypoint of a manually controlled aircraft has been clicked */
-	private boolean waypointClicked;
-	
-	/** Music to play during the game scene */
-	private Music music;
-	
-	/** The background to draw in the airspace */
-	private Image background;
-	
-	/** Array of the airports in the airspace */
-	public static Airport[] airports;
-	
-	/** The set of waypoints in the airspace which are entry/exit points */
-	public static Waypoint[] locationWaypoints;
-
-	/** All waypoints in the airspace, including locationWaypoints */
-	public static Waypoint[] airspaceWaypoints;
-	
 	/**
 	 * Constructor for Demo.
 	 * @param main the main containing the scene
 	 * @param difficulty the difficulty the scene is to be initialised with
 	 */
-	public SinglePlayerGame(Main main, int difficulty) {
-		super(main);
-		SinglePlayerGame.difficulty = difficulty;
+	public SinglePlayerGame(Main main, DifficultySetting difficulty) {
+		super(main, difficulty);
 	}
-	
+
 	/**
 	 * Initialise and begin music, init background image and scene variables.
 	 * Shorten flight generationpublic final static int  timer according to difficulty.
@@ -455,45 +404,6 @@ public class SinglePlayerGame extends Game {
 		main.setScene(new GameOver(main, plane1, plane2, 0)); //TODO <- pass score
 	}
 	
-	protected boolean compassClicked() {
-		if (selectedAircraft != null) {
-			double dx = selectedAircraft.getPosition().getX() - input.mouseX() + xOffset;
-			double dy = selectedAircraft.getPosition().getY() - input.mouseY() + yOffset;
-			int r = Aircraft.COMPASS_RADIUS;
-			return  dx*dx + dy*dy < r*r;
-		}
-		return false;
-	}
-	
-	protected boolean aircraftClicked(int x, int y) {
-		for (Aircraft a : aircraftInAirspace) {
-			if (a.isMouseOver(x - xOffset, y - yOffset)) {
-				return true;
-			}
-		}
-		return false;
-	}
-	
-	protected Aircraft findClickedAircraft(int x, int y) {
-		for (Aircraft a : aircraftInAirspace) {
-			if (a.isMouseOver(x - xOffset, y - yOffset)) {
-				return a;
-			}
-		}
-		return null;
-	}
-	
-	protected boolean waypointInFlightplanClicked(int x, int y, Aircraft a) {
-		if (a != null) {
-			for (Waypoint w : airspaceWaypoints) {
-				if (w.isMouseOver(x - xOffset, y - yOffset) && a.getFlightPlan().indexOfWaypoint(w) > -1) {
-					return true;
-				}
-			}
-		}
-		return false;
-	}
-	
 	protected Waypoint findClickedWaypoint(int x, int y) {
 		for (Waypoint w : airspaceWaypoints) {
 			if (w.isMouseOver(x - xOffset, y - yOffset)) {
@@ -549,7 +459,7 @@ public class SinglePlayerGame extends Game {
 				selectedAircraft = findClickedAircraft(x, y);
 			}
 			if (selectedAircraft != null) {
-				if (compassClicked()) {
+				if (compassClicked(x, y)) {
 					compassClicked = true; // Flag to mouseReleased
 					if (!selectedAircraft.isManuallyControlled())
 						toggleManualControl();
@@ -562,10 +472,6 @@ public class SinglePlayerGame extends Game {
 				}
 			}
 		}
-	}
-	
-	protected boolean manualOverridePressed(int x, int y) {
-		return manualOverrideButton.isMouseOver(x - xOffset, y - yOffset);
 	}
 
 	@Override
@@ -651,7 +557,7 @@ public class SinglePlayerGame extends Game {
 		double seconds = timeElapsed % 60;
 		DecimalFormat df = new DecimalFormat("00.00");
 		String timePlayed = String.format("%d:%02d:", hours, minutes) + df.format(seconds); 
-		graphics.print(timePlayed, window.width() - SinglePlayerGame.xOffset - (timePlayed.length() * 8 + 32), 32);
+		graphics.print(timePlayed, window.width() - xOffset - (timePlayed.length() * 8 + 32), 32);
 		int planes = aircraftInAirspace.size();
 		graphics.print(String.valueOf("Highlighted altitude: " + Integer.toString(highlightedAltitude)) , 32, 15);
 		graphics.print(String.valueOf(aircraftInAirspace.size())
@@ -722,6 +628,7 @@ public class SinglePlayerGame extends Game {
 		String originName = "";
 		Waypoint originPoint = null;
 		Waypoint destinationPoint;
+		Airport destinationAirport = null;
 		
 		// Chooses two waypoints randomly and then checks if they satisfy the rules
 		// If not, it tries until it finds good ones
@@ -737,12 +644,14 @@ public class SinglePlayerGame extends Game {
 				originPoint = airports[randomAirport].getDeparturesCentre();
 				originName = airports[randomAirport].name;
 			}
+			destinationAirport = airports[randomAirport];
 		} else {
 			originPoint = availableOrigins.get(
 					(new Random()).nextInt((availableOrigins.size() - 1) + 1));
 			
 			// If random point is an airport, use its departures location
 			if (originPoint instanceof Airport) {
+				destinationAirport = (Airport) originPoint;
 				originName = originPoint.name;
 				originPoint = ((Airport) originPoint).getDeparturesCentre();
 			} else {
@@ -780,8 +689,9 @@ public class SinglePlayerGame extends Game {
 		
 		int speed = 32 + (int)(10 * Math.random());
 		
-		return new Aircraft(name, destinationName, originName, destinationPoint, originPoint,
-				aircraftImage, speed, airspaceWaypoints, difficulty);
+		return new Aircraft(name, destinationName, originName,
+				destinationPoint, originPoint, aircraftImage, speed,
+				airspaceWaypoints, difficulty, destinationAirport);
 	}
 	
 	@Override
@@ -802,7 +712,7 @@ public class SinglePlayerGame extends Game {
 	 * Getter for aircraft list.
 	 * @return the arrayList of aircraft in the airspace
 	 */
-	public ArrayList<Aircraft> aircraftList() {
+	public ArrayList<Aircraft> getAircraftList() {
 		return aircraftInAirspace;
 	}
 	
@@ -813,40 +723,6 @@ public class SinglePlayerGame extends Game {
 	@Deprecated
 	public void initializeAircraftArray() {
 		aircraftInAirspace = new ArrayList<Aircraft>();
-	}
-	
-	/**
-	 * The interval in seconds to generate flights after.
-	 */
-	public int getFlightGenerationInterval() {
-		switch (difficulty) {
-		case 1:
-			// Planes move 2x faster on medium so this makes them spawn
-			// 2 times as often to keep the ratio
-			return (30 / (maxAircraft * 2));
-		case 2:
-			// Planes move 3x faster on hard so this makes them spawn
-			// 3 times as often to keep the ratio 
-			return (30 / (maxAircraft * 3) );
-		default:
-			return (30 / maxAircraft);
-		}	
-	}
-	
-	/**
-	 * Returns whether a given name is an airport or not.
-	 * @param name the name to test
-	 * @return <code>true</code> if the name matches an airport name,
-	 * 			otherwise <code>false</code>
-	 */
-	protected boolean isAirportName(String name) {
-		for (Airport airport : airports) {
-			// If a match is found, return true
-			if (airport.name.equals(name)) return true;
-		}
-		
-		// Otherwise
-		return false;
 	}
 	
 }

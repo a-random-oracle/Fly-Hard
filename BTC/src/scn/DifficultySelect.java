@@ -1,10 +1,13 @@
 package scn;
 
+import scn.Game.DifficultySetting;
+
 import lib.TextBox;
 import lib.jog.audio.Sound;
 import lib.jog.graphics;
 import lib.jog.input;
 import lib.jog.window;
+
 import btc.Main;
 
 public class DifficultySelect extends Scene {
@@ -83,7 +86,7 @@ public class DifficultySelect extends Scene {
 			public void action() {
 				switch (scene){
 				case DifficultySelect.CREATE_DEMO:
-					main.setScene(new SinglePlayerGame(main, Game.DIFFICULTY_EASY));
+					main.setScene(new SinglePlayerGame(main, DifficultySetting.EASY));
 					break;
 				}
 			}
@@ -95,7 +98,7 @@ public class DifficultySelect extends Scene {
 			public void action() {
 				switch (scene){
 				case DifficultySelect.CREATE_DEMO:
-					main.setScene(new SinglePlayerGame(main, Game.DIFFICULTY_MEDIUM));
+					main.setScene(new SinglePlayerGame(main, DifficultySetting.MEDIUM));
 					break;
 				}
 			}
@@ -107,7 +110,7 @@ public class DifficultySelect extends Scene {
 			public void action() {
 				switch (scene){
 				case DifficultySelect.CREATE_DEMO:
-					main.setScene(new SinglePlayerGame(main, Game.DIFFICULTY_HARD));
+					main.setScene(new SinglePlayerGame(main, DifficultySetting.HARD));
 					break;
 				}
 			}

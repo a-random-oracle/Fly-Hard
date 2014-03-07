@@ -6,6 +6,8 @@ import lib.jog.window;
 import org.junit.Test;
 import org.junit.Before;
 
+import scn.Game.DifficultySetting;
+
 import cls.Aircraft;
 import cls.Airport;
 import cls.Waypoint;
@@ -28,13 +30,14 @@ public class AirportTest {
 				new Waypoint(50,50, false)};
 		
 		test_aircraft = new Aircraft("testAircraft", "Berlin", "Dublin",
-				new Waypoint(100,100, true), new Waypoint(0,0, true),
-				null, 10.0, waypointList, 1);			
+				new Waypoint(100, 100, true), new Waypoint(0, 0, true),
+				null, 10.0, waypointList, DifficultySetting.MEDIUM, null);			
 	}
 	
 	/**
-	 * The methods in airport isMouseOverArrivals() and isMouseOverDepartures() only call IsMouseInRect() with their relevant parameters
-	 * and therefore is ommitted from testing 
+	 * The methods in airport isMouseOverArrivals() and isMouseOverDepartures()
+	 * only call isMouseInRect() with their relevant parameters and therefore are
+	 * omitted from testing.
 	 */
 	@Test
 	public void testIsWithinRect() {

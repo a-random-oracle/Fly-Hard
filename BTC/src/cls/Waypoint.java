@@ -1,6 +1,5 @@
 package cls;
 
-import scn.Game;
 import lib.jog.graphics;
 
 public class Waypoint {

@@ -8,21 +8,24 @@ public class FlightPlan {
 	private Vector origin;
 	private String destinationName;
 	private Vector destination;
+	private Airport airport;
 	
-	FlightPlan(Waypoint[] route, String originName, String destinationName, Waypoint originPoint, Waypoint destinationPoint) {
+	FlightPlan(Waypoint[] route, String originName, String destinationName,
+			Waypoint originPoint, Waypoint destinationPoint, Airport airport) {
 		this.route = findGreedyRoute(originPoint, destinationPoint, route);
 		this.originName = originName;
 		this.origin = originPoint.getLocation();
 		this.destinationName = destinationName;
 		this.destination = destinationPoint.getLocation();
+		this.airport = airport;
 	}
 	
 	public Waypoint[] getRoute() {
 		return route;
 	}
 	
-	public Vector getDestination() {
-		return destination;
+	public String getOriginName() {
+		return originName;
 	}
 	
 	public Vector getOrigin() {
@@ -33,10 +36,13 @@ public class FlightPlan {
 		return destinationName;
 	}
 	
-	public String getOriginName() {
-		return originName;
+	public Vector getDestination() {
+		return destination;
 	}
 	
+	public Airport getAirport() {
+		return airport;
+	}
 	
 	/**
 	 * Edits the plane's path by changing the waypoint it will go to at a certain stage in its route.
@@ -76,14 +82,14 @@ public class FlightPlan {
 	private Waypoint[] findGreedyRoute(Waypoint origin, Waypoint destination, Waypoint[] waypoints) {
 		// To hold the route as we generate it.
 		ArrayList<Waypoint> selectedWaypoints = new ArrayList<Waypoint>();
-		// Initialise the origin as the first point in the route.
-		// SelectedWaypoints.add(origin);
+
 		// To track our position as we generate the route. Initialise to the start of the route
 		Waypoint currentPos = origin;
 
 		// To track the closest next waypoint
 		double cost = Double.MAX_VALUE;
 		Waypoint cheapest = null;
+		
 		// To track if the route is complete
 		boolean atDestination = false;
 
@@ -103,8 +109,10 @@ public class FlightPlan {
 				// Do not consider the waypoint we are currently at or the origin
 				// Do not consider offscreen waypoints which are not the destination
 				// Also skip if flagged as a previously selected waypoint
-				if (skip | point.getLocation().equals(currentPos.getLocation()) | point.getLocation().equals(origin.getLocation())
-						| (point.isEntryOrExit() && !(point.getLocation().equals(destination.getLocation())))) {
+				if (skip | point.getLocation().equals(currentPos.getLocation())
+						| point.getLocation().equals(origin.getLocation())
+						| (point.isEntryOrExit() && !(point.getLocation()
+								.equals(destination.getLocation())))) {
 					skip = false; // Reset flag
 					continue;
 				} else {
@@ -113,10 +121,12 @@ public class FlightPlan {
 					 * Compare cost vs current cheapest 
 					 * If smaller, replace
 					 */
-					if (point.getCost(currentPos) + 0.5 * Waypoint.getCostBetween(point, destination) < cost) {
+					if (point.getCost(currentPos)
+							+ 0.5 * Waypoint.getCostBetween(point, destination) < cost) {
 						// Cheaper route found, update
 						cheapest = point;
-						cost = point.getCost(currentPos) + 0.5 * Waypoint.getCostBetween(point, destination);
+						cost = point.getCost(currentPos)
+								+ 0.5 * Waypoint.getCostBetween(point, destination);
 					}
 				}
 
@@ -125,9 +135,7 @@ public class FlightPlan {
 			assert cheapest != null : "The cheapest waypoint was not found";
 
 			if (cheapest.getLocation().equals(destination.getLocation())) {
-				/*
-				 * Route has reached destination, break out of while loop
-				 */
+				// Route has reached destination, break out of while loop
 				atDestination = true;
 			}
 			// Update the selected route
@@ -154,4 +162,5 @@ public class FlightPlan {
 		}
 		return index;
 	}
+	
 }
