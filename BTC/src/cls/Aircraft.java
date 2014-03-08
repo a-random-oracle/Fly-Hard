@@ -637,7 +637,7 @@ public class Aircraft {
 			flightPlan.getAirport().isActive = true;
 		}
 		
-		Game.takeOffSequence(this);
+		Game.addAircraftWaitingToTakeOff(this);
 	}
 
 	/**

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import lib.ButtonText;
 import lib.jog.audio.Music;
+import lib.jog.audio.Sound;
 import lib.jog.graphics.Image;
 
 import cls.Aircraft;
@@ -16,7 +17,7 @@ import btc.Main;
 public abstract class Game extends Scene {
 	
 	/** The maximum number of aircraft allowed in the airspace simultaneously */
-	protected int maxAircraft = 5;
+	protected int maxAircraft;
 	
 	// Due to the way the airspace elements are drawn (graphics.setviewport) these variables are needed to manually
 	// adjust mouse listeners and elements drawn outside the airspace so that they align with the airspace elements.
@@ -31,10 +32,8 @@ public abstract class Game extends Scene {
 	// PLEASE DO NOT REMOVE - this is very useful for debugging
 	protected OrdersBox out;
 	
-	/** Difficulty settings */
-	public enum DifficultySetting {
-		EASY, MEDIUM, HARD
-	}
+	/** Difficulty settings: easy, medium and hard */
+	public enum DifficultySetting {EASY, MEDIUM, HARD}
 	
 	/** The current difficulty setting */
 	protected DifficultySetting difficulty;
@@ -42,17 +41,8 @@ public abstract class Game extends Scene {
 	/** Time since the scene began */
 	protected static double timeElapsed;
 	
-	/** The currently selected aircraft */
-	protected Aircraft selectedAircraft;
-	
-	/** The currently selected waypoint */
-	protected Waypoint clickedWaypoint;
-	
-	/** Selected path point, in an aircraft's route, used for altering the route */
-	protected int selectedPathpoint;
-	
-	/** A list of aircraft present in the airspace */
-	protected static ArrayList<Aircraft> aircraftInAirspace;
+	/** A list of aircraft which are waiting to take off */
+	protected static ArrayList<Aircraft> aircraftWaitingToTakeOff;
 	
 	/** A list of aircraft which have recently left the airspace */
 	protected ArrayList<Aircraft> recentlyDepartedAircraft;
@@ -81,20 +71,11 @@ public abstract class Game extends Scene {
 	/** The background to draw in the airspace */
 	protected Image background;
 	
-	/** Array of the airports in the airspace */
-	protected static Airport[] airports;
-	
-	/** The set of waypoints in the airspace which are entry/exit points */
-	protected Waypoint[] locationWaypoints;
-
-	/** All waypoints in the airspace, including locationWaypoints */
-	protected Waypoint[] airspaceWaypoints;
-	
 	/** Is the game paused */
 	protected boolean paused;
 	
 	
-	// Constructors:---------------------------------------------------------------------
+	// Constructors ---------------------------------------------------------------------
 	
 	/**
 	 * Constructor for Demo.
@@ -103,11 +84,12 @@ public abstract class Game extends Scene {
 	 */
 	public Game(Main main, DifficultySetting difficulty) {
 		super(main);
+		this.maxAircraft = 5;
 		this.difficulty = difficulty;
 	}
 	
 	
-	// Implemented methods:--------------------------------------------------------------
+	// Implemented methods --------------------------------------------------------------
 	
 	/**
 	 * Initialise and begin music, init background image and scene variables.
@@ -124,7 +106,11 @@ public abstract class Game extends Scene {
 	 * </p>
 	 */
 	@Override
-	public abstract void update(double timeDifference);
+	public void update(double timeDifference) {
+		if (paused) return;
+		
+		takeOffWaitingAircraft();
+	}
 	
 	/**
 	 * Draw the scene GUI and all drawables within it, e.g. aircraft and waypoints.
@@ -146,8 +132,17 @@ public abstract class Game extends Scene {
 	 */
 	protected abstract void drawAdditional();
 	
+	/**
+	 * Plays the music attached to the game.
+	 */
+	@Override
+	public void playSound(Sound sound) {
+		sound.stop();
+		sound.play();
+	}
 	
-	// Event handling:-------------------------------------------------------------------
+	
+	// Event handling -------------------------------------------------------------------
 
 	/**
 	 * Handles mouse click events.
@@ -174,24 +169,29 @@ public abstract class Game extends Scene {
 	public abstract void keyReleased(int key);
 	
 	
-	// Game ending:----------------------------------------------------------------------
+	// Game ending ----------------------------------------------------------------------
 	
 	/**
-	 * Handle a game over caused by two planes colliding
-	 * Create a gameOver scene and make it the current scene
+	 * Check if any aircraft in the airspace have collided.
+	 * @param timeDifference delta time since last collision check
+	 */
+	protected abstract void checkCollisions(double timeDifference);
+	
+	/**
+	 * Handle game over.
 	 * @param plane1 the first plane involved in the collision
 	 * @param plane2 the second plane in the collision
 	 */
 	protected abstract void gameOver(Aircraft plane1, Aircraft plane2);
 	
 	/**
-	 * Cleanly exit by stopping the scene's music
+	 * Exit the game.
 	 */
 	@Override
 	public abstract void close();
 	
 	
-	// Helper methods:-------------------------------------------------------------------
+	// Helper methods -------------------------------------------------------------------
 	
 	/**
 	 * The interval in seconds to generate flights after.
@@ -212,37 +212,15 @@ public abstract class Game extends Scene {
 	}
 	
 	/**
-	 * Returns whether a given name is an airport or not.
-	 * @param name the name to test
-	 * @return <code>true</code> if the name matches an airport name,
-	 * 			otherwise <code>false</code>
-	 */
-	protected boolean isAirportName(String name) {
-		for (Airport airport : airports) {
-			// If a match is found, return true
-			if (airport.name.equals(name)) return true;
-		}
-		
-		// Otherwise
-		return false;
-	}
-	
-	/**
 	 * Creates a new aircraft object and introduces it to the airspace. 
 	 */
 	protected abstract void generateFlight();
 	
 	/**
-	 * Handle nitty gritty of aircraft creating
-	 * including randomisation of entry, exit, altitude, etc.
+	 * Handle aircraft creation.
 	 * @return the created aircraft object
 	 */
 	protected abstract Aircraft createAircraft();
-	
-	/**
-	 * Causes a selected aircraft to call methods to toggle manual control.
-	 */
-	protected abstract void toggleManualControl();
 	
 	/**
 	 * Causes an aircraft to call methods to handle deselection.
@@ -250,39 +228,31 @@ public abstract class Game extends Scene {
 	protected abstract void deselectAircraft();
 	
 	/**
-	 * Cause all planes in airspace to update collisions
-	 * Catch and handle a resultant game over state
-	 * @param timeDifference delta time since last collision check
+	 * Causes a selected aircraft to call methods to toggle manual control.
 	 */
-	protected abstract void checkCollisions(double timeDifference);
+	protected abstract void toggleManualControl();
 	
 	/**
-	 * Sets the airport to busy, adds the aircraft passed to the airspace,
-	 * where it begins its flight plan starting at the airport.
-	 * @param aircraft the aircraft to take off
+	 * Sets the airport to busy, and adds any aircraft waiting to take off to the game,
+	 * where they begins their flight plans starting at the airport.
 	 */
-	public static void takeOffSequence(Aircraft aircraft) {
-		aircraftInAirspace.add(aircraft);
-		
-		for (Airport airport : airports) {
-			if (aircraft.getFlightPlan().getOriginName().equals(airport.name)) {
-				airport.isActive = false;
-				return;
-			}
-		}
-	}
+	public abstract void takeOffWaitingAircraft();
 	
 	/**
 	 * Returns array of entry points that are fair to be entry points for a plane.
-	 * <p>
-	 * Specifically, returns points where no plane is currently going to exit the
-	 * airspace there, also it is not too close to any plane.
-	 * </p>
 	 */	
 	public abstract ArrayList<Waypoint> getAvailableEntryPoints();
 	
+	/**
+	 * Returns whether a given name is an airport or not.
+	 * @param name the name to test
+	 * @return <code>true</code> if the name matches an airport name,
+	 * 			otherwise <code>false</code>
+	 */
+	protected abstract boolean isAirportName(String name);
 	
-	// Click event helpers:--------------------------------------------------------------
+	
+	// Click event helpers --------------------------------------------------------------
 	
 	/**
 	 * Gets whether the manual control compass has been clicked or not.
@@ -291,15 +261,7 @@ public abstract class Game extends Scene {
 	 * @return <code>true</code> if the compass has been clicked,
 	 * 			otherwise <code>false</code>
 	 */
-	protected boolean compassClicked(int x, int y) {
-		if (selectedAircraft != null) {
-			double dx = selectedAircraft.getPosition().getX() - x + xOffset;
-			double dy = selectedAircraft.getPosition().getY() - y + yOffset;
-			int r = Aircraft.COMPASS_RADIUS;
-			return  dx*dx + dy*dy < r*r;
-		}
-		return false;
-	}
+	protected abstract boolean compassClicked(int x, int y);
 	
 	/**
 	 * Gets whether an aircraft has been clicked.
@@ -309,24 +271,19 @@ public abstract class Game extends Scene {
 	 * 			otherwise <code>false</code>
 	 */
 	protected boolean aircraftClicked(int x, int y) {
-		return (findClickedAircraft(x, y) != null) ? true : false;
+		return (findClickedAircraft(x, y) != null);
 	}
 	
 	/**
 	 * Gets the aircraft which has been clicked.
-	 * @param x the x position of the mouse
+	 * @param x the x position of 		
+		System.out.println(clickedWaypoint);
+		System.out.println(aircraft);the mouse
 	 * @param y the y position of the mouse
 	 * @return if an aircraft was clicked, returns the corresponding aircraft object,
 	 * 			otherwise returns null
 	 */
-	protected Aircraft findClickedAircraft(int x, int y) {
-		for (Aircraft a : aircraftInAirspace) {
-			if (a.isMouseOver(x - xOffset, y - yOffset)) {
-				return a;
-			}
-		}
-		return null;
-	}
+	protected abstract Aircraft findClickedAircraft(int x, int y);
 	
 	/**
 	 * Gets whether a waypoint in an aircraft's flight plan has been clicked.
@@ -337,9 +294,8 @@ public abstract class Game extends Scene {
 	 */
 	protected boolean waypointInFlightplanClicked(int x, int y, Aircraft aircraft) {
 		Waypoint clickedWaypoint = findClickedWaypoint(x, y);
-		return ((clickedWaypoint != null)
-				&& (aircraft.getFlightPlan()
-						.indexOfWaypoint(clickedWaypoint) > -1)) ? true : false;
+		return (clickedWaypoint != null) && (aircraft != null)
+				&& (aircraft.getFlightPlan().indexOfWaypoint(clickedWaypoint) > -1);
 	}
 	
 	/**
@@ -349,14 +305,7 @@ public abstract class Game extends Scene {
 	 * @return if a waypoint was clicked, returns the corresponding waypoint object,
 	 * 			otherwise returns null
 	 */
-	protected Waypoint findClickedWaypoint(int x, int y) {
-		for (Waypoint w : airspaceWaypoints) {
-			if (w.isMouseOver(x - xOffset, y - yOffset)) {
-				return w;
-			}
-		}
-		return null;
-	}
+	protected abstract Waypoint findClickedWaypoint(int x, int y);
 	
 	/**
 	 * Gets whether the manual control button has been clicked.
@@ -368,7 +317,7 @@ public abstract class Game extends Scene {
 		return manualOverrideButton.isMouseOver(x - xOffset, y - yOffset);
 	}
 	
-	// Accessors:------------------------------------------------------------------------
+	// Accessors ------------------------------------------------------------------------
 	
 	/**
 	 * Gets the horizontal offset of the game region.
@@ -390,9 +339,7 @@ public abstract class Game extends Scene {
 	 * Gets a list of the airports in the airspace.
 	 * @return a list of the airports in the airspace
 	 */
-	public Airport[] getAirports() {
-		return airports;
-	}
+	public abstract Airport[] getAirports();
 	
 	/**
 	 * Gets how long the game has been played for.
@@ -402,12 +349,21 @@ public abstract class Game extends Scene {
 		return timeElapsed;
 	}
 	
-	/**
-	 * Gets a list of the aircraft currently in the airspace.
-	 * @return a list of the aircraft currently in the airspace
-	 */
-	protected ArrayList<Aircraft> getAircraftList() {
-		return aircraftInAirspace;
+	
+	// Mutators -------------------------------------------------------------------------
+	
+	public static void addAircraftWaitingToTakeOff(Aircraft aircraft) {
+		aircraftWaitingToTakeOff.add(aircraft);
 	}
+	
+	
+	// Deprecated -----------------------------------------------------------------------
+	
+	/**
+	 * This method should only be used for unit testing (avoiding instantiation of main class).
+	 * Its purpose is to initialize array where aircraft are stored. 
+	 */	
+	@Deprecated
+	public abstract void initializeAircraftArray();
 	
 }

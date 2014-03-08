@@ -5,7 +5,7 @@ import lib.jog.audio.Sound;
 
 public abstract class Scene implements lib.jog.input.EventHandler {
 
-	protected btc.Main main;
+	protected Main main;
 
 	/**
 	 * Top level constructor for a scene.
@@ -18,7 +18,7 @@ public abstract class Scene implements lib.jog.input.EventHandler {
 	/**
 	 * Handles initialisation of a scene. Only runs at the start of the scene.
 	 */
-	abstract public void start();
+	public abstract void start();
 
 	/**
 	 * Handles updates of all objects requiring updates in the scene.
@@ -27,7 +27,7 @@ public abstract class Scene implements lib.jog.input.EventHandler {
 	 * </p>
 	 * @param timeDifference the time since the last update was carried out
 	 */
-	abstract public void update(double timeDifference);
+	public abstract void update(double timeDifference);
 
 	/**
 	 * Handles drawing of all objects in the scene to the window.
@@ -35,7 +35,7 @@ public abstract class Scene implements lib.jog.input.EventHandler {
 	 * Called regularly by main.
 	 * </p>
 	 */
-	abstract public void draw();
+	public abstract void draw();
 
 	/**
 	 * Used to cleanly exit a scene, e.g. halting the scene's
@@ -44,7 +44,7 @@ public abstract class Scene implements lib.jog.input.EventHandler {
 	 * Runs once only when a scene is closed.
 	 * </p>
 	 */
-	abstract public void close();
+	public abstract void close();
 
 	/**
 	 * Plays a sound effect.
@@ -54,7 +54,7 @@ public abstract class Scene implements lib.jog.input.EventHandler {
 	 * </p>
 	 * @param sound the sound to be played
 	 */
-	abstract public void playSound(Sound sound);
+	public abstract void playSound(Sound sound);
 
 }
 
