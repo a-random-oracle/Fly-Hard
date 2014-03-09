@@ -170,7 +170,7 @@ public class Title extends Scene {
 		int titleLength = title.length();
 		// fades title string's characters over time
 		// characters brighten when the sweep passes over them
-		double a = radarAngle + (Math.PI * 4 / 5);
+		double a = radarAngle + (Math.PI * 6 / 7);
 		for (int i = 0; i < titleLength; i++) {
 			a -= Math.PI / 32;
 			double opacity = a %= (2 * Math.PI);
@@ -185,7 +185,7 @@ public class Title extends Scene {
 		
 		String subtitle = "GOA Edition";
 		int subtitleLength = subtitle.length();
-		a = radarAngle + (Math.PI * 4 / 5);
+		a = radarAngle + (Math.PI * 2 / 3);
 		for (int i = 0; i < subtitleLength; i++) {
 			a -= Math.PI / 32;
 			double opacity = a %= (2 * Math.PI);
