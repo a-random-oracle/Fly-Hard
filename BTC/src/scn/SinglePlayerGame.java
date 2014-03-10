@@ -1,7 +1,6 @@
 package scn;
 
 import java.io.File;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -277,147 +276,30 @@ public class SinglePlayerGame extends Game {
 	public void draw() {
 		// Draw the rectangle surrounding the map area
 		graphics.setColour(graphics.green);
-		graphics.rectangle(false, xOffset, yOffset,
-				window.width() - (2 * xOffset),
+		graphics.rectangle(false, xOffset, yOffset, window.width() - (2 * xOffset),
 				window.height() - (2 * yOffset));
 
 		// Set the viewport - this is the boundary used when drawing objects
-		graphics.setViewport(xOffset, yOffset,
-				window.width() - (2 * xOffset),
-				window.height() - (2 * yOffset));// - 176);
+		graphics.setViewport(xOffset, yOffset, window.width() - (2 * xOffset),
+				window.height() - (2 * yOffset));
 
 		// Draw the map background
 		graphics.setColour(255, 255, 255, 48);
-		graphics.drawScaled(background, 0, 0, Math.max(Main.getXScale(), Main.getYScale()));
+		graphics.drawScaled(background, 0, 0,
+				Math.max(Main.getXScale(), Main.getYScale()));
 
-		// Draw all the airports
-		for (Airport airport : airports) {
-			graphics.setColour(255, 255, 255, 64);
-			airport.draw();
-		}
-
-		// Draw the waypoints etc.
-		drawMap();
-
-		// Reset the viewport
-		graphics.setViewport();
-
-		// Draw the compass around the selected aircraft,
-		// but only if it is being manually controlled
-		if (selectedAircraft != null && selectedAircraft.isManuallyControlled()) {
-			selectedAircraft.drawCompass();
-		}
-
-		// Draw extra information such as the number of flights in the airspace
-		graphics.setColour(graphics.green);
-		drawAdditional();
+		// Draw individual map features
+		drawAircraft(aircraftInAirspace, selectedAircraft, clickedWaypoint,
+				selectedPathpoint, highlightedAltitude);
+		drawWaypoints(airspaceWaypoints, locationWaypoints);
+		drawAirports(airports, locationWaypoints);
+		drawManualControlButton(selectedAircraft);
+		drawAdditional(aircraftInAirspace.size());
 
 		// Draw debug box
 		// PLEASE DO NOT REMOVE - this is very useful for debugging
 		out.draw();
 	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	protected void drawMap() {
-		// Draw all waypoints, except airport waypoints
-		for (Waypoint waypoint : airspaceWaypoints) {
-			if (!(waypoint instanceof Airport)) {
-				waypoint.draw();
-			}
-		}
-
-		graphics.setColour(255, 255, 255);
-
-		// Draw all aircraft, and show their routes if the mouse is hovering
-		// above them
-		for (Aircraft aircraft : aircraftInAirspace) {
-			aircraft.draw(highlightedAltitude);
-			if (aircraft.isMouseOver()) {
-				aircraft.drawFlightPath(false);
-			}
-		}
-
-		if (selectedAircraft != null) {
-			// Draw the selected aircraft's flight path
-			selectedAircraft.drawFlightPath(true);
-			graphics.setColour(graphics.green);
-			// Display the manual control button
-			graphics.setColour(graphics.black);
-			graphics.rectangle(true,
-					(window.width() - 128 - (2 * xOffset)) / 2, 32, 128, 32);
-			graphics.setColour(graphics.green);
-			graphics.rectangle(false,
-					(window.width() - 128 - (2 * xOffset)) / 2, 32, 128, 32);
-			manualOverrideButton.draw();
-		}
-
-		if (clickedWaypoint != null
-				&& selectedAircraft.isManuallyControlled() == false) {
-			selectedAircraft.drawModifiedPath(selectedPathpoint,
-					input.mouseX() - xOffset,
-					input.mouseY() - yOffset);
-		}
-
-		// Draw entry/exit points
-		graphics.setViewport();
-		graphics.setColour(graphics.green);
-		graphics.print(locationWaypoints[0].getName(),
-				locationWaypoints[0].getLocation().getX() + xOffset + 9,
-				locationWaypoints[0].getLocation().getY() + yOffset - 6);
-		graphics.print(locationWaypoints[1].getName(),
-				locationWaypoints[1].getLocation().getX() + xOffset + 9,
-				locationWaypoints[1].getLocation().getY() + yOffset - 6);
-		graphics.print(locationWaypoints[2].getName(),
-				locationWaypoints[2].getLocation().getX() + xOffset - 141,
-				locationWaypoints[2].getLocation().getY() + yOffset - 6);
-		graphics.print(locationWaypoints[3].getName(),
-				locationWaypoints[3].getLocation().getX() + xOffset - 91,
-				locationWaypoints[3].getLocation().getY() + yOffset - 6);
-		graphics.print(locationWaypoints[4].getName(),
-				locationWaypoints[4].getLocation().getX() + xOffset - 20,
-				locationWaypoints[4].getLocation().getY() + yOffset + 25);
-		graphics.print(locationWaypoints[5].getName(),
-				locationWaypoints[5].getLocation().getX() + xOffset - 20,
-				locationWaypoints[5].getLocation().getY() + yOffset + 25);
-	}
-
-	/**
-	 * Draw a readout of the time the game has been played for, and number of planes
-	 * in the sky.
-	 */
-	protected void drawAdditional() {
-		// Get the time the game has been played for
-		int hours = (int)(timeElapsed / (60 * 60));
-		int minutes = (int)(timeElapsed / 60);
-		minutes %= 60;
-		double seconds = timeElapsed % 60;
-
-		// Display this in the form 'hh:mm:ss'
-		DecimalFormat df = new DecimalFormat("00.00");
-		String timePlayed = String.format("%d:%02d:", hours, minutes)
-				+ df.format(seconds);
-
-		// Print this to the screen
-		graphics.print(timePlayed, window.width() - xOffset
-				- (timePlayed.length() * 8 + 32), 32);
-
-		// Get the number of aircraft in the airspace
-		int planes = aircraftInAirspace.size();
-
-		// Print the highlighted altitude to the screen
-		graphics.print(String.valueOf("Highlighted altitude: " + Integer
-				.toString(highlightedAltitude)) , 32, 15);
-
-		// Print the number of aircraft in the airspace to the screen
-		graphics.print(String.valueOf(aircraftInAirspace.size())
-				+ " plane" + (planes == 1 ? "" : "s") + " in the sky.", 32, 32);
-	}
-
-
-
-
 
 
 	// Event handling -------------------------------------------------------------------
@@ -495,7 +377,7 @@ public class SinglePlayerGame extends Game {
 			}
 		}
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -532,7 +414,7 @@ public class SinglePlayerGame extends Game {
 			highlightedAltitude = 28000;
 		}
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -540,7 +422,7 @@ public class SinglePlayerGame extends Game {
 	public void keyPressed(int key) {
 		if (paused) return;
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -577,10 +459,10 @@ public class SinglePlayerGame extends Game {
 			break;
 		}
 	}
-	
-	
+
+
 	// Game ending ----------------------------------------------------------------------
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -619,10 +501,10 @@ public class SinglePlayerGame extends Game {
 	public void close() {
 		music.stop();
 	}
-	
-	
+
+
 	// Helper methods -------------------------------------------------------------------
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -643,7 +525,7 @@ public class SinglePlayerGame extends Game {
 			aircraftInAirspace.add(aircraft);
 		}
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -719,7 +601,7 @@ public class SinglePlayerGame extends Game {
 				destinationPoint, originPoint, aircraftImage, speed,
 				airspaceWaypoints, difficulty, destinationAirport);
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -734,7 +616,7 @@ public class SinglePlayerGame extends Game {
 		clickedWaypoint = null; 
 		selectedPathpoint = -1;
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -747,7 +629,7 @@ public class SinglePlayerGame extends Game {
 				(selectedAircraft.isManuallyControlled() ?
 						"Remove" : " Take") + " Control");
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -799,7 +681,7 @@ public class SinglePlayerGame extends Game {
 		}
 		return availableEntryPoints;
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -813,10 +695,10 @@ public class SinglePlayerGame extends Game {
 		// Otherwise
 		return false;
 	}
-	
-	
+
+
 	// Click event helpers --------------------------------------------------------------
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -830,7 +712,7 @@ public class SinglePlayerGame extends Game {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -843,7 +725,7 @@ public class SinglePlayerGame extends Game {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -856,10 +738,10 @@ public class SinglePlayerGame extends Game {
 		}
 		return null;
 	}
-	
-	
+
+
 	// Accessors ------------------------------------------------------------------------
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -875,10 +757,10 @@ public class SinglePlayerGame extends Game {
 	public ArrayList<Aircraft> getAircraftList() {
 		return aircraftInAirspace;
 	}
-	
-	
+
+
 	// Deprecated -----------------------------------------------------------------------
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -887,5 +769,5 @@ public class SinglePlayerGame extends Game {
 	public void initializeAircraftArray() {
 		aircraftInAirspace = new ArrayList<Aircraft>();
 	}
-	
+
 }

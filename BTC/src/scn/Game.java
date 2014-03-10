@@ -1,8 +1,12 @@
 package scn;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 import lib.ButtonText;
+import lib.jog.graphics;
+import lib.jog.input;
+import lib.jog.window;
 import lib.jog.audio.Music;
 import lib.jog.audio.Sound;
 import lib.jog.graphics.Image;
@@ -119,18 +123,172 @@ public abstract class Game extends Scene {
 	public abstract void draw();
 	
 	/**
-	 * Draw waypoints, and route of a selected aircraft between waypoints.
+	 * Draws aircraft.
 	 * <p>
-	 * Also prints waypoint names next to waypoints.
+	 * Calls the aircraft.draw() method for each aircraft.
+	 * </p>
+	 * <p>
+	 * Also draws flight paths, and the manual control compass.
 	 * </p>
 	 */
-	protected abstract void drawMap();
-	
+	protected void drawAircraft(ArrayList<Aircraft> aircraftInAirspace,
+			Aircraft selectedAircraft, Waypoint clickedWaypoint,
+			int selectedPathpoint, int highlightedAltitude) {
+		graphics.setColour(255, 255, 255);
+
+		// Draw all aircraft, and show their routes if the mouse is hovering
+		// above them
+		for (Aircraft aircraft : aircraftInAirspace) {
+			aircraft.draw(highlightedAltitude);
+			
+			if (aircraft.isMouseOver()) {
+				aircraft.drawFlightPath(false);
+			}
+		}
+		
+		// Handle the selected aircraft
+		if (selectedAircraft != null) {
+			// Draw the compass around the selected aircraft, but only if it is
+			// being manually controlled
+			if (selectedAircraft.isManuallyControlled()) {
+				selectedAircraft.drawCompass();
+			}
+
+			// If the selected aircraft's flight path is being manipulated,
+			// draw the manipulated path
+			if (clickedWaypoint != null && !selectedAircraft.isManuallyControlled()) {
+				selectedAircraft.drawModifiedPath(selectedPathpoint,
+						input.mouseX() - xOffset,
+						input.mouseY() - yOffset);
+			}
+
+			// Draw the selected aircraft's flight path
+			selectedAircraft.drawFlightPath(true);
+			graphics.setColour(graphics.green);
+		}
+	}
+
 	/**
-	 * Draw a readout of the time the game has been played for,
-	 * and number of planes in the sky.
+	 * Draws waypoints.
+	 * <p>
+	 * Calls the waypoint.draw() method for each waypoint, excluding airport
+	 * waypoints.
+	 * </p>
+	 * <p>
+	 * Also prints the names of the entry/exit points.
+	 * </p>
 	 */
-	protected abstract void drawAdditional();
+	protected void drawWaypoints(Waypoint[] airspaceWaypoints,
+			Waypoint[] locationWaypoints) {
+		// Draw all waypoints, except airport waypoints
+		for (Waypoint waypoint : airspaceWaypoints) {
+			if (!(waypoint instanceof Airport)) {
+				waypoint.draw();
+			}
+		}
+
+		// Draw entry/exit points
+		graphics.setViewport();
+		graphics.setColour(graphics.green);
+		
+		graphics.print(locationWaypoints[0].getName(),
+				locationWaypoints[0].getLocation().getX() + xOffset + 9,
+				locationWaypoints[0].getLocation().getY() + yOffset - 6);
+		graphics.print(locationWaypoints[1].getName(),
+				locationWaypoints[1].getLocation().getX() + xOffset + 9,
+				locationWaypoints[1].getLocation().getY() + yOffset - 6);
+		graphics.print(locationWaypoints[2].getName(),
+				locationWaypoints[2].getLocation().getX() + xOffset - 141,
+				locationWaypoints[2].getLocation().getY() + yOffset - 6);
+		graphics.print(locationWaypoints[3].getName(),
+				locationWaypoints[3].getLocation().getX() + xOffset - 91,
+				locationWaypoints[3].getLocation().getY() + yOffset - 6);
+	}
+
+	/**
+	 * Draws airports.
+	 * <p>
+	 * Calls the airport.draw() method for each airport.
+	 * </p>
+	 * <p>
+	 * Also prints the names of the airports.
+	 * </p>
+	 */
+	protected void drawAirports(Airport[] airports,
+			Waypoint[] locationWaypoints) {
+		// Reset the viewport
+		graphics.setViewport(xOffset, yOffset, window.width() - (2 * xOffset),
+				window.height() - (2 * yOffset));
+				
+		// Draw the airports
+		for (Airport airport : airports) {
+			graphics.setColour(255, 255, 255, 64);
+			airport.draw();
+		}
+		
+		// Draw the airport names
+		graphics.setViewport();
+		graphics.setColour(graphics.green);
+		
+		graphics.print(locationWaypoints[4].getName(),
+				locationWaypoints[4].getLocation().getX() + xOffset - 20,
+				locationWaypoints[4].getLocation().getY() + yOffset + 25);
+		graphics.print(locationWaypoints[5].getName(),
+				locationWaypoints[5].getLocation().getX() + xOffset - 20,
+				locationWaypoints[5].getLocation().getY() + yOffset + 25);
+	}
+
+	/**
+	 * Draws the manual control button.
+	 */
+	protected void drawManualControlButton(Aircraft selectedAircraft) {
+		if (selectedAircraft != null) {
+			graphics.setColour(graphics.green);
+			// Display the manual control button
+			graphics.setColour(graphics.black);
+			graphics.rectangle(true,
+					(window.width() - 128 - (2 * xOffset)) / 2, 32, 128, 32);
+			graphics.setColour(graphics.green);
+			graphics.rectangle(false,
+					(window.width() - 128 - (2 * xOffset)) / 2, 32, 128, 32);
+			manualOverrideButton.draw();
+		}
+	}
+
+	/**
+	 * Draws a readout of the time the game has been played for, and number of planes
+	 * in the sky.
+	 */
+	protected void drawAdditional(int aircraftCount) {
+		graphics.setColour(graphics.green);
+		
+		// Reset the viewport - these statistics can appear outside the game
+		// area
+		graphics.setViewport();
+		
+		// Get the time the game has been played for
+		int hours = (int)(timeElapsed / (60 * 60));
+		int minutes = (int)(timeElapsed / 60);
+		minutes %= 60;
+		double seconds = timeElapsed % 60;
+
+		// Display this in the form 'hh:mm:ss'
+		DecimalFormat df = new DecimalFormat("00.00");
+		String timePlayed = String.format("%d:%02d:", hours, minutes)
+				+ df.format(seconds);
+
+		// Print this to the screen
+		graphics.print(timePlayed, window.width() - xOffset
+				- (timePlayed.length() * 8 + 32), 32);
+
+		// Print the highlighted altitude to the screen
+		graphics.print(String.valueOf("Highlighted altitude: " + Integer
+				.toString(highlightedAltitude)) , 32 + xOffset, 15);
+
+		// Print the number of aircraft in the airspace to the screen
+		graphics.print(String.valueOf(aircraftCount)
+				+ " aircraft in the airspace.", 32 + xOffset, 32);
+	}
 	
 	/**
 	 * Plays the music attached to the game.
