@@ -110,11 +110,7 @@ public abstract class Game extends Scene {
 	 * </p>
 	 */
 	@Override
-	public void update(double timeDifference) {
-		if (paused) return;
-		
-		takeOffWaitingAircraft();
-	}
+	public abstract void update(double timeDifference);
 	
 	/**
 	 * Draw the scene GUI and all drawables within it, e.g. aircraft and waypoints.
@@ -343,10 +339,12 @@ public abstract class Game extends Scene {
 	protected abstract void gameOver(Aircraft plane1, Aircraft plane2);
 	
 	/**
-	 * Exit the game.
+	 * Cleanly exit by stopping the scene's music.
 	 */
 	@Override
-	public abstract void close();
+	public void close() {
+		music.stop();
+	}
 	
 	
 	// Helper methods -------------------------------------------------------------------

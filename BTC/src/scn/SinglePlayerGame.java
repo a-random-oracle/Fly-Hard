@@ -44,7 +44,7 @@ public class SinglePlayerGame extends Game {
 	// Constructor ----------------------------------------------------------------------
 
 	/**
-	 * Constructor for Demo.
+	 * Constructor for SinglePlayerGame.
 	 * @param main the main containing the scene
 	 * @param difficulty the difficulty the scene is to be initialised with
 	 */
@@ -171,18 +171,14 @@ public class SinglePlayerGame extends Game {
 		selectedPathpoint = -1;
 		deselectAircraft();
 	}
-
+	
 	/**
-	 * Update all objects within the scene, e.g. aircraft.
-	 * <p>
-	 * Also runs collision detection and generates a new flight if flight
-	 * generation interval has been exceeded.
-	 * </p>
+	 * {@inheritDoc}
 	 */
 	@Override
 	public void update(double timeDifference) {
-		super.update(timeDifference);
-
+		if (paused) return;
+		
 		timeElapsed += timeDifference;
 
 		graphics.setColour(graphics.green_transp);
@@ -210,6 +206,9 @@ public class SinglePlayerGame extends Game {
 
 		// Update the airports
 		for (Airport airport : airports) airport.update(aircraftInAirspace);
+		
+		// If there are any aircraft waiting to take off, let them take off
+		takeOffWaitingAircraft();
 
 		if (selectedAircraft != null) {
 			if (selectedAircraft.isManuallyControlled()) {
@@ -267,10 +266,7 @@ public class SinglePlayerGame extends Game {
 	}
 
 	/**
-	 * Draw parts of the scene GUI specific to single player.
-	 * <p>
-	 * Such as the airports, and the compass around the currently selected aircraft.
-	 * </p>
+	 * {@inheritDoc}
 	 */
 	@Override
 	public void draw() {
@@ -492,14 +488,6 @@ public class SinglePlayerGame extends Game {
 		//playSound(audio.newSoundEffect("sfx" + File.separator + "crash.ogg"));
 		main.closeScene();
 		main.setScene(new GameOver(main, plane1, plane2, 0)); //TODO <- pass score
-	}
-
-	/**
-	 * Cleanly exit by stopping the scene's music.
-	 */
-	@Override
-	public void close() {
-		music.stop();
 	}
 
 
