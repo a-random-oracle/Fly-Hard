@@ -106,10 +106,12 @@ public class Airport extends Waypoint implements EventHandler {
 	 * @param name the airport's name
 	 * @param x the x position to display the top-left corner of the airport at
 	 * @param y the y position to display the top-left corner of the airport at
+	 * @param player the player who should have control over this airport
 	 */
-	private Airport(String name, double x, double y, boolean testing) {
+	private Airport(String name, double x, double y, int player, boolean testing) {
 		super((x + (relativeArrivalsX + (relativeArrivalsWidth/2)) * scale),
-				(y + (relativeArrivalsY + (relativeArrivalsHeight/2)) * scale), true, name);
+				(y + (relativeArrivalsY + (relativeArrivalsHeight/2)) * scale),
+				true, player, name);
 		
 		// Load the aircraft image
 		if (!testing)  image = graphics.newImage("gfx" + File.separator + "Airport.png");
@@ -143,11 +145,13 @@ public class Airport extends Waypoint implements EventHandler {
 	 * @param name the name of the airport
 	 * @param x the position at which the centre of the airport should be located
 	 * @param y the position at which the centre of the airport should be located
+	 * @param player the player who should have control over this airport
 	 */
-	public static Airport create(String name, double x, double y) {
+	public static Airport create(String name, double x, double y, int player) {
 		return new Airport(name,
 				(x - relativeArrivalsX - (relativeArrivalsWidth/2)),
-				(y - relativeArrivalsY - (relativeArrivalsHeight/2)), false);
+				(y - relativeArrivalsY - (relativeArrivalsHeight/2)),
+				player, false);
 	}
 	
 	/**
@@ -164,10 +168,12 @@ public class Airport extends Waypoint implements EventHandler {
 	 * @param y the position at which the centre of the airport should be located
 	 */
 	@Deprecated
-	public static Airport create(String name, double x, double y, boolean testing) {
+	public static Airport create(String name,
+			double x, double y, int player, boolean testing) {
 		return new Airport(name,
 				(x - relativeArrivalsX - (relativeArrivalsWidth/2)),
-				(y - relativeArrivalsY - (relativeArrivalsHeight/2)), testing);
+				(y - relativeArrivalsY - (relativeArrivalsHeight/2)),
+				player, testing);
 	}
 	  
 	/** 
@@ -424,7 +430,7 @@ public class Airport extends Waypoint implements EventHandler {
 	
 	public Waypoint getDeparturesCentre() {
 		return new Waypoint(departuresX + (departuresWidth / 2),
-				departuresY + (departuresHeight / 2), true);
+				departuresY + (departuresHeight / 2), true, getPlayer());
 	}
 	
 	// Used for testing, to avoid the need to have a demo instance

@@ -4,58 +4,126 @@ import lib.jog.graphics;
 
 public class Waypoint {
 	
-	/**
-	 * Leniency to allow mouse input to be accepted in a small area around the waypoint
-	 * For ease of use.
-	 */
+	/** Leniency to allow mouse input to be accepted in a small area around the waypoint  */
 	public final static int MOUSE_LENIENCY = 32;
 	
-	final private int WAYPOINT_ICON_RADIUS = 8;
+	/** The radius of the waypoint image */
+	private final int WAYPOINT_ICON_RADIUS = 8;
+	
+	/** The vector position of the waypoint */
 	private Vector waypointLocation;
 	
+	/** The name to associate with this waypoint */
 	public String name;
 	
-	/**
-	 * Marks whether the waypoint is a point where planes may enter and exit the game airspace
-	 */
-	private boolean entryOrExit; //#Please specify what True or False are (just one of them)
+	/** Marks whether the waypoint is an entry point, exit point or airport */
+	private boolean entryOrExit;
+	
+	/** The player who will control this waypoint */
+	private int player;
 	
 	/**
 	 * Constructor for waypoints
 	 * @param x the x coordinate of the waypoint
 	 * @param y the y coordinate of the waypoint
-	 * @param inputEntryOrExit whether the waypoint is a point where planes may enter and leave the airspace
+	 * @param entryOrExit whether the waypoint is a point where planes may
+	 * 			enter and leave the airspace
+	 * @param player the player who should have control of this waypoint
+	 * @param name the name to associate with the waypoint
 	 */
-	public Waypoint(double x, double y, boolean inputEntryOrExit, String name) {
-		waypointLocation  = new Vector(x, y, 0);
-		entryOrExit = inputEntryOrExit;
+	public Waypoint(double x, double y,
+			boolean entryOrExit, int player, String name) {
+		this.waypointLocation = new Vector(x, y, 0);
+		this.entryOrExit = entryOrExit;
 		this.name = name;
+		this.player = player;
 		
 		// Scale points to fit on screen
 		// Entry and exit points are scaled automatically
-		if (!inputEntryOrExit) {
+		if (!entryOrExit) {
 			waypointLocation = waypointLocation.remapPosition();
 		}
 	}
 	
-	public Waypoint(double x, double y, boolean inputEntryOrExit) {
-		waypointLocation = new Vector(x, y, 0);
-		entryOrExit = inputEntryOrExit;
+	public Waypoint(double x, double y, boolean entryOrExit, int player) {
+		this.waypointLocation = new Vector(x, y, 0);
+		this.entryOrExit = entryOrExit;
 		this.name = "";
 		
 		// Scale points to fit on screen
 		// Entry and exit points are scaled automatically
-		if (!inputEntryOrExit) {
+		if (!entryOrExit) {
 			waypointLocation = waypointLocation.remapPosition();
 		}
 	}
 	
+	/**
+	 * Gets the waypoint's vector location.
+	 * @return the waypoint's location
+	 */
 	public Vector getLocation() {
 		return waypointLocation ;
 	}
 	
+	/**
+	 * Gets whether the waypoint is an entry point, exit point or airport.
+	 * @return <code>true</code> if the waypoint is an entry point, exit point
+	 * 			or airport, otherwise <code>false</code>
+	 */
+	public boolean isEntryOrExit() {
+		return this.entryOrExit;
+	}
+	
+	/**
+	 * Gets the value of the player who controls this waypoint.
+	 * <p>
+	 * Options are:
+	 * <ul>
+	 * <li>-1: not under player control</li>
+	 * <li> 0: under control of player 1</li>
+	 * <li> ...</li>
+	 * <li> n: under control of player n</li>
+	 * </ul>
+	 * </p>
+	 * @return the player who controls this waypoint
+	 */
+	public int getPlayer() {
+		return player;
+	}
+	
+	/**
+	 * Gets the name associated with this waypoint.
+	 * <p>
+	 * This will typically be the null string ("") unless the waypoint
+	 * is an entry point, exit point or airport.
+	 * @return the waypoint's name
+	 */
 	public String getName() {
 		return name;
+	}
+	
+	/**
+	 * Draws the waypoint.
+	 */
+	public void draw() {
+		draw(waypointLocation.getX(), waypointLocation.getY());
+	}
+	
+	/**
+	 * Draws the waypoint.
+	 * @param x the x location to draw the waypoint at
+	 * @param y the y location to draw the waypoint at
+	 */
+	public void draw(double x, double y) {
+		if (this.isEntryOrExit()) 
+			graphics.setColour(64, 128, 0, 192);
+		else
+			graphics.setColour(graphics.red_transp);
+		
+		graphics.circle(false, x-WAYPOINT_ICON_RADIUS/2 + 2,
+				y-WAYPOINT_ICON_RADIUS/2 + 2, WAYPOINT_ICON_RADIUS);
+		graphics.circle(true, x-WAYPOINT_ICON_RADIUS/2 + 2,
+				y-WAYPOINT_ICON_RADIUS/2 + 2, WAYPOINT_ICON_RADIUS - 2);
 	}
 	
 	/**
@@ -64,18 +132,10 @@ public class Waypoint {
 	 * @param my the mouse's y location
 	 * @return whether the mouse is considered over the waypoint.
 	 */
-	public boolean isMouseOver(int mx, int my) {
-		double dx = waypointLocation .getX() - mx;
-		double dy = waypointLocation .getY() - my;
+	public boolean isMouseOver(int x, int y) {
+		double dx = waypointLocation.getX() - x;
+		double dy = waypointLocation.getY() - y;
 		return dx*dx + dy*dy < MOUSE_LENIENCY*MOUSE_LENIENCY;
-	}
-	
-	/**
-	 * Returns if the waypoint is an entry or exit point.
-	 * @return Whether or not the waypoint is an entry or exit point.//#What does True mean?
-	 */
-	public boolean isEntryOrExit() {
-		return this.entryOrExit;
 	}
 	
 	/**
@@ -95,25 +155,6 @@ public class Waypoint {
 	 */
 	public static double getCostBetween(Waypoint source, Waypoint target) {
 		return target.getCost(source);
-	}
-	
-	/**
-	 * draws the waypoint
-	 * @param x the x location to draw at
-	 * @param y the y location to draw at
-	 */
-	public void draw(double x, double y) {
-		if (this.isEntryOrExit()) 
-			graphics.setColour(64, 128, 0, 192);
-		else
-			graphics.setColour(graphics.red_transp);
-		
-		graphics.circle(false, x-WAYPOINT_ICON_RADIUS/2 + 2, y-WAYPOINT_ICON_RADIUS/2 + 2, WAYPOINT_ICON_RADIUS);
-		graphics.circle(true, x-WAYPOINT_ICON_RADIUS/2 + 2, y-WAYPOINT_ICON_RADIUS/2 + 2, WAYPOINT_ICON_RADIUS - 2);
-	}
-
-	public void draw() {
-		draw(waypointLocation.getX(), waypointLocation.getY());
 	}
 	
 }

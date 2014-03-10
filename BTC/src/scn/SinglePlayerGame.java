@@ -85,11 +85,11 @@ public class SinglePlayerGame extends Game {
 		// Set up airports
 		Airport airport1 = Airport.create("Mosgrizzly Airport",
 				(window.width() - (2 * xOffset)) / 4,
-				window.height() / 2);
+				window.height() / 2, 0);
 
 		Airport airport2 = Airport.create("Mosbear Airport",
 				3 * (window.width() - (2 * xOffset)) / 4,
-				window.height() / 2);
+				window.height() / 2, 0);
 
 		airports = new Airport[2];
 		airports[0] = airport1;
@@ -97,14 +97,14 @@ public class SinglePlayerGame extends Game {
 
 		// Set up entry/exit points
 		Waypoint topLeft = new Waypoint(8, 8,
-				true, "North West Top Leftonia");
+				true, 0, "North West Top Leftonia");
 		Waypoint bottomLeft = new Waypoint(8, window.height() - (2 * yOffset) - 4,
-				true, "100 Acre Woods");
+				true, 0, "100 Acre Woods");
 		Waypoint topRight = new Waypoint(window.width() - (2 * xOffset) - 4, 8,
-				true, "City of Rightson");
+				true, 0, "City of Rightson");
 		Waypoint bottomRight = new Waypoint(window.width() - (2 * xOffset) - 4,
 				window.height() - (2 * yOffset) - 4,
-				true, "South Sea");
+				true, 0, "South Sea");
 
 		locationWaypoints = new Waypoint[4 + airports.length];
 		locationWaypoints[0] = topLeft;
@@ -119,16 +119,16 @@ public class SinglePlayerGame extends Game {
 
 		// Set up map waypoints
 		// Create airspace waypoints
-		Waypoint wp1 = new Waypoint(125, 70, false);
-		Waypoint wp2 = new Waypoint(700, 100, false);
-		Waypoint wp3 = new Waypoint(1040, 80, false);
-		Waypoint wp4 = new Waypoint(500, 200, false);
-		Waypoint wp5 = new Waypoint(1050, 400, false);
-		Waypoint wp6 = new Waypoint(250, 400, false);
-		Waypoint wp7 = new Waypoint(200, 635, false);
-		Waypoint wp8 = new Waypoint(500, 655, false);
-		Waypoint wp9 = new Waypoint(800, 750, false);
-		Waypoint wp10 = new Waypoint(1000, 750, false);
+		Waypoint wp1 = new Waypoint(125, 70, false, 0);
+		Waypoint wp2 = new Waypoint(700, 100, false, 0);
+		Waypoint wp3 = new Waypoint(1040, 80, false, 0);
+		Waypoint wp4 = new Waypoint(500, 200, false, 0);
+		Waypoint wp5 = new Waypoint(1050, 400, false, 0);
+		Waypoint wp6 = new Waypoint(250, 400, false, 0);
+		Waypoint wp7 = new Waypoint(200, 635, false, 0);
+		Waypoint wp8 = new Waypoint(500, 655, false, 0);
+		Waypoint wp9 = new Waypoint(800, 750, false, 0);
+		Waypoint wp10 = new Waypoint(1000, 750, false, 0);
 
 		// Add in airspace waypoints
 		airspaceWaypoints = new Waypoint[10 + locationWaypoints.length];
