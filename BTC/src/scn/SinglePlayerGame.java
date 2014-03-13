@@ -236,15 +236,17 @@ public class SinglePlayerGame extends Game {
 					&& (selectedAircraft.getPosition().getZ() < 30000)) {
 				selectedAircraft.setAltitudeState(Aircraft.ALTITUDE_CLIMB);
 			}
-
-			// If the aircraft under manual control is out of bounds, deselect it
-			// This ensures that players can't keep controlling aircraft
-			// after they've left the airspace
-			if (!(selectedAircraft.isAtDestination())) {
-				if (selectedAircraft.isOutOfAirspaceBounds()) {
-					deselectAircraft();
+		}
+		
+		// Deselect any aircraft which are outside the airspace
+		// This ensures that players can't keep controlling aircraft
+		// after they've left the airspace
+		for (Aircraft airc : aircraftInAirspace) {
+			if (!(airc.isAtDestination())) {
+				if (airc.isOutOfAirspaceBounds()) {
+					deselectAircraft(airc);
 				}
-			}	
+			}
 		}
 
 		// Update the counter used to determine when another flight should
@@ -316,7 +318,7 @@ public class SinglePlayerGame extends Game {
 				selectedAircraft = clickedAircraft;
 			} else if (waypointInFlightplanClicked(x, y, selectedAircraft)
 					&& !selectedAircraft.isManuallyControlled()) {
-				// If awaypoint in the currently selected aircraft's flight
+				// If a waypoint in the currently selected aircraft's flight
 				// plan has been clicked, save this waypoint to the
 				// clicked waypoint attribute
 				clickedWaypoint = findClickedWaypoint(x, y);
@@ -356,6 +358,7 @@ public class SinglePlayerGame extends Game {
 			}
 		} else if (key == input.MOUSE_RIGHT) {
 			if (aircraftClicked(x, y)) {
+				deselectAircraft();
 				selectedAircraft = findClickedAircraft(x, y);
 			}
 
@@ -601,8 +604,12 @@ public class SinglePlayerGame extends Game {
 	 */
 	@Override
 	protected void deselectAircraft() {
-		if (selectedAircraft != null && selectedAircraft.isManuallyControlled()) {
-			selectedAircraft.toggleManualControl();
+		deselectAircraft(selectedAircraft);
+	}
+	
+	protected void deselectAircraft(Aircraft aircraft) {
+		if (aircraft != null && aircraft.isManuallyControlled()) {
+			aircraft.toggleManualControl();
 			manualOverrideButton.setText(" Take Control");
 		}
 
