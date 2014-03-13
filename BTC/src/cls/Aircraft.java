@@ -610,7 +610,7 @@ public class Aircraft implements Serializable {
 	 * Updates the number of planes that are violating the separation rule. Also
 	 * checks for crashes.
 	 * 
-	 * @param time_difference
+	 * @param timeDifference
 	 *            the time elapsed since the last frame.
 	 * @param aircraftList
 	 *            all aircraft in the airspace
@@ -619,7 +619,7 @@ public class Aircraft implements Serializable {
 	 * @return index of plane breaching separation distance with this plane, or
 	 *         -1 if no planes are in violation.
 	 */
-	public int updateCollisions(double time_difference,
+	public int updateCollisions(double timeDifference,
 			ArrayList<Aircraft> aircraftList) {
 		planesTooNear.clear();
 		for (int i = 0; i < aircraftList.size(); i++) {

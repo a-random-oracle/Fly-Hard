@@ -62,7 +62,7 @@ public class SinglePlayerGame extends Game {
 	@Override
 	public void start() {
 		// Set up variables
-		maxAircraft = 5;
+		maxAircraft = 2;
 		xOffset = 196;
 		yOffset = 48;
 		out = new OrdersBox(window.width() - xOffset + 20,
@@ -200,6 +200,7 @@ public class SinglePlayerGame extends Game {
 				if (aircraftInAirspace.get(i) == selectedAircraft) {
 					deselectAircraft();
 				}
+				out.addOrder("Removing: " + aircraftInAirspace.get(i).getName());
 				aircraftInAirspace.remove(i);
 			}
 		}
@@ -540,14 +541,14 @@ public class SinglePlayerGame extends Game {
 				originPoint = airports[randomAirport].getDeparturesCentre();
 				originName = airports[randomAirport].name;
 			}
-			destinationAirport = airports[randomAirport];
+			//destinationAirport = airports[randomAirport];
 		} else {
 			originPoint = availableOrigins.get(
 					(new Random()).nextInt((availableOrigins.size() - 1) + 1));
 
 			// If random point is an airport, use its departures location
 			if (originPoint instanceof Airport) {
-				destinationAirport = (Airport) originPoint;
+				//destinationAirport = (Airport) originPoint;
 				originName = originPoint.name;
 				originPoint = ((Airport) originPoint).getDeparturesCentre();
 			} else {
@@ -571,6 +572,11 @@ public class SinglePlayerGame extends Game {
 			destinationPoint = locationWaypoints[destination];
 		} while (destinationName.equals(originName) ||
 				(isAirportName(originName) && isAirportName(destinationName)));
+		
+		// If destination is an airport, flag it
+		if (destinationPoint instanceof Airport) {
+			destinationAirport = (Airport) destinationPoint;
+		}
 
 		// Generate a unique, random flight name
 		String name = "";

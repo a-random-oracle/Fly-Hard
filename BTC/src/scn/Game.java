@@ -88,7 +88,6 @@ public abstract class Game extends Scene {
 	 */
 	public Game(Main main, DifficultySetting difficulty) {
 		super(main);
-		this.maxAircraft = 5;
 		this.difficulty = difficulty;
 	}
 	
@@ -187,17 +186,17 @@ public abstract class Game extends Scene {
 		graphics.setColour(graphics.green);
 		
 		graphics.print(locationWaypoints[0].getName(),
-				locationWaypoints[0].getLocation().getX() + xOffset + 9,
-				locationWaypoints[0].getLocation().getY() + yOffset - 6);
+				locationWaypoints[0].getLocation().getX() + 9,
+				locationWaypoints[0].getLocation().getY() - 6);
 		graphics.print(locationWaypoints[1].getName(),
-				locationWaypoints[1].getLocation().getX() + xOffset + 9,
-				locationWaypoints[1].getLocation().getY() + yOffset - 6);
+				locationWaypoints[1].getLocation().getX() + 9,
+				locationWaypoints[1].getLocation().getY() - 6);
 		graphics.print(locationWaypoints[2].getName(),
-				locationWaypoints[2].getLocation().getX() + xOffset - 141,
-				locationWaypoints[2].getLocation().getY() + yOffset - 6);
+				locationWaypoints[2].getLocation().getX() - 141,
+				locationWaypoints[2].getLocation().getY() - 6);
 		graphics.print(locationWaypoints[3].getName(),
-				locationWaypoints[3].getLocation().getX() + xOffset - 91,
-				locationWaypoints[3].getLocation().getY() + yOffset - 6);
+				locationWaypoints[3].getLocation().getX() - 91,
+				locationWaypoints[3].getLocation().getY() - 6);
 	}
 
 	/**
@@ -221,11 +220,11 @@ public abstract class Game extends Scene {
 		graphics.setColour(graphics.green);
 		
 		graphics.print(locationWaypoints[4].getName(),
-				locationWaypoints[4].getLocation().getX() + xOffset - 20,
-				locationWaypoints[4].getLocation().getY() + yOffset + 25);
+				locationWaypoints[4].getLocation().getX() - 20,
+				locationWaypoints[4].getLocation().getY() + 25);
 		graphics.print(locationWaypoints[5].getName(),
-				locationWaypoints[5].getLocation().getX() + xOffset - 20,
-				locationWaypoints[5].getLocation().getY() + yOffset + 25);
+				locationWaypoints[5].getLocation().getX() - 20,
+				locationWaypoints[5].getLocation().getY() + 25);
 	}
 
 	/**
