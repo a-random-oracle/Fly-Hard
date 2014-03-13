@@ -15,20 +15,38 @@ import lib.jog.input.EventHandler;
 
 public class Airport extends Waypoint implements EventHandler, Serializable {
 	
-	// TODO last updated: 2014.03.13 00:10
-	private static final long serialVersionUID = -1848986618688806661L;
+	// TODO last updated: 2014.03.13 16:50
+	private static final long serialVersionUID = 1782647199629729664L;
+
+	/** The distance between the left edge of the airport image, and the arrivals area */
+	private static final double RELATIVE_ARRIVALS_X = 91;
+	
+	/** The distance between the top edge of the airport image, and the arrivals area */
+	private static final double RELATIVE_ARRIVALS_Y = 36;
+	
+	/** The relative width of the arrivals area */
+	private static final double RELATIVE_ARRAVALS_WIDTH = 102;
+	
+	/** The relative height of the arrivals area */
+	private static final double RELATIVE_ARRIVALS_HEIGHT = 53;
+	
+	/** The distance between the left edge of the airport image, and the departures area */
+	private static final double RELATIVE_DEPARTURES_X = 2;
+	
+	/** The distance between the left edge of the airport image, and the departures area */
+	private static final double RELATIVE_DEPARTURES_Y = 3;
+	
+	/** The relative width of the departures area */
+	private static final double RELATIVE_DEPARTURES_WIDTH = 52;
+	
+	/** The relative height of the departures area */
+	private static final double RELATIVE_DEPARTURES_HEIGHT = 37;
 
 	/** The airport's x position (measured to the top-left of the image) */
 	private double xLocation;
 	
 	/** The airport's y position (measured to the top-left of the image) */
-	private double yLocation;		
-
-	/** The distance between the left edge of the airport image, and the arrivals area */
-	private final static double relativeArrivalsX = 91;
-	
-	/** The distance between the top edge of the airport image, and the arrivals area */
-	private final static double relativeArrivalsY = 36;
+	private double yLocation;
 	
 	/** The absolute distance from the map edge to the left of the arrivals area */
 	private double arrivalsX;
@@ -36,35 +54,17 @@ public class Airport extends Waypoint implements EventHandler, Serializable {
 	/** The absolute distance from the map edge to the top of the arrivals area */
 	private double arrivalsY;
 	
-	/** The relative width of the arrivals area */
-	private final static double relativeArrivalsWidth = 102;
-	
-	/** The relative height of the arrivals area */
-	private final static double relativeArrivalsHeight = 53;
-	
 	/** The width of the arrivals area */
 	private double arrivalsWidth;
 	
 	/** The height of the arrivals area */
 	private double arrivalsHeight;
 	
-	/** The distance between the left edge of the airport image, and the departures area */
-	private final static double relativeDeparturesX = 2;
-	
-	/** The distance between the left edge of the airport image, and the departures area */
-	private final static double relativeDeparturesY = 3;
-	
 	/** The absolute distance from the map edge to the left of the departures area */
 	private double departuresX;
 	
 	/** The absolute distance from the map edge to the top of the departures area */
 	private double departuresY;
-	
-	/** The relative width of the departures area */
-	private final static double relativeDeparturesWidth = 52;
-	
-	/** The relative height of the departures area */
-	private final static double relativeDeparturesHeight = 37;
 	
 	/** The width of the departures area */
 	private double departuresWidth;
@@ -87,7 +87,7 @@ public class Airport extends Waypoint implements EventHandler, Serializable {
 	
 	/** The scaling factor to apply to cause the airport to 'fit in' with the map size
 	 * this is taken to be the lower (and hence smaller) of the height and width scales */
-	private static double scale = Math.min(Main.getXScale(), Main.getYScale());
+	private double scale = Main.getMinScale();
 	
 	/** A list of aircraft waiting to land at the airport */
 	public ArrayList<Aircraft> aircraftWaitingToLand = new ArrayList<Aircraft>();
@@ -113,8 +113,8 @@ public class Airport extends Waypoint implements EventHandler, Serializable {
 	 * @param player the player who should have control over this airport
 	 */
 	private Airport(String name, double x, double y, int player, boolean testing) {
-		super((x + (relativeArrivalsX + (relativeArrivalsWidth/2)) * scale),
-				(y + (relativeArrivalsY + (relativeArrivalsHeight/2)) * scale),
+		super((x + (RELATIVE_ARRIVALS_X + (RELATIVE_ARRAVALS_WIDTH/2)) * Main.getMinScale()),
+				(y + (RELATIVE_ARRIVALS_Y + (RELATIVE_ARRIVALS_HEIGHT/2)) * Main.getMinScale()),
 				true, player, name);
 		
 		// Load the aircraft image
@@ -124,20 +124,20 @@ public class Airport extends Waypoint implements EventHandler, Serializable {
 		yLocation = y;
 		
 		// Scale the arrivals rectangle by the scaling factor
-		Vector arrivalsScaled = (new Vector(relativeArrivalsX,
-				relativeArrivalsY, 0)).scaleBy(scale);
+		Vector arrivalsScaled = (new Vector(RELATIVE_ARRIVALS_X,
+				RELATIVE_ARRIVALS_Y, 0)).scaleBy(scale);
 		arrivalsX = x + arrivalsScaled.getX();
 		arrivalsY = y + arrivalsScaled.getY();
-		arrivalsWidth = relativeArrivalsWidth * scale;
-		arrivalsHeight = relativeArrivalsHeight * scale;
+		arrivalsWidth = RELATIVE_ARRAVALS_WIDTH * scale;
+		arrivalsHeight = RELATIVE_ARRIVALS_HEIGHT * scale;
 		
 		// Scale the departures rectangle by the scaling factor
-		Vector departuresScaled = (new Vector(relativeDeparturesX,
-				relativeDeparturesY, 0)).scaleBy(scale);
+		Vector departuresScaled = (new Vector(RELATIVE_DEPARTURES_X,
+				RELATIVE_DEPARTURES_Y, 0)).scaleBy(scale);
 		departuresX = x + departuresScaled.getX();
 		departuresY = y + departuresScaled.getY();
-		departuresWidth = relativeDeparturesWidth * scale;
-		departuresHeight = relativeDeparturesHeight * scale;
+		departuresWidth = RELATIVE_DEPARTURES_WIDTH * scale;
+		departuresHeight = RELATIVE_DEPARTURES_HEIGHT * scale;
 	}
 	
 	/**
@@ -153,8 +153,8 @@ public class Airport extends Waypoint implements EventHandler, Serializable {
 	 */
 	public static Airport create(String name, double x, double y, int player) {
 		return new Airport(name,
-				(x - relativeArrivalsX - (relativeArrivalsWidth/2)),
-				(y - relativeArrivalsY - (relativeArrivalsHeight/2)),
+				(x - RELATIVE_ARRIVALS_X - (RELATIVE_ARRAVALS_WIDTH/2)),
+				(y - RELATIVE_ARRIVALS_Y - (RELATIVE_ARRIVALS_HEIGHT/2)),
 				player, false);
 	}
 	
@@ -175,8 +175,8 @@ public class Airport extends Waypoint implements EventHandler, Serializable {
 	public static Airport create(String name,
 			double x, double y, int player, boolean testing) {
 		return new Airport(name,
-				(x - relativeArrivalsX - (relativeArrivalsWidth/2)),
-				(y - relativeArrivalsY - (relativeArrivalsHeight/2)),
+				(x - RELATIVE_ARRIVALS_X - (RELATIVE_ARRAVALS_WIDTH/2)),
+				(y - RELATIVE_ARRIVALS_Y - (RELATIVE_ARRIVALS_HEIGHT/2)),
 				player, testing);
 	}
 	  

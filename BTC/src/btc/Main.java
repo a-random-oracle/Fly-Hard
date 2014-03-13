@@ -210,6 +210,10 @@ public class Main implements input.EventHandler {
 	public static double getYScale() {
 		return yScale;
 	}
+	
+	public static double getMinScale() {
+		return Math.min(xScale, yScale);
+	}
 
 	@Override
 	public void mousePressed(int key, int x, int y) {
