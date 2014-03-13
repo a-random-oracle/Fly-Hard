@@ -184,7 +184,6 @@ public abstract class Game extends Scene {
 		}
 
 		// Draw entry/exit points
-		graphics.setViewport();
 		graphics.setColour(graphics.green);
 		
 		graphics.print(locationWaypoints[0].getName(),
@@ -212,10 +211,6 @@ public abstract class Game extends Scene {
 	 */
 	protected void drawAirports(Airport[] airports,
 			Waypoint[] locationWaypoints) {
-		// Reset the viewport
-		graphics.setViewport(xOffset, yOffset, window.width() - (2 * xOffset),
-				window.height() - (2 * yOffset));
-				
 		// Draw the airports
 		for (Airport airport : airports) {
 			graphics.setColour(255, 255, 255, 64);
@@ -223,7 +218,6 @@ public abstract class Game extends Scene {
 		}
 		
 		// Draw the airport names
-		graphics.setViewport();
 		graphics.setColour(graphics.green);
 		
 		graphics.print(locationWaypoints[4].getName(),

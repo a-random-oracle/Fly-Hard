@@ -462,8 +462,8 @@ public class Aircraft implements Serializable {
 		graphics.setColour(graphics.green);
 
 		// Centre positions of aircraft
-		Double xpos = position.getX() - image.width() / 2 + Game.getXOffset();
-		Double ypos = position.getY() - image.height() / 2 + Game.getYOffset();
+		Double xpos = position.getX() - image.width() / 2;
+		Double ypos = position.getY() - image.height() / 2;
 
 		// Draw the compass circle
 		graphics.circle(false, xpos, ypos, COMPASS_RADIUS, 30);
