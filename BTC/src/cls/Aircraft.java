@@ -274,8 +274,10 @@ public class Aircraft implements Serializable {
 			return (manualBearingTarget == Double.NaN) ? getBearing()
 					: manualBearingTarget;
 		} else {
-			return Math.atan2(currentTarget.getY() - position.getY(),
-					currentTarget.getX() - position.getX());
+			return Math.atan2(currentTarget.getY() - position.getY()
+					+ Waypoint.WAYPOINT_ICON_RADIUS/2,
+					currentTarget.getX() - position.getX()
+					+ Waypoint.WAYPOINT_ICON_RADIUS/2);
 		}
 	}
 
@@ -291,7 +293,7 @@ public class Aircraft implements Serializable {
 	public boolean isAt(Vector point) {
 		double dy = point.getY() - position.getY();
 		double dx = point.getX() - position.getX();
-		return dy * dy + dx * dx < 6;
+		return (dy * dy) + (dx * dx) < (6 * 6);
 	}
 
 	/**
@@ -335,12 +337,9 @@ public class Aircraft implements Serializable {
 
 	public boolean isAtDestination() {
 		if (flightPlan.getAirport() != null) { // At airport
-			return flightPlan.getAirport().isWithinArrivals(position, false); // Within
-																				// Arrivals
-																				// rectangle
+			return flightPlan.getAirport().isWithinArrivals(position, false);
 		} else {
-			return isAt(flightPlan.getDestination()); // Very close to
-														// destination
+			return isAt(flightPlan.getDestination());
 		}
 	}
 

@@ -62,7 +62,7 @@ public class SinglePlayerGame extends Game {
 	@Override
 	public void start() {
 		// Set up variables
-		maxAircraft = 2;
+		maxAircraft = 5;
 		xOffset = 196;
 		yOffset = 48;
 		out = new OrdersBox(window.width() - xOffset + 20,
@@ -119,16 +119,16 @@ public class SinglePlayerGame extends Game {
 
 		// Set up map waypoints
 		// Create airspace waypoints
-		Waypoint wp1 = new Waypoint(125, 70, false, 0);
-		Waypoint wp2 = new Waypoint(700, 100, false, 0);
-		Waypoint wp3 = new Waypoint(1040, 80, false, 0);
+		Waypoint wp1 = new Waypoint(125, 175, false, 0);
+		Waypoint wp2 = new Waypoint(200, 635, false, 0);
+		Waypoint wp3 = new Waypoint(250, 400, false, 0);
 		Waypoint wp4 = new Waypoint(500, 200, false, 0);
-		Waypoint wp5 = new Waypoint(1050, 400, false, 0);
-		Waypoint wp6 = new Waypoint(250, 400, false, 0);
-		Waypoint wp7 = new Waypoint(200, 635, false, 0);
-		Waypoint wp8 = new Waypoint(500, 655, false, 0);
-		Waypoint wp9 = new Waypoint(800, 750, false, 0);
-		Waypoint wp10 = new Waypoint(1000, 750, false, 0);
+		Waypoint wp5 = new Waypoint(500, 655, false, 0);
+		Waypoint wp6 = new Waypoint(700, 100, false, 0);
+		Waypoint wp7 = new Waypoint(800, 750, false, 0);
+		Waypoint wp8 = new Waypoint(1000, 750, false, 0);
+		Waypoint wp9 = new Waypoint(1040, 150, false, 0);
+		Waypoint wp10 = new Waypoint(1050, 400, false, 0);
 
 		// Add in airspace waypoints
 		airspaceWaypoints = new Waypoint[10 + locationWaypoints.length];

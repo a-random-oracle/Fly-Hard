@@ -10,10 +10,10 @@ public class Waypoint implements Serializable {
 	private static final long serialVersionUID = 4488796224466928834L;
 
 	/** Leniency to allow mouse input to be accepted in a small area around the waypoint  */
-	public final static int MOUSE_LENIENCY = 32;
+	public static final int MOUSE_LENIENCY = 32;
 	
 	/** The radius of the waypoint image */
-	private final int WAYPOINT_ICON_RADIUS = 8;
+	public static final int WAYPOINT_ICON_RADIUS = 8;
 	
 	/** The vector position of the waypoint */
 	private Vector waypointLocation;
