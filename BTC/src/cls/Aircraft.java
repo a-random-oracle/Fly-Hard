@@ -402,8 +402,8 @@ public class Aircraft implements Serializable {
 		graphics.setColour(graphics.green);
 		
 		// Centre positions of aircraft
-		Double xpos = position.getX()-image.width()/2 + Game.getXOffset(); 
-		Double ypos = position.getY()-image.height()/2 + Game.getYOffset();
+		Double xpos = position.getX() - image.width()/2; 
+		Double ypos = position.getY() - image.height()/2;
 		
 		// Draw the compass circle
 		graphics.circle(false, xpos, ypos, COMPASS_RADIUS, 30);
@@ -422,7 +422,8 @@ public class Aircraft implements Serializable {
 		double x, y;
 		if (isManuallyControlled && input.isMouseDown(input.MOUSE_RIGHT)) {
 			graphics.setColour(graphics.green_transp);
-			double r = Math.atan2(input.mouseY() - position.getY(), input.mouseX() - position.getX());
+			double r = Math.atan2(input.mouseY() - position.getY(),
+					input.mouseX() - position.getX());
 			x = xpos + (COMPASS_RADIUS * Math.cos(r));
 			y = ypos + (COMPASS_RADIUS * Math.sin(r));
 			// Draw several lines to make the line thicker
