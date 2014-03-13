@@ -742,7 +742,7 @@ public class SinglePlayerGame extends Game {
 	 * Gets a list of the aircraft currently in the airspace.
 	 * @return a list of the aircraft currently in the airspace
 	 */
-	public ArrayList<Aircraft> getAircraftList() {
+	public static ArrayList<Aircraft> getAircraftList() {
 		return aircraftInAirspace;
 	}
 

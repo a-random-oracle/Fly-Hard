@@ -59,6 +59,9 @@ public class Aircraft implements Serializable {
 	/** The aircraft's current velocity */
 	private Vector velocity;
 	
+	/** The aircraft's score */
+	private int score;
+	
 	/** Whether the aircraft is currently under manual control */
 	private boolean isManuallyControlled = false;
 	
@@ -118,6 +121,7 @@ public class Aircraft implements Serializable {
 		this.image = image;
 		this.position = originPoint.getLocation();
 		this.isWaitingToLand = (airport != null);
+		this.score = 100;
 		
 		// Set aircraft's altitude to a random height
 		int altitudeOffset = ((new Random()).nextInt(2)) == 0 ? 28000 : 30000;
