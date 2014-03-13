@@ -1,6 +1,7 @@
 package cls;
 
 import java.io.File;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -19,7 +20,10 @@ import lib.jog.window;
  * Represents an aircraft. Calculates velocity, route-following, etc.
  * </p>
  */
-public class Aircraft {
+public class Aircraft implements Serializable {
+	
+	// TODO last updated: 2014.03.12 23:50
+	private static final long serialVersionUID = -6259795098509299784L;
 	
 	// Static ints for use where altitude state is to be changed
 	public final static int ALTITUDE_CLIMB = 1;

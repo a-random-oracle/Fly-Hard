@@ -1,19 +1,32 @@
 package cls;
 
+import java.io.Serializable;
+
 import scn.Game;
 import btc.Main;
 
 /**
- * Simplified 3D vector class with basic operations
+ * Simplified 3D vector class with basic operations.
  */
-public class Vector {
-	private double x, y, z;
+public class Vector implements Serializable {
+	
+	// TODO last updated: 2014.03.13 00:05
+	private static final long serialVersionUID = -5086652815637818053L;
+	
+	/** The vector's x position */
+	private double x;
+	
+	/** The vector's y position */
+	private double y;
+	
+	/** The vector's z position */
+	private double z;
 	
 	/**
-	 * Constructor for a vector
-	 * @param x X coordinate
-	 * @param y Y coordinate
-	 * @param z Z coordinate
+	 * Constructor for a vector.
+	 * @param x the vector's x position
+	 * @param y the vector's y position
+	 * @param z the vector's z position
 	 */
 	public Vector(double x, double y, double z) {
 		this.x = x;
@@ -21,33 +34,56 @@ public class Vector {
 		this.z = z;
 	}
 	
-
+	/**
+	 * Gets the x position of the vector.
+	 * @return the x position of the vector
+	 */
 	public double getX() {
 		return x;
 	}
 
+	/**
+	 * Gets the y position of the vector.
+	 * @return the y position of the vector
+	 */
 	public double getY() {
 		return y;
 	}
 	
+	/**
+	 * Gets the z position of the vector.
+	 * @return the z position of the vector
+	 */
 	public double getZ() {
 		return z;
 	}
 	
 	/**
-	 * Calculates the magnitude of the vector
+	 * Sets the z value of the vector.
+	 * @param z the z value to be set
+	 */
+	public void setZ(double z) {
+		this.z = z;
+	}
+	
+	/**
+	 * Calculates the magnitude of the vector.
 	 * @return the magnitude of the vector
 	 */
 	public double magnitude() {
 		return Math.sqrt(magnitudeSquared());
 	}
 	
+	/**
+	 * Calculates the square of the magnitude of the vector.
+	 * @return the square of the magnitude of the vector
+	 */
 	public double magnitudeSquared() {
 		return (x*x) + (y*y) + (z*z);
 	}
 	
 	/**
-	 * Normalises the vector
+	 * Normalises the vector.
 	 * @return a normalised vector
 	 */
 	public Vector normalise() {
@@ -55,16 +91,16 @@ public class Vector {
 	}
 	
 	/**
-	 * Scales the vector by a given scalar
+	 * Scales the vector by a given scalar.
 	 * @param n the scalar to scale by
-	 * @return a new scaled vector
+	 * @return the scaled vector
 	 */
 	public Vector scaleBy(double n) {
 		return new Vector(x * n, y * n, z * n);
 	}
 	
 	/**
-	 * Adds two vectors together
+	 * Adds two vectors together.
 	 * @param v a vector to be added
 	 * @return the sum of the vectors
 	 */
@@ -82,7 +118,7 @@ public class Vector {
 	}
 	
 	/**
-	 * Gets the angle between this vector and a specified vector
+	 * Gets the angle between this vector and a specified vector.
 	 * @param v the vector to find the angle to
 	 * @return the angle between this vector and another
 	 */
@@ -90,14 +126,6 @@ public class Vector {
 		double a = Math.acos( (x*v.x + y*v.y + z*v.z) / (magnitude() * v.magnitude()));
 		if (v.y < y) a *= -1;
 		return a;
-	}
-	
-	/**
-	 * Sets the z value of the vector
-	 * @param z the z value to be set
-	 */
-	public void setZ(double z) {
-		this.z = z;
 	}
 	
 	/**

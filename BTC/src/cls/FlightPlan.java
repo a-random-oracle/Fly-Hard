@@ -1,13 +1,29 @@
 package cls;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class FlightPlan {	
+public class FlightPlan implements Serializable {
+	
+	// TODO last updated: 2014.03.13 00:05
+	private static final long serialVersionUID = 4863826794317542260L;
+
+	/** The waypoints the aircraft following this path will pass through */
 	private Waypoint[] route;
+	
+	/** The name of the location the aircraft following this path originated at */
 	private String originName;
+	
+	/** The position which the aircraft following this path originated at */
 	private Vector origin;
+	
+	/** The name of the location the aircraft following this path will exit at */
 	private String destinationName;
+	
+	/** The position which the aircraft following this path will exit at */
 	private Vector destination;
+	
+	/** The airport which the aircraft following this path is heading towards */
 	private Airport airport;
 	
 	FlightPlan(Waypoint[] route, String originName, String destinationName,

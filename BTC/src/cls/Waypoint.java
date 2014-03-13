@@ -1,9 +1,14 @@
 package cls;
 
+import java.io.Serializable;
+
 import lib.jog.graphics;
 
-public class Waypoint {
+public class Waypoint implements Serializable {
 	
+	// TODO last updated: 2014.03.13 00:10
+	private static final long serialVersionUID = 4488796224466928834L;
+
 	/** Leniency to allow mouse input to be accepted in a small area around the waypoint  */
 	public final static int MOUSE_LENIENCY = 32;
 	

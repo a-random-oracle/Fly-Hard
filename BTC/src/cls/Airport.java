@@ -1,6 +1,7 @@
 package cls;
 
 import java.io.File;
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import btc.Main;
@@ -12,8 +13,11 @@ import lib.jog.graphics.Image;
 import lib.jog.input;
 import lib.jog.input.EventHandler;
 
-public class Airport extends Waypoint implements EventHandler {
+public class Airport extends Waypoint implements EventHandler, Serializable {
 	
+	// TODO last updated: 2014.03.13 00:10
+	private static final long serialVersionUID = -1848986618688806661L;
+
 	/** The airport's x position (measured to the top-left of the image) */
 	private double xLocation;
 	
