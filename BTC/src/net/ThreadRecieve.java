@@ -3,16 +3,17 @@ package net;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 
-import scn.Demo;
+import cls.Aircraft;
+
 
 public class ThreadRecieve extends Thread {
 	
-	ObjectInputStream in;
-	Demo demo;
+	ObjectInputStream inStream;
+	Aircraft aircraft;
 		
-	public ThreadRecieve(Demo d, ObjectInputStream inStream) {
-		demo = d;
-		in = inStream;
+	public ThreadRecieve(Aircraft aircraft, ObjectInputStream inStream) {
+		this.aircraft = aircraft;
+		this.inStream = inStream;
 	}
 	
 	@Override
