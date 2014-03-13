@@ -2,7 +2,7 @@ package cls;
 
 public class Powerup {
 
-	public Powerup()) {
+	public Powerup(){
 		
 	}
 

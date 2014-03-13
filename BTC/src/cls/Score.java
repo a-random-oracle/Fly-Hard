@@ -9,7 +9,7 @@ public class Score {
 	
 	
 		
-	}
+	
 
 	
 	public static void update() {
@@ -20,8 +20,8 @@ public class Score {
 				
 			}
 			
-					
+		}
 
 	}
 
-}
+	}
