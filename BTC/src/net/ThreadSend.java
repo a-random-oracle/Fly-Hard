@@ -3,25 +3,16 @@ package net;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 
-import cls.Aircraft;
-
+import scn.Demo;
 
 public class ThreadSend extends Thread {
 	
-	//no longer sending an instance of demo
-	/*
-	 * for now
-	 * send aircraft
-	 * 
-	 * possibly...:
-	 */
-	
-	ObjectOutputStream outStream;
-	Aircraft aircraft;
+	ObjectOutputStream out;
+	Demo demo;
 
-	public ThreadSend(Aircraft aircraft, ObjectOutputStream outStream) {
-		this.aircraft = aircraft;
-		this.outStream = outStream;
+	public ThreadSend(Demo d, ObjectOutputStream outStream) {
+		demo = d;
+		out = outStream;
 	}
 	
 	@Override
