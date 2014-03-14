@@ -13,26 +13,15 @@ import lib.jog.window;
 import cls.Aircraft;
 import cls.Airport;
 import cls.OrdersBox;
+import cls.Player;
 import cls.Waypoint;
 
 import btc.Main;
 
 public class SinglePlayerGame extends Game {
 
-	/** The currently selected aircraft */
-	protected Aircraft selectedAircraft;
-
-	/** The currently selected waypoint */
-	protected Waypoint clickedWaypoint;
-
-	/** Selected path point, in an aircraft's route, used for altering the route */
-	protected int selectedPathpoint;
-
-	/** A list of aircraft present in the airspace */
-	protected static ArrayList<Aircraft> aircraftInAirspace;
-
-	/** Array of the airports in the airspace */
-	protected static Airport[] airports;
+	/** The player */
+	private Player player;
 
 	/** The set of waypoints in the airspace which are entry/exit points */
 	protected Waypoint[] locationWaypoints;
@@ -61,14 +50,11 @@ public class SinglePlayerGame extends Game {
 	 */
 	@Override
 	public void start() {
+		super.start();
+		
 		// Set up variables
-		maxAircraft = 5;
-		xOffset = 196;
-		yOffset = 48;
 		out = new OrdersBox(window.width() - xOffset + 20,
 				yOffset, xOffset - 40, window.height() - (2 * yOffset), 30);
-		flightGenerationTimeElapsed = 6;
-		highlightedAltitude = 30000;
 		aircraftWaitingToTakeOff = new ArrayList<Aircraft>();
 		paused = false;
 
@@ -91,7 +77,7 @@ public class SinglePlayerGame extends Game {
 				3 * (window.width() - (2 * xOffset)) / 4,
 				window.height() / 2, 0);
 
-		airports = new Airport[2];
+		Airport[] airports = new Airport[2];
 		airports[0] = airport1;
 		airports[1] = airport2;
 
@@ -149,26 +135,27 @@ public class SinglePlayerGame extends Game {
 		}
 
 		// Set up game components
-		aircraftInAirspace = new ArrayList<Aircraft>();
 		recentlyDepartedAircraft = new ArrayList<Aircraft>();
+		
+		// Set up the player TODO
+		player = new Player("Bob", true, "127.0.0.1", airports);
+		getPlayers().add(this.player);
 
 		// Create the manual control button
+		manualControlButtons = new ButtonText[1];
+		
 		ButtonText.Action manual = new ButtonText.Action() {
 			@Override
 			public void action() {
-				toggleManualControl();
+				toggleManualControl(player);
 			}
 		};
 
-		manualOverrideButton = new ButtonText(" Take Control", manual,
+		manualControlButtons[player.getID()] = new ButtonText(" Take Control", manual,
 				(window.width() - 128 - (2 * xOffset)) / 2, 32, 128, 32, 8, 4);
 
 		// Reset game attributes
 		timeElapsed = 0;
-		compassClicked = false;
-		selectedAircraft = null;
-		clickedWaypoint = null;
-		selectedPathpoint = -1;
 		deselectAircraft();
 	}
 	
@@ -184,7 +171,7 @@ public class SinglePlayerGame extends Game {
 		graphics.setColour(graphics.green_transp);
 
 		// Update aircraft
-		for (Aircraft aircraft : aircraftInAirspace) {
+		for (Aircraft aircraft : player.getAircraft()) {
 			aircraft.update(timeDifference);
 			if (aircraft.isFinished()) {
 				recentlyDepartedAircraft.add(aircraft);
@@ -195,53 +182,53 @@ public class SinglePlayerGame extends Game {
 		checkCollisions(timeDifference);
 
 		// Deselect and remove any aircraft which have completed their routes
-		for (int i = aircraftInAirspace.size() - 1; i >= 0; i--) {
-			if (aircraftInAirspace.get(i).isFinished()) {
-				if (aircraftInAirspace.get(i) == selectedAircraft) {
+		for (int i = player.getAircraft().size() - 1; i >= 0; i--) {
+			if (player.getAircraft().get(i).isFinished()) {
+				if (player.getAircraft().get(i).equals(player.getSelectedAircraft())) {
 					deselectAircraft();
 				}
-				out.addOrder("Removing: " + aircraftInAirspace.get(i).getName());
-				aircraftInAirspace.remove(i);
+				out.addOrder("Removing: " + player.getAircraft().get(i).getName());
+				player.getAircraft().remove(i);
 			}
 		}
 
 		// Update the airports
-		for (Airport airport : airports) airport.update(aircraftInAirspace);
+		for (Airport airport : player.getAirports()) airport.update(player.getAircraft());
 		
 		// If there are any aircraft waiting to take off, let them take off
 		takeOffWaitingAircraft();
 
-		if (selectedAircraft != null) {
-			if (selectedAircraft.isManuallyControlled()) {
+		if (player.getSelectedAircraft() != null) {
+			if (player.getSelectedAircraft().isManuallyControlled()) {
 				// Handle directional control for a manually controlled aircraft
 				if (input.keyPressed(new int[]{input.KEY_LEFT, input.KEY_A})) {
 					// Turn left when 'Left' or 'A' key is pressed
-					selectedAircraft.turnLeft(timeDifference);
+					player.getSelectedAircraft().turnLeft(timeDifference);
 				} else if (input.keyPressed(new int[]{input.KEY_RIGHT, input.KEY_D})) {
 					// Turn right when 'Right' or 'D' key is pressed
-					selectedAircraft.turnRight(timeDifference);
+					player.getSelectedAircraft().turnRight(timeDifference);
 				}
 			} else if (input.keyPressed(new int[]{
 					input.KEY_LEFT, input.KEY_A, input.KEY_RIGHT, input.KEY_D})) {
 				// If any of the directional keys is pressed, set selected aircraft
 				// to manual control
-				toggleManualControl();
+				toggleManualControl(player);
 			}
 
 			// Handle altitude controls
 			if (input.keyPressed(new int[]{input.KEY_S, input.KEY_DOWN})
-					&& (selectedAircraft.getPosition().getZ() > 28000)) {
-				selectedAircraft.setAltitudeState(Aircraft.ALTITUDE_FALL);
+					&& (player.getSelectedAircraft().getPosition().getZ() > 28000)) {
+				player.getSelectedAircraft().setAltitudeState(Aircraft.ALTITUDE_FALL);
 			} else if (input.keyPressed(new int[]{input.KEY_W, input.KEY_UP})
-					&& (selectedAircraft.getPosition().getZ() < 30000)) {
-				selectedAircraft.setAltitudeState(Aircraft.ALTITUDE_CLIMB);
+					&& (player.getSelectedAircraft().getPosition().getZ() < 30000)) {
+				player.getSelectedAircraft().setAltitudeState(Aircraft.ALTITUDE_CLIMB);
 			}
 		}
 		
 		// Deselect any aircraft which are outside the airspace
 		// This ensures that players can't keep controlling aircraft
 		// after they've left the airspace
-		for (Aircraft airc : aircraftInAirspace) {
+		for (Aircraft airc : player.getAircraft()) {
 			if (!(airc.isAtDestination())) {
 				if (airc.isOutOfAirspaceBounds()) {
 					deselectAircraft(airc);
@@ -252,16 +239,16 @@ public class SinglePlayerGame extends Game {
 		// Update the counter used to determine when another flight should
 		// enter the airspace
 		// If the counter has reached 0, then spawn a new aircraft
-		flightGenerationTimeElapsed += timeDifference;
-		if(flightGenerationTimeElapsed >= getFlightGenerationInterval()) {
-			flightGenerationTimeElapsed -= getFlightGenerationInterval();
-			if (aircraftInAirspace.size() < maxAircraft) {
+		player.setFlightGenerationTimeElapsed(player.getFlightGenerationTimeElapsed() + timeDifference);
+		if (player.getFlightGenerationTimeElapsed() >= getFlightGenerationInterval(player)) {
+			player.setFlightGenerationTimeElapsed(player.getFlightGenerationTimeElapsed() - getFlightGenerationInterval(player));
+			if (player.getAircraft().size() < player.getMaxAircraft()) {
 				generateFlight();
 			}
 		}
 
 		// If there are no aircraft in the airspace, spawn a new aircraft
-		if (aircraftInAirspace.size() == 0) generateFlight();
+		if (player.getAircraft().size() == 0) generateFlight();
 
 		// Update debug box
 		// PLEASE DO NOT REMOVE - this is very useful for debugging
@@ -288,12 +275,12 @@ public class SinglePlayerGame extends Game {
 				Math.max(Main.getXScale(), Main.getYScale()));
 
 		// Draw individual map features
-		drawAircraft(aircraftInAirspace, selectedAircraft, clickedWaypoint,
-				selectedPathpoint, highlightedAltitude);
+		drawAircraft(player.getAircraft(), player.getSelectedAircraft(), player.getSelectedWaypoint(),
+				player.getSelectedPathpoint(), player.getControlAltitude());
 		drawWaypoints(airspaceWaypoints, locationWaypoints);
-		drawAirports(airports, locationWaypoints);
-		drawManualControlButton(selectedAircraft);
-		drawAdditional(aircraftInAirspace.size());
+		drawAirports(player.getAirports(), locationWaypoints);
+		drawManualControlButton(player);
+		drawAdditional(player.getAircraft().size());
 
 		// Draw debug box
 		// PLEASE DO NOT REMOVE - this is very useful for debugging
@@ -315,36 +302,36 @@ public class SinglePlayerGame extends Game {
 				// If an aircraft has been clicked, select it
 				Aircraft clickedAircraft = findClickedAircraft(x, y);
 				deselectAircraft();
-				selectedAircraft = clickedAircraft;
-			} else if (waypointInFlightplanClicked(x, y, selectedAircraft)
-					&& !selectedAircraft.isManuallyControlled()) {
+				player.setSelectedAircraft(clickedAircraft);
+			} else if (waypointInFlightplanClicked(x, y, player.getSelectedAircraft())
+					&& !player.getSelectedAircraft().isManuallyControlled()) {
 				// If a waypoint in the currently selected aircraft's flight
 				// plan has been clicked, save this waypoint to the
 				// clicked waypoint attribute
-				clickedWaypoint = findClickedWaypoint(x, y);
-				if (clickedWaypoint != null) {
-					if (!clickedWaypoint.isEntryOrExit()) {
-						waypointClicked = true; // Flag to mouseReleased
-						selectedPathpoint = selectedAircraft.getFlightPlan()
-								.indexOfWaypoint(clickedWaypoint);
+				player.setSelectedWaypoint(findClickedWaypoint(x, y));
+				if (player.getSelectedWaypoint() != null) {
+					if (!player.getSelectedWaypoint().isEntryOrExit()) {
+						player.setWaypointClicked(true); // Flag to mouseReleased
+						player.setSelectedPathpoint(player.getSelectedAircraft().getFlightPlan()
+								.indexOfWaypoint(player.getSelectedWaypoint()));
 					} else {
 						// If the clicked waypoint is an entry/exit point, discard it
 						// as we don't want the user to be able to move these points
-						clickedWaypoint = null;
+						player.setSelectedWaypoint(null);
 					}
 				}
 			}
 
-			for (Airport airport : airports) {
-				if (selectedAircraft != null && airport.isArrivalsClicked(x, y)) {
-					if ((selectedAircraft.isWaitingToLand)
-							&& (selectedAircraft.currentTarget.equals(airport
+			for (Airport airport : player.getAirports()) {
+				if (player.getSelectedAircraft() != null && airport.isArrivalsClicked(x, y)) {
+					if ((player.getSelectedAircraft().isWaitingToLand)
+							&& (player.getSelectedAircraft().currentTarget.equals(airport
 									.getLocation()))) {
 						// If arrivals is clicked, and the selected aircraft
 						// is waiting to land at that airport, cause the aircraft
 						// to land
 						airport.mousePressed(key, x, y);
-						selectedAircraft.land();
+						player.getSelectedAircraft().land();
 						deselectAircraft();
 					}
 				} else if (airport.isDeparturesClicked(x, y)) {
@@ -359,17 +346,17 @@ public class SinglePlayerGame extends Game {
 		} else if (key == input.MOUSE_RIGHT) {
 			if (aircraftClicked(x, y)) {
 				deselectAircraft();
-				selectedAircraft = findClickedAircraft(x, y);
+				player.setSelectedAircraft(findClickedAircraft(x, y));
 			}
 
-			if (selectedAircraft != null) {
+			if (player.getSelectedAircraft() != null) {
 				if (compassClicked(x, y)) {
-					compassClicked = true; // Flag to mouseReleased
-					if (!selectedAircraft.isManuallyControlled())
-						toggleManualControl();
+					player.setCompassClicked(true); // Flag to mouseReleased
+					if (!player.getSelectedAircraft().isManuallyControlled())
+						toggleManualControl(player);
 				} else {
-					if (selectedAircraft.isManuallyControlled()) {
-						toggleManualControl();
+					if (player.getSelectedAircraft().isManuallyControlled()) {
+						toggleManualControl(player);
 					} else {
 						deselectAircraft();					
 					}
@@ -385,33 +372,33 @@ public class SinglePlayerGame extends Game {
 	public void mouseReleased(int key, int x, int y) {
 		if (paused) return;
 
-		for (Airport airport : airports) {
+		for (Airport airport : player.getAirports()) {
 			airport.mouseReleased(key, x, y);
 		}
 
 		if (key == input.MOUSE_LEFT) {
-			if (manualOverridePressed(x, y)) {
-				manualOverrideButton.act();
-			} else if (waypointClicked && selectedAircraft != null) {
+			if (manualOverridePressed(x, y, player)) {
+				manualControlButtons[player.getID()].act();
+			} else if (player.isWaypointClicked() && player.getSelectedAircraft() != null) {
 				Waypoint newWaypoint = findClickedWaypoint(x, y);
-				if (newWaypoint != null)  selectedAircraft.alterPath(selectedPathpoint,
+				if (newWaypoint != null)  player.getSelectedAircraft().alterPath(player.getSelectedPathpoint(),
 						newWaypoint);
-				selectedPathpoint = -1;
+				player.setSelectedPathpoint(-1);
 			}
-			clickedWaypoint = null; // Fine to set to null now as will have been dealt with
+			player.setSelectedWaypoint(null); // Fine to set to null now as will have been dealt with
 		} else if (key == input.MOUSE_RIGHT) {
-			if (compassClicked && selectedAircraft != null) {
+			if (player.isCompassClicked() && player.getSelectedAircraft() != null) {
 				double dx = input.mouseX()
-						- selectedAircraft.getPosition().getX() + xOffset - 8;
+						- player.getSelectedAircraft().getPosition().getX() + xOffset - 8;
 				double dy = input.mouseY()
-						- selectedAircraft.getPosition().getY() + yOffset - 8;
+						- player.getSelectedAircraft().getPosition().getY() + yOffset - 8;
 				double newBearing = Math.atan2(dy, dx);
-				selectedAircraft.setBearing(newBearing);
+				player.getSelectedAircraft().setBearing(newBearing);
 			}
 		} else if (key == input.MOUSE_WHEEL_UP) {
-			highlightedAltitude = 30000;
+			player.setControlAltitude(30000);
 		} else if (key == input.MOUSE_WHEEL_DOWN){
-			highlightedAltitude = 28000;
+			player.setControlAltitude(28000);
 		}
 	}
 
@@ -439,7 +426,7 @@ public class SinglePlayerGame extends Game {
 
 		switch (key) {
 		case input.KEY_SPACE :
-			toggleManualControl();
+			toggleManualControl(player);
 			break;
 
 		case input.KEY_LCRTL :
@@ -447,8 +434,8 @@ public class SinglePlayerGame extends Game {
 			break;
 
 		case input.KEY_ESCAPE :
-			aircraftInAirspace.clear();
-			for (Airport airport : airports) airport.clear();
+			player.getAircraft().clear();
+			for (Airport airport : player.getAirports()) airport.clear();
 			main.closeScene();
 			break;
 
@@ -468,11 +455,11 @@ public class SinglePlayerGame extends Game {
 	 */
 	@Override
 	protected void checkCollisions(double timeDifference) {
-		for (Aircraft plane : aircraftInAirspace) {
+		for (Aircraft plane : player.getAircraft()) {
 			int collisionState = plane.updateCollisions(timeDifference,
-					aircraftInAirspace);
+					player.getAircraft());
 			if (collisionState >= 0) {
-				gameOver(plane, aircraftInAirspace.get(collisionState));
+				gameOver(plane, player.getAircraft().get(collisionState));
 				return;
 			}
 		}
@@ -486,8 +473,8 @@ public class SinglePlayerGame extends Game {
 	 */
 	@Override
 	public void gameOver(Aircraft plane1, Aircraft plane2) {
-		aircraftInAirspace.clear();
-		for (Airport airport : airports) airport.clear();
+		player.getAircraft().clear();
+		for (Airport airport : player.getAirports()) airport.clear();
 		// TODO <- add back in for release
 		//playSound(audio.newSoundEffect("sfx" + File.separator + "crash.ogg"));
 		main.closeScene();
@@ -506,7 +493,7 @@ public class SinglePlayerGame extends Game {
 
 		if (aircraft != null) {
 			// If the aircraft starts at an airport, add it to that airport
-			for (Airport airport : airports) {
+			for (Airport airport : player.getAirports()) {
 				if (aircraft.getFlightPlan().getOriginName().equals(airport.name)) {
 					airport.addToHangar(aircraft);
 					return;
@@ -514,7 +501,7 @@ public class SinglePlayerGame extends Game {
 			}
 
 			// Otherwise, add the aircraft to the airspace
-			aircraftInAirspace.add(aircraft);
+			player.getAircraft().add(aircraft);
 		}
 	}
 
@@ -536,13 +523,13 @@ public class SinglePlayerGame extends Game {
 		ArrayList<Waypoint> availableOrigins = getAvailableEntryPoints();
 
 		if (availableOrigins.isEmpty()) {
-			int randomAirport = (new Random()).nextInt((airports.length - 1) + 1);
-			if (airports[randomAirport].aircraftHangar.size()
-					== airports[randomAirport].getHangarSize()) {
+			int randomAirport = (new Random()).nextInt((player.getAirports().length - 1) + 1);
+			if (player.getAirports()[randomAirport].aircraftHangar.size()
+					== player.getAirports()[randomAirport].getHangarSize()) {
 				return null;
 			} else {
-				originPoint = airports[randomAirport].getDeparturesCentre();
-				originName = airports[randomAirport].name;
+				originPoint = player.getAirports()[randomAirport].getDeparturesCentre();
+				originName = player.getAirports()[randomAirport].name;
 			}
 			//destinationAirport = airports[randomAirport];
 		} else {
@@ -587,7 +574,7 @@ public class SinglePlayerGame extends Game {
 		while (nameTaken) {
 			name = "Flight " + (int)(900 * Math.random() + 100);
 			nameTaken = false;
-			for (Aircraft a : aircraftInAirspace) {
+			for (Aircraft a : player.getAircraft()) {
 				if (a.getName() == name) nameTaken = true;
 			}
 		}
@@ -604,31 +591,18 @@ public class SinglePlayerGame extends Game {
 	 */
 	@Override
 	protected void deselectAircraft() {
-		deselectAircraft(selectedAircraft);
+		deselectAircraft(player.getSelectedAircraft());
 	}
 	
 	protected void deselectAircraft(Aircraft aircraft) {
 		if (aircraft != null && aircraft.isManuallyControlled()) {
 			aircraft.toggleManualControl();
-			manualOverrideButton.setText(" Take Control");
+			manualControlButtons[player.getID()].setText(" Take Control");
 		}
 
-		selectedAircraft = null;
-		clickedWaypoint = null; 
-		selectedPathpoint = -1;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void toggleManualControl() {
-		if (selectedAircraft == null) return;
-
-		selectedAircraft.toggleManualControl();
-		manualOverrideButton.setText(
-				(selectedAircraft.isManuallyControlled() ?
-						"Remove" : " Take") + " Control");
+		player.setSelectedAircraft(null);
+		player.setSelectedWaypoint(null); 
+		player.setSelectedPathpoint(-1);
 	}
 
 	/**
@@ -637,7 +611,7 @@ public class SinglePlayerGame extends Game {
 	@Override
 	public void takeOffWaitingAircraft() {
 		for (Aircraft a : aircraftWaitingToTakeOff) {
-			aircraftInAirspace.add(a);
+			player.getAircraft().add(a);
 
 			if (a.getFlightPlan().getAirport() != null) {
 				a.getFlightPlan().getAirport().isActive = false;
@@ -665,7 +639,7 @@ public class SinglePlayerGame extends Game {
 			//   any plane is currently going towards it
 			//   or any plane is less than 250 from it
 
-			for (Aircraft aircraft : aircraftInAirspace) {
+			for (Aircraft aircraft : player.getAircraft()) {
 				// Check if any plane is currently going towards the
 				// exit point/chosen originPoint
 				// Check if any plane is less than what is defined as too close
@@ -688,7 +662,7 @@ public class SinglePlayerGame extends Game {
 	 */
 	@Override
 	protected boolean isAirportName(String name) {
-		for (Airport airport : airports) {
+		for (Airport airport : player.getAirports()) {
 			// If a match is found, return true
 			if (airport.name.equals(name)) return true;
 		}
@@ -705,9 +679,9 @@ public class SinglePlayerGame extends Game {
 	 */
 	@Override
 	protected boolean compassClicked(int x, int y) {
-		if (selectedAircraft != null) {
-			double dx = selectedAircraft.getPosition().getX() - x + xOffset;
-			double dy = selectedAircraft.getPosition().getY() - y + yOffset;
+		if (player.getSelectedAircraft() != null) {
+			double dx = player.getSelectedAircraft().getPosition().getX() - x + xOffset;
+			double dy = player.getSelectedAircraft().getPosition().getY() - y + yOffset;
 			int r = Aircraft.COMPASS_RADIUS;
 			return  dx*dx + dy*dy < r*r;
 		}
@@ -719,7 +693,7 @@ public class SinglePlayerGame extends Game {
 	 */
 	@Override
 	protected Aircraft findClickedAircraft(int x, int y) {
-		for (Aircraft a : aircraftInAirspace) {
+		for (Aircraft a : player.getAircraft()) {
 			if (a.isMouseOver(x - xOffset, y - yOffset)) {
 				return a;
 			}
@@ -741,25 +715,6 @@ public class SinglePlayerGame extends Game {
 	}
 
 
-	// Accessors ------------------------------------------------------------------------
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public Airport[] getAirports() {
-		return airports;
-	}
-
-	/**
-	 * Gets a list of the aircraft currently in the airspace.
-	 * @return a list of the aircraft currently in the airspace
-	 */
-	public static ArrayList<Aircraft> getAircraftList() {
-		return aircraftInAirspace;
-	}
-
-
 	// Deprecated -----------------------------------------------------------------------
 
 	/**
@@ -768,7 +723,7 @@ public class SinglePlayerGame extends Game {
 	@Deprecated
 	@Override
 	public void initializeAircraftArray() {
-		aircraftInAirspace = new ArrayList<Aircraft>();
+		player.setAircraft(new ArrayList<Aircraft>());
 	}
 
 }

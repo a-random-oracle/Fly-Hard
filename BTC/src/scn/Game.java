@@ -14,17 +14,18 @@ import lib.jog.graphics.Image;
 import cls.Aircraft;
 import cls.Airport;
 import cls.OrdersBox;
+import cls.Player;
 import cls.Waypoint;
 
 import btc.Main;
 
 public abstract class Game extends Scene {
 	
-	/** The maximum number of aircraft allowed in the airspace simultaneously */
-	protected int maxAircraft;
+	protected static ArrayList<Player> players;
 	
-	// Due to the way the airspace elements are drawn (graphics.setviewport) these variables are needed to manually
-	// adjust mouse listeners and elements drawn outside the airspace so that they align with the airspace elements.
+	// Due to the way the airspace elements are drawn (graphics.setviewport)
+	// these variables are needed to manually adjust mouse listeners and elements
+	// drawn outside the airspace so that they align with the airspace elements.
 	// These variables can be used to adjust the size of the airspace view.
 	
 	/** The distance between the left edge of the screen and the map area */
@@ -38,6 +39,9 @@ public abstract class Game extends Scene {
 	
 	/** Difficulty settings: easy, medium and hard */
 	public enum DifficultySetting {EASY, MEDIUM, HARD}
+	
+	/** The default maximum number of aircraft */
+	public static final int DEFAULT_MAX_AIRCRAFT = 5;
 	
 	/** The current difficulty setting */
 	protected DifficultySetting difficulty;
@@ -54,26 +58,14 @@ public abstract class Game extends Scene {
 	/** The image to use for aircraft */
 	protected Image aircraftImage;
 	
-	/** A button to start and end manual control of an aircraft */
-	protected ButtonText manualOverrideButton;
-	
-	/** Tracks if manual heading compass of a manually controlled aircraft has been clicked */
-	protected boolean compassClicked;
-	
-	/** Tracks if waypoint of a manually controlled aircraft has been clicked */
-	protected boolean waypointClicked;
-	
-	/** The time elapsed since the last flight was generated */
-	protected double flightGenerationTimeElapsed;
-	
-	/** The current control altitude of the ATCO - initially 30,000 */
-	protected int highlightedAltitude;
-	
 	/** Music to play during the game scene */
 	protected Music music;
 	
 	/** The background to draw in the airspace */
 	protected Image background;
+	
+	/** The manual control buttons */
+	protected ButtonText[] manualControlButtons;
 	
 	/** Is the game paused */
 	protected boolean paused;
@@ -83,8 +75,10 @@ public abstract class Game extends Scene {
 	
 	/**
 	 * Constructor for Demo.
-	 * @param main the main containing the scene
-	 * @param difficulty the difficulty the scene is to be initialised with
+	 * @param main
+	 * 			the main containing the scene
+	 * @param difficulty
+	 * 			the difficulty the scene is to be initialised with
 	 */
 	public Game(Main main, DifficultySetting difficulty) {
 		super(main);
@@ -99,7 +93,14 @@ public abstract class Game extends Scene {
 	 * Shorten flight generation timer according to difficulty.
 	 */
 	@Override
-	public abstract void start();
+	public void start() {
+		// Set screen offsets
+		xOffset = 196;
+		yOffset = 48;
+		
+		// Set up players
+		players = new ArrayList<Player>();
+	}
 	
 	/**
 	 * Update all objects within the scene, e.g. aircraft.
@@ -230,8 +231,8 @@ public abstract class Game extends Scene {
 	/**
 	 * Draws the manual control button.
 	 */
-	protected void drawManualControlButton(Aircraft selectedAircraft) {
-		if (selectedAircraft != null) {
+	protected void drawManualControlButton(Player player) {
+		if (player.getSelectedAircraft() != null) {
 			graphics.setColour(graphics.green);
 			// Display the manual control button
 			graphics.setColour(graphics.black);
@@ -240,7 +241,7 @@ public abstract class Game extends Scene {
 			graphics.setColour(graphics.green);
 			graphics.rectangle(false,
 					(window.width() - 128 - (2 * xOffset)) / 2, 32, 128, 32);
-			manualOverrideButton.draw();
+			manualControlButtons[player.getID()].draw();
 		}
 	}
 
@@ -270,9 +271,9 @@ public abstract class Game extends Scene {
 		graphics.print(timePlayed, window.width() - xOffset
 				- (timePlayed.length() * 8 + 32), 32);
 
-		// Print the highlighted altitude to the screen
-		graphics.print(String.valueOf("Highlighted altitude: " + Integer
-				.toString(highlightedAltitude)) , 32 + xOffset, 15);
+		// Print the highlighted altitude to the screen TODO <- check with Mark
+		//graphics.print(String.valueOf("Highlighted altitude: " + Integer
+		//		.toString(highlightedAltitude)) , 32 + xOffset, 15);
 
 		// Print the number of aircraft in the airspace to the screen
 		graphics.print(String.valueOf(aircraftCount)
@@ -320,14 +321,17 @@ public abstract class Game extends Scene {
 	
 	/**
 	 * Check if any aircraft in the airspace have collided.
-	 * @param timeDifference delta time since last collision check
+	 * @param timeDifference
+	 * 			the time since the last collision check
 	 */
 	protected abstract void checkCollisions(double timeDifference);
 	
 	/**
 	 * Handle game over.
-	 * @param plane1 the first plane involved in the collision
-	 * @param plane2 the second plane in the collision
+	 * @param plane1
+	 * 			the first plane involved in the collision
+	 * @param plane2
+	 * 			the second plane in the collision
 	 */
 	protected abstract void gameOver(Aircraft plane1, Aircraft plane2);
 	
@@ -345,18 +349,18 @@ public abstract class Game extends Scene {
 	/**
 	 * The interval in seconds to generate flights after.
 	 */
-	protected int getFlightGenerationInterval() {
+	protected int getFlightGenerationInterval(Player player) {
 		switch (difficulty) {
 		case MEDIUM:
 			// Planes move 2x faster on medium so this makes them spawn
 			// 2 times as often to keep the ratio
-			return (30 / (maxAircraft * 2));
+			return (30 / (player.getMaxAircraft() * 2));
 		case HARD:
 			// Planes move 3x faster on hard so this makes them spawn
 			// 3 times as often to keep the ratio 
-			return (30 / (maxAircraft * 3) );
+			return (30 / (player.getMaxAircraft() * 3) );
 		default:
-			return (30 / maxAircraft);
+			return (30 / player.getMaxAircraft());
 		}	
 	}
 	
@@ -377,9 +381,18 @@ public abstract class Game extends Scene {
 	protected abstract void deselectAircraft();
 	
 	/**
-	 * Causes a selected aircraft to call methods to toggle manual control.
+	 * Causes a player's selected aircraft to call methods to toggle manual control.
 	 */
-	protected abstract void toggleManualControl();
+	protected void toggleManualControl(Player player) {
+		Aircraft selectedAircraft = player.getSelectedAircraft();
+		
+		if (selectedAircraft == null) return;
+
+		selectedAircraft.toggleManualControl();
+		manualControlButtons[player.getID()].setText(
+				(selectedAircraft.isManuallyControlled() ?
+						"Remove" : " Take") + " Control");
+	}
 	
 	/**
 	 * Sets the airport to busy, and adds any aircraft waiting to take off to the game,
@@ -394,7 +407,8 @@ public abstract class Game extends Scene {
 	
 	/**
 	 * Returns whether a given name is an airport or not.
-	 * @param name the name to test
+	 * @param name
+	 * 			the name to test
 	 * @return <code>true</code> if the name matches an airport name,
 	 * 			otherwise <code>false</code>
 	 */
@@ -405,8 +419,10 @@ public abstract class Game extends Scene {
 	
 	/**
 	 * Gets whether the manual control compass has been clicked or not.
-	 * @param x the x position of the mouse
-	 * @param y the y position of the mouse
+	 * @param x
+	 * 			the x position of the mouse
+	 * @param y
+	 * 			the y position of the mouse
 	 * @return <code>true</code> if the compass has been clicked,
 	 * 			otherwise <code>false</code>
 	 */
@@ -414,8 +430,10 @@ public abstract class Game extends Scene {
 	
 	/**
 	 * Gets whether an aircraft has been clicked.
-	 * @param x the x position of the mouse
-	 * @param y the y position of the mouse
+	 * @param x
+	 * 			the x position of the mouse
+	 * @param y
+	 * 			the y position of the mouse
 	 * @return <code>true</code> if an aircraft has been clicked,
 	 * 			otherwise <code>false</code>
 	 */
@@ -425,10 +443,10 @@ public abstract class Game extends Scene {
 	
 	/**
 	 * Gets the aircraft which has been clicked.
-	 * @param x the x position of 		
-		System.out.println(clickedWaypoint);
-		System.out.println(aircraft);the mouse
-	 * @param y the y position of the mouse
+	 * @param x
+	 * 			the x position of the mouse
+	 * @param y
+	 * 			the y position of the mouse
 	 * @return if an aircraft was clicked, returns the corresponding aircraft object,
 	 * 			otherwise returns null
 	 */
@@ -436,8 +454,10 @@ public abstract class Game extends Scene {
 	
 	/**
 	 * Gets whether a waypoint in an aircraft's flight plan has been clicked.
-	 * @param x the x position of the mouse
-	 * @param y the y position of the mouse
+	 * @param x
+	 * 			the x position of the mouse
+	 * @param y
+	 * 			the y position of the mouse
 	 * @return <code>true</code> if a waypoint in an aircraft's flight plan
 	 * 			has been clicked, otherwise <code>false</code>
 	 */
@@ -449,8 +469,10 @@ public abstract class Game extends Scene {
 	
 	/**
 	 * Gets the waypoint which has been clicked.
-	 * @param x the x position of the mouse
-	 * @param y the y position of the mouse
+	 * @param x
+	 * 			the x position of the mouse
+	 * @param y
+	 * 			the y position of the mouse
 	 * @return if a waypoint was clicked, returns the corresponding waypoint object,
 	 * 			otherwise returns null
 	 */
@@ -459,12 +481,19 @@ public abstract class Game extends Scene {
 	/**
 	 * Gets whether the manual control button has been clicked.
 	 * @param x
+	 * 			the mouse's x position
 	 * @param y
-	 * @return
+	 * 			the mouse's y position
+	 * @param player
+	 * 			the player to check this for
+	 * @return <code>true</code> if the manual control button has been
+	 * 			pressed, otherwise <code>false</code>
 	 */
-	protected boolean manualOverridePressed(int x, int y) {
-		return manualOverrideButton.isMouseOver(x - xOffset, y - yOffset);
+	protected boolean manualOverridePressed(int x, int y, Player player) {
+		return manualControlButtons[player.getID()]
+				.isMouseOver(x - xOffset, y - yOffset);
 	}
+	
 	
 	// Accessors ------------------------------------------------------------------------
 	
@@ -485,12 +514,6 @@ public abstract class Game extends Scene {
 	}
 	
 	/**
-	 * Gets a list of the airports in the airspace.
-	 * @return a list of the airports in the airspace
-	 */
-	public abstract Airport[] getAirports();
-	
-	/**
 	 * Gets how long the game has been played for.
 	 * @return the length of time the game has been running for
 	 */
@@ -498,9 +521,41 @@ public abstract class Game extends Scene {
 		return timeElapsed;
 	}
 	
+	/**
+	 * Generates a new unique player ID.
+	 * <p>
+	 * This will be one higher than the highest ID currently
+	 * in use.
+	 * </p>
+	 * @return a new unique player ID
+	 */
+	public static int getNewPlayerID() {
+		// Start player ID's at 0
+		int maxPlayerID = -1;
+		
+		// Search through list of players to find highest ID
+		// currently in use
+		for (Player player : players) {
+			if (player.getID() > maxPlayerID) maxPlayerID = player.getID();
+		}
+		
+		// Return an ID one higher than the highest ID currently
+		// in use
+		return maxPlayerID + 1;
+	}
+	
 	
 	// Mutators -------------------------------------------------------------------------
 	
+	protected static ArrayList<Player> getPlayers() {
+		return players;
+	}
+	
+	/**
+	 * Adds an aircraft to the list of aircraft waiting to take off. TODO
+	 * @param aircraft
+	 * 			the aircraft to add
+	 */
 	public static void addAircraftWaitingToTakeOff(Aircraft aircraft) {
 		aircraftWaitingToTakeOff.add(aircraft);
 	}
