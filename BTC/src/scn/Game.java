@@ -547,7 +547,7 @@ public abstract class Game extends Scene {
 	
 	// Mutators -------------------------------------------------------------------------
 	
-	protected static ArrayList<Player> getPlayers() {
+	public ArrayList<Player> getPlayers() {
 		return players;
 	}
 	
