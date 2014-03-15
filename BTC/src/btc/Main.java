@@ -25,6 +25,7 @@ public class Main implements input.EventHandler {
 	 * @param args any command-line arguments.
 	 */
 	public static void main(String[] args) {
+		Main.testing = false;
 		new Main();
 	}
 	
@@ -49,12 +50,15 @@ public class Main implements input.EventHandler {
 	/** The scale the game has been resized to in the vertical plane */
 	private static double yScale = 1;
 	
-	/** THe locations of the icon files */
+	/** The locations of the icon files */
 	final private String[] ICON_FILENAMES = {
 		"gfx" + File.separator + "icon16.png",
 		"gfx" + File.separator + "icon32.png",
 		"gfx" + File.separator + "icon64.png",
 	};
+	
+	/** Whether the game is currently being tested or not */
+	public static boolean testing = true;
 
 	private double lastFrameTime;
 	private double timeDifference;

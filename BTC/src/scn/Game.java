@@ -109,15 +109,17 @@ public abstract class Game extends Scene {
 		aircraftWaitingToTakeOff = new ArrayList<Aircraft>();
 		paused = false;
 
-		// Load in graphics
-		background = graphics.newImage("gfx" + File.separator + "background_base.png");
-		aircraftImage = graphics.newImage("gfx" + File.separator + "plane.png");
+		if (!Main.testing) {
+			// Load in graphics
+			background = graphics.newImage("gfx" + File.separator + "background_base.png");
+			aircraftImage = graphics.newImage("gfx" + File.separator + "plane.png");
 
-		// Load in music
-		music = audio.newMusic("sfx" + File.separator + "Gypsy_Shoegazer.ogg");
+			// Load in music
+			music = audio.newMusic("sfx" + File.separator + "Gypsy_Shoegazer.ogg");
 
-		// Start the music
-		//music.play(); TODO <- add this back in for release
+			// Start the music
+			//music.play(); TODO <- add this back in for release
+		}
 		
 		// Set up game components
 		recentlyDepartedAircraft = new ArrayList<Aircraft>();
