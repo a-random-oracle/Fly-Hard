@@ -598,9 +598,12 @@ public class SinglePlayerGame extends Game {
 		if (aircraft != null && aircraft.isManuallyControlled()) {
 			aircraft.toggleManualControl();
 			manualControlButtons[player.getID()].setText(" Take Control");
+			
+			if (aircraft.equals(player.getSelectedAircraft())) {
+				player.setSelectedAircraft(null);
+			}
 		}
 
-		player.setSelectedAircraft(null);
 		player.setSelectedWaypoint(null); 
 		player.setSelectedPathpoint(-1);
 	}
