@@ -27,8 +27,9 @@ public class MultiPlayerGame extends Game {
 		if (instance == null) {
 			return new MultiPlayerGame(main, difficulty);
 		} else {
-			System.out.println("ERROR: Attempting to create a " +
+			Exception e = new Exception("Attempting to create a " +
 					"second instance of MultiPlayerGame");
+			e.printStackTrace();
 			return instance;
 		}
 	}

@@ -252,10 +252,6 @@ public abstract class Game extends Scene {
 	protected void drawAdditional(int aircraftCount) {
 		graphics.setColour(graphics.green);
 		
-		// Reset the viewport - these statistics can appear outside the game
-		// area
-		graphics.setViewport();
-		
 		// Get the time the game has been played for
 		int hours = (int)(timeElapsed / (60 * 60));
 		int minutes = (int)(timeElapsed / 60);
