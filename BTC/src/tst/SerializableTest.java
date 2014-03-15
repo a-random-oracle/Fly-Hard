@@ -22,14 +22,14 @@ public class SerializableTest {
 	@Before
 	public void setUp() {
 		Waypoint[] waypointList = new Waypoint[]{
-				new Waypoint(0, 0, true, 0),
-				new Waypoint(100, 100, true, 0),
-				new Waypoint(25, 75, false, 0),
-				new Waypoint(75, 25, false, 0),
-				new Waypoint(50, 50, false, 0)};
+				new Waypoint(0, 0, true),
+				new Waypoint(100, 100, true),
+				new Waypoint(25, 75, false),
+				new Waypoint(75, 25, false),
+				new Waypoint(50, 50, false)};
 		
 		testAircraft = new Aircraft("testAircraft", "Berlin", "Dublin",
-				new Waypoint(100, 100, true, 0), new Waypoint(0, 0, true, 0),
+				new Waypoint(100, 100, true), new Waypoint(0, 0, true),
 				null, 10.0, waypointList, DifficultySetting.MEDIUM, null);
 	}
 	

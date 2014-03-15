@@ -6,8 +6,8 @@ import lib.jog.graphics;
 
 public class Waypoint implements Serializable {
 	
-	// TODO last updated: 2014.03.13 00:10
-	private static final long serialVersionUID = 4488796224466928834L;
+	// TODO last updated: 2014.03.15 14:30
+	private static final long serialVersionUID = 1413476488063120300L;
 
 	/** Leniency to allow mouse input to be accepted in a small area around the waypoint  */
 	public static final int MOUSE_LENIENCY = 32;
@@ -24,9 +24,6 @@ public class Waypoint implements Serializable {
 	/** Marks whether the waypoint is an entry point, exit point or airport */
 	private boolean entryOrExit;
 	
-	/** The player who will control this waypoint */
-	private int player;
-	
 	/**
 	 * Constructor for waypoints
 	 * @param x the x coordinate of the waypoint
@@ -34,14 +31,12 @@ public class Waypoint implements Serializable {
 	 * @param entryOrExit whether the waypoint is a point where planes may
 	 * 			enter and leave the airspace
 	 * @param player the player who should have control of this waypoint
-	 * @param name the name to associate with the waypoint
 	 */
 	public Waypoint(double x, double y,
-			boolean entryOrExit, int player, String name) {
+			boolean entryOrExit, String name) {
 		this.waypointLocation = new Vector(x, y, 0);
 		this.entryOrExit = entryOrExit;
 		this.name = name;
-		this.player = player;
 		
 		// Scale points to fit on screen
 		// Entry and exit points are scaled automatically
@@ -50,7 +45,7 @@ public class Waypoint implements Serializable {
 		}
 	}
 	
-	public Waypoint(double x, double y, boolean entryOrExit, int player) {
+	public Waypoint(double x, double y, boolean entryOrExit) {
 		this.waypointLocation = new Vector(x, y, 0);
 		this.entryOrExit = entryOrExit;
 		this.name = "";
@@ -77,23 +72,6 @@ public class Waypoint implements Serializable {
 	 */
 	public boolean isEntryOrExit() {
 		return this.entryOrExit;
-	}
-	
-	/**
-	 * Gets the value of the player who controls this waypoint.
-	 * <p>
-	 * Options are:
-	 * <ul>
-	 * <li>-1: not under player control</li>
-	 * <li> 0: under control of player 1</li>
-	 * <li> ...</li>
-	 * <li> n: under control of player n</li>
-	 * </ul>
-	 * </p>
-	 * @return the player who controls this waypoint
-	 */
-	public int getPlayer() {
-		return player;
 	}
 	
 	/**

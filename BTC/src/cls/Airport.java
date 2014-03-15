@@ -15,8 +15,8 @@ import lib.jog.input.EventHandler;
 
 public class Airport extends Waypoint implements EventHandler, Serializable {
 	
-	// TODO last updated: 2014.03.13 16:50
-	private static final long serialVersionUID = 1782647199629729664L;
+	// TODO last updated: 2014.03.15 14:35
+	private static final long serialVersionUID = 5053500661843320357L;
 
 	/** The distance between the left edge of the airport image, and the arrivals area */
 	private static final double RELATIVE_ARRIVALS_X = 91;
@@ -110,12 +110,11 @@ public class Airport extends Waypoint implements EventHandler, Serializable {
 	 * @param name the airport's name
 	 * @param x the x position to display the top-left corner of the airport at
 	 * @param y the y position to display the top-left corner of the airport at
-	 * @param player the player who should have control over this airport
 	 */
-	private Airport(String name, double x, double y, int player, boolean testing) {
+	private Airport(String name, double x, double y, boolean testing) {
 		super((x + (RELATIVE_ARRIVALS_X + (RELATIVE_ARRAVALS_WIDTH/2)) * Main.getMinScale()),
 				(y + (RELATIVE_ARRIVALS_Y + (RELATIVE_ARRIVALS_HEIGHT/2)) * Main.getMinScale()),
-				true, player, name);
+				true, name);
 		
 		// Load the aircraft image
 		if (!testing)  image = graphics.newImage("gfx" + File.separator + "Airport.png");
@@ -149,13 +148,12 @@ public class Airport extends Waypoint implements EventHandler, Serializable {
 	 * @param name the name of the airport
 	 * @param x the position at which the centre of the airport should be located
 	 * @param y the position at which the centre of the airport should be located
-	 * @param player the player who should have control over this airport
 	 */
-	public static Airport create(String name, double x, double y, int player) {
+	public static Airport create(String name, double x, double y) {
 		return new Airport(name,
 				(x - RELATIVE_ARRIVALS_X - (RELATIVE_ARRAVALS_WIDTH/2)),
 				(y - RELATIVE_ARRIVALS_Y - (RELATIVE_ARRIVALS_HEIGHT/2)),
-				player, false);
+				false);
 	}
 	
 	/**
@@ -173,11 +171,11 @@ public class Airport extends Waypoint implements EventHandler, Serializable {
 	 */
 	@Deprecated
 	public static Airport create(String name,
-			double x, double y, int player, boolean testing) {
+			double x, double y, boolean testing) {
 		return new Airport(name,
 				(x - RELATIVE_ARRIVALS_X - (RELATIVE_ARRAVALS_WIDTH/2)),
 				(y - RELATIVE_ARRIVALS_Y - (RELATIVE_ARRIVALS_HEIGHT/2)),
-				player, testing);
+				testing);
 	}
 	  
 	/** 
@@ -434,7 +432,7 @@ public class Airport extends Waypoint implements EventHandler, Serializable {
 	
 	public Waypoint getDeparturesCentre() {
 		return new Waypoint(departuresX + (departuresWidth / 2),
-				departuresY + (departuresHeight / 2), true, getPlayer());
+				departuresY + (departuresHeight / 2), true);
 	}
 	
 	// Used for testing, to avoid the need to have a demo instance

@@ -71,11 +71,11 @@ public class SinglePlayerGame extends Game {
 		// Set up airports
 		Airport airport1 = Airport.create("Mosgrizzly Airport",
 				(window.width() - (2 * xOffset)) / 4,
-				window.height() / 2, 0);
+				window.height() / 2);
 
 		Airport airport2 = Airport.create("Mosbear Airport",
 				3 * (window.width() - (2 * xOffset)) / 4,
-				window.height() / 2, 0);
+				window.height() / 2);
 
 		Airport[] airports = new Airport[2];
 		airports[0] = airport1;
@@ -83,14 +83,14 @@ public class SinglePlayerGame extends Game {
 
 		// Set up entry/exit points
 		Waypoint topLeft = new Waypoint(8, 8,
-				true, 0, "North West Top Leftonia");
+				true, "North West Top Leftonia");
 		Waypoint bottomLeft = new Waypoint(8, window.height() - (2 * yOffset) - 4,
-				true, 0, "100 Acre Woods");
+				true, "100 Acre Woods");
 		Waypoint topRight = new Waypoint(window.width() - (2 * xOffset) - 4, 8,
-				true, 0, "City of Rightson");
+				true, "City of Rightson");
 		Waypoint bottomRight = new Waypoint(window.width() - (2 * xOffset) - 4,
 				window.height() - (2 * yOffset) - 4,
-				true, 0, "South Sea");
+				true, "South Sea");
 
 		locationWaypoints = new Waypoint[4 + airports.length];
 		locationWaypoints[0] = topLeft;
@@ -105,16 +105,16 @@ public class SinglePlayerGame extends Game {
 
 		// Set up map waypoints
 		// Create airspace waypoints
-		Waypoint wp1 = new Waypoint(125, 175, false, 0);
-		Waypoint wp2 = new Waypoint(200, 635, false, 0);
-		Waypoint wp3 = new Waypoint(250, 400, false, 0);
-		Waypoint wp4 = new Waypoint(500, 200, false, 0);
-		Waypoint wp5 = new Waypoint(500, 655, false, 0);
-		Waypoint wp6 = new Waypoint(700, 100, false, 0);
-		Waypoint wp7 = new Waypoint(800, 750, false, 0);
-		Waypoint wp8 = new Waypoint(1000, 750, false, 0);
-		Waypoint wp9 = new Waypoint(1040, 150, false, 0);
-		Waypoint wp10 = new Waypoint(1050, 400, false, 0);
+		Waypoint wp1 = new Waypoint(125, 175, false);
+		Waypoint wp2 = new Waypoint(200, 635, false);
+		Waypoint wp3 = new Waypoint(250, 400, false);
+		Waypoint wp4 = new Waypoint(500, 200, false);
+		Waypoint wp5 = new Waypoint(500, 655, false);
+		Waypoint wp6 = new Waypoint(700, 100, false);
+		Waypoint wp7 = new Waypoint(800, 750, false);
+		Waypoint wp8 = new Waypoint(1000, 750, false);
+		Waypoint wp9 = new Waypoint(1040, 150, false);
+		Waypoint wp10 = new Waypoint(1050, 400, false);
 
 		// Add in airspace waypoints
 		airspaceWaypoints = new Waypoint[10 + locationWaypoints.length];
@@ -275,11 +275,15 @@ public class SinglePlayerGame extends Game {
 				Math.max(Main.getXScale(), Main.getYScale()));
 
 		// Draw individual map features
+		drawAirports(player.getAirports(), locationWaypoints);
+		drawWaypoints(airspaceWaypoints, locationWaypoints);
+		drawManualControlButton(player);
 		drawAircraft(player.getAircraft(), player.getSelectedAircraft(), player.getSelectedWaypoint(),
 				player.getSelectedPathpoint(), player.getControlAltitude());
-		drawWaypoints(airspaceWaypoints, locationWaypoints);
-		drawAirports(player.getAirports(), locationWaypoints);
-		drawManualControlButton(player);
+		
+		// Reset the viewport - these statistics can appear outside the game
+		// area
+		graphics.setViewport();
 		drawAdditional(player.getAircraft().size());
 
 		// Draw debug box
