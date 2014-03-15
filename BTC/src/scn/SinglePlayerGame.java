@@ -723,6 +723,9 @@ public class SinglePlayerGame extends Game {
 	@Deprecated
 	@Override
 	public void initializeAircraftArray() {
+		super.start();
+		player = new Player("Test Player", true, "127.0.0.1", null);
+		getPlayers().add(this.player);
 		player.setAircraft(new ArrayList<Aircraft>());
 	}
 
