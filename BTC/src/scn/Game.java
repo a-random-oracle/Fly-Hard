@@ -1,9 +1,11 @@
 package scn;
 
+import java.io.File;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 import lib.ButtonText;
+import lib.jog.audio;
 import lib.jog.graphics;
 import lib.jog.input;
 import lib.jog.window;
@@ -100,6 +102,28 @@ public abstract class Game extends Scene {
 		
 		// Set up players
 		players = new ArrayList<Player>();
+		
+		// Set up variables
+		out = new OrdersBox(window.width() - xOffset + 20,
+				yOffset, xOffset - 40, window.height() - (2 * yOffset), 30);
+		aircraftWaitingToTakeOff = new ArrayList<Aircraft>();
+		paused = false;
+
+		// Load in graphics
+		background = graphics.newImage("gfx" + File.separator + "background_base.png");
+		aircraftImage = graphics.newImage("gfx" + File.separator + "plane.png");
+
+		// Load in music
+		music = audio.newMusic("sfx" + File.separator + "Gypsy_Shoegazer.ogg");
+
+		// Start the music
+		//music.play(); TODO <- add this back in for release
+		
+		// Set up game components
+		recentlyDepartedAircraft = new ArrayList<Aircraft>();
+		
+		// Reset game attributes
+		timeElapsed = 0;
 	}
 	
 	/**

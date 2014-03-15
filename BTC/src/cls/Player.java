@@ -34,6 +34,9 @@ public class Player {
 	/** The aircraft under the player's control */
 	private ArrayList<Aircraft> aircraft;
 	
+	/** The waypoints under the player's control */
+	private Waypoint[] waypoints;
+	
 	/** The colour to draw this player's aircraft */
 	private Color aircraftColour;
 	
@@ -82,13 +85,14 @@ public class Player {
 	
 	
 	public Player(String name, boolean hosting, String ipAddress,
-			Airport[] airports) {
+			Airport[] airports, Waypoint[] waypoints) {
 		setDefaults();
 		
 		this.name = name;
 		this.hosting = hosting;
 		this.ipAddress = ipAddress;
 		this.airports = airports;
+		this.waypoints = waypoints;
 	}
 	
 	private void setDefaults() {
@@ -165,6 +169,13 @@ public class Player {
 	 */
 	public ArrayList<Aircraft> getAircraft() {
 		return aircraft;
+	}
+	
+	/**
+	 * @return a list of this player's waypoints
+	 */
+	public Waypoint[] getWaypoints() {
+		return waypoints;
 	}
 
 	/**
