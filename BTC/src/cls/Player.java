@@ -2,15 +2,14 @@ package cls;
 
 import java.util.ArrayList;
 
-import org.newdawn.slick.Color;
-
 import scn.Game;
 
 public class Player {
 	
 	/** The list of colours to associate with aircraft */
-	public static final Color[] AIRCRAFT_COLOURS = new Color[] {
-		Color.red, Color.blue
+	public static final Integer[][] AIRCRAFT_COLOURS = new Integer[][] {
+		new Integer[] {42, 51, 159},	// Blue
+		new Integer[] {202, 0, 5}		// Red
 	};
 	
 	/** The player's unique ID */
@@ -34,8 +33,11 @@ public class Player {
 	/** The aircraft under the player's control */
 	private ArrayList<Aircraft> aircraft;
 	
+	/** The waypoints under the player's control */
+	private Waypoint[] waypoints;
+	
 	/** The colour to draw this player's aircraft */
-	private Color aircraftColour;
+	private Integer[] aircraftColour;
 	
 	/** The aircraft which this player has selected */
 	private Aircraft selectedAircraft;
@@ -65,39 +67,30 @@ public class Player {
 	private int score;
 	
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+	// Constructor: -----------------------------------------------------------
 	
 	public Player(String name, boolean hosting, String ipAddress,
-			Airport[] airports) {
+			Airport[] airports, Waypoint[] waypoints) {
 		setDefaults();
 		
 		this.name = name;
 		this.hosting = hosting;
 		this.ipAddress = ipAddress;
 		this.airports = airports;
+		this.waypoints = waypoints;
 	}
+	
+	
+	// Helper methods: --------------------------------------------------------
 	
 	private void setDefaults() {
 		// Get a unique player ID
 		id = Game.getNewPlayerID();
 		
 		// Set aircraft colour
+		// Default is white
 		aircraftColour = (id < AIRCRAFT_COLOURS.length)
-				? AIRCRAFT_COLOURS[id] : Color.white;
+				? AIRCRAFT_COLOURS[id] : new Integer[] {255, 255, 255};
 		
 		// Reset values
 		this.maxAircraft = Game.DEFAULT_MAX_AIRCRAFT;
@@ -113,24 +106,9 @@ public class Player {
 		this.aircraft = new ArrayList<Aircraft>();
 		this.powerups = new ArrayList<Powerup>();
 	}
-
 	
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+	// Accessors: -------------------------------------------------------------
 	
 	/**
 	 * @return the player's unique ID
@@ -144,6 +122,20 @@ public class Player {
 	 */
 	public String getName() {
 		return name;
+	}
+	
+	/**
+	 * @return whether the player is currently the host
+	 */
+	public boolean isHosting() {
+		return hosting;
+	}
+	
+	/**
+	 * @return the player's IP address
+	 */
+	public String getIPAddress() {
+		return ipAddress;
 	}
 	
 	/**
@@ -165,6 +157,20 @@ public class Player {
 	 */
 	public ArrayList<Aircraft> getAircraft() {
 		return aircraft;
+	}
+	
+	/**
+	 * @return a list of this player's waypoints
+	 */
+	public Waypoint[] getWaypoints() {
+		return waypoints;
+	}
+	
+	/**
+	 * @return the colour to draw this player's aircraft
+	 */
+	public Integer[] getAircraftColour() {
+		return aircraftColour;
 	}
 
 	/**
@@ -223,16 +229,15 @@ public class Player {
 		return score;
 	}
 	
+	/**
+	 * @return a list of this player's active powerups
+	 */
+	public ArrayList<Powerup> getPowerups() {
+		return powerups;
+	}
 	
 	
-	
-	
-	
-	
-	
-	
-	
-	
+	// Mutators: --------------------------------------------------------------
 	
 	/**
 	 * @param aircraft
@@ -296,6 +301,33 @@ public class Player {
 	 */
 	public void setControlAltitude(int altitude) {
 		this.controlAltitude = altitude;
+	}
+	
+	/**
+	 * @param powerup
+	 * 			the powerup to add
+	 */
+	public void addPowerup(Powerup powerup) {
+		powerups.add(powerup);
+	}
+	
+	/**
+	 * @param powerup
+	 * 			the powerup to remove
+	 */
+	public void removePowerup(Powerup powerup) {
+		for (int i = (powerups.size() - 1); i >= 0; i--) {
+			if (powerups.get(i).equals(powerup)) {
+				powerups.remove(i);
+			}
+		}
+	}
+	
+	/**
+	 * Removes all powerups from this player.
+	 */
+	public void clearPowerups() {
+		powerups = new ArrayList<Powerup>();
 	}
 	
 	/**
