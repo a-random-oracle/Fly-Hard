@@ -1,11 +1,8 @@
 package scn;
 
-import java.util.ArrayList;
-
 import btc.Main;
 
 import cls.Aircraft;
-import cls.Waypoint;
 
 public class MultiPlayerGame extends Game {
 	
@@ -42,18 +39,9 @@ public class MultiPlayerGame extends Game {
 	private MultiPlayerGame(Main main, DifficultySetting difficulty) {
 		super(main, difficulty);
 	}
-
+	
 	@Override
 	public void start() {
-		
-	}
-
-	@Override
-	public void update(double timeDifference) {
-	}
-
-	@Override
-	public void draw() {
 	}
 
 	@Override
@@ -73,52 +61,7 @@ public class MultiPlayerGame extends Game {
 	}
 
 	@Override
-	protected void checkCollisions(double timeDifference) {
-	}
-
-	@Override
-	protected void gameOver(Aircraft plane1, Aircraft plane2) {
-	}
-
-	@Override
-	protected void generateFlight() {
-	}
-
-	@Override
 	protected Aircraft createAircraft() {
-		return null;
-	}
-
-	@Override
-	protected void deselectAircraft() {
-	}
-
-	@Override
-	public void takeOffWaitingAircraft() {
-	}
-
-	@Override
-	public ArrayList<Waypoint> getAvailableEntryPoints() {
-		return null;
-	}
-
-	@Override
-	protected boolean isAirportName(String name) {
-		return false;
-	}
-
-	@Override
-	protected boolean compassClicked(int x, int y) {
-		return false;
-	}
-
-	@Override
-	protected Aircraft findClickedAircraft(int x, int y) {
-		return null;
-	}
-
-	@Override
-	protected Waypoint findClickedWaypoint(int x, int y) {
 		return null;
 	}
 
