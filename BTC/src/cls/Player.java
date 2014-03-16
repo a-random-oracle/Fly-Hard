@@ -67,21 +67,7 @@ public class Player {
 	private int score;
 	
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+	// Constructor: -----------------------------------------------------------
 	
 	public Player(String name, boolean hosting, String ipAddress,
 			Airport[] airports, Waypoint[] waypoints) {
@@ -93,6 +79,9 @@ public class Player {
 		this.airports = airports;
 		this.waypoints = waypoints;
 	}
+	
+	
+	// Helper methods: --------------------------------------------------------
 	
 	private void setDefaults() {
 		// Get a unique player ID
@@ -117,24 +106,9 @@ public class Player {
 		this.aircraft = new ArrayList<Aircraft>();
 		this.powerups = new ArrayList<Powerup>();
 	}
-
 	
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+	// Accessors: -------------------------------------------------------------
 	
 	/**
 	 * @return the player's unique ID
@@ -148,6 +122,20 @@ public class Player {
 	 */
 	public String getName() {
 		return name;
+	}
+	
+	/**
+	 * @return whether the player is currently the host
+	 */
+	public boolean isHosting() {
+		return hosting;
+	}
+	
+	/**
+	 * @return the player's IP address
+	 */
+	public String getIPAddress() {
+		return ipAddress;
 	}
 	
 	/**
@@ -176,6 +164,13 @@ public class Player {
 	 */
 	public Waypoint[] getWaypoints() {
 		return waypoints;
+	}
+	
+	/**
+	 * @return the colour to draw this player's aircraft
+	 */
+	public Integer[] getAircraftColour() {
+		return aircraftColour;
 	}
 
 	/**
@@ -235,22 +230,14 @@ public class Player {
 	}
 	
 	/**
-	 * @return the colour to draw this player's aircraft
+	 * @return a list of this player's active powerups
 	 */
-	public Integer[] getAircraftColour() {
-		return aircraftColour;
+	public ArrayList<Powerup> getPowerups() {
+		return powerups;
 	}
 	
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+	// Mutators: --------------------------------------------------------------
 	
 	/**
 	 * @param aircraft
@@ -314,6 +301,33 @@ public class Player {
 	 */
 	public void setControlAltitude(int altitude) {
 		this.controlAltitude = altitude;
+	}
+	
+	/**
+	 * @param powerup
+	 * 			the powerup to add
+	 */
+	public void addPowerup(Powerup powerup) {
+		powerups.add(powerup);
+	}
+	
+	/**
+	 * @param powerup
+	 * 			the powerup to remove
+	 */
+	public void removePowerup(Powerup powerup) {
+		for (int i = (powerups.size() - 1); i >= 0; i--) {
+			if (powerups.get(i).equals(powerup)) {
+				powerups.remove(i);
+			}
+		}
+	}
+	
+	/**
+	 * Removes all powerups from this player.
+	 */
+	public void clearPowerups() {
+		powerups = new ArrayList<Powerup>();
 	}
 	
 	/**
