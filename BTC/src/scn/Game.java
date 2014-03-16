@@ -137,7 +137,105 @@ public abstract class Game extends Scene {
 	 * </p>
 	 */
 	@Override
-	public abstract void update(double timeDifference);
+	public void update(double timeDifference) {
+		if (paused) return;
+		
+		timeElapsed += timeDifference;
+		
+		// Check if any aircraft in the airspace have collided
+		checkCollisions(timeDifference);
+
+		for (Player player : players) {
+			// Update aircraft
+			for (Aircraft aircraft : player.getAircraft()) {
+				aircraft.update(timeDifference);
+			}
+
+			// Deselect and remove any aircraft which have completed their routes
+			for (int i = player.getAircraft().size() - 1; i >= 0; i--) {
+				if (player.getAircraft().get(i).isFinished()) {
+					if (player.getAircraft().get(i).equals(player
+							.getSelectedAircraft())) {
+						deselectAircraft(player);
+					}
+
+					player.getAircraft().remove(i);
+				}
+			}
+
+			// Update the airports
+			for (Airport airport : player.getAirports()) {
+				airport.update(player.getAircraft());
+			}
+
+			if (player.getSelectedAircraft() != null) {
+				if (player.getSelectedAircraft().isManuallyControlled()) {
+					// Handle directional control for a manually
+					// controlled aircraft
+					if (input.keyPressed(new int[]{input.KEY_LEFT, input.KEY_A})) {
+						// Turn left when 'Left' or 'A' key is pressed
+						player.getSelectedAircraft().turnLeft(timeDifference);
+					} else if (input.keyPressed(new int[]{input.KEY_RIGHT,
+							input.KEY_D})) {
+						// Turn right when 'Right' or 'D' key is pressed
+						player.getSelectedAircraft().turnRight(timeDifference);
+					}
+				} else if (input.keyPressed(new int[]{input.KEY_LEFT, input.KEY_A,
+						input.KEY_RIGHT, input.KEY_D})) {
+					// If any of the directional keys is pressed, set
+					// selected aircraft to manual control
+					toggleManualControl(player);
+				}
+
+				// Handle altitude controls
+				if (input.keyPressed(new int[]{input.KEY_S, input.KEY_DOWN})
+						&& (player.getSelectedAircraft()
+								.getPosition().getZ() > 28000)) {
+					player.getSelectedAircraft()
+							.setAltitudeState(Aircraft.ALTITUDE_FALL);
+				} else if (input.keyPressed(new int[]{input.KEY_W, input.KEY_UP})
+						&& (player.getSelectedAircraft()
+								.getPosition().getZ() < 30000)) {
+					player.getSelectedAircraft()
+							.setAltitudeState(Aircraft.ALTITUDE_CLIMB);
+				}
+			}
+
+			// Deselect any aircraft which are outside the airspace
+			// This ensures that players can't keep controlling aircraft
+			// after they've left the airspace
+			for (Aircraft airc : player.getAircraft()) {
+				if (!(airc.isAtDestination())) {
+					if (airc.isOutOfAirspaceBounds()) {
+						deselectAircraft(airc, player);
+					}
+				}
+			}
+
+			// Update the counter used to determine when another flight should
+			// enter the airspace
+			// If the counter has reached 0, then spawn a new aircraft
+			player.setFlightGenerationTimeElapsed(player
+					.getFlightGenerationTimeElapsed() + timeDifference);
+			if (player.getFlightGenerationTimeElapsed()
+					>= getFlightGenerationInterval(player)) {
+				player.setFlightGenerationTimeElapsed(player
+						.getFlightGenerationTimeElapsed()
+						- getFlightGenerationInterval(player));
+
+				if (player.getAircraft().size() < player.getMaxAircraft()) {
+					generateFlight(player);
+				}
+			}
+
+			// If there are no aircraft in the airspace, spawn a new aircraft
+			if (player.getAircraft().size() == 0) generateFlight(player);
+		}
+
+		// Update debug box
+		// PLEASE DO NOT REMOVE - this is very useful for debugging
+		out.update(timeDifference);
+	}
 	
 	/**
 	 * Draw the scene GUI and all drawables within it, e.g. aircraft and waypoints.
@@ -160,12 +258,10 @@ public abstract class Game extends Scene {
 
 		// Draw individual map features
 		for (Player player : players) {
-			drawAirports(player.getAirports(), locationWaypoints);
-			drawWaypoints(player.getWaypoints(), locationWaypoints);
+			drawAirports(player);
+			drawWaypoints(player);
 			drawManualControlButton(player);
-			drawAircraft(player.getAircraft(), player.getSelectedAircraft(),
-					player.getSelectedWaypoint(), player.getSelectedPathpoint(),
-					player.getControlAltitude());
+			drawAircraft(player);
 		}
 		
 		// Reset the viewport - these statistics can appear outside the game
@@ -187,15 +283,13 @@ public abstract class Game extends Scene {
 	 * Also draws flight paths, and the manual control compass.
 	 * </p>
 	 */
-	protected void drawAircraft(ArrayList<Aircraft> aircraftInAirspace,
-			Aircraft selectedAircraft, Waypoint clickedWaypoint,
-			int selectedPathpoint, int highlightedAltitude) {
+	protected void drawAircraft(Player player) {
 		graphics.setColour(255, 255, 255);
 
 		// Draw all aircraft, and show their routes if the mouse is hovering
 		// above them
-		for (Aircraft aircraft : aircraftInAirspace) {
-			aircraft.draw(highlightedAltitude);
+		for (Aircraft aircraft : player.getAircraft()) {
+			aircraft.draw(player.getAircraftColour(), player.getControlAltitude());
 			
 			if (aircraft.isMouseOver()) {
 				aircraft.drawFlightPath(false);
@@ -203,23 +297,25 @@ public abstract class Game extends Scene {
 		}
 		
 		// Handle the selected aircraft
-		if (selectedAircraft != null) {
+		if (player.getSelectedAircraft() != null) {
 			// Draw the compass around the selected aircraft, but only if it is
 			// being manually controlled
-			if (selectedAircraft.isManuallyControlled()) {
-				selectedAircraft.drawCompass();
+			if (player.getSelectedAircraft().isManuallyControlled()) {
+				player.getSelectedAircraft().drawCompass();
 			}
 
 			// If the selected aircraft's flight path is being manipulated,
 			// draw the manipulated path
-			if (clickedWaypoint != null && !selectedAircraft.isManuallyControlled()) {
-				selectedAircraft.drawModifiedPath(selectedPathpoint,
+			if (player.getSelectedWaypoint() != null
+					&& !player.getSelectedAircraft().isManuallyControlled()) {
+				player.getSelectedAircraft().drawModifiedPath(
+						player.getSelectedPathpoint(),
 						input.mouseX() - xOffset,
 						input.mouseY() - yOffset);
 			}
 
 			// Draw the selected aircraft's flight path
-			selectedAircraft.drawFlightPath(true);
+			player.getSelectedAircraft().drawFlightPath(true);
 			graphics.setColour(graphics.green);
 		}
 	}
@@ -234,15 +330,14 @@ public abstract class Game extends Scene {
 	 * Also prints the names of the entry/exit points.
 	 * </p>
 	 */
-	protected void drawWaypoints(Waypoint[] airspaceWaypoints,
-			Waypoint[] locationWaypoints) {
+	protected void drawWaypoints(Player player) {
 		// Draw all waypoints, except airport waypoints
-		for (Waypoint waypoint : airspaceWaypoints) {
+		for (Waypoint waypoint : player.getWaypoints()) {
 			if (!(waypoint instanceof Airport)) {
 				waypoint.draw();
 			}
 		}
-
+		
 		// Draw entry/exit points
 		graphics.setColour(graphics.green);
 		
@@ -269,10 +364,9 @@ public abstract class Game extends Scene {
 	 * Also prints the names of the airports.
 	 * </p>
 	 */
-	protected void drawAirports(Airport[] airports,
-			Waypoint[] locationWaypoints) {
+	protected void drawAirports(Player player) {
 		// Draw the airports
-		for (Airport airport : airports) {
+		for (Airport airport : player.getAirports()) {
 			graphics.setColour(255, 255, 255, 64);
 			airport.draw();
 		}
@@ -520,11 +614,17 @@ public abstract class Game extends Scene {
 	 * Specifically, returns points where no plane is currently going to exit the
 	 * airspace there, also it is not too close to any plane.
 	 * </p>
+	 * @param player
+	 * 			the player whose entry points should be checked
+	 * @return a list of available entry points
 	 */	
-	public ArrayList<Waypoint> getAvailableEntryPoints() {
+	public ArrayList<Waypoint> getAvailableEntryPoints(Player player) {
 		ArrayList<Waypoint> availableEntryPoints = new ArrayList<Waypoint>();
+		
+		// Only check location waypoints which are under the players' control
+		Waypoint[] playersLocationWaypoints = getPlayersLocationWaypoints(player);
 
-		for (Waypoint entryPoint : locationWaypoints) {
+		for (Waypoint entryPoint : playersLocationWaypoints) {
 			boolean isAvailable = true;
 			// Prevents spawning a plane at a waypoint if:
 			//   - any plane is currently going towards it
@@ -745,6 +845,48 @@ public abstract class Game extends Scene {
 		}
 		
 		return allAirports;
+	}
+	
+	/**
+	 * Gets all the location waypoints assigned to a particular player.
+	 * @param player
+	 * 			the player to get waypoints for
+	 * @return a list of the selected player's location waypoints
+	 */
+	public Waypoint[] getPlayersLocationWaypoints(Player player) {
+		return getPlayersLocationWaypoints(player.getID());
+	}
+	
+	/**
+	 * Gets all the location waypoints assigned to a particular player's ID.
+	 * @param player
+	 * 			the player to get waypoints for
+	 * @return a list of the selected player's location waypoints
+	 */
+	public Waypoint[] getPlayersLocationWaypoints(int playerID) {
+		int count = 0;
+		int index = 0;
+		
+		// Scan through location waypoint map to get the number
+		// of location waypoints assigned to this player
+		for (int i = 0; i < locationWaypointMap.entrySet().size(); i++) {
+			if (locationWaypointMap.get(i) == playerID) count++;
+		}
+		
+		// Create a new array to hold the waypoints
+		Waypoint[] playersLocationWaypoints = new Waypoint[count];
+		
+		// Loop through each location waypoint, and check which player it's
+		// assigned to; if the assigned player is the current player, add it to
+		// the list to check
+		for (int i = 0; i < locationWaypointMap.entrySet().size(); i++) {
+			if (locationWaypointMap.get(i) == playerID) {
+				playersLocationWaypoints[index] = locationWaypoints[i];
+				index++;
+			}
+		}
+		
+		return playersLocationWaypoints;
 	}
 	
 	/**

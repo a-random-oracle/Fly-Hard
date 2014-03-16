@@ -168,8 +168,10 @@ public class GameOver extends Scene {
 		if (explosionAnim.hasFinished()) {
 			textBox.draw();
 		} else {
-			aircraft1.draw((int) aircraft1.getPosition().getZ(), origin);
-			aircraft2.draw((int) aircraft1.getPosition().getZ(), origin);
+			aircraft1.draw(new Integer[] {255, 255, 255},
+					(int) aircraft1.getPosition().getZ(), origin);
+			aircraft2.draw(new Integer[] {255, 255, 255},
+					(int) aircraft1.getPosition().getZ(), origin);
 			
 			double radius = 20; // Radius of explosion
 			graphics.setColour(graphics.red);

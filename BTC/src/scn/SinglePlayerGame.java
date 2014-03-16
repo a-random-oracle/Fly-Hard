@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Random;
 
 import lib.ButtonText;
-import lib.jog.graphics;
 import lib.jog.input;
 import lib.jog.window;
 
@@ -73,12 +72,11 @@ public class SinglePlayerGame extends Game {
 		locationWaypoints[2] = topRight;
 		locationWaypoints[3] = bottomRight;
 		
-		// Assign players to location waypoints
 		locationWaypointMap.put(0, 0);
 		locationWaypointMap.put(1, 0);
 		locationWaypointMap.put(2, 0);
 		locationWaypointMap.put(3, 0);
-
+		
 		// Add airports to list of location waypoints
 		for (int i = 0; i < airports.length; i++) {
 			locationWaypoints[4 + i] = airports[i];
@@ -99,7 +97,7 @@ public class SinglePlayerGame extends Game {
 		Waypoint wp10 = new Waypoint(1050, 400, false);
 
 		// Add in airspace waypoints
-		Waypoint[] airspaceWaypoints = new Waypoint[10 + locationWaypoints.length];
+		Waypoint[] airspaceWaypoints = new Waypoint[10];
 		airspaceWaypoints[0] = wp1;
 		airspaceWaypoints[1] = wp2;
 		airspaceWaypoints[2] = wp3;
@@ -110,15 +108,26 @@ public class SinglePlayerGame extends Game {
 		airspaceWaypoints[7] = wp8;
 		airspaceWaypoints[8] = wp9;
 		airspaceWaypoints[9] = wp10;
-
-		// Add in location waypoints
-		for (int j = 0; j < locationWaypoints.length; j++) {
-			airspaceWaypoints[10 + j] = locationWaypoints[j];
+		
+		// Assign half of the waypoints to each player
+		Waypoint[] player0LocationWaypoints = getPlayersLocationWaypoints(0);
+		Waypoint[] player0Waypoints = new Waypoint[airspaceWaypoints.length
+		                                           + player0LocationWaypoints.length];
+		
+		for (int i = 0; i < airspaceWaypoints.length; i++) {
+			player0Waypoints[i] = airspaceWaypoints[i];
 		}
 		
-		// Set up the player TODO
-		player = new Player("Bob", true, "127.0.0.1", airports, airspaceWaypoints);
-		getPlayers().add(this.player);
+		// Add in any location waypoints assigned to the player
+		for (int i = 0; i < player0LocationWaypoints.length; i++) {
+			player0Waypoints[airspaceWaypoints.length + i]
+					= player0LocationWaypoints[i];
+		}
+		
+		// Set up the players TODO
+		player = new Player("Bob2", true, "127.0.0.1",
+				airports, player0Waypoints);
+		getPlayers().add(player);
 
 		// Create the manual control button
 		manualControlButtons = new ButtonText[1];
@@ -135,102 +144,6 @@ public class SinglePlayerGame extends Game {
 		
 		// Reset game attributes
 		deselectAircraft(player);
-	}
-	
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void update(double timeDifference) {
-		if (paused) return;
-		
-		timeElapsed += timeDifference;
-
-		graphics.setColour(graphics.green_transp);
-
-		// Update aircraft
-		for (Aircraft aircraft : player.getAircraft()) {
-			aircraft.update(timeDifference);
-		}
-
-		// Check if any aircraft in the airspace have collided
-		checkCollisions(timeDifference);
-
-		// Deselect and remove any aircraft which have completed their routes
-		for (int i = player.getAircraft().size() - 1; i >= 0; i--) {
-			if (player.getAircraft().get(i).isFinished()) {
-				if (player.getAircraft().get(i).equals(player.getSelectedAircraft())) {
-					deselectAircraft(player);
-				}
-				
-				player.getAircraft().remove(i);
-			}
-		}
-
-		// Update the airports
-		for (Airport airport : player.getAirports()) {
-			airport.update(player.getAircraft());
-		}
-
-		if (player.getSelectedAircraft() != null) {
-			if (player.getSelectedAircraft().isManuallyControlled()) {
-				// Handle directional control for a manually controlled aircraft
-				if (input.keyPressed(new int[]{input.KEY_LEFT, input.KEY_A})) {
-					// Turn left when 'Left' or 'A' key is pressed
-					player.getSelectedAircraft().turnLeft(timeDifference);
-				} else if (input.keyPressed(new int[]{input.KEY_RIGHT, input.KEY_D})) {
-					// Turn right when 'Right' or 'D' key is pressed
-					player.getSelectedAircraft().turnRight(timeDifference);
-				}
-			} else if (input.keyPressed(new int[]{
-					input.KEY_LEFT, input.KEY_A, input.KEY_RIGHT, input.KEY_D})) {
-				// If any of the directional keys is pressed, set selected aircraft
-				// to manual control
-				toggleManualControl(player);
-			}
-
-			// Handle altitude controls
-			if (input.keyPressed(new int[]{input.KEY_S, input.KEY_DOWN})
-					&& (player.getSelectedAircraft().getPosition().getZ() > 28000)) {
-				player.getSelectedAircraft().setAltitudeState(Aircraft.ALTITUDE_FALL);
-			} else if (input.keyPressed(new int[]{input.KEY_W, input.KEY_UP})
-					&& (player.getSelectedAircraft().getPosition().getZ() < 30000)) {
-				player.getSelectedAircraft().setAltitudeState(Aircraft.ALTITUDE_CLIMB);
-			}
-		}
-		
-		// Deselect any aircraft which are outside the airspace
-		// This ensures that players can't keep controlling aircraft
-		// after they've left the airspace
-		for (Aircraft airc : player.getAircraft()) {
-			if (!(airc.isAtDestination())) {
-				if (airc.isOutOfAirspaceBounds()) {
-					deselectAircraft(airc, player);
-				}
-			}
-		}
-
-		// Update the counter used to determine when another flight should
-		// enter the airspace
-		// If the counter has reached 0, then spawn a new aircraft
-		player.setFlightGenerationTimeElapsed(player.getFlightGenerationTimeElapsed()
-				+ timeDifference);
-		if (player.getFlightGenerationTimeElapsed()
-				>= getFlightGenerationInterval(player)) {
-			player.setFlightGenerationTimeElapsed(player.getFlightGenerationTimeElapsed()
-					- getFlightGenerationInterval(player));
-			
-			if (player.getAircraft().size() < player.getMaxAircraft()) {
-				generateFlight(player);
-			}
-		}
-
-		// If there are no aircraft in the airspace, spawn a new aircraft
-		if (player.getAircraft().size() == 0) generateFlight(player);
-
-		// Update debug box
-		// PLEASE DO NOT REMOVE - this is very useful for debugging
-		out.update(timeDifference);
 	}
 
 
@@ -411,17 +324,17 @@ public class SinglePlayerGame extends Game {
 	 */
 	@Override
 	protected Aircraft createAircraft() {
-		// Origin and Destination
 		String destinationName;
 		String originName = "";
 		Waypoint originPoint = null;
 		Waypoint destinationPoint;
 		Airport destinationAirport = null;
+		
+		// Get a list of this player's location waypoints
+		Waypoint[] playersLocationWaypoints = getPlayersLocationWaypoints(player);
 
-		// Chooses two waypoints randomly and then checks if they satisfy the rules
-		// If not, it tries until it finds good ones
-
-		ArrayList<Waypoint> availableOrigins = getAvailableEntryPoints();
+		// Get a list of location waypoints where a crash would not be immediate
+		ArrayList<Waypoint> availableOrigins = getAvailableEntryPoints(player);
 
 		if (availableOrigins.isEmpty()) {
 			int randomAirport = (new Random())
@@ -436,20 +349,19 @@ public class SinglePlayerGame extends Game {
 				originName = player.getAirports()[randomAirport]
 						.name;
 			}
-			//destinationAirport = airports[randomAirport];
 		} else {
 			originPoint = availableOrigins.get(
 					(new Random()).nextInt((availableOrigins.size() - 1) + 1));
 
 			// If random point is an airport, use its departures location
 			if (originPoint instanceof Airport) {
-				//destinationAirport = (Airport) originPoint;
 				originName = originPoint.name;
 				originPoint = ((Airport) originPoint).getDeparturesCentre();
 			} else {
-				for (int i = 0; i < locationWaypoints.length; i++) {
-					if (locationWaypoints[i].equals(originPoint)) {
-						originName = locationWaypoints[i].getName();
+				
+				for (int i = 0; i < playersLocationWaypoints.length; i++) {
+					if (playersLocationWaypoints[i].equals(originPoint)) {
+						originName = playersLocationWaypoints[i].getName();
 						break;
 					}
 				}
@@ -462,9 +374,10 @@ public class SinglePlayerGame extends Game {
 		int destination = 0;
 
 		do {
-			destination = (new Random()).nextInt((locationWaypoints.length - 1) + 1);
-			destinationName = locationWaypoints[destination].getName();
-			destinationPoint = locationWaypoints[destination];
+			destination = (new Random())
+					.nextInt((playersLocationWaypoints.length - 1) + 1);
+			destinationName = playersLocationWaypoints[destination].getName();
+			destinationPoint = playersLocationWaypoints[destination];
 		} while (destinationName.equals(originName) ||
 				((getAirportFromName(originName) != null)
 						&& (getAirportFromName(destinationName) != null)));
@@ -480,11 +393,14 @@ public class SinglePlayerGame extends Game {
 		while (nameTaken) {
 			name = "Flight " + (int)(900 * Math.random() + 100);
 			nameTaken = false;
-			for (Aircraft a : player.getAircraft()) {
+			
+			// Check the generated name against every other flight name
+			for (Aircraft a : getAllAircraft()) {
 				if (a.getName() == name) nameTaken = true;
 			}
 		}
 
+		// Generate a random speed, centred around 37
 		int speed = 32 + (int)(10 * Math.random());
 
 		return new Aircraft(name, destinationName, originName,
