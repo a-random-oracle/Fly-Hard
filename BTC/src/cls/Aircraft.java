@@ -843,4 +843,48 @@ public class Aircraft implements Serializable {
 		this.altitudeState = state;
 	}
 
+	/**
+	 * Generates the hash code for this aircraft.
+	 * @return the hash code for this aircraft
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result
+				+ ((flightName == null) ? 0 : flightName.hashCode());
+		return result;
+	}
+
+	/**
+	 * Compares this aircraft to another aircraft.
+	 * <p>
+	 * Only the flight name is checked.
+	 * </p>
+	 * @param obj
+	 * 			the object to compare with
+	 * @return <code>true</code> if and only if obj is equivalent
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (!(obj instanceof Aircraft)) {
+			return false;
+		}
+		Aircraft other = (Aircraft) obj;
+		if (flightName == null) {
+			if (other.flightName != null) {
+				return false;
+			}
+		} else if (!flightName.equals(other.flightName)) {
+			return false;
+		}
+		return true;
+	}
+
 }
