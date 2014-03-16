@@ -2,15 +2,14 @@ package cls;
 
 import java.util.ArrayList;
 
-import org.newdawn.slick.Color;
-
 import scn.Game;
 
 public class Player {
 	
 	/** The list of colours to associate with aircraft */
-	public static final Color[] AIRCRAFT_COLOURS = new Color[] {
-		Color.red, Color.blue
+	public static final Integer[][] AIRCRAFT_COLOURS = new Integer[][] {
+		new Integer[] {42, 51, 159},	// Blue
+		new Integer[] {202, 0, 5}		// Red
 	};
 	
 	/** The player's unique ID */
@@ -38,7 +37,7 @@ public class Player {
 	private Waypoint[] waypoints;
 	
 	/** The colour to draw this player's aircraft */
-	private Color aircraftColour;
+	private Integer[] aircraftColour;
 	
 	/** The aircraft which this player has selected */
 	private Aircraft selectedAircraft;
@@ -100,8 +99,9 @@ public class Player {
 		id = Game.getNewPlayerID();
 		
 		// Set aircraft colour
+		// Default is white
 		aircraftColour = (id < AIRCRAFT_COLOURS.length)
-				? AIRCRAFT_COLOURS[id] : Color.white;
+				? AIRCRAFT_COLOURS[id] : new Integer[] {255, 255, 255};
 		
 		// Reset values
 		this.maxAircraft = Game.DEFAULT_MAX_AIRCRAFT;
@@ -232,6 +232,13 @@ public class Player {
 	 */
 	public int getScore() {
 		return score;
+	}
+	
+	/**
+	 * @return the colour to draw this player's aircraft
+	 */
+	public Integer[] getAircraftColour() {
+		return aircraftColour;
 	}
 	
 	

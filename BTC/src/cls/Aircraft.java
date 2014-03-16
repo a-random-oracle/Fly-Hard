@@ -398,8 +398,8 @@ public class Aircraft implements Serializable {
 		turnBy(angleMagnitude * angleDirection);
 	}
 
-	public void draw(int highlightedAltitude) {
-		draw(highlightedAltitude, null);
+	public void draw(Integer[] colour, int highlightedAltitude) {
+		draw(colour, highlightedAltitude, null);
 	}
 
 	/**
@@ -408,16 +408,14 @@ public class Aircraft implements Serializable {
 	 * @param the
 	 *            altitude to highlight aircraft at
 	 */
-	public void draw(int highlightedAltitude, Vector offset) {
+	public void draw(Integer[] colour, int highlightedAltitude, Vector offset) {
 		double alpha;
 		if (position.getZ() >= 28000 && position.getZ() <= 29000) { // 28000-29000
-			alpha = highlightedAltitude == 28000 ? 255 : 128; // 255 if
-																// highlighted,
-																// else 128
+			// 255 if highlighted, else 128
+			alpha = highlightedAltitude == 28000 ? 255 : 128;
 		} else if (position.getZ() <= 30000 && position.getZ() >= 29000) { // 29000-30000
-			alpha = highlightedAltitude == 30000 ? 255 : 128; // 255 if
-																// highlighted,
-																// else 128
+			// 255 if highlighted, else 128
+			alpha = highlightedAltitude == 30000 ? 255 : 128;
 		} else { // If it's not 28000-30000, then it's currently landing
 			alpha = 128;
 		}
@@ -426,7 +424,7 @@ public class Aircraft implements Serializable {
 		double scale = 2 * (position.getZ() / 30000);
 
 		// Draw plane image
-		graphics.setColour(128, 128, 128, alpha);
+		graphics.setColour(colour[0], colour[1], colour[2], alpha);
 
 		if (offset != null) {
 			graphics.draw(image, scale, position.getX() - (image.width() / 2)
