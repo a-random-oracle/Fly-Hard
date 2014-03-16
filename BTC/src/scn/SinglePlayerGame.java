@@ -151,9 +151,6 @@ public class SinglePlayerGame extends Game {
 		// Update aircraft
 		for (Aircraft aircraft : player.getAircraft()) {
 			aircraft.update(timeDifference);
-			if (aircraft.isFinished()) {
-				recentlyDepartedAircraft.add(aircraft);
-			}
 		}
 
 		// Check if any aircraft in the airspace have collided
@@ -165,7 +162,7 @@ public class SinglePlayerGame extends Game {
 				if (player.getAircraft().get(i).equals(player.getSelectedAircraft())) {
 					deselectAircraft(player);
 				}
-				out.addOrder("Removing: " + player.getAircraft().get(i).getName());
+				
 				player.getAircraft().remove(i);
 			}
 		}
@@ -224,53 +221,16 @@ public class SinglePlayerGame extends Game {
 					- getFlightGenerationInterval(player));
 			
 			if (player.getAircraft().size() < player.getMaxAircraft()) {
-				generateFlight();
+				generateFlight(player);
 			}
 		}
 
 		// If there are no aircraft in the airspace, spawn a new aircraft
-		if (player.getAircraft().size() == 0) generateFlight();
+		if (player.getAircraft().size() == 0) generateFlight(player);
 
 		// Update debug box
 		// PLEASE DO NOT REMOVE - this is very useful for debugging
 		out.update(timeDifference);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void draw() {
-		// Draw the rectangle surrounding the map area
-		graphics.setColour(graphics.green);
-		graphics.rectangle(false, xOffset, yOffset, window.width() - (2 * xOffset),
-				window.height() - (2 * yOffset));
-
-		// Set the viewport - this is the boundary used when drawing objects
-		graphics.setViewport(xOffset, yOffset, window.width() - (2 * xOffset),
-				window.height() - (2 * yOffset));
-
-		// Draw the map background
-		graphics.setColour(255, 255, 255, 48);
-		graphics.drawScaled(background, 0, 0,
-				Math.max(Main.getXScale(), Main.getYScale()));
-
-		// Draw individual map features
-		drawAirports(player.getAirports(), locationWaypoints);
-		drawWaypoints(player.getWaypoints(), locationWaypoints);
-		drawManualControlButton(player);
-		drawAircraft(player.getAircraft(), player.getSelectedAircraft(),
-				player.getSelectedWaypoint(), player.getSelectedPathpoint(),
-				player.getControlAltitude());
-		
-		// Reset the viewport - these statistics can appear outside the game
-		// area
-		graphics.setViewport();
-		drawAdditional(player.getAircraft().size());
-
-		// Draw debug box
-		// PLEASE DO NOT REMOVE - this is very useful for debugging
-		out.draw();
 	}
 
 
@@ -426,7 +386,7 @@ public class SinglePlayerGame extends Game {
 			break;
 
 		case input.KEY_LCRTL :
-			generateFlight();
+			generateFlight(player);
 			break;
 
 		case input.KEY_ESCAPE :
@@ -445,27 +405,6 @@ public class SinglePlayerGame extends Game {
 
 
 	// Helper methods -------------------------------------------------------------------
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void generateFlight() {
-		Aircraft aircraft = createAircraft();
-
-		if (aircraft != null) {
-			// If the aircraft starts at an airport, add it to that airport
-			for (Airport airport : player.getAirports()) {
-				if (aircraft.getFlightPlan().getOriginName().equals(airport.name)) {
-					airport.addToHangar(aircraft);
-					return;
-				}
-			}
-
-			// Otherwise, add the aircraft to the airspace
-			player.getAircraft().add(aircraft);
-		}
-	}
 
 	/**
 	 * {@inheritDoc}

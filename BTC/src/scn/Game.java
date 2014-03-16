@@ -24,6 +24,7 @@ import btc.Main;
 
 public abstract class Game extends Scene {
 	
+	/** The list of players currently playing the game */
 	protected static ArrayList<Player> players;
 	
 	// Due to the way the airspace elements are drawn (graphics.setviewport)
@@ -38,7 +39,7 @@ public abstract class Game extends Scene {
 	protected static int yOffset;
 	
 	// PLEASE DO NOT REMOVE - this is very useful for debugging
-	protected OrdersBox out;
+	protected static OrdersBox out;
 	
 	/** Difficulty settings: easy, medium and hard */
 	public enum DifficultySetting {EASY, MEDIUM, HARD}
@@ -49,16 +50,13 @@ public abstract class Game extends Scene {
 	/** The current difficulty setting */
 	protected DifficultySetting difficulty;
 	
-	/** Time since the scene began */
+	/** The time since the scene began */
 	protected static double timeElapsed;
-	
-	/** A list of aircraft which have recently left the airspace */
-	protected ArrayList<Aircraft> recentlyDepartedAircraft;
 	
 	/** The image to use for aircraft */
 	protected Image aircraftImage;
 	
-	/** Music to play during the game scene */
+	/** The music to play during the game scene */
 	protected Music music;
 	
 	/** The background to draw in the airspace */
@@ -127,9 +125,6 @@ public abstract class Game extends Scene {
 			//music.play(); TODO <- add this back in for release
 		}
 		
-		// Set up game components
-		recentlyDepartedAircraft = new ArrayList<Aircraft>();
-		
 		// Reset game attributes
 		timeElapsed = 0;
 	}
@@ -148,7 +143,40 @@ public abstract class Game extends Scene {
 	 * Draw the scene GUI and all drawables within it, e.g. aircraft and waypoints.
 	 */
 	@Override
-	public abstract void draw();
+	public void draw() {
+		// Draw the rectangle surrounding the map area
+		graphics.setColour(graphics.green);
+		graphics.rectangle(false, xOffset, yOffset, window.width() - (2 * xOffset),
+				window.height() - (2 * yOffset));
+
+		// Set the viewport - this is the boundary used when drawing objects
+		graphics.setViewport(xOffset, yOffset, window.width() - (2 * xOffset),
+				window.height() - (2 * yOffset));
+
+		// Draw the map background
+		graphics.setColour(255, 255, 255, 48);
+		graphics.drawScaled(background, 0, 0,
+				Math.max(Main.getXScale(), Main.getYScale()));
+
+		// Draw individual map features
+		for (Player player : players) {
+			drawAirports(player.getAirports(), locationWaypoints);
+			drawWaypoints(player.getWaypoints(), locationWaypoints);
+			drawManualControlButton(player);
+			drawAircraft(player.getAircraft(), player.getSelectedAircraft(),
+					player.getSelectedWaypoint(), player.getSelectedPathpoint(),
+					player.getControlAltitude());
+		}
+		
+		// Reset the viewport - these statistics can appear outside the game
+		// area
+		graphics.setViewport();
+		drawAdditional(getAllAircraft().size());
+
+		// Draw debug box
+		// PLEASE DO NOT REMOVE - this is very useful for debugging
+		out.draw();
+	}
 	
 	/**
 	 * Draws aircraft.
@@ -419,7 +447,22 @@ public abstract class Game extends Scene {
 	/**
 	 * Creates a new aircraft object and introduces it to the airspace. 
 	 */
-	protected abstract void generateFlight();
+	protected void generateFlight(Player player) {
+		Aircraft aircraft = createAircraft();
+
+		if (aircraft != null && player != null) {
+			// If the aircraft starts at an airport, add it to that airport
+			for (Airport airport : player.getAirports()) {
+				if (aircraft.getFlightPlan().getOriginName().equals(airport.name)) {
+					airport.addToHangar(aircraft);
+					return;
+				}
+			}
+
+			// Otherwise, add the aircraft to the airspace
+			player.getAircraft().add(aircraft);
+		}
+	}
 	
 	/**
 	 * Handle aircraft creation.
