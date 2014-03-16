@@ -709,20 +709,24 @@ public class Aircraft implements Serializable {
 		}
 	}
 
+	/**
+	 * Adds this aircraft to the player whose airport it is departing from.
+	 */
 	public void takeOff() {
-		if (flightPlan.getAirport() != null) {
-			flightPlan.getAirport().isActive = true;
+		Airport airport = Game.getAirportFromName(flightPlan.getOriginName());
+		if (airport != null) {
+			// Add the aircraft to the player whose airport
+			// it is departing from
+			Game.getPlayerFromAirport(airport).getAircraft().add(this);
 		}
-
-		Game.addAircraftWaitingToTakeOff(this);
 	}
 
 	/**
 	 * Checks if an aircraft is close to an its parameter (entry point).
 	 * 
 	 * @param position
-	 *            of a waypoint
-	 * @return True it if it close
+	 *            the position of the waypoint to test
+	 * @return <code>true</code> if it is close
 	 */
 	public boolean isCloseToEntry(Vector position) {
 		double x = this.getPosition().getX() - position.getX();

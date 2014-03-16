@@ -3,6 +3,7 @@ package scn;
 import java.io.File;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Hashtable;
 
 import lib.ButtonText;
 import lib.jog.audio;
@@ -51,9 +52,6 @@ public abstract class Game extends Scene {
 	/** Time since the scene began */
 	protected static double timeElapsed;
 	
-	/** A list of aircraft which are waiting to take off */
-	protected static ArrayList<Aircraft> aircraftWaitingToTakeOff;
-	
 	/** A list of aircraft which have recently left the airspace */
 	protected ArrayList<Aircraft> recentlyDepartedAircraft;
 	
@@ -65,6 +63,12 @@ public abstract class Game extends Scene {
 	
 	/** The background to draw in the airspace */
 	protected Image background;
+	
+	/** The set of waypoints in the airspace which are entry/exit points */
+	protected Waypoint[] locationWaypoints;
+	
+	/** The location waypoints under each players' control */
+	protected Hashtable<Integer, Integer> locationWaypointMap;
 	
 	/** The manual control buttons */
 	protected ButtonText[] manualControlButtons;
@@ -103,10 +107,12 @@ public abstract class Game extends Scene {
 		// Set up players
 		players = new ArrayList<Player>();
 		
+		// Set up waypoints
+		locationWaypointMap = new Hashtable<Integer, Integer>();
+		
 		// Set up variables
 		out = new OrdersBox(window.width() - xOffset + 20,
 				yOffset, xOffset - 40, window.height() - (2 * yOffset), 30);
-		aircraftWaitingToTakeOff = new ArrayList<Aircraft>();
 		paused = false;
 
 		if (!Main.testing) {
@@ -346,16 +352,40 @@ public abstract class Game extends Scene {
 	 * @param timeDifference
 	 * 			the time since the last collision check
 	 */
-	protected abstract void checkCollisions(double timeDifference);
+	protected void checkCollisions(double timeDifference) {
+		for (Aircraft plane : getAllAircraft()) {
+			int collisionState = plane.updateCollisions(timeDifference,
+					getAllAircraft());
+			if (collisionState >= 0) {
+				gameOver(plane, getAllAircraft().get(collisionState));
+				return;
+			}
+		}
+	}
 	
 	/**
-	 * Handle game over.
+	 * Handle a game over caused by two planes colliding.
+	 * Create a GameOver scene and make it the current scene.
 	 * @param plane1
 	 * 			the first plane involved in the collision
 	 * @param plane2
 	 * 			the second plane in the collision
 	 */
-	protected abstract void gameOver(Aircraft plane1, Aircraft plane2);
+	public void gameOver(Aircraft plane1, Aircraft plane2) {
+		for (Player player : players) {
+			player.getAircraft().clear();
+			
+			for (Airport airport : player.getAirports()) {
+				airport.clear();
+			}
+		}
+		
+		// TODO <- add back in for release
+		//playSound(audio.newSoundEffect("sfx" + File.separator + "crash.ogg"));
+		
+		main.closeScene();
+		main.setScene(new GameOver(main, plane1, plane2, 0)); //TODO <- pass score
+	}
 	
 	/**
 	 * Cleanly exit by stopping the scene's music.
@@ -398,9 +428,34 @@ public abstract class Game extends Scene {
 	protected abstract Aircraft createAircraft();
 	
 	/**
-	 * Causes an aircraft to call methods to handle deselection.
+	 * Causes deselection of the selected aircraft.
+	 * @param player
+	 * 			the player to reset the selected plane attribute for
 	 */
-	protected abstract void deselectAircraft();
+	protected void deselectAircraft(Player player) {
+		deselectAircraft(player.getSelectedAircraft(), player);
+	}
+	
+	/**
+	 * Causes deselection of the specified aircraft.
+	 * @param aircraft
+	 * 			the aircraft to deselect
+	 * @param player
+	 * 			the player to reset the selected plane attribute for
+	 */
+	protected void deselectAircraft(Aircraft aircraft, Player player) {
+		if (aircraft != null && aircraft.isManuallyControlled()) {
+			aircraft.toggleManualControl();
+			manualControlButtons[player.getID()].setText(" Take Control");
+		}
+		
+		if (aircraft != null && aircraft.equals(player.getSelectedAircraft())) {
+			player.setSelectedAircraft(null);
+		}
+		
+		player.setSelectedWaypoint(null); 
+		player.setSelectedPathpoint(-1);
+	}
 	
 	/**
 	 * Causes a player's selected aircraft to call methods to toggle manual control.
@@ -417,15 +472,38 @@ public abstract class Game extends Scene {
 	}
 	
 	/**
-	 * Sets the airport to busy, and adds any aircraft waiting to take off to the game,
-	 * where they begins their flight plans starting at the airport.
-	 */
-	public abstract void takeOffWaitingAircraft();
-	
-	/**
 	 * Returns array of entry points that are fair to be entry points for a plane.
+	 * <p>
+	 * Specifically, returns points where no plane is currently going to exit the
+	 * airspace there, also it is not too close to any plane.
+	 * </p>
 	 */	
-	public abstract ArrayList<Waypoint> getAvailableEntryPoints();
+	public ArrayList<Waypoint> getAvailableEntryPoints() {
+		ArrayList<Waypoint> availableEntryPoints = new ArrayList<Waypoint>();
+
+		for (Waypoint entryPoint : locationWaypoints) {
+			boolean isAvailable = true;
+			// Prevents spawning a plane at a waypoint if:
+			//   - any plane is currently going towards it
+			//   - or any plane is less than 250 from it
+
+			for (Aircraft aircraft : getAllAircraft()) {
+				// Check if any plane is currently going towards the
+				// exit point/chosen originPoint
+				// Check if any plane is less than what is defined as too close
+				// from the chosen originPoint
+				if (aircraft.currentTarget.equals(entryPoint.getLocation())
+						|| aircraft.isCloseToEntry(entryPoint.getLocation())) {
+					isAvailable = false;
+				}	
+			}
+
+			if (isAvailable) {
+				availableEntryPoints.add(entryPoint);
+			}	
+		}
+		return availableEntryPoints;
+	}
 	
 	/**
 	 * Returns whether a given name is an airport or not.
@@ -434,7 +512,15 @@ public abstract class Game extends Scene {
 	 * @return <code>true</code> if the name matches an airport name,
 	 * 			otherwise <code>false</code>
 	 */
-	protected abstract boolean isAirportName(String name);
+	public static Airport getAirportFromName(String name) {
+		for (Airport airport : getAllAirports()) {
+			// If a match is found, return true
+			if (airport.name.equals(name)) return airport;
+		}
+
+		// Otherwise
+		return null;
+	}
 	
 	
 	// Click event helpers --------------------------------------------------------------
@@ -445,10 +531,20 @@ public abstract class Game extends Scene {
 	 * 			the x position of the mouse
 	 * @param y
 	 * 			the y position of the mouse
+	 * @param aircraft
+	 * 			the aircraft whose compass region should be checked
 	 * @return <code>true</code> if the compass has been clicked,
 	 * 			otherwise <code>false</code>
 	 */
-	protected abstract boolean compassClicked(int x, int y);
+	protected boolean compassClicked(int x, int y, Aircraft aircraft) {
+		if (aircraft != null) {
+			double dx = aircraft.getPosition().getX() - x + xOffset;
+			double dy = aircraft.getPosition().getY() - y + yOffset;
+			int r = Aircraft.COMPASS_RADIUS;
+			return  dx*dx + dy*dy < r*r;
+		}
+		return false;
+	}
 	
 	/**
 	 * Gets whether an aircraft has been clicked.
@@ -456,11 +552,13 @@ public abstract class Game extends Scene {
 	 * 			the x position of the mouse
 	 * @param y
 	 * 			the y position of the mouse
+	 * @param player
+	 * 			the player whose aircraft should be checked
 	 * @return <code>true</code> if an aircraft has been clicked,
 	 * 			otherwise <code>false</code>
 	 */
-	protected boolean aircraftClicked(int x, int y) {
-		return (findClickedAircraft(x, y) != null);
+	protected boolean aircraftClicked(int x, int y, Player player) {
+		return (findClickedAircraft(x, y, player) != null);
 	}
 	
 	/**
@@ -469,10 +567,19 @@ public abstract class Game extends Scene {
 	 * 			the x position of the mouse
 	 * @param y
 	 * 			the y position of the mouse
+	 * @param player
+	 * 			the player whose aircraft should be checked
 	 * @return if an aircraft was clicked, returns the corresponding aircraft object,
 	 * 			otherwise returns null
 	 */
-	protected abstract Aircraft findClickedAircraft(int x, int y);
+	protected Aircraft findClickedAircraft(int x, int y, Player player) {
+		for (Aircraft a : player.getAircraft()) {
+			if (a.isMouseOver(x - xOffset, y - yOffset)) {
+				return a;
+			}
+		}
+		return null;
+	}
 	
 	/**
 	 * Gets whether a waypoint in an aircraft's flight plan has been clicked.
@@ -480,11 +587,14 @@ public abstract class Game extends Scene {
 	 * 			the x position of the mouse
 	 * @param y
 	 * 			the y position of the mouse
+	 * @param player
+	 * 			the player whose waypoints should be searched
 	 * @return <code>true</code> if a waypoint in an aircraft's flight plan
 	 * 			has been clicked, otherwise <code>false</code>
 	 */
-	protected boolean waypointInFlightplanClicked(int x, int y, Aircraft aircraft) {
-		Waypoint clickedWaypoint = findClickedWaypoint(x, y);
+	protected boolean waypointInFlightplanClicked(int x, int y,
+			Aircraft aircraft, Player player) {
+		Waypoint clickedWaypoint = findClickedWaypoint(x, y, player);
 		return (clickedWaypoint != null) && (aircraft != null)
 				&& (aircraft.getFlightPlan().indexOfWaypoint(clickedWaypoint) > -1);
 	}
@@ -495,10 +605,19 @@ public abstract class Game extends Scene {
 	 * 			the x position of the mouse
 	 * @param y
 	 * 			the y position of the mouse
+	 * @param player
+	 * 			the player whose waypoints should be searched
 	 * @return if a waypoint was clicked, returns the corresponding waypoint object,
 	 * 			otherwise returns null
 	 */
-	protected abstract Waypoint findClickedWaypoint(int x, int y);
+	protected Waypoint findClickedWaypoint(int x, int y, Player player) {
+		for (Waypoint w : player.getWaypoints()) {
+			if (w.isMouseOver(x - xOffset, y - yOffset)) {
+				return w;
+			}
+		}
+		return null;
+	}
 	
 	/**
 	 * Gets whether the manual control button has been clicked.
@@ -536,6 +655,56 @@ public abstract class Game extends Scene {
 	}
 	
 	/**
+	 * Gets the list of players.
+	 * @return the list of players
+	 */
+	public static ArrayList<Player> getPlayers() {
+		return players;
+	}
+	
+	/**
+	 * Gets a list of all aircraft in the airspace.
+	 * @return a list of all the aircraft in the airspace
+	 */
+	public static ArrayList<Aircraft> getAllAircraft() {
+		ArrayList<Aircraft> allAircraft = new ArrayList<Aircraft>();
+		
+		for (Player player : players) {
+			allAircraft.addAll(player.getAircraft());
+		}
+		
+		return allAircraft;
+	}
+	
+	/**
+	 * Gets a list of all airports in the airspace.
+	 * @return a list of all the airports in the airspace
+	 */
+	public static Airport[] getAllAirports() {
+		int count = 0;
+		
+		// Count the number of airports in the airspace
+		for (Player player : players) count += player.getAirports().length;
+		
+		// Initialise a new array to store all the airports
+		Airport[] allAirports = new Airport[count];
+		
+		// Loop through each player, adding their airports to the list
+		int index = 0;
+		Airport[] curAirports;
+		for (Player player : players) {
+			curAirports = player.getAirports();
+			
+			for (Airport airport : curAirports) {
+				allAirports[index] = airport;
+				index++;
+			}
+		}
+		
+		return allAirports;
+	}
+	
+	/**
 	 * Gets how long the game has been played for.
 	 * @return the length of time the game has been running for
 	 */
@@ -566,20 +735,22 @@ public abstract class Game extends Scene {
 		return maxPlayerID + 1;
 	}
 	
-	
-	// Mutators -------------------------------------------------------------------------
-	
-	public ArrayList<Player> getPlayers() {
-		return players;
-	}
-	
 	/**
-	 * Adds an aircraft to the list of aircraft waiting to take off. TODO
-	 * @param aircraft
-	 * 			the aircraft to add
+	 * Finds which player is associated with a given airport.
+	 * @return the player associated with the supplied airport
 	 */
-	public static void addAircraftWaitingToTakeOff(Aircraft aircraft) {
-		aircraftWaitingToTakeOff.add(aircraft);
+	public static Player getPlayerFromAirport(Airport airport) {
+		for (Player player : players) {
+			Airport[] playersAirports = player.getAirports();
+			
+			for (Airport a : playersAirports) {
+				if (a.equals(airport)) {
+					return player;
+				}
+			}
+		}
+		
+		return null;
 	}
 	
 	
