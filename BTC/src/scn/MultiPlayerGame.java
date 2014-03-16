@@ -2,8 +2,6 @@ package scn;
 
 import btc.Main;
 
-import cls.Aircraft;
-
 public class MultiPlayerGame extends Game {
 	
 	/** The unique instance of this class */
@@ -58,11 +56,6 @@ public class MultiPlayerGame extends Game {
 
 	@Override
 	public void keyReleased(int key) {
-	}
-
-	@Override
-	protected Aircraft createAircraft() {
-		return null;
 	}
 
 	@Override
