@@ -81,6 +81,9 @@ public abstract class Game extends Scene {
 	/** Is the game paused */
 	protected boolean paused;
 	
+	/** The side of the screen the mouse is on */
+	protected int mouseSide;
+	
 	
 	// Constructors ---------------------------------------------------------------------
 	
@@ -187,6 +190,9 @@ public abstract class Game extends Scene {
 		if (paused) return;
 		
 		timeElapsed += timeDifference;
+		
+		// Get which side of the screen the mouse is on
+		mouseSide = (input.mouseX() < (window.width() / 2)) ? 0 : 1;
 		
 		// Check if any aircraft in the airspace have collided
 		checkCollisions(timeDifference);
@@ -474,6 +480,12 @@ public abstract class Game extends Scene {
 		// Print the number of aircraft in the airspace to the screen
 		graphics.print(String.valueOf(aircraftCount)
 				+ " aircraft in the airspace.", 32 + xOffset, 32);
+		
+		// Print the current player
+		graphics.printCentred("Currently playing as player: "
+				+ mouseSide + 1,//+ players.get(mouseSide % players.size()).getName(),
+				(((double) window.width() - (2 * xOffset)) / 2), 32d,
+				1, 300);
 	}
 	
 	/**

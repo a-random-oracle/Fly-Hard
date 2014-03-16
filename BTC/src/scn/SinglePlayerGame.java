@@ -80,7 +80,7 @@ public class SinglePlayerGame extends Game {
 
 		manualControlButtons[player.getID()]
 				= new ButtonText(" Take Control", manual,
-						(window.width() - 128 - (2 * xOffset)),
+						(window.width() - 128 - (2 * xOffset)) / 2,
 						32, 128, 32, 8, 4);
 
 		// Reset game attributes for each player
@@ -96,6 +96,8 @@ public class SinglePlayerGame extends Game {
 	@Override
 	public void mousePressed(int key, int x, int y) {
 		if (paused) return;
+		
+		Player player = players.get(mouseSide % players.size());
 
 		if (key == input.MOUSE_LEFT) {
 			if (aircraftClicked(x, y, player)) {
@@ -175,6 +177,8 @@ public class SinglePlayerGame extends Game {
 	@Override
 	public void mouseReleased(int key, int x, int y) {
 		if (paused) return;
+		
+		Player player = players.get(mouseSide % players.size());
 
 		for (Airport airport : player.getAirports()) {
 			airport.mouseReleased(key, x, y);
@@ -233,6 +237,8 @@ public class SinglePlayerGame extends Game {
 		}
 
 		if (paused) return;
+		
+		Player player = players.get(mouseSide % players.size());
 
 		switch (key) {
 		case input.KEY_SPACE :
