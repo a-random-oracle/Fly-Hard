@@ -1,7 +1,6 @@
 package scn;
 
 import java.util.ArrayList;
-import java.util.Random;
 
 import lib.ButtonText;
 import lib.jog.input;
@@ -16,7 +15,7 @@ import btc.Main;
 
 public class SinglePlayerGame extends Game {
 
-	/** The player */
+	/** The current player */
 	private Player player;
 
 
@@ -41,96 +40,36 @@ public class SinglePlayerGame extends Game {
 	@Override
 	public void start() {
 		super.start();
-
-		// Set up airports
-		Airport airport1 = Airport.create("Mosgrizzly Airport",
-				(window.width() - (2 * xOffset)) / 4,
-				window.height() / 2);
-
-		Airport airport2 = Airport.create("Mosbear Airport",
-				3 * (window.width() - (2 * xOffset)) / 4,
-				window.height() / 2);
-
-		Airport[] airports = new Airport[2];
-		airports[0] = airport1;
-		airports[1] = airport2;
-
-		// Set up entry/exit points
-		Waypoint topLeft = new Waypoint(8, 8,
-				true, "North West Top Leftonia");
-		Waypoint bottomLeft = new Waypoint(8, window.height() - (2 * yOffset) - 4,
-				true, "100 Acre Woods");
-		Waypoint topRight = new Waypoint(window.width() - (2 * xOffset) - 4, 8,
-				true, "City of Rightson");
-		Waypoint bottomRight = new Waypoint(window.width() - (2 * xOffset) - 4,
-				window.height() - (2 * yOffset) - 4,
-				true, "South Sea");
-
-		locationWaypoints = new Waypoint[4 + airports.length];
-		locationWaypoints[0] = topLeft;
-		locationWaypoints[1] = bottomLeft;
-		locationWaypoints[2] = topRight;
-		locationWaypoints[3] = bottomRight;
 		
+		// Assign location waypoints to the player
 		locationWaypointMap.put(0, 0);
 		locationWaypointMap.put(1, 0);
 		locationWaypointMap.put(2, 0);
 		locationWaypointMap.put(3, 0);
+		locationWaypointMap.put(4, 0);
+		locationWaypointMap.put(5, 0);
 		
-		// Add airports to list of location waypoints
-		for (int i = 0; i < airports.length; i++) {
-			locationWaypoints[4 + i] = airports[i];
-			locationWaypointMap.put(4 + i, 0);
-		}
-
-		// Set up map waypoints
-		// Create airspace waypoints
-		Waypoint wp1 = new Waypoint(125, 175, false);
-		Waypoint wp2 = new Waypoint(200, 635, false);
-		Waypoint wp3 = new Waypoint(250, 400, false);
-		Waypoint wp4 = new Waypoint(500, 200, false);
-		Waypoint wp5 = new Waypoint(500, 655, false);
-		Waypoint wp6 = new Waypoint(700, 100, false);
-		Waypoint wp7 = new Waypoint(800, 750, false);
-		Waypoint wp8 = new Waypoint(1000, 750, false);
-		Waypoint wp9 = new Waypoint(1040, 150, false);
-		Waypoint wp10 = new Waypoint(1050, 400, false);
-
-		// Add in airspace waypoints
-		Waypoint[] airspaceWaypoints = new Waypoint[10];
-		airspaceWaypoints[0] = wp1;
-		airspaceWaypoints[1] = wp2;
-		airspaceWaypoints[2] = wp3;
-		airspaceWaypoints[3] = wp4;
-		airspaceWaypoints[4] = wp5;
-		airspaceWaypoints[5] = wp6;
-		airspaceWaypoints[6] = wp7;
-		airspaceWaypoints[7] = wp8;
-		airspaceWaypoints[8] = wp9;
-		airspaceWaypoints[9] = wp10;
-		
-		// Assign half of the waypoints to each player
-		Waypoint[] player0LocationWaypoints = getPlayersLocationWaypoints(0);
-		Waypoint[] player0Waypoints = new Waypoint[airspaceWaypoints.length
-		                                           + player0LocationWaypoints.length];
+		// Generate list of waypoints to pass to the player
+		Waypoint[] playersWaypoints = new Waypoint[airspaceWaypoints.length
+		                                           + locationWaypoints.length];
 		
 		for (int i = 0; i < airspaceWaypoints.length; i++) {
-			player0Waypoints[i] = airspaceWaypoints[i];
+			playersWaypoints[i] = airspaceWaypoints[i];
 		}
 		
-		// Add in any location waypoints assigned to the player
-		for (int i = 0; i < player0LocationWaypoints.length; i++) {
-			player0Waypoints[airspaceWaypoints.length + i]
-					= player0LocationWaypoints[i];
+		// Add in location waypoints
+		for (int i = 0; i < locationWaypoints.length; i++) {
+			playersWaypoints[airspaceWaypoints.length + i]
+					= locationWaypoints[i];
 		}
 		
-		// Set up the players TODO
+		// Set up the player
 		player = new Player("Bob2", true, "127.0.0.1",
-				airports, player0Waypoints);
+				airports, playersWaypoints);
 		getPlayers().add(player);
 
 		// Create the manual control button
-		manualControlButtons = new ButtonText[1];
+		manualControlButtons = new ButtonText[players.size()];
 		
 		ButtonText.Action manual = new ButtonText.Action() {
 			@Override
@@ -139,10 +78,12 @@ public class SinglePlayerGame extends Game {
 			}
 		};
 
-		manualControlButtons[player.getID()] = new ButtonText(" Take Control", manual,
-				(window.width() - 128 - (2 * xOffset)) / 2, 32, 128, 32, 8, 4);
-		
-		// Reset game attributes
+		manualControlButtons[player.getID()]
+				= new ButtonText(" Take Control", manual,
+						(window.width() - 128 - (2 * xOffset)),
+						32, 128, 32, 8, 4);
+
+		// Reset game attributes for each player
 		deselectAircraft(player);
 	}
 
@@ -309,103 +250,11 @@ public class SinglePlayerGame extends Game {
 			break;
 
 		case input.KEY_F5 :
-			Aircraft a1 = createAircraft();
-			Aircraft a2 = createAircraft();
+			Aircraft a1 = createAircraft(player);
+			Aircraft a2 = createAircraft(player);
 			gameOver(a1, a2);
 			break;
 		}
-	}
-
-
-	// Helper methods -------------------------------------------------------------------
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected Aircraft createAircraft() {
-		String destinationName;
-		String originName = "";
-		Waypoint originPoint = null;
-		Waypoint destinationPoint;
-		Airport destinationAirport = null;
-		
-		// Get a list of this player's location waypoints
-		Waypoint[] playersLocationWaypoints = getPlayersLocationWaypoints(player);
-
-		// Get a list of location waypoints where a crash would not be immediate
-		ArrayList<Waypoint> availableOrigins = getAvailableEntryPoints(player);
-
-		if (availableOrigins.isEmpty()) {
-			int randomAirport = (new Random())
-					.nextInt((player.getAirports().length - 1) + 1);
-			
-			if (player.getAirports()[randomAirport].aircraftHangar.size()
-					== player.getAirports()[randomAirport].getHangarSize()) {
-				return null;
-			} else {
-				originPoint = player.getAirports()[randomAirport]
-						.getDeparturesCentre();
-				originName = player.getAirports()[randomAirport]
-						.name;
-			}
-		} else {
-			originPoint = availableOrigins.get(
-					(new Random()).nextInt((availableOrigins.size() - 1) + 1));
-
-			// If random point is an airport, use its departures location
-			if (originPoint instanceof Airport) {
-				originName = originPoint.name;
-				originPoint = ((Airport) originPoint).getDeparturesCentre();
-			} else {
-				
-				for (int i = 0; i < playersLocationWaypoints.length; i++) {
-					if (playersLocationWaypoints[i].equals(originPoint)) {
-						originName = playersLocationWaypoints[i].getName();
-						break;
-					}
-				}
-			}
-		}
-
-		// Generate a destination
-		// Keep trying until the random destination is not equal to the chosen origin
-		// Also, if origin is an airport, prevent destination from being an airport
-		int destination = 0;
-
-		do {
-			destination = (new Random())
-					.nextInt((playersLocationWaypoints.length - 1) + 1);
-			destinationName = playersLocationWaypoints[destination].getName();
-			destinationPoint = playersLocationWaypoints[destination];
-		} while (destinationName.equals(originName) ||
-				((getAirportFromName(originName) != null)
-						&& (getAirportFromName(destinationName) != null)));
-		
-		// If destination is an airport, flag it
-		if (destinationPoint instanceof Airport) {
-			destinationAirport = (Airport) destinationPoint;
-		}
-
-		// Generate a unique, random flight name
-		String name = "";
-		boolean nameTaken = true;
-		while (nameTaken) {
-			name = "Flight " + (int)(900 * Math.random() + 100);
-			nameTaken = false;
-			
-			// Check the generated name against every other flight name
-			for (Aircraft a : getAllAircraft()) {
-				if (a.getName() == name) nameTaken = true;
-			}
-		}
-
-		// Generate a random speed, centred around 37
-		int speed = 32 + (int)(10 * Math.random());
-
-		return new Aircraft(name, destinationName, originName,
-				destinationPoint, originPoint, aircraftImage, speed,
-				player.getWaypoints(), difficulty, destinationAirport);
 	}
 
 

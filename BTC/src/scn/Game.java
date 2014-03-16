@@ -4,6 +4,7 @@ import java.io.File;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.Random;
 
 import lib.ButtonText;
 import lib.jog.audio;
@@ -62,8 +63,14 @@ public abstract class Game extends Scene {
 	/** The background to draw in the airspace */
 	protected Image background;
 	
+	/** The airports in the airspace */
+	protected static Airport[] airports;
+	
 	/** The set of waypoints in the airspace which are entry/exit points */
-	protected Waypoint[] locationWaypoints;
+	protected static Waypoint[] locationWaypoints;
+	
+	/** The waypoints through which aircraft must travel to reach their destination */
+	protected static Waypoint[] airspaceWaypoints;
 	
 	/** The location waypoints under each players' control */
 	protected Hashtable<Integer, Integer> locationWaypointMap;
@@ -87,6 +94,49 @@ public abstract class Game extends Scene {
 	public Game(Main main, DifficultySetting difficulty) {
 		super(main);
 		this.difficulty = difficulty;
+		
+		// Set screen offsets
+		xOffset = 196;
+		yOffset = 48;
+		
+		// Define airports
+		airports = new Airport[] {
+				Airport.create("Mosgrizzly Airport",
+						(window.width() - (2 * xOffset)) / 4,
+						window.height() / 2),
+				Airport.create("Mosbear Airport",
+						3 * (window.width() - (2 * xOffset)) / 4,
+						window.height() / 2)
+		};
+		
+		// Define entry and exit points
+		locationWaypoints = new Waypoint[] {
+				new Waypoint(8, 8,
+						true, "North West Top Leftonia"),
+				new Waypoint(8, window.height() - (2 * yOffset) - 4,
+						true, "100 Acre Woods"),
+				new Waypoint(window.width() - (2 * xOffset) - 4, 8,
+						true, "City of Rightson"),
+				new Waypoint(window.width() - (2 * xOffset) - 4,
+						window.height() - (2 * yOffset) - 4,
+						true, "South Sea"),
+				airports[0],
+				airports[1]
+		};
+		
+		// Define other waypoints
+		airspaceWaypoints = new Waypoint[] {
+				new Waypoint(125, 175, false),
+				new Waypoint(200, 635, false),
+				new Waypoint(250, 400, false),
+				new Waypoint(500, 200, false),
+				new Waypoint(500, 655, false),
+				new Waypoint(700, 100, false),
+				new Waypoint(800, 750, false),
+				new Waypoint(1000, 750, false),
+				new Waypoint(1040, 150, false),
+				new Waypoint(1050, 400, false)
+		};
 	}
 	
 	
@@ -98,10 +148,6 @@ public abstract class Game extends Scene {
 	 */
 	@Override
 	public void start() {
-		// Set screen offsets
-		xOffset = 196;
-		yOffset = 48;
-		
 		// Set up players
 		players = new ArrayList<Player>();
 		
@@ -542,7 +588,7 @@ public abstract class Game extends Scene {
 	 * Creates a new aircraft object and introduces it to the airspace. 
 	 */
 	protected void generateFlight(Player player) {
-		Aircraft aircraft = createAircraft();
+		Aircraft aircraft = createAircraft(player);
 
 		if (aircraft != null && player != null) {
 			// If the aircraft starts at an airport, add it to that airport
@@ -562,7 +608,90 @@ public abstract class Game extends Scene {
 	 * Handle aircraft creation.
 	 * @return the created aircraft object
 	 */
-	protected abstract Aircraft createAircraft();
+	protected Aircraft createAircraft(Player player) {
+		String destinationName;
+		String originName = "";
+		Waypoint originPoint = null;
+		Waypoint destinationPoint;
+		Airport destinationAirport = null;
+		
+		// Get a list of this player's location waypoints
+		Waypoint[] playersLocationWaypoints = getPlayersLocationWaypoints(player);
+
+		// Get a list of location waypoints where a crash would not be immediate
+		ArrayList<Waypoint> availableOrigins = getAvailableEntryPoints(player);
+
+		if (availableOrigins.isEmpty()) {
+			int randomAirport = (new Random())
+					.nextInt((player.getAirports().length - 1) + 1);
+			
+			if (player.getAirports()[randomAirport].aircraftHangar.size()
+					== player.getAirports()[randomAirport].getHangarSize()) {
+				return null;
+			} else {
+				originPoint = player.getAirports()[randomAirport]
+						.getDeparturesCentre();
+				originName = player.getAirports()[randomAirport]
+						.name;
+			}
+		} else {
+			originPoint = availableOrigins.get(
+					(new Random()).nextInt((availableOrigins.size() - 1) + 1));
+
+			// If random point is an airport, use its departures location
+			if (originPoint instanceof Airport) {
+				originName = originPoint.name;
+				originPoint = ((Airport) originPoint).getDeparturesCentre();
+			} else {
+				
+				for (int i = 0; i < playersLocationWaypoints.length; i++) {
+					if (playersLocationWaypoints[i].equals(originPoint)) {
+						originName = playersLocationWaypoints[i].getName();
+						break;
+					}
+				}
+			}
+		}
+
+		// Generate a destination
+		// Keep trying until the random destination is not equal to the chosen origin
+		// Also, if origin is an airport, prevent destination from being an airport
+		int destination = 0;
+
+		do {
+			destination = (new Random())
+					.nextInt((playersLocationWaypoints.length - 1) + 1);
+			destinationName = playersLocationWaypoints[destination].getName();
+			destinationPoint = playersLocationWaypoints[destination];
+		} while (destinationName.equals(originName) ||
+				((getAirportFromName(originName) != null)
+						&& (getAirportFromName(destinationName) != null)));
+		
+		// If destination is an airport, flag it
+		if (destinationPoint instanceof Airport) {
+			destinationAirport = (Airport) destinationPoint;
+		}
+
+		// Generate a unique, random flight name
+		String name = "";
+		boolean nameTaken = true;
+		while (nameTaken) {
+			name = "Flight " + (int)(900 * Math.random() + 100);
+			nameTaken = false;
+			
+			// Check the generated name against every other flight name
+			for (Aircraft a : getAllAircraft()) {
+				if (a.getName() == name) nameTaken = true;
+			}
+		}
+
+		// Generate a random speed, centred around 37
+		int speed = 32 + (int)(10 * Math.random());
+
+		return new Aircraft(name, destinationName, originName,
+				destinationPoint, originPoint, aircraftImage, speed,
+				player.getWaypoints(), difficulty, destinationAirport);
+	}
 	
 	/**
 	 * Causes deselection of the selected aircraft.
@@ -943,7 +1072,7 @@ public abstract class Game extends Scene {
 	
 	/**
 	 * This method should only be used for unit testing (avoiding instantiation of main class).
-	 * Its purpose is to initialize array where aircraft are stored. 
+	 * Its purpose is to initialise the list of aircraft.
 	 */	
 	@Deprecated
 	public abstract void initializeAircraftArray();
