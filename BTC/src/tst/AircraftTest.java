@@ -5,6 +5,7 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 import org.junit.Before;
 
+import scn.Game;
 import scn.SinglePlayerGame;
 import scn.Game.DifficultySetting;
 import cls.Aircraft;
@@ -124,8 +125,8 @@ public class AircraftTest {
 	public void totalDistanceInFlightPlan() {
 		SinglePlayerGame testDemo = new SinglePlayerGame(null, DifficultySetting.MEDIUM);
 		testDemo.initializeAircraftArray();
-		testDemo.getPlayers().get(0).getAircraft().add(testAircraft);
-		Aircraft plane = testDemo.getPlayers().get(0).getAircraft().get(0);
+		Game.getPlayers().get(0).getAircraft().add(testAircraft);
+		Aircraft plane = Game.getPlayers().get(0).getAircraft().get(0);
 		int distance = 0;
 		
 		for (int i = 0; i < plane.getFlightPlan().getRoute().length - 1; i++) {
