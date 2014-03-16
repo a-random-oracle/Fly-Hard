@@ -20,7 +20,7 @@ public class AirportTest {
 	
 	@Before
 	public void setUp() {
-		test_airport = Airport.create("", window.width(), window.height(), true);
+		test_airport = Airport.create("", window.width(), window.height());
 		
 		Waypoint[] waypointList = new Waypoint[]{
 				new Waypoint(0, 0, true),

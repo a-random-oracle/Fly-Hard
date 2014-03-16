@@ -15,8 +15,8 @@ import lib.jog.input.EventHandler;
 
 public class Airport extends Waypoint implements EventHandler, Serializable {
 	
-	// TODO last updated: 2014.03.15 14:35
-	private static final long serialVersionUID = 5053500661843320357L;
+	// TODO last updated: 2014.03.16 18:50
+	private static final long serialVersionUID = -3563392746662125848L;
 
 	/** The distance between the left edge of the airport image, and the arrivals area */
 	private static final double RELATIVE_ARRIVALS_X = 91;
@@ -111,13 +111,15 @@ public class Airport extends Waypoint implements EventHandler, Serializable {
 	 * @param x the x position to display the top-left corner of the airport at
 	 * @param y the y position to display the top-left corner of the airport at
 	 */
-	private Airport(String name, double x, double y, boolean testing) {
+	private Airport(String name, double x, double y) {
 		super((x + (RELATIVE_ARRIVALS_X + (RELATIVE_ARRAVALS_WIDTH/2)) * Main.getMinScale()),
 				(y + (RELATIVE_ARRIVALS_Y + (RELATIVE_ARRIVALS_HEIGHT/2)) * Main.getMinScale()),
 				true, name);
 		
 		// Load the aircraft image
-		if (!testing)  image = graphics.newImage("gfx" + File.separator + "Airport.png");
+		if (!Main.testing) {
+			image = graphics.newImage("gfx" + File.separator + "Airport.png");
+		}
 		
 		xLocation = x;
 		yLocation = y;
@@ -152,30 +154,7 @@ public class Airport extends Waypoint implements EventHandler, Serializable {
 	public static Airport create(String name, double x, double y) {
 		return new Airport(name,
 				(x - RELATIVE_ARRIVALS_X - (RELATIVE_ARRAVALS_WIDTH/2)),
-				(y - RELATIVE_ARRIVALS_Y - (RELATIVE_ARRIVALS_HEIGHT/2)),
-				false);
-	}
-	
-	/**
-	 * Creates an airport at the given location.
-	 * <p>
-	 * <b>This should be used for testing ONLY.<b>
-	 * </p>
-	 * <p>
-	 * This method applies the necessary scaling to position the airport
-	 * relative to the map.
-	 * </p>
-	 * @param name the name of the airport
-	 * @param x the position at which the centre of the airport should be located
-	 * @param y the position at which the centre of the airport should be located
-	 */
-	@Deprecated
-	public static Airport create(String name,
-			double x, double y, boolean testing) {
-		return new Airport(name,
-				(x - RELATIVE_ARRIVALS_X - (RELATIVE_ARRAVALS_WIDTH/2)),
-				(y - RELATIVE_ARRIVALS_Y - (RELATIVE_ARRIVALS_HEIGHT/2)),
-				testing);
+				(y - RELATIVE_ARRIVALS_Y - (RELATIVE_ARRIVALS_HEIGHT/2)));
 	}
 	  
 	/** 
