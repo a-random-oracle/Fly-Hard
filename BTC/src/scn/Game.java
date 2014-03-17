@@ -46,7 +46,7 @@ public abstract class Game extends Scene {
 	public enum DifficultySetting {EASY, MEDIUM, HARD}
 	
 	/** The default maximum number of aircraft */
-	public static final int DEFAULT_MAX_AIRCRAFT = 5;
+	public static final int DEFAULT_MAX_AIRCRAFT = 2;
 	
 	/** The current difficulty setting */
 	protected DifficultySetting difficulty;
@@ -274,7 +274,7 @@ public abstract class Game extends Scene {
 				player.setFlightGenerationTimeElapsed(player
 						.getFlightGenerationTimeElapsed()
 						- getFlightGenerationInterval(player));
-
+				
 				if (player.getAircraft().size() < player.getMaxAircraft()) {
 					generateFlight(player);
 				}
@@ -443,10 +443,14 @@ public abstract class Game extends Scene {
 			// Display the manual control button
 			graphics.setColour(graphics.black);
 			graphics.rectangle(true,
-					(window.width() - 128 - (2 * xOffset)) / 2, 32, 128, 32);
+					(player.getID() + 1) * (window.width()
+							- 128 - (2 * xOffset)) / (players.size() + 1),
+							32, 128, 32);
 			graphics.setColour(graphics.green);
 			graphics.rectangle(false,
-					(window.width() - 128 - (2 * xOffset)) / 2, 32, 128, 32);
+					(player.getID() + 1) * (window.width()
+							- 128 - (2 * xOffset)) / (players.size() + 1),
+							32, 128, 32);
 			manualControlButtons[player.getID()].draw();
 		}
 	}
@@ -483,7 +487,7 @@ public abstract class Game extends Scene {
 		
 		// Print the current player
 		graphics.printCentred("Currently playing as player: "
-				+ mouseSide + 1,//+ players.get(mouseSide % players.size()).getName(),
+				+ players.get(mouseSide % players.size()).getName(),
 				(((double) window.width() - (2 * xOffset)) / 2), 32d,
 				1, 300);
 	}
@@ -621,6 +625,8 @@ public abstract class Game extends Scene {
 	 * @return the created aircraft object
 	 */
 	protected Aircraft createAircraft(Player player) {
+		out.addOrder(player.getName());
+		
 		String destinationName;
 		String originName = "";
 		Waypoint originPoint = null;
@@ -643,8 +649,7 @@ public abstract class Game extends Scene {
 			} else {
 				originPoint = player.getAirports()[randomAirport]
 						.getDeparturesCentre();
-				originName = player.getAirports()[randomAirport]
-						.name;
+				originName = player.getAirports()[randomAirport].name;
 			}
 		} else {
 			originPoint = availableOrigins.get(
@@ -696,10 +701,10 @@ public abstract class Game extends Scene {
 				if (a.getName() == name) nameTaken = true;
 			}
 		}
-
+		
 		// Generate a random speed, centred around 37
 		int speed = 32 + (int)(10 * Math.random());
-
+		
 		return new Aircraft(name, destinationName, originName,
 				destinationPoint, originPoint, aircraftImage, speed,
 				player.getWaypoints(), difficulty, destinationAirport);
@@ -1053,6 +1058,7 @@ public abstract class Game extends Scene {
 		// Search through list of players to find highest ID
 		// currently in use
 		for (Player player : players) {
+			out.addOrder(player.getName() + " = " + player.getID());
 			if (player.getID() > maxPlayerID) maxPlayerID = player.getID();
 		}
 		

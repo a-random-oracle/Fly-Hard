@@ -73,11 +73,11 @@ public class MultiPlayerGame extends Game {
 		player0Waypoints[3] = airspaceWaypoints[3];
 		player0Waypoints[4] = airspaceWaypoints[4];
 		
-		player0Waypoints[0] = airspaceWaypoints[5];
-		player0Waypoints[1] = airspaceWaypoints[6];
-		player0Waypoints[2] = airspaceWaypoints[7];
-		player0Waypoints[3] = airspaceWaypoints[8];
-		player0Waypoints[4] = airspaceWaypoints[9];
+		player1Waypoints[0] = airspaceWaypoints[5];
+		player1Waypoints[1] = airspaceWaypoints[6];
+		player1Waypoints[2] = airspaceWaypoints[7];
+		player1Waypoints[3] = airspaceWaypoints[8];
+		player1Waypoints[4] = airspaceWaypoints[9];
 		
 		// Add in location waypoints
 		player0Waypoints[5] = locationWaypoints[0];
@@ -98,9 +98,9 @@ public class MultiPlayerGame extends Game {
 		// Set up the player
 		player0 = new Player("Bob1", true, "127.0.0.1",
 				player0Airports, player0Waypoints);
+		getPlayers().add(player0);
 		player1 = new Player("Bob2", false, "127.0.0.1",
 				player1Airports, player1Waypoints);
-		getPlayers().add(player0);
 		getPlayers().add(player1);
 
 		// Create the manual control button
