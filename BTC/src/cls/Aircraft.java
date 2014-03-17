@@ -22,7 +22,7 @@ import lib.jog.window;
  */
 public class Aircraft implements Serializable {
 
-	// TODO last updated: 2014.03.17 22:45
+	// TODO last updated: 2014.03.17 23:30
 	private static final long serialVersionUID = 5055902995723199588L;
 	
 	// Static ints for use where altitude state is to be changed
@@ -501,9 +501,9 @@ public class Aircraft implements Serializable {
 		graphics.setColour(graphics.green);
 
 		// Centre positions of aircraft
-		Double xpos = position.getX() - image.width() / 2;
-		Double ypos = position.getY() - image.height() / 2;
-
+		Double xpos = position.getX() - (image.width() / 2);
+		Double ypos = position.getY() - (image.height() / 2);
+		
 		// Draw the compass circle
 		graphics.circle(false, xpos, ypos, COMPASS_RADIUS, 30);
 
@@ -512,10 +512,8 @@ public class Aircraft implements Serializable {
 			double r = Math.toRadians(i - 90);
 			double x = xpos + (1.1 * COMPASS_RADIUS * Math.cos(r));
 			double y = ypos - 2 + (1.1 * COMPASS_RADIUS * Math.sin(r));
-			if (i > 170)
-				x -= 24;
-			if (i == 180)
-				x += 12;
+			if (i > 170) x -= 24;
+			if (i == 180) x += 12;
 			graphics.print(String.valueOf(i), x, y);
 		}
 
@@ -523,10 +521,13 @@ public class Aircraft implements Serializable {
 		double x, y;
 		if (isManuallyControlled && input.isMouseDown(input.MOUSE_RIGHT)) {
 			graphics.setColour(graphics.green_transp);
-			double r = Math.atan2(input.mouseY() - position.getY(),
-					input.mouseX() - position.getX());
+			double r = Math.atan2((input.mouseY() - Game.getYOffset())
+					- position.getY(),
+					(input.mouseX() - Game.getXOffset())
+					- position.getX());
 			x = xpos + (COMPASS_RADIUS * Math.cos(r));
 			y = ypos + (COMPASS_RADIUS * Math.sin(r));
+			
 			// Draw several lines to make the line thicker
 			graphics.line(xpos, ypos, x, y);
 			graphics.line(xpos - 1, ypos, x, y);

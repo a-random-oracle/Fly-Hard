@@ -616,12 +616,12 @@ public abstract class Game extends Scene {
 			player.setSelectedWaypoint(null);
 		} else if (key == input.MOUSE_RIGHT) {
 			if (player.isCompassClicked() && player.getSelectedAircraft() != null) {
-				double dx = input.mouseX()
+				double dx = (input.mouseX() - xOffset)
 						- player.getSelectedAircraft().getPosition().getX()
-						+ xOffset - 8;
-				double dy = input.mouseY()
+						- 8;
+				double dy = (input.mouseY() - yOffset)
 						- player.getSelectedAircraft().getPosition().getY()
-						+ yOffset - 8;
+						- 8;
 				double newBearing = Math.atan2(dy, dx);
 				player.getSelectedAircraft().setBearing(newBearing);
 			}
