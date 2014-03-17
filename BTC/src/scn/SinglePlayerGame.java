@@ -64,7 +64,7 @@ public class SinglePlayerGame extends Game {
 		}
 		
 		// Set up the player
-		player = new Player("Bob2", true, "127.0.0.1",
+		player = new Player("Bob1", true, "127.0.0.1",
 				airports, playersWaypoints);
 		getPlayers().add(player);
 
