@@ -86,31 +86,64 @@ public class FlightPlan implements Serializable {
 	}
 	
 	/**
-	 * Creates a sensible route from an origin to a destination from an array of
-	 * waypoints. Waypoint costs are considered according to distance from
-	 * current aircraft location Costs are further weighted by distance from
-	 * waypoint to destination.
-	 * @param origin the waypoint from which to begin.
-	 * @param destination the waypoint at which to end.
-	 * @param waypoints the waypoints to be used.
-	 * @return a sensible route between the origin and the destination, using a sensible amount of waypoint.
+	 * Creates a sensible route from an origin to a destination from an array of waypoints.
+	 * 
+	 * Waypoint costs are considered according to distance from current aircraft location
+	 * Costs are further weighted by distance from waypoint to destination
+	 * @param origin the waypoint from which to begin
+	 * @param destination the waypoint at which to end
+	 * @param waypoints the waypoints to be used
+	 * @return a sensible route between the origin and the destination, using a sensible
+	 * 			amount of waypoint
 	 */
-	private Waypoint[] findGreedyRoute(Waypoint origin, Waypoint destination, Waypoint[] waypoints) {
-		// To hold the route as we generate it.
-		ArrayList<Waypoint> selectedWaypoints = new ArrayList<Waypoint>();
+	public Waypoint[] findGreedyRoute(Waypoint origin, Waypoint destination,
+			Waypoint[] waypoints) {
+		Waypoint[] allWaypoints;
+		
+		// Is destination in waypoints list
+		boolean destInWaypoints = false;
+		
+		for (int i = 0; i < waypoints.length; i++) {
+			if (waypoints[i] == destination) {
+				destInWaypoints = true;
+				break;
+			}
+		}
+		
+		// If dest not in waypoint list, add it in
+		if (!destInWaypoints) {
+			int waypointCount = 0;
+			allWaypoints = new Waypoint[waypoints.length + 1];
+			
+			for (Waypoint waypoint : waypoints) {
+				allWaypoints[waypointCount] = waypoint;
+				waypointCount++;
+			}
 
-		// To track our position as we generate the route. Initialise to the start of the route
+			allWaypoints[waypointCount] = destination;
+		} else {
+			allWaypoints = waypoints.clone();
+		}
+		
+		// Create an array to hold the route as we generate it
+		ArrayList<Waypoint> selectedWaypoints = new ArrayList<Waypoint>();
+		
+		// Create a waypoint which will track our position as we generate the route
+		// Initialise this to the start of the route
 		Waypoint currentPos = origin;
 
-		// To track the closest next waypoint
-		double cost = Double.MAX_VALUE;
+		// Set the cost to a high value (as per using a greedy algorithm)
+		double cost = 99999999999999.0;
+		
+		// Create a waypoint which will track the closest waypoint
 		Waypoint cheapest = null;
 		
-		// To track if the route is complete
+		// Set a flag so we can tell if the route is complete
 		boolean atDestination = false;
-
+		
 		while (!atDestination) {
-			for (Waypoint point : waypoints) {
+			// For each possible waypoint
+			for (Waypoint point : allWaypoints) {
 				boolean skip = false;
 
 				for (Waypoint routePoints : selectedWaypoints) {
@@ -118,56 +151,63 @@ public class FlightPlan implements Serializable {
 					// If we have, skip evaluating the point
 					// This protects the aircraft from getting stuck looping between points
 					if (routePoints.getLocation().equals(point.getLocation())) {
-						skip = true; // Flag to skip
-						break; // No need to check rest of list, already found a match.
+						skip = true; //flag to skip
+						break; // no need to check rest of list, already found a match.
 					}
 				}
+				
 				// Do not consider the waypoint we are currently at or the origin
 				// Do not consider offscreen waypoints which are not the destination
 				// Also skip if flagged as a previously selected waypoint
-				if (skip | point.getLocation().equals(currentPos.getLocation())
-						| point.getLocation().equals(origin.getLocation())
-						| (point.isEntryOrExit() && !(point.getLocation()
-								.equals(destination.getLocation())))) {
-					skip = false; // Reset flag
+				if (skip == true
+						|| point.getLocation().equals(currentPos.getLocation())
+						|| point.getLocation().equals(origin.getLocation())
+						|| ((point.isEntryOrExit())
+								&& (!point.getLocation().equals(destination.getLocation())))) {
+					skip = false;
 					continue;
 				} else {
-					/*
-					 * Get cost of visiting waypoint 
-					 * Compare cost vs current cheapest 
-					 * If smaller, replace
-					 */
-					if (point.getCost(currentPos)
-							+ 0.5 * Waypoint.getCostBetween(point, destination) < cost) {
-						// Cheaper route found, update
+					// Get the cost of visiting waypoint
+					// Compare cost this cost to the current cheapest
+					// If smaller, then this is the new cheapest waypoint
+					if (point.getCost(currentPos) + 0.5
+							* Waypoint.getCostBetween(point, destination) < cost) {
+						// Cheaper route found, so update
 						cheapest = point;
-						cost = point.getCost(currentPos)
-								+ 0.5 * Waypoint.getCostBetween(point, destination);
+						cost = point.getCost(currentPos) + 0.5
+								* Waypoint.getCostBetween(point, destination);
 					}
 				}
+			}
 
-			} // End for - evaluated all waypoints
 			// The cheapest waypoint must have been found
 			assert cheapest != null : "The cheapest waypoint was not found";
 
+			// If the cheapest waypoint is the destination, then we have sucessfully
+			// generated a route to the aircraft's destination, so break out of loop
 			if (cheapest.getLocation().equals(destination.getLocation())) {
-				// Route has reached destination, break out of while loop
+				// route has reached destination 
+				// break out of while loop
 				atDestination = true;
 			}
+
 			// Update the selected route
 			// Consider further points in route from the position of the selected point
 			selectedWaypoints.add(cheapest);
 			currentPos = cheapest;
+			
 			// Resaturate cost for next loop
-			cost = Double.MAX_VALUE;
-
-		} // End while
-		// Create a Waypoint[] to hold the new route
+			cost = 99999999999.0;
+		}
+		
+		// Create an array to hold the new route
 		Waypoint[] route = new Waypoint[selectedWaypoints.size()];
+		
 		// Fill route with the selected waypoints
 		for (int i = 0; i < selectedWaypoints.size(); i++) {
 			route[i] = selectedWaypoints.get(i);
 		}
+
 		return route;
 	}
 	

@@ -135,6 +135,7 @@ public class Aircraft implements Serializable {
 			Waypoint destinationPoint, Waypoint originPoint, Image image,
 			double speed, Waypoint[] sceneWaypoints,
 			DifficultySetting difficulty, Airport airport) {
+		
 		this.flightName = name;
 		this.flightPlan = new FlightPlan(sceneWaypoints, nameOrigin,
 				nameDestination, originPoint, destinationPoint, airport);
