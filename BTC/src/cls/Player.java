@@ -7,7 +7,7 @@ import scn.Game;
 
 public class Player implements Serializable {
 	
-	// TODO last updated: 2014.03.17 22:45
+	// TODO last updated: 2014.03.17 22:50
 	private static final long serialVersionUID = -1355541630946018678L;
 
 	/** The list of colours to associate with aircraft */
