@@ -22,7 +22,7 @@ import lib.jog.window;
  */
 public class Aircraft implements Serializable {
 
-	// TODO last updated: 2014.03.12 23:50
+	// TODO last updated: 2014.03.17 22:45
 	private static final long serialVersionUID = 5055902995723199588L;
 	
 	// Static ints for use where altitude state is to be changed
