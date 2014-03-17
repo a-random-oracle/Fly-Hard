@@ -26,7 +26,6 @@ public class SpriteAnimation {
 	/**
 	 * <h1>Sprite Animation</h1>
 	 * <p>Creates an animation class</p>
-	 * @author Stephen Webb
 	 * @param image image from which the quads are taken.
 	 * @param x the x position to draw the animation.
 	 * @param y the y position to draw the animation.
@@ -65,7 +64,6 @@ public class SpriteAnimation {
 	/**
 	 * <h1>Sprite Animation</h1>
 	 * <p>Creates an animation class</p>
-	 * @author Stephen Webb
 	 * @param imageFilepath the filepath at which the image is.  
 	 * @param x the x position to draw the animation.
 	 * @param y the y position to draw the animation.

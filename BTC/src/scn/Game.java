@@ -1148,8 +1148,8 @@ public abstract class Game extends Scene {
 	
 	/**
 	 * Gets all the location waypoints assigned to a particular player's ID.
-	 * @param player
-	 * 			the player to get waypoints for
+	 * @param playerID
+	 * 			the ID of the player to get waypoints for
 	 * @return a list of the selected player's location waypoints
 	 */
 	public Waypoint[] getPlayersLocationWaypoints(int playerID) {

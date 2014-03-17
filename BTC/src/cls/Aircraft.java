@@ -23,8 +23,8 @@ import lib.jog.window;
 public class Aircraft implements Serializable {
 
 	// TODO last updated: 2014.03.12 23:50
-	private static final long serialVersionUID = -6259795098509299784L;
-
+	private static final long serialVersionUID = 5055902995723199588L;
+	
 	// Static ints for use where altitude state is to be changed
 	public final static int ALTITUDE_CLIMB = 1;
 	public final static int ALTITUDE_FALL = -1;
@@ -33,10 +33,8 @@ public class Aircraft implements Serializable {
 	/** The size of the aircraft in pixels */
 	private final static int RADIUS = 16;
 
-	/**
-	 * How far away (in pixels) the mouse can be from the plane but still select
-	 * it
-	 */
+	/** How far away (in pixels) the mouse can be from the plane
+	 * but still select it */
 	private final static int MOUSE_LENIENCY = 32;
 
 	/** The size of the compass circle */
@@ -55,12 +53,11 @@ public class Aircraft implements Serializable {
 	/** How much the plane can turn per second - in radians */
 	private double turnSpeed;
 
-	/**
-	 * The unique name of the aircraft. Format is Flight followed by a random
-	 * number between 100 and 900.
-	 */
+	/** The unique name of the aircraft. Format is 'Flight' followed by a random
+	 * number between 100 and 900. */
 	private String flightName;
 
+	/** The aircraft's current position */
 	private Vector position;
 
 	/** The aircraft's current velocity */
@@ -72,11 +69,7 @@ public class Aircraft implements Serializable {
 	/** Whether the aircraft is currently under manual control */
 	private boolean isManuallyControlled = false;
 
-	/**
-	 * Whether the aircraft has reached its destination. Note that if the
-	 * destination is airport, a land command must then be given before the
-	 * flight can terminate.
-	 */
+	/** Whether the aircraft has reached its destination */
 	private boolean hasFinished = false;
 
 	/** Whether the aircraft is currently at an airport and waiting to land */
@@ -88,7 +81,7 @@ public class Aircraft implements Serializable {
 	/** The plan the aircraft will follow to reach its destination */
 	private FlightPlan flightPlan;
 
-	/** Whether the aircraft is currently landing */
+	/** A value representing whether the aircraft is currently landing */
 	private boolean isLanding = false;
 
 	/** The point the aircraft is currently heading towards */
@@ -100,7 +93,7 @@ public class Aircraft implements Serializable {
 	/** The stage of its flight path the aircraft is at */
 	private int currentRouteStage = 0;
 
-	/** Avalue representing whether the plane is climbing or falling */
+	/** A value representing whether the plane is climbing or falling */
 	private int altitudeState;
 
 	/** Whether the collision warning sound is currently playing */
@@ -111,7 +104,6 @@ public class Aircraft implements Serializable {
 
 	/**
 	 * Constructor for an aircraft.
-	 * 
 	 * @param name
 	 *            the name of the flight
 	 * @param nameOrigin
@@ -205,10 +197,10 @@ public class Aircraft implements Serializable {
 	/**
 	 * Updates the plane's position and bearing, the stage of its route, and
 	 * whether it has finished its flight.
-	 * 
-	 * @param time_difference
+	 * @param timeDifference
+	 * 			the time since the last update
 	 */
-	public void update(double time_difference) {
+	public void update(double timeDifference) {
 		if (hasFinished)
 			return;
 
@@ -217,7 +209,7 @@ public class Aircraft implements Serializable {
 			if (position.getZ() > 100) {
 				// Decrease altitude rapidly (2501/second),
 				// ~11 seconds to fully descend
-				position.setZ(position.getZ() - 2501 * time_difference);
+				position.setZ(position.getZ() - 2501 * timeDifference);
 			} else { // Gone too low, land it now TODO (check this)
 				if (flightPlan.getAirport() != null) {
 					flightPlan.getAirport().isActive = false;
@@ -238,7 +230,7 @@ public class Aircraft implements Serializable {
 		}
 
 		// Update position
-		Vector dv = velocity.scaleBy(time_difference);
+		Vector dv = velocity.scaleBy(timeDifference);
 		position = position.add(dv);
 
 		// Update target
@@ -261,13 +253,12 @@ public class Aircraft implements Serializable {
 
 		// Update bearing
 		if (Math.abs(angleToTarget() - getBearing()) > 0.01) {
-			turnTowardsTarget(time_difference);
+			turnTowardsTarget(timeDifference);
 		}
 	}
 
 	/**
 	 * Calculates the angle from the plane's position, to its current target.
-	 * 
 	 * @return the angle in radians to the plane's current target.
 	 */
 	private double angleToTarget() {
@@ -282,6 +273,10 @@ public class Aircraft implements Serializable {
 		}
 	}
 
+	/**
+	 * Checks whether the aircraft is outside the game area.
+	 * @return <code>true</code> if the aircraft is outside the game area
+	 */
 	public boolean isOutOfAirspaceBounds() {
 		double x = position.getX();
 		double y = position.getY();
@@ -291,6 +286,12 @@ public class Aircraft implements Serializable {
 				- (2 * Game.getYOffset())));
 	}
 
+	/**
+	 * Checks if the aircraft is at (or near to) a specified point.
+	 * @param point
+	 * 			the point to check
+	 * @return <code>true</code> if the aircraft is at the specified point
+	 */
 	public boolean isAt(Vector point) {
 		double dy = point.getY() - position.getY();
 		double dx = point.getX() - position.getX();
@@ -300,7 +301,6 @@ public class Aircraft implements Serializable {
 	/**
 	 * Edits the plane's path by changing the waypoint it will go to at a
 	 * certain stage in its route.
-	 * 
 	 * @param routeStage
 	 *            the stage at which the new waypoint will replace the old
 	 * @param newWaypoint
@@ -318,6 +318,15 @@ public class Aircraft implements Serializable {
 		}
 	}
 
+	/**
+	 * Checks whether the mouse cursor is over this aircraft.
+	 * @param mx
+	 * 			the x coordinate of the mouse cursor
+	 * @param my
+	 * 			the y coordinate of the mouse cursor
+	 * @return <code>true</code>, if the mouse is close enough to this aircraft;
+	 * 			<code>false</code> otherwise
+	 */
 	public boolean isMouseOver(int mx, int my) {
 		double dx = position.getX() - mx;
 		double dy = position.getY() - my;
@@ -325,17 +334,20 @@ public class Aircraft implements Serializable {
 	}
 
 	/**
-	 * Calls {@link isMouseOver()} using {@link input.mouseX()} and {@link
-	 * input.mouseY()} as the arguments.
-	 * 
-	 * @return <code>true</code> if the mouse is close enough to this plane,
-	 *         otherwise <code>false</code>
+	 * Calls {@link #isMouseOver(int, int)} using {@link lib.jog.input#mouseX()} and
+	 * {@link  lib.jog.input#mouseY()} as the arguments.
+	 * @return <code>true</code>, if the mouse is close enough to this aircraft;
+	 * 			<code>false</code> otherwise
 	 */
 	public boolean isMouseOver() {
 		return isMouseOver(input.mouseX() - Game.getXOffset(), input.mouseY()
 				- Game.getYOffset());
 	}
 
+	/**
+	 * Checks if the aircraft is at its destination.
+	 * @return <code>true</code> if the aircraft is at its destination
+	 */
 	public boolean isAtDestination() {
 		if (flightPlan.getAirport() != null) { // At airport
 			return flightPlan.getAirport().isWithinArrivals(position, false);
@@ -344,20 +356,31 @@ public class Aircraft implements Serializable {
 		}
 	}
 
-	public void turnLeft(double time_difference) {
-		turnBy(time_difference * -turnSpeed);
-		manualBearingTarget = Double.NaN;
-	}
-
-	public void turnRight(double time_difference) {
-		turnBy(time_difference * turnSpeed);
+	/**
+	 * Causes the aircraft to turn left.
+	 * @param timeDifference
+	 * 			the time since the last update
+	 */
+	public void turnLeft(double timeDifference) {
+		turnBy(timeDifference * -turnSpeed);
 		manualBearingTarget = Double.NaN;
 	}
 
 	/**
-	 * Turns the plane by a certain angle (in radians). Positive angles turn the
-	 * plane clockwise.
-	 * 
+	 * Causes the aircraft to turn right.
+	 * @param timeDifference
+	 * 			the time since the last update
+	 */
+	public void turnRight(double timeDifference) {
+		turnBy(timeDifference * turnSpeed);
+		manualBearingTarget = Double.NaN;
+	}
+
+	/**
+	 * Turns the plane by a certain angle (in radians).
+	 * <p>
+	 * Positive angles turn the plane clockwise.
+	 * </p>
 	 * @param angle
 	 *            the angle by which to turn
 	 */
@@ -371,7 +394,12 @@ public class Aircraft implements Serializable {
 				velocity.getZ());
 	}
 
-	private void turnTowardsTarget(double time_difference) {
+	/**
+	 * Causes the aircraft to turn towards its target.
+	 * @param timeDifference
+	 * 			the time since the last update
+	 */
+	private void turnTowardsTarget(double timeDifference) {
 		// Get difference in angle
 		double angleDifference = (angleToTarget() % (2 * Math.PI))
 				- (getBearing() % (2 * Math.PI));
@@ -389,7 +417,7 @@ public class Aircraft implements Serializable {
 			angleDirection *= -1;
 
 		double angleMagnitude = Math.min(
-				Math.abs((time_difference * turnSpeed)),
+				Math.abs((timeDifference * turnSpeed)),
 				Math.abs(angleDifference));
 
 		// Scale if the angle is greater than 90 degrees
@@ -399,15 +427,28 @@ public class Aircraft implements Serializable {
 		turnBy(angleMagnitude * angleDirection);
 	}
 
+	/**
+	 * Draws the plane and any warning circles if necessary.
+	 * @param colour
+	 * 			the colour to draw the aircraft
+	 * @param highlightedAltitude
+	 * 			the altitude to highlight aircraft at
+	 */
 	public void draw(Integer[] colour, int highlightedAltitude) {
 		draw(colour, highlightedAltitude, null);
 	}
 
 	/**
 	 * Draws the plane and any warning circles if necessary.
-	 * 
-	 * @param the
-	 *            altitude to highlight aircraft at
+	 * <p>
+	 * Also allows an offset to be applied.
+	 * </p>
+	 * @param colour
+	 * 			the colour to draw the aircraft
+	 * @param highlightedAltitude
+	 * 			the altitude to highlight aircraft at
+	 * @param offset
+	 * 			a manual offset to apply
 	 */
 	public void draw(Integer[] colour, int highlightedAltitude, Vector offset) {
 		double alpha;
@@ -454,7 +495,7 @@ public class Aircraft implements Serializable {
 	}
 
 	/**
-	 * Draws the compass around this plane - used for manual control
+	 * Draws a compass around the aircraft.
 	 */
 	public void drawCompass() {
 		graphics.setColour(graphics.green);
@@ -508,7 +549,8 @@ public class Aircraft implements Serializable {
 	}
 
 	/**
-	 * Draws warning circles around this plane and any others that are too near.
+	 * Draws warning circles around this aircraft and any others
+	 * that are too near.
 	 */
 	private void drawWarningCircles(Vector offset) {
 		for (Aircraft plane : planesTooNear) {
@@ -526,7 +568,7 @@ public class Aircraft implements Serializable {
 	}
 
 	/**
-	 * Draws lines starting from the plane, along its flight path to its
+	 * Draws lines starting from the aircraft, along its flight path to its
 	 * destination.
 	 */
 	public void drawFlightPath(boolean isSelected) {
@@ -552,11 +594,8 @@ public class Aircraft implements Serializable {
 					destination.getY());
 		}
 
-		for (int i = currentRouteStage; i < route.length - 1; i++) { // Draw
-																		// lines
-																		// between
-																		// successive
-																		// waypoints
+		// Draw lines between successive waypoints
+		for (int i = currentRouteStage; i < route.length - 1; i++) {
 			graphics.line(route[i].getLocation().getX(), route[i].getLocation()
 					.getY(), route[i + 1].getLocation().getX(), route[i + 1]
 					.getLocation().getY());
@@ -565,7 +604,6 @@ public class Aircraft implements Serializable {
 
 	/**
 	 * Visually represents the waypoint being moved.
-	 * 
 	 * @param modified
 	 *            the index of the waypoint being modified
 	 * @param mouseX
@@ -607,13 +645,10 @@ public class Aircraft implements Serializable {
 	/**
 	 * Updates the number of planes that are violating the separation rule. Also
 	 * checks for crashes.
-	 * 
 	 * @param timeDifference
 	 *            the time elapsed since the last frame.
 	 * @param aircraftList
 	 *            all aircraft in the airspace
-	 * @param global
-	 *            score object used to decrement score if separation is breached
 	 * @return index of plane breaching separation distance with this plane, or
 	 *         -1 if no planes are in violation.
 	 */
@@ -643,7 +678,6 @@ public class Aircraft implements Serializable {
 
 	/**
 	 * Checks whether an aircraft is within a certain distance from this one.
-	 * 
 	 * @param aircraft
 	 *            the aircraft to check.
 	 * @param distance
@@ -657,6 +691,13 @@ public class Aircraft implements Serializable {
 		return dx * dx + dy * dy + dz * dz < distance * distance;
 	}
 
+	/**
+	 * Causes manual control to toggle.
+	 * <p>
+	 * i.e. if the aircraft is under manual control, control is released
+	 * (and vice-versa)
+	 * </p>
+	 */
 	public void toggleManualControl() {
 		if (isLanding) { // Can't manually control while landing
 			isManuallyControlled = false;
@@ -670,6 +711,10 @@ public class Aircraft implements Serializable {
 		}
 	}
 
+	/**
+	 * Resets the current target, and causes the aircraft to head towards
+	 * the new target.
+	 */
 	private void resetBearing() {
 		if (currentRouteStage < flightPlan.getRoute().length
 				& flightPlan.getRoute()[currentRouteStage] != null) {
@@ -679,6 +724,9 @@ public class Aircraft implements Serializable {
 		turnTowardsTarget(0);
 	}
 
+	/**
+	 * Causes the aircraft to move to a higher altitude.
+	 */
 	private void climb() {
 		if (position.getZ() < 30000 && altitudeState == ALTITUDE_CLIMB)
 			setAltitude(verticalVelocity);
@@ -689,6 +737,9 @@ public class Aircraft implements Serializable {
 		}
 	}
 
+	/**
+	 * Causes the aircraft to move to a lower altitude.
+	 */
 	private void fall() {
 		if (position.getZ() > 28000 && altitudeState == ALTITUDE_FALL)
 			setAltitude(-verticalVelocity);
@@ -699,6 +750,9 @@ public class Aircraft implements Serializable {
 		}
 	}
 
+	/**
+	 * Causes the aircraft to land at its airport.
+	 */
 	public void land() {
 		isWaitingToLand = false;
 		isLanding = true;
@@ -722,7 +776,6 @@ public class Aircraft implements Serializable {
 
 	/**
 	 * Checks if an aircraft is close to an its parameter (entry point).
-	 * 
 	 * @param position
 	 *            the position of the waypoint to test
 	 * @return <code>true</code> if it is close
@@ -735,7 +788,6 @@ public class Aircraft implements Serializable {
 
 	/**
 	 * Gets the aircraft's position.
-	 * 
 	 * @return the aircraft's position
 	 */
 	public Vector getPosition() {
@@ -744,7 +796,6 @@ public class Aircraft implements Serializable {
 
 	/**
 	 * Gets the aircraft's name.
-	 * 
 	 * @return the aircraft's name
 	 */
 	public String getName() {
@@ -753,7 +804,6 @@ public class Aircraft implements Serializable {
 
 	/**
 	 * Gets whether or not the aircraft has completed its route.
-	 * 
 	 * @return <code>true</code> if the aircraft has finished, otherwise
 	 *         <code>false</code>
 	 */
@@ -763,7 +813,6 @@ public class Aircraft implements Serializable {
 
 	/**
 	 * Gets whether or not the aircraft is under manual control.
-	 * 
 	 * @return <code>true</code> if the aircraft is under manual control,
 	 *         otherwise <code>false</code>
 	 */
@@ -773,7 +822,6 @@ public class Aircraft implements Serializable {
 
 	/**
 	 * Gets the aircraft's altitude state.
-	 * 
 	 * @return the aircraft's altitude state
 	 */
 	public int getAltitudeState() {
@@ -782,7 +830,6 @@ public class Aircraft implements Serializable {
 
 	/**
 	 * Gets the aircraft's bearing.
-	 * 
 	 * @return the aircraft's bearing
 	 */
 	public double getBearing() {
@@ -791,7 +838,6 @@ public class Aircraft implements Serializable {
 
 	/**
 	 * Gets the aircraft's speed.
-	 * 
 	 * @return the aircraft's speed
 	 */
 	public double getSpeed() {
@@ -800,7 +846,6 @@ public class Aircraft implements Serializable {
 
 	/**
 	 * Gets the aircraft's flight plan.
-	 * 
 	 * @return the aircraft's flight plan
 	 */
 	public FlightPlan getFlightPlan() {
@@ -813,7 +858,6 @@ public class Aircraft implements Serializable {
 	 * NOTE: the aircraft will only follow this heading if it is under manual
 	 * control.
 	 * </p>
-	 * 
 	 * @param newHeading
 	 *            the new bearing to follow
 	 */
@@ -823,7 +867,6 @@ public class Aircraft implements Serializable {
 
 	/**
 	 * Sets the aircraft's altitude.
-	 * 
 	 * @param height
 	 *            the altitude to move the aircraft to
 	 */
@@ -833,10 +876,9 @@ public class Aircraft implements Serializable {
 
 	/**
 	 * Sets the aircraft's altitude state to climbing, falling or level.
-	 * 
 	 * @param state
-	 *            the new altitude state: 0 = level, 1 = climbing and -1 =
-	 *            falling
+	 *            the new altitude state: 0 = level, 1 = climbing and
+	 *            -1 = falling
 	 */
 	public void setAltitudeState(int state) {
 		this.altitudeState = state;

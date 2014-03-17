@@ -211,6 +211,12 @@ public class FlightPlan implements Serializable {
 		return route;
 	}
 	
+	/**
+	 * Gets the position of a waypoint in the flight plan.
+	 * @param waypoint
+	 * 			the waypoint to get the position of
+	 * @return the position of the specified waypoint
+	 */
 	public int indexOfWaypoint(Waypoint waypoint) {
 		int index = -1;
 		for (int i = 0; i < getRoute().length; i++) {

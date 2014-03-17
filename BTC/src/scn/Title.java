@@ -14,36 +14,32 @@ import lib.jog.window;
 import btc.Main;
 
 public class Title extends Scene {
+	/** The path to the user manual */
 	private final static String HELP_FILE_PATH = System.getProperty("user.dir") + "/user_manual.pdf";
 
-	/**
-	 * The 'beep' played as the radar makes a sweep
-	 */
+	/** The 'beep' played as the radar makes a sweep */
 	private audio.Sound beep;
 
-	/**
-	 * A List of buttons, to hold declared buttons in the scene
-	 */
+	/** A List of buttons, to hold declared buttons in the scene */
 	private lib.ButtonText[] buttons;
 
-	/**
-	 * Holds the angle to draw the radar sweep at.
-	 * Also used to play the beep sound as the radar sweeps the BTC title string
-	 * Updated regularly during Title's update()
-	 */
+	/** Holds the angle to draw the radar sweep at */
 	private double angle;
 
 	/**
-	 * Constructor for the Title Scene
-	 * @param main the main holding the scene
+	 * Constructor for the Title Scene.
+	 * @param main
+	 * 			the main holding the scene
 	 */
 	public Title(Main main) {
 		super(main);
 	}
 
 	/**
-	 * Initialises all objects, such as buttons and sound effects
-	 * Only runs at start of scene
+	 * Initialises all objects, such as buttons and sound effects.
+	 * <p>
+	 * Only runs at the start of the scene.
+	 * </p>
 	 */
 	@Override
 	public void start() {
@@ -129,9 +125,9 @@ public class Title extends Scene {
 	}
 
 	/**
-	 * Updates all objects in the title scene
-	 * Called by Main class
-	 * @param time_difference the time since the last update
+	 * Updates all objects in the title scene.
+	 * @param timeDifference
+	 * 			the time since the last update
 	 */
 	@Override
 	public void update(double timeDifference) {
@@ -147,17 +143,20 @@ public class Title extends Scene {
 	}
 
 	/**
-	 * Handles drawing of the scene
-	 * Calls drawRadar() and drawMenu() to draw elements of the scene
-	 * Called by Main
+	 * Handles drawing of the scene.
+	 * <p>
+	 * Calls {@link #drawRadar()} and {@link #drawMenu()} to
+	 * draw elements of the scene.
+	 * </p>
 	 */
 	@Override
 	public void draw() {
 		drawRadar();
 		drawMenu();
 	}
+	
 	/**
-	 * Draws the radar arc and title string
+	 * Draws the radar arc and title string.
 	 */
 	private void drawRadar() {
 		// Radar
@@ -219,7 +218,7 @@ public class Title extends Scene {
 	}
 
 	/**
-	 * Draws menu boxes, boxes around buttons, and strings
+	 * Draws menu boxes, boxes around buttons, and strings.
 	 */
 	private void drawMenu() {
 		// Draw Extras e.g. Date, Time, Credits
@@ -247,17 +246,17 @@ public class Title extends Scene {
 		graphics.line(window.height(), window.height()/2 + 240, window.width() - 16, window.height()/2 + 240);
 	}
 
-
 	/**
-	 * Handles mouse pressed input
-	 * Currently unused
+	 * {@inheritDoc}
 	 */
 	@Override
 	public void mousePressed(int key, int x, int y) {}
 	
 	/**
-	 * Handles mouse release events
-	 * Causes a button to act if clicked by any mouse key
+	 * {@inheritDoc}
+	 * <p>
+	 * Causes a button to act if clicked by any mouse key.
+	 * </p>
 	 */
 	@Override
 	public void mouseReleased(int key, int mx, int my) {
@@ -266,16 +265,17 @@ public class Title extends Scene {
 				b.act();
 			}
 		}
-
 	}
 
 	/**
-	 * Keyboard input methods
-	 * Currently unused
+	 * {@inheritDoc}
 	 */
 	@Override
 	public void keyPressed(int key) {}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void keyReleased(int key) {
 		// Exit if ESC key pressed
@@ -285,16 +285,16 @@ public class Title extends Scene {
 		}
 	}
 	
-	@Override
 	/**
-	 * cleanly exits the title scene
+	 * {@inheritDoc}
 	 */
+	@Override
 	public void close() {}
 
-	@Override
 	/**
-	 * Plays a requested sound
+	 * {@inheritDoc}
 	 */
+	@Override
 	public void playSound(Sound sound) {
 		sound.stop();
 		sound.play();

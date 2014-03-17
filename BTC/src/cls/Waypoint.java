@@ -6,7 +6,7 @@ import lib.jog.graphics;
 
 public class Waypoint implements Serializable {
 	
-	// TODO last updated: 2014.03.15 14:30
+	// TODO last updated: 2014.03.17 13:40
 	private static final long serialVersionUID = 1413476488063120300L;
 
 	/** Leniency to allow mouse input to be accepted in a small area around the waypoint  */
@@ -25,15 +25,18 @@ public class Waypoint implements Serializable {
 	private boolean entryOrExit;
 	
 	/**
-	 * Constructor for waypoints
-	 * @param x the x coordinate of the waypoint
-	 * @param y the y coordinate of the waypoint
-	 * @param entryOrExit whether the waypoint is a point where planes may
+	 * Constructor for waypoints.
+	 * @param x
+	 * 			the x coordinate of the waypoint
+	 * @param y
+	 * 			the y coordinate of the waypoint
+	 * @param entryOrExit
+	 * 			whether the waypoint is a point where planes may
 	 * 			enter and leave the airspace
-	 * @param player the player who should have control of this waypoint
+	 * @param name
+	 * 			the waypoint's name
 	 */
-	public Waypoint(double x, double y,
-			boolean entryOrExit, String name) {
+	public Waypoint(double x, double y, boolean entryOrExit, String name) {
 		this.waypointLocation = new Vector(x, y, 0);
 		this.entryOrExit = entryOrExit;
 		this.name = name;
@@ -45,6 +48,16 @@ public class Waypoint implements Serializable {
 		}
 	}
 	
+	/**
+	 * Constructor for waypoints.
+	 * @param x
+	 * 			the x coordinate of the waypoint
+	 * @param y
+	 * 			the y coordinate of the waypoint
+	 * @param entryOrExit
+	 * 			whether the waypoint is a point where planes may
+	 * 			enter and leave the airspace
+	 */
 	public Waypoint(double x, double y, boolean entryOrExit) {
 		this.waypointLocation = new Vector(x, y, 0);
 		this.entryOrExit = entryOrExit;
@@ -79,6 +92,7 @@ public class Waypoint implements Serializable {
 	 * <p>
 	 * This will typically be the null string ("") unless the waypoint
 	 * is an entry point, exit point or airport.
+	 * </p>
 	 * @return the waypoint's name
 	 */
 	public String getName() {
@@ -94,8 +108,10 @@ public class Waypoint implements Serializable {
 	
 	/**
 	 * Draws the waypoint.
-	 * @param x the x location to draw the waypoint at
-	 * @param y the y location to draw the waypoint at
+	 * @param x
+	 * 			the x location to draw the waypoint at
+	 * @param y
+	 * 			the y location to draw the waypoint at
 	 */
 	public void draw(double x, double y) {
 		if (this.isEntryOrExit()) 
@@ -110,10 +126,12 @@ public class Waypoint implements Serializable {
 	}
 	
 	/**
-	 * Checks if the mouse is over the waypoint, within MOUSE_LENIANCY
-	 * @param mx the mouse's x location
-	 * @param my the mouse's y location
-	 * @return whether the mouse is considered over the waypoint.
+	 * Checks if the mouse is over the waypoint, within MOUSE_LENIENCY
+	 * @param x
+	 * 			the mouse's x location
+	 * @param y
+	 * 			the mouse's y location
+	 * @return whether the mouse is over the waypoint
 	 */
 	public boolean isMouseOver(int x, int y) {
 		double dx = waypointLocation.getX() - x;
@@ -122,8 +140,12 @@ public class Waypoint implements Serializable {
 	}
 	
 	/**
-	 * Gets the cost of travelling between this waypoint and another - Used for pathfinding
-	 * @param fromPoint The point to consider cost from, to this waypoint
+	 * Gets the cost of travelling between this waypoint and another.
+	 * <p>
+	 * Used for path finding.
+	 * </p>
+	 * @param fromPoint
+	 * 			the point to consider cost from
 	 * @return the distance(cost) between the two waypoints
 	 */
 	public double getCost(Waypoint fromPoint) {
@@ -131,10 +153,12 @@ public class Waypoint implements Serializable {
 	}
 	
 	/**
-	 * Gets the cost between two waypoints
-	 * @param source the source waypoint
-	 * @param target the target waypoint
-	 * @return the cost between source and target
+	 * Gets the cost between two waypoints.
+	 * @param source
+	 * 			the source waypoint
+	 * @param target
+	 * 			the target waypoint
+	 * @return the cost of travelling between the source and the target
 	 */
 	public static double getCostBetween(Waypoint source, Waypoint target) {
 		return target.getCost(source);

@@ -107,9 +107,12 @@ public class Airport extends Waypoint implements EventHandler, Serializable {
 	 * <p>
 	 * Sets up the airport image, and scales the location attributes.
 	 * </p>
-	 * @param name the airport's name
-	 * @param x the x position to display the top-left corner of the airport at
-	 * @param y the y position to display the top-left corner of the airport at
+	 * @param name
+	 * 			the airport's name
+	 * @param x
+	 * 			the x position to display the top-left corner of the airport at
+	 * @param y
+	 * 			the y position to display the top-left corner of the airport at
 	 */
 	private Airport(String name, double x, double y) {
 		super((x + (RELATIVE_ARRIVALS_X + (RELATIVE_ARRAVALS_WIDTH/2)) * Main.getMinScale()),
@@ -147,9 +150,13 @@ public class Airport extends Waypoint implements EventHandler, Serializable {
 	 * This method applies the necessary scaling to position the airport
 	 * relative to the map.
 	 * </p>
-	 * @param name the name of the airport
-	 * @param x the position at which the centre of the airport should be located
-	 * @param y the position at which the centre of the airport should be located
+	 * @param name
+	 * 			the name of the airport
+	 * @param x
+	 * 			the position at which the centre of the airport should be located
+	 * @param y
+	 * 			the position at which the centre of the airport should be located
+	 * @return the created airport
 	 */
 	public static Airport create(String name, double x, double y) {
 		return new Airport(name,
@@ -158,9 +165,9 @@ public class Airport extends Waypoint implements EventHandler, Serializable {
 	}
 	  
 	/** 
-	 * Decides whether to draw the radius around the airport by checking if
-	 * any aircraft which are landing are close.
-	 * @param aircraft the list of aircraft to check
+	 * Updates the aircraft at the airport.
+	 * @param aircraft
+	 * 			the list of aircraft to check
 	 */
 	public void update(ArrayList<Aircraft> aircraft) {
 		aircraftWaitingToLand.clear();
@@ -242,9 +249,12 @@ public class Airport extends Waypoint implements EventHandler, Serializable {
 
 	/**
 	 * Handles mouse click events.
-	 * @param key the key which was pressed
-	 * @param x the x position of the mouse
-	 * @param y the y position of the mouse
+	 * @param key
+	 * 			the key which was pressed
+	 * @param x
+	 * 			the x position of the mouse
+	 * @param y
+	 * 			the y position of the mouse
 	 */
 	@Override
 	public void mousePressed(int key, int x, int y) {
@@ -259,9 +269,12 @@ public class Airport extends Waypoint implements EventHandler, Serializable {
 
 	/**
 	 * Handles mouse release events.
-	 * @param key the key which was pressed
-	 * @param x the x position of the mouse
-	 * @param y the y position of the mouse
+	 * @param key
+	 * 			the key which was pressed
+	 * @param x
+	 * 			the x position of the mouse
+	 * @param y
+	 * 			the y position of the mouse
 	 */
 	@Override
 	public void mouseReleased(int key, int x, int y) {
@@ -269,31 +282,63 @@ public class Airport extends Waypoint implements EventHandler, Serializable {
 		isDeparturesClicked = false;
 	}
 
+	/**
+	 * Handles key press events.
+	 */
 	@Override
 	public void keyPressed(int key) {}
 
+	/**
+	 * Handles key release events.
+	 */
 	@Override
 	public void keyReleased(int key) {}
 	
+	/**
+	 * Determines whether the arrivals area has just been clicked.
+	 * @param x
+	 * 			the x position of the mouse
+	 * @param y
+	 * 			the y position of the mouse
+	 * @return <code>true</code> if the arrivals area has been clicked,
+	 * 			<code>false</code> otherwise
+	 */
 	public boolean isArrivalsClicked(int x, int y) {
 		return isWithinArrivals(new Vector(x, y, 0)) && !isActive;
 	}
 	
+	/**
+	 * Determines whether the departures area has just been clicked.
+	 * @param x
+	 * 			the x position of the mouse
+	 * @param y
+	 * 			the y position of the mouse
+	 * @return <code>true</code> if the departures area has been clicked,
+	 * 			<code>false</code> otherwise
+	 */
 	public boolean isDeparturesClicked(int x, int y) {
 		return isWithinDepartures(new Vector(x, y, 0)) && !isActive;
 	}
 	
 	/**
-	 * Checks whether the specified testX and testY coordinates are within a region.
+	 * Checks whether the specified testX and testY coordinates are
+	 * within a region.
 	 * <p>
-	 * The region to check starts at the point (x, y), with width 'width' and height 'height'.
+	 * The region to check starts at the point (x, y), with width
+	 * 'width' and height 'height'.
 	 * </p>
-	 * @param testX the x position of the point to test
-	 * @param testY the y position of the point to test
-	 * @param x the x co-ord of the top-left of the region
-	 * @param y the y co-ord of the top-left of the region
-	 * @param width the width of the region
-	 * @param height the height of the region
+	 * @param testX
+	 * 			the x position of the point to test
+	 * @param testY
+	 * 			the y position of the point to test
+	 * @param x
+	 * 			the x co-ord of the top-left of the region
+	 * @param y
+	 * 			the y co-ord of the top-left of the region
+	 * @param width
+	 * 			the width of the region
+	 * @param height
+	 * 			the height of the region
 	 * @return <code>true</code> if the position is within the region specified,
 	 * 			<code>false</code> otherwise
 	 */
@@ -303,7 +348,8 @@ public class Airport extends Waypoint implements EventHandler, Serializable {
 	
 	/**
 	 * Calculates whether a position is within the arrivals area.
-	 * @param position the position to check
+	 * @param position
+	 * 			the position to check
 	 * @return <code>true</code> if the position is within the arrivals area,
 	 * 			otherwise <code>false</code>
 	 */
@@ -319,9 +365,11 @@ public class Airport extends Waypoint implements EventHandler, Serializable {
 	
 	/**
 	 * Calculates whether a position is within the arrivals area, with an optional offset.
-	 * @param position the position to check
-	 * @param applyOffset <code>true</code> if the airspace offset should be taken
-	 * 						into consideration, otherwise <code>false</code>
+	 * @param position
+	 * 			the position to check
+	 * @param applyOffset
+	 * 			<code>true</code> if the airspace offset should be taken
+	 * 			into consideration, otherwise <code>false</code>
 	 * @return <code>true</code> if the position is within the arrivals area,
 	 * 			otherwise <code>false</code>
 	 */
@@ -337,7 +385,8 @@ public class Airport extends Waypoint implements EventHandler, Serializable {
 	
 	/**
 	 * Calculates whether a position is within the departures area.
-	 * @param position the point to be tested
+	 * @param position
+	 * 			the point to be tested
 	 * @return <code>true</code> if the position is within the departures area,
 	 * 			otherwise <code>false</code>
 	 */
@@ -352,7 +401,10 @@ public class Airport extends Waypoint implements EventHandler, Serializable {
 	}
 	
 	/**
-	 * Gets the size of the airport's hangar - i.e. the number of aircraft it can store
+	 * Gets the size of the airport's hangar.
+	 * <p>
+	 * i.e. the number of aircraft it can store.
+	 * </p>
 	 * @return the size of the airport's hangar
 	 */
 	public int getHangarSize() {
@@ -368,7 +420,8 @@ public class Airport extends Waypoint implements EventHandler, Serializable {
 	 * The aircraft will only be added if the current size is less than the maximum
 	 * specified by hangarSize.
 	 * </p>
-	 * @param aircraft the aircraft to add to the hangar
+	 * @param aircraft
+	 * 			the aircraft to add to the hangar
 	 */
 	public void addToHangar(Aircraft aircraft) {
 		if (aircraftHangar.size() < hangarSize) {
@@ -390,7 +443,8 @@ public class Airport extends Waypoint implements EventHandler, Serializable {
 	
 	/**
 	 * Calculates the longest amount of time any aircraft has been waiting.
-	 * @param currentTime the current game time
+	 * @param currentTime
+	 * 			the current game time
 	 * @return the longest amount of time an aircraft has been waiting for
 	 */
 	public double getLongestTimeInHangar(double currentTime) {
@@ -409,12 +463,21 @@ public class Airport extends Waypoint implements EventHandler, Serializable {
 		isActive = false;
 	}
 	
+	/**
+	 * Gets the centre of the departures area.
+	 * @return a waypoint at the centre of the departures area
+	 */
 	public Waypoint getDeparturesCentre() {
 		return new Waypoint(departuresX + (departuresWidth / 2),
 				departuresY + (departuresHeight / 2), true);
 	}
 	
-	// Used for testing, to avoid the need to have a demo instance
+	/**
+	 * Instructs an aircraft to take off.
+	 * <p>
+	 * Used for testing, to avoid the need to have a demo instance.
+	 * </p>
+	 */
 	@Deprecated
 	public void signalTakeOffTesting() {
 		if (aircraftHangar.size() > 0) {

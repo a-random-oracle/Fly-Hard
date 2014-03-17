@@ -62,7 +62,7 @@ public class TextBox {
 	
 	/**
 	 * Adds a line of text to be displayed.
-	 * @param the text to be written.
+	 * @param order the text to be written.
 	 */
 	public void addText(String order) {
 		// Word Wrap
