@@ -86,6 +86,7 @@ public class Player {
 	private void setDefaults() {
 		// Get a unique player ID
 		id = Game.getNewPlayerID();
+		System.out.println("ID=" + id);
 		
 		// Set aircraft colour
 		// Default is white
