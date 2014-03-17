@@ -1,11 +1,15 @@
 package cls;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import scn.Game;
 
-public class Player {
+public class Player implements Serializable {
 	
+	// TODO last updated: 2014.03.17 22:45
+	private static final long serialVersionUID = -1355541630946018678L;
+
 	/** The list of colours to associate with aircraft */
 	public static final Integer[][] AIRCRAFT_COLOURS = new Integer[][] {
 		new Integer[] {42, 51, 159},	// Blue
