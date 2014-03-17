@@ -151,7 +151,6 @@ public class GameOver extends Scene {
 	public void keyReleased(int key) {
 		if (key == keyPressed) {
 			main.closeScene();
-			main.closeScene();
 		}
 	}
 

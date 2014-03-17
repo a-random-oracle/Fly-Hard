@@ -84,8 +84,9 @@ public class DifficultySelect extends Scene {
 		lib.ButtonText.Action easy = new lib.ButtonText.Action() {
 			@Override
 			public void action() {
-				switch (scene){
+				switch (scene) {
 				case DifficultySelect.CREATE_DEMO:
+					main.closeScene();
 					main.setScene(new SinglePlayerGame(main, DifficultySetting.EASY));
 					break;
 				}
@@ -98,6 +99,7 @@ public class DifficultySelect extends Scene {
 			public void action() {
 				switch (scene){
 				case DifficultySelect.CREATE_DEMO:
+					main.closeScene();
 					main.setScene(new SinglePlayerGame(main, DifficultySetting.MEDIUM));
 					break;
 				}
@@ -110,6 +112,7 @@ public class DifficultySelect extends Scene {
 			public void action() {
 				switch (scene){
 				case DifficultySelect.CREATE_DEMO:
+					main.closeScene();
 					main.setScene(new SinglePlayerGame(main, DifficultySetting.HARD));
 					break;
 				}
