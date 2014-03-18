@@ -17,6 +17,13 @@ public class ThreadSend extends Thread {
 	
 	@Override
 	public void run() {
-		
+		while (true) {
+			try {
+				outStream.writeObject(multiPlayerGame);
+				outStream.flush();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 }

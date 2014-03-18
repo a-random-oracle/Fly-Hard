@@ -11,10 +11,11 @@ import java.net.Socket;
 import java.util.Scanner;
 
 import scn.Game.DifficultySetting;
+import scn.MultiPlayerGame;
 import cls.Aircraft;
 import cls.Waypoint;
 
-public class AircraftGame {
+public class NetworkGame {
 	
 	public static ServerSocket server;
 	
@@ -28,23 +29,11 @@ public class AircraftGame {
 	
 	public static int port = 25560;
 	
+	public MultiPlayerGame multiPlayerGame;
 	
 	
-	public AircraftGame(boolean host) {
-		Waypoint[] waypointList = new Waypoint[]{
-				new Waypoint(0, 0, true, 0),
-				new Waypoint(100, 100, true, 0),
-				new Waypoint(25, 75, false, 0),
-				new Waypoint(75, 25, false, 0),
-				new Waypoint(50, 50, false, 0)};
-		
-		Aircraft testAircraft = new Aircraft("testAircraft", "Berlin", "Dublin",
-				new Waypoint(100, 100, true, 0), new Waypoint(0, 0, true, 0),
-				null, 10.0, waypointList, DifficultySetting.MEDIUM, null);
-		
-		Aircraft testAircraft2 = new Aircraft("testAircraft2", "Dublin", "Berlin",
-				new Waypoint(0, 0, true, 0), new Waypoint(100, 100, true, 0),
-				null, 10.0, waypointList, DifficultySetting.MEDIUM, null);
+	
+	public NetworkGame(boolean host) {
 		
 		try {
 			if (host) {
@@ -54,13 +43,14 @@ public class AircraftGame {
 				client = server.accept();
 				System.out.println("Client connected!\nSetting up game...");
 				
-				ObjectOutputStream out = new ObjectOutputStream(client.getOutputStream());
-				ObjectInputStream in = new ObjectInputStream(client.getInputStream());
+				ObjectOutputStream outStream = new ObjectOutputStream(client.getOutputStream());
+				ObjectInputStream inStream = new ObjectInputStream(client.getInputStream());
 				
 				System.out.println("Streams set up!");
 				
-				new ThreadSend(testAircraft, out);
-				new ThreadRecieve(testAircraft, in);
+				new ThreadSend(multiPlayerGame, outStream);
+				new ThreadRecieve(multiPlayerGame, inStream);
+				System.out.println("Creating multiplayer game!");	
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -89,7 +79,7 @@ public class AircraftGame {
 		}else{
 			System.out.println("Will join to "+connectIP+":"+port);
 		}
-		new AircraftGame(isHost);
+		new NetworkGame(isHost);
 	}
 	
 }

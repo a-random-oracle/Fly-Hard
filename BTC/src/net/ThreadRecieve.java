@@ -14,10 +14,18 @@ public class ThreadRecieve extends Thread {
 	public ThreadRecieve(MultiPlayerGame multiPlayerGame, ObjectInputStream inStream) {
 		this.inStream = inStream;
 		this.multiPlayerGame = multiPlayerGame;
+		start();
 	}
 	
 	@Override
 	public void run() {
-		
+		while (true) {
+			try {
+				multiPlayerGame.updatePlayer0(inStream.readObject());
+			} catch (IOException | ClassNotFoundException e) {
+				e.printStackTrace();
+			}
+			
+		}
 	}
 }

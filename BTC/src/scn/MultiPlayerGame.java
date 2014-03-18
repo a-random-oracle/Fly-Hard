@@ -17,6 +17,12 @@ public class MultiPlayerGame extends Game {
 	/** The unique instance of this class */
 	private static MultiPlayerGame instance = null;
 	
+	/** An instance of Player - player 0 */
+	private Player player0;
+	
+	/** An instance of Player - player 1 */
+	private Player player1;
+	
 	/**
 	 * Creates a new instance of a multi-player game.
 	 * <p>
@@ -93,10 +99,10 @@ public class MultiPlayerGame extends Game {
 		player1Airports[0] = airports[1];
 		
 		// Set up the player
-		Player player0 = new Player("Bob1", true, "127.0.0.1",
+		player0 = new Player("Bob1", true, "127.0.0.1",
 				player0Airports, player0Waypoints);
 		players.add(player0);
-		Player player1 = new Player("Bob2", false, "127.0.0.1",
+		player1 = new Player("Bob2", false, "127.0.0.1",
 				player1Airports, player1Waypoints);
 		players.add(player1);
 
@@ -130,6 +136,18 @@ public class MultiPlayerGame extends Game {
 		// Reset game attributes for each player
 		deselectAircraft(players.get(0));
 		deselectAircraft(players.get(1));
+	}
+	
+	public Player Player0() {
+		return player0;
+	}
+	
+	public Player Player1() {
+		return player1;
+	}
+	
+	public void updatePlayer0(Object object) {
+		player0.setScore(((Player) object).getScore());
 	}
 
 
