@@ -13,9 +13,6 @@ import btc.Main;
 
 public class SinglePlayerGame extends Game {
 
-	/** The current player */
-	private Player player;
-
 
 	// Constructor ----------------------------------------------------------------------
 

@@ -28,6 +28,9 @@ public abstract class Game extends Scene {
 	/** The list of players currently playing the game */
 	protected static ArrayList<Player> players;
 	
+	/** The current player */
+	protected Player player;
+	
 	// Due to the way the airspace elements are drawn (graphics.setviewport)
 	// these variables are needed to manually adjust mouse listeners and elements
 	// drawn outside the airspace so that they align with the airspace elements.
@@ -80,9 +83,6 @@ public abstract class Game extends Scene {
 	
 	/** Is the game paused */
 	protected boolean paused;
-	
-	/** The side of the screen the mouse is on */
-	protected int mouseSide;
 	
 	
 	// Constructors ---------------------------------------------------------------------
@@ -189,10 +189,14 @@ public abstract class Game extends Scene {
 	public void update(double timeDifference) {
 		if (paused) return;
 		
+		// Update the time the game has run for
 		timeElapsed += timeDifference;
 		
 		// Get which side of the screen the mouse is on
-		mouseSide = (input.mouseX() < (window.width() / 2)) ? 0 : 1;
+		int mouseSide = (input.mouseX() < (window.width() / 2)) ? 0 : 1;
+		
+		// Update which player is controlling inputs
+		player = players.get(mouseSide % players.size());
 		
 		// Check if any aircraft in the airspace have collided
 		checkCollisions(timeDifference);
@@ -250,8 +254,6 @@ public abstract class Game extends Scene {
 			// If there are no aircraft in the airspace, spawn a new aircraft
 			if (player.getAircraft().size() == 0) generateFlight(player);
 		}
-		
-		Player player = players.get(mouseSide % players.size());
 		
 		if (player.getSelectedAircraft() != null) {
 			if (player.getSelectedAircraft().isManuallyControlled()) {
@@ -488,10 +490,8 @@ public abstract class Game extends Scene {
 				+ " aircraft in the airspace.", 32 + xOffset, 32);
 		
 		// Print the current player
-		graphics.printCentred("Currently playing as player: "
-				+ players.get(mouseSide % players.size()).getName(),
-				(((double) window.width() - (2 * xOffset)) / 2), 32d,
-				1, 300);
+		graphics.printCentred("Currently playing as player: " + player.getName(),
+				(((double) window.width() - (2 * xOffset)) / 2), 32d, 1, 300);
 	}
 	
 	/**
@@ -512,8 +512,6 @@ public abstract class Game extends Scene {
 	@Override
 	public void mousePressed(int key, int x, int y) {
 		if (paused) return;
-		
-		Player player = players.get(mouseSide % players.size());
 
 		if (key == input.MOUSE_LEFT) {
 			if (aircraftClicked(x, y, player)) {
@@ -593,8 +591,6 @@ public abstract class Game extends Scene {
 	@Override
 	public void mouseReleased(int key, int x, int y) {
 		if (paused) return;
-		
-		Player player = players.get(mouseSide % players.size());
 
 		for (Airport airport : player.getAirports()) {
 			airport.mouseReleased(key, x, y);
@@ -653,8 +649,6 @@ public abstract class Game extends Scene {
 		}
 
 		if (paused) return;
-		
-		Player player = players.get(mouseSide % players.size());
 
 		switch (key) {
 		case input.KEY_SPACE :
