@@ -3,16 +3,17 @@ package net;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 
-import scn.Demo;
+import scn.MultiPlayerGame;
+import cls.Player;
 
 public class ThreadRecieve extends Thread {
 	
-	ObjectInputStream in;
-	Demo demo;
+	ObjectInputStream inStream;
+	MultiPlayerGame multiPlayerGame;
 		
-	public ThreadRecieve(Demo d, ObjectInputStream inStream) {
-		demo = d;
-		in = inStream;
+	public ThreadRecieve(MultiPlayerGame multiPlayerGame, ObjectInputStream inStream) {
+		this.inStream = inStream;
+		this.multiPlayerGame = multiPlayerGame;
 	}
 	
 	@Override

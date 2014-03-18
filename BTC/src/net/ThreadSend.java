@@ -3,16 +3,16 @@ package net;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 
-import scn.Demo;
+import scn.MultiPlayerGame;
 
 public class ThreadSend extends Thread {
 	
-	ObjectOutputStream out;
-	Demo demo;
+	ObjectOutputStream outStream;
+	MultiPlayerGame multiPlayerGame;
 
-	public ThreadSend(Demo d, ObjectOutputStream outStream) {
-		demo = d;
-		out = outStream;
+	public ThreadSend(MultiPlayerGame multiPlayerGame, ObjectOutputStream outStream) {
+		this.outStream = outStream;
+		this.multiPlayerGame = multiPlayerGame;
 	}
 	
 	@Override
