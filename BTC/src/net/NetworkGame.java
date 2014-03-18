@@ -10,10 +10,8 @@ import java.net.Socket;
 
 import java.util.Scanner;
 
-import scn.Game.DifficultySetting;
 import scn.MultiPlayerGame;
-import cls.Aircraft;
-import cls.Waypoint;
+
 
 public class NetworkGame {
 	
@@ -23,9 +21,9 @@ public class NetworkGame {
 	
 	public static Socket socket;
 	
-	public static String serverIP = "PUT ADDRESS HERE";
+	public static String serverIP = "192.168.0.7";
 	
-	public static String connectIP = "PUT ADDRESS HERE";
+	public static String connectIP = "192.168.0.7";
 	
 	public static int port = 25560;
 	
@@ -80,6 +78,8 @@ public class NetworkGame {
 			System.out.println("Will join to "+connectIP+":"+port);
 		}
 		new NetworkGame(isHost);
+		
+		input.close();
 	}
 	
 }
