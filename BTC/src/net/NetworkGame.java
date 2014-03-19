@@ -34,21 +34,33 @@ public class NetworkGame {
 	public NetworkGame(boolean host) {
 		
 		try {
+			ObjectOutputStream outStream = new ObjectOutputStream(client.getOutputStream());
+			ObjectInputStream inStream = new ObjectInputStream(client.getInputStream());
+			
 			if (host) {
 				System.out.println("Hosting...");
 				server = new ServerSocket(port, 4, InetAddress.getByName(serverIP));
 				System.out.println("Ready!\nAwaiting client...");
 				client = server.accept();
 				System.out.println("Client connected!\nSetting up game...");
-				
-				ObjectOutputStream outStream = new ObjectOutputStream(client.getOutputStream());
-				ObjectInputStream inStream = new ObjectInputStream(client.getInputStream());
-				
+			
 				System.out.println("Streams set up!");
 				
 				new ThreadSend(multiPlayerGame, outStream);
-				new ThreadRecieve(multiPlayerGame, inStream);
+				//new ThreadRecieve(multiPlayerGame, inStream);
 				System.out.println("Creating multiplayer game!");	
+			} else {
+				System.out.println("Connecting...");
+				socket = new Socket(connectIP, port);
+				System.out.println("Connected!\nBuffering...");
+				inStream = new ObjectInputStream(socket.getInputStream());
+				outStream = new ObjectOutputStream(socket.getOutputStream());
+				System.out.println("Buffered\nPinging for 256 bytes...");
+				outStream.flush();
+				System.out.println("Starting threads...");
+				new ThreadRecieve(multiPlayerGame, inStream);
+				//new ThreadSend(multiPlayerGame, outStream);
+				System.out.println("Started!");
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
