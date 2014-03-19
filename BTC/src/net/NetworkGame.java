@@ -54,7 +54,7 @@ public class NetworkGame {
 				System.out.println("Streams set up!");
 				
 				new ThreadSend(multiPlayerGame, outStream);
-				//new ThreadRecieve(multiPlayerGame, inStream);
+				new ThreadReceive(multiPlayerGame, inStream);
 				System.out.println("Creating multiplayer game!");	
 			} else {
 				System.out.println("Connecting...");
@@ -65,8 +65,8 @@ public class NetworkGame {
 				System.out.println("Buffered\nPinging for 256 bytes...");
 				outStream.flush();
 				System.out.println("Starting threads...");
-				new ThreadRecieve(multiPlayerGame, inStream);
-				//new ThreadSend(multiPlayerGame, outStream);
+				new ThreadReceive(multiPlayerGame, inStream);
+				new ThreadSend(multiPlayerGame, outStream);
 				System.out.println("Started!");
 			}
 		} catch (Exception e) {
