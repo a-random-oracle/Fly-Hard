@@ -26,7 +26,7 @@ _These are not final/rigid. Any issues, update/query as you wish :D_
 
 | Member | Tasks | File/Source |
 |:-------|:-----|:------------|
-| [Wanderlust](http://github.com/a-random-oracle) | Multiplayer. Some networking stuff. | [_multiplayer branch_](https://github.com/MWUK/Fly-Hard/tree/multiplayer) |
+| [Wanderlust](http://github.com/a-random-oracle) | Multiplayer. Some networking stuff. | [`Player.java`](https://github.com/MWUK/Fly-Hard/blob/master/BTC/src/cls/Player.java), [`Game.java`](https://github.com/MWUK/Fly-Hard/blob/master/BTC/src/scn/Game.java), [`SinglePlayerGame.java`](https://github.com/MWUK/Fly-Hard/blob/master/BTC/src/scn/SinglePlayerGame.java), [`MultiPlayerGame.java`](https://github.com/MWUK/Fly-Hard/blob/master/BTC/src/scn/MultiPlayerGame.java) and [`net*`](https://github.com/MWUK/Fly-Hard/blob/master/BTC/src/net) (and anything else which needs editing for multiplayer) |
 | [200% Richard](http://github.com/RMCKirby) | Networking | [`graphics.java`](https://github.com/MWUK/Fly-Hard/blob/master/BTC/src/lib/jog/graphics.java), [`scn*`](https://github.com/MWUK/Fly-Hard/tree/master/BTC/src/scn), and [_networking branch_](https://github.com/MWUK/Fly-Hard/tree/networking) |
 | [Bonus Mark](http://github.com/MWUK) | Investigative Design and Air Traffic Control Training |  [Saab](http://www.saabgroup.com/Global/Documents%20and%20Images/Civil%20Security/Air%20Transportation%20and%20Airport%20Security/e-Strip/E-Strip-WEB.pdf) _mostly…_ Small doses of [`iOS-7`](https://github.com/MWUK/Fly-Hard/tree/iOS-7). |
 | [50% Jaron](http://github.com/JaronAli) | Powerdowns/Score | _Snapchat_ |
