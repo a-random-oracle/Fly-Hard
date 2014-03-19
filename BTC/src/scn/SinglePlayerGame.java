@@ -11,6 +11,10 @@ import cls.Waypoint;
 
 public class SinglePlayerGame extends Game {
 
+	// TODO last updated: 2014.03.19 20:10
+	private static final long serialVersionUID = 6221876756233022107L;
+
+
 	/**
 	 * Creates a new instance of a single player game.
 	 * <p>

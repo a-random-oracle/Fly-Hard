@@ -1,6 +1,7 @@
 package scn;
 
 import java.io.File;
+import java.io.Serializable;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Hashtable;
@@ -23,8 +24,11 @@ import cls.Waypoint;
 
 import btc.Main;
 
-public abstract class Game extends Scene {
+public abstract class Game extends Scene implements Serializable {
 	
+	// TODO last updated: 2014.03.19 20:05
+	private static final long serialVersionUID = -5326141541318365606L;
+
 	/** The unique instance of this class */
 	protected static Game instance = null;
 	

@@ -21,6 +21,9 @@ import cls.Waypoint;
 
 public class MultiPlayerGame extends Game {
 
+	// TODO last updated: 2014.03.19 20:10
+	private static final long serialVersionUID = -7558985356045622872L;
+
 	/** The server-side socket */
 	private ServerSocket server;
 
