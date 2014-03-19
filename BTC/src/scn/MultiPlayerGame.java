@@ -17,7 +17,7 @@ public class MultiPlayerGame extends Game {
 	/**
 	 * Creates a new instance of a multi-player game.
 	 * <p>
-	 * If an instance of MultiPlayerGame already eairportxists, this will print
+	 * If an instance of Game already exists, this will print
 	 * an error message and return the current instance.
 	 * </p>
 	 * @param main the main containing the scene
@@ -30,7 +30,7 @@ public class MultiPlayerGame extends Game {
 			return new MultiPlayerGame(main, difficulty);
 		} else {
 			Exception e = new Exception("Attempting to create a " +
-					"second instance of MultiPlayerGame");
+					"second instance of Game");
 			e.printStackTrace();
 			return (MultiPlayerGame) instance;
 		}

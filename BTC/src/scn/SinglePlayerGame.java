@@ -14,15 +14,37 @@ import btc.Main;
 public class SinglePlayerGame extends Game {
 
 
-	// Constructor ----------------------------------------------------------------------
-
+	/**
+	 * Creates a new instance of a single player game.
+	 * <p>
+	 * If an instance of Game already exists, this will print
+	 * an error message and return the current instance.
+	 * </p>
+	 * @param main the main containing the scene
+	 * @param difficulty the difficulty the scene is to be initialised with
+	 * @return the single player game instance
+	 */
+	public static SinglePlayerGame createSinglePlayerGame(Main main,
+			DifficultySetting difficulty) {
+		if (instance == null) {
+			return new SinglePlayerGame(main, difficulty);
+		} else {
+			Exception e = new Exception("Attempting to create a " +
+					"second instance of Game");
+			e.printStackTrace();
+			return (SinglePlayerGame) instance;
+		}
+	}
+	
 	/**
 	 * Constructor for SinglePlayerGame.
 	 * @param main the main containing the scene
 	 * @param difficulty the difficulty the scene is to be initialised with
 	 */
-	public SinglePlayerGame(Main main, DifficultySetting difficulty) {
+	private SinglePlayerGame(Main main, DifficultySetting difficulty) {
 		super(main, difficulty);
+		
+		instance = this;
 	}
 
 

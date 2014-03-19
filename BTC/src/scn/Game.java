@@ -131,7 +131,7 @@ public abstract class Game extends Scene {
 				airports[1]
 		};
 		
-		// Define other waypoints
+		// Define other waypointsinstance = this;
 		airspaceWaypoints = new Waypoint[] {
 				new Waypoint(125, 175, false),
 				new Waypoint(200, 635, false),
@@ -726,6 +726,7 @@ public abstract class Game extends Scene {
 	@Override
 	public void close() {
 		music.stop();
+		instance = null;
 	}
 	
 	

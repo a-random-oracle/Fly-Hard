@@ -86,7 +86,7 @@ public class DifficultySelect extends Scene {
 			public void action() {
 				switch (scene) {
 				case DifficultySelect.CREATE_DEMO:
-					main.setScene(new SinglePlayerGame(main, DifficultySetting.EASY));
+					main.setScene(SinglePlayerGame.createSinglePlayerGame(main, DifficultySetting.EASY));
 					break;
 				}
 			}
@@ -98,7 +98,7 @@ public class DifficultySelect extends Scene {
 			public void action() {
 				switch (scene){
 				case DifficultySelect.CREATE_DEMO:
-					main.setScene(new SinglePlayerGame(main, DifficultySetting.MEDIUM));
+					main.setScene(SinglePlayerGame.createSinglePlayerGame(main, DifficultySetting.MEDIUM));
 					break;
 				}
 			}
@@ -110,7 +110,7 @@ public class DifficultySelect extends Scene {
 			public void action() {
 				switch (scene){
 				case DifficultySelect.CREATE_DEMO:
-					main.setScene(new SinglePlayerGame(main, DifficultySetting.HARD));
+					main.setScene(SinglePlayerGame.createSinglePlayerGame(main, DifficultySetting.HARD));
 					break;
 				}
 			}
