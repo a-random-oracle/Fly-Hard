@@ -12,7 +12,7 @@ public class Player implements Serializable {
 
 	/** The list of colours to associate with aircraft */
 	public static final Integer[][] AIRCRAFT_COLOURS = new Integer[][] {
-		new Integer[] {42, 51, 159},	// Blue
+		new Integer[] {42, 51, 200},	// Blue
 		new Integer[] {202, 0, 5}		// Red
 	};
 	
