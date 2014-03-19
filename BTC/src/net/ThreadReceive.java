@@ -3,6 +3,7 @@ package net;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 
+import scn.Game;
 import scn.MultiPlayerGame;
 
 public class ThreadReceive extends Thread {
@@ -14,20 +15,22 @@ public class ThreadReceive extends Thread {
 		this.inStream = inStream;
 		this.multiPlayerGame = multiPlayerGame;
 		start();
-		System.out.println(multiPlayerGame.getPlayers().get(0).getScore());
 	}
 	
 	@Override
 	public void run() {
 		while(true) {
 			try {
-				multiPlayerGame.getPlayers().get(0).setScore((
-						(MultiPlayerGame) inStream.readObject()).getPlayers().get(0).getScore());
+				multiPlayerGame = (MultiPlayerGame) inStream.readObject();
 			} catch (ClassNotFoundException e) {
 				e.printStackTrace();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
+	}
+	
+	public Game getInstance() {
+		return (Game) multiPlayerGame;
 	}
 }
