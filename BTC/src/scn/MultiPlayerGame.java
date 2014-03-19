@@ -223,6 +223,8 @@ public class MultiPlayerGame extends Game {
 
 				System.out.println("Streams set up!");
 
+				outStream.flush();
+				
 				new ThreadSend(this, outStream);
 				new ThreadReceive(this, inStream);
 				System.out.println("Creating multiplayer game!");	
