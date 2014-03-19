@@ -73,10 +73,11 @@ public class Player implements Serializable {
 	
 	// Constructor: -----------------------------------------------------------
 	
-	public Player(String name, boolean hosting, String ipAddress,
+	public Player(int id, String name, boolean hosting, String ipAddress,
 			Airport[] airports, Waypoint[] waypoints) {
 		setDefaults();
 		
+		this.id = id;
 		this.name = name;
 		this.hosting = hosting;
 		this.ipAddress = ipAddress;
@@ -88,9 +89,6 @@ public class Player implements Serializable {
 	// Helper methods: --------------------------------------------------------
 	
 	private void setDefaults() {
-		// Get a unique player ID
-		id = Game.getNewPlayerID();
-		
 		// Set aircraft colour
 		// Default is white
 		aircraftColour = (id < AIRCRAFT_COLOURS.length)

@@ -3,6 +3,7 @@ package net;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 
+import scn.Game;
 import scn.MultiPlayerGame;
 import cls.Player;
 
@@ -21,7 +22,7 @@ public class ThreadRecieve extends Thread {
 	public void run() {
 		while (true) {
 			try {
-				multiPlayerGame.getPlayers().get(0).setScore(((Player) inStream.readObject()).getScore()); 
+				Game.getPlayers().get(0).setScore(((MultiPlayerGame) inStream.readObject()).getPlayers().get(0)); 
 			} catch (IOException | ClassNotFoundException e) {
 				e.printStackTrace();
 			}

@@ -26,7 +26,7 @@ import btc.Main;
 public abstract class Game extends Scene {
 	
 	/** The list of players currently playing the game */
-	protected static ArrayList<Player> players;
+	protected ArrayList<Player> players;
 	
 	/** The current player */
 	protected Player player;
@@ -946,7 +946,7 @@ public abstract class Game extends Scene {
 	 * @return <code>true</code> if the name matches an airport name,
 	 * 			otherwise <code>false</code>
 	 */
-	public static Airport getAirportFromName(String name) {
+	public Airport getAirportFromName(String name) {
 		for (Airport airport : getAllAirports()) {
 			// If a match is found, return true
 			if (airport.name.equals(name)) return airport;
@@ -1093,7 +1093,7 @@ public abstract class Game extends Scene {
 	 * Gets the list of players.
 	 * @return the list of players
 	 */
-	public static ArrayList<Player> getPlayers() {
+	public ArrayList<Player> getPlayers() {
 		return players;
 	}
 	
@@ -1101,7 +1101,7 @@ public abstract class Game extends Scene {
 	 * Gets a list of all aircraft in the airspace.
 	 * @return a list of all the aircraft in the airspace
 	 */
-	public static ArrayList<Aircraft> getAllAircraft() {
+	public ArrayList<Aircraft> getAllAircraft() {
 		ArrayList<Aircraft> allAircraft = new ArrayList<Aircraft>();
 		
 		for (Player player : players) {
@@ -1115,7 +1115,7 @@ public abstract class Game extends Scene {
 	 * Gets a list of all airports in the airspace.
 	 * @return a list of all the airports in the airspace
 	 */
-	public static Airport[] getAllAirports() {
+	public Airport[] getAllAirports() {
 		int count = 0;
 		
 		// Count the number of airports in the airspace
@@ -1197,7 +1197,7 @@ public abstract class Game extends Scene {
 	 * </p>
 	 * @return a new unique player ID
 	 */
-	public static int getNewPlayerID() {
+	public int getNewPlayerID() {
 		// Start player ID's at 0
 		int maxPlayerID = -1;
 		
@@ -1217,7 +1217,7 @@ public abstract class Game extends Scene {
 	 * Finds which player is associated with a given airport.
 	 * @return the player associated with the supplied airport
 	 */
-	public static Player getPlayerFromAirport(Airport airport) {
+	public Player getPlayerFromAirport(Airport airport) {
 		for (Player player : players) {
 			Airport[] playersAirports = player.getAirports();
 			
