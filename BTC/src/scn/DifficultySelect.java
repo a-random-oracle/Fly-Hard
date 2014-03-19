@@ -28,13 +28,12 @@ public class DifficultySelect extends Scene {
 	private final int HARD_BUTTON_Y = EASY_BUTTON_Y;
 	
 	private lib.ButtonText[] buttons;
-	//text box for flavour text
 	private lib.TextBox textBox;
 	private static final String placeName = "Moscow";
 	
-	//To allow the difficulty selection to work with multiple potential game scenes, e.g. separate Demo and a Full Game
+	// To allow the difficulty selection to work with multiple potential
+	// game scenes, e.g. separate Demo and a Full Game
 	private int scene;
-	//static ints for clarity of reading. Implement more to allow more game scenes.
 	public final static int CREATE_DEMO = 0;
 
 	/**
@@ -42,8 +41,8 @@ public class DifficultySelect extends Scene {
 	 * @param main the main containing the scene
 	 * @param scene the scene to create e.g. Demo
 	 */
-	protected DifficultySelect(Main main, int scene) {
-		super(main);
+	protected DifficultySelect(int scene) {
+		super();
 		this.scene = scene;
 	}
 
@@ -71,7 +70,7 @@ public class DifficultySelect extends Scene {
 	 */
 	public void keyReleased(int key) {
 		if (key == input.KEY_ESCAPE) {
-			main.closeScene();
+			Main.closeScene();
 		}
 	}
 
@@ -86,51 +85,70 @@ public class DifficultySelect extends Scene {
 			public void action() {
 				switch (scene) {
 				case DifficultySelect.CREATE_DEMO:
-					main.setScene(SinglePlayerGame.createSinglePlayerGame(main, DifficultySetting.EASY));
+					Main.setScene(SinglePlayerGame
+							.createSinglePlayerGame(DifficultySetting.EASY));
 					break;
 				}
 			}
 		};
-		buttons[0] = new lib.ButtonText("Easy", easy, EASY_BUTTON_X, EASY_BUTTON_Y, EASY_BUTTON_W, EASY_BUTTON_H);
+		buttons[0] = new lib.ButtonText("Easy", easy,
+				EASY_BUTTON_X, EASY_BUTTON_Y, EASY_BUTTON_W, EASY_BUTTON_H);
 		
 		lib.ButtonText.Action medium = new lib.ButtonText.Action() {
 			@Override
 			public void action() {
 				switch (scene){
 				case DifficultySelect.CREATE_DEMO:
-					main.setScene(SinglePlayerGame.createSinglePlayerGame(main, DifficultySetting.MEDIUM));
+					Main.setScene(SinglePlayerGame
+							.createSinglePlayerGame(DifficultySetting.MEDIUM));
 					break;
 				}
 			}
 		};
-		buttons[1] = new lib.ButtonText("Medium", medium, MEDIUM_BUTTON_X, MEDIUM_BUTTON_Y, MEDIUM_BUTTON_W, MEDIUM_BUTTON_H);
+		buttons[1] = new lib.ButtonText("Medium", medium,
+				MEDIUM_BUTTON_X, MEDIUM_BUTTON_Y, MEDIUM_BUTTON_W, MEDIUM_BUTTON_H);
 		
 		lib.ButtonText.Action hard = new lib.ButtonText.Action() {
 			@Override
 			public void action() {
 				switch (scene){
 				case DifficultySelect.CREATE_DEMO:
-					main.setScene(SinglePlayerGame.createSinglePlayerGame(main, DifficultySetting.HARD));
+					Main.setScene(SinglePlayerGame
+							.createSinglePlayerGame(DifficultySetting.HARD));
 					break;
 				}
 			}
 		};
-		buttons[2] = new lib.ButtonText("Hard", hard, HARD_BUTTON_X, HARD_BUTTON_Y, HARD_BUTTON_W, HARD_BUTTON_H);
+		buttons[2] = new lib.ButtonText("Hard", hard,
+				HARD_BUTTON_X, HARD_BUTTON_Y, HARD_BUTTON_W, HARD_BUTTON_H);
 		
-		textBox = new lib.TextBox(128, 96, window.width() - 256, window.height() - 96, 32);
-		textBox.addText("You are a 500 kilogram ferocious Grizzly Bear." + TextBox.DELAY_START + "0.5" + TextBox.DELAY_END + " The Humans are not aware of your hidden identity.");
+		textBox = new lib.TextBox(128, 96,
+				window.width() - 256, window.height() - 96, 32);
+		
+		textBox.addText("You are a 500 kilogram ferocious Grizzly Bear."
+				+ TextBox.DELAY_START
+				+ "0.5" + TextBox.DELAY_END + " The Humans are not aware of"
+				+ "your hidden identity.");
 		textBox.delay(0.5);
-		textBox.addText("You have become an air traffic controller at " + DifficultySelect.placeName + " international in order to provide for your family during the harsh winters ahead.");
+		textBox.addText("You have become an air traffic controller at "
+				+ DifficultySelect.placeName
+				+ " international in order to provide for your family "
+				+ "during the harsh winters ahead.");
 		textBox.delay(0.5);
 		textBox.newline();
-		textBox.addText("Somehow, miraculously, your true nature has not yet been discovered.");
+		textBox.addText("Somehow, miraculously, your true nature has not"
+		+ "yet been discovered.");
 		textBox.newline();
 		textBox.newline();
 		textBox.newline();
 		textBox.delay(1);
-		textBox.addText("Guide planes to their destination successfully and you will be rewarded." + TextBox.DELAY_START + "0.5" + TextBox.DELAY_END + 
-						" Fail," + TextBox.DELAY_START + "0.5" + TextBox.DELAY_END + " and the humans may discover your secret identity and put you in a zoo." + 
-						TextBox.DELAY_START + "1" + TextBox.DELAY_END + " Or worse.");
+		textBox.addText("Guide planes to their destination successfully and"
+				+ "you will be rewarded." + TextBox.DELAY_START + "0.5"
+				+ TextBox.DELAY_END + 
+				" Fail," + TextBox.DELAY_START + "0.5" + TextBox.DELAY_END
+				+ " and the humans may discover your secret identity and"
+				+ "put you in a zoo." + TextBox.DELAY_START + "1"
+				+ TextBox.DELAY_END + " Or worse.");
 	}
 
 	@Override

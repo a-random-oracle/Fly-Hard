@@ -19,14 +19,12 @@ public class ThreadReceive extends Thread {
 	
 	@Override
 	public void run() {
-		while(true) {
-			try {
-				multiPlayerGame = (MultiPlayerGame) inStream.readObject();
-			} catch (ClassNotFoundException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+		try {
+			multiPlayerGame = (MultiPlayerGame) inStream.readObject();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
 	

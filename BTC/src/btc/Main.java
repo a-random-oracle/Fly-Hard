@@ -62,8 +62,8 @@ public class Main implements input.EventHandler {
 
 	private double lastFrameTime;
 	private double timeDifference;
-	private Stack<Scene> sceneStack;
-	private Scene currentScene;
+	private static Stack<Scene> sceneStack;
+	private static Scene currentScene;
 	private int fpsCounter;
 	private long lastFpsTime;
 	
@@ -72,7 +72,7 @@ public class Main implements input.EventHandler {
 	 * begins the game loop, calculating time between frames, and then when
 	 * the window is closed it releases resources and closes the program
 	 */
-	public Main() {
+	private Main() {
 		double xOffset = 0;
 		double yOffset = 0;
 		boolean fullscreen = true;
@@ -117,16 +117,19 @@ public class Main implements input.EventHandler {
 	/**
 	 * Creates window, initialises jog classes and sets starting values to variables.
 	 */
-	private void start(double width, double height, double xOffset, double yOffset, boolean fullscreen) {
+	private void start(double width, double height, double xOffset,
+			double yOffset, boolean fullscreen) {
 		window.setIcon(ICON_FILENAMES);
-		window.initialise(TITLE, (int)(width),(int)(height), (int)(xOffset), (int)(yOffset), fullscreen);
+		window.initialise(TITLE, (int)(width),(int)(height),
+				(int)(xOffset), (int)(yOffset), fullscreen);
 		graphics.initialise();
 		graphics.Font font = graphics.newBitmapFont("gfx" + File.separator + "font.png",
-				("ABCDEFGHIJKLMNOPQRSTUVWXYZ abcdefghijklmnopqrstuvwxyz1234567890.,_-!?()[]><#~:;/\\^'\"{}+=@@@@@@@@`"));
+				("ABCDEFGHIJKLMNOPQRSTUVWXYZ abcdefghijklmnopqrstuvwxyz" +
+						"1234567890.,_-!?()[]><#~:;/\\^'\"{}+=@@@@@@@@`"));
 		graphics.setFont(font);
 		
 		sceneStack = new Stack<Scene>();
-		setScene(new scn.Title(this));
+		setScene(new scn.Title());
 		
 		lastFrameTime = (double)(Sys.getTime()) / Sys.getTimerResolution();
 		lastFpsTime = Sys.getTime()* 1000 / Sys.getTimerResolution(); // Set to current Time
@@ -134,18 +137,20 @@ public class Main implements input.EventHandler {
 	
 	/**
 	 * Updates audio, input handling, the window, the current scene and FPS.
-	 * @param time_difference the time elapsed since the last frame.
+	 * @param timeDifference
+	 * 			the time elapsed since the last frame.
 	 */
-	private void update(double time_difference) {
+	private void update(double timeDifference) {
 		audio.update();
 		input.update(this);
 		window.update();
-		currentScene.update(time_difference);
+		currentScene.update(timeDifference);
 		updateFPS();
 	}
 	
 	/**
-	 * Calculates the time since the last frame in seconds as a double-precision floating point number.
+	 * Calculates the time since the last frame in seconds as a double-precision
+	 * floating point number.
 	 * @return the time in seconds since the last frame.
 	 */
 	private double getTimeSinceLastFrame() {
@@ -156,7 +161,8 @@ public class Main implements input.EventHandler {
 	}
 	
 	/**
-	 * Clears the graphical viewport and calls the draw function of the current scene.
+	 * Clears the graphical viewport and calls the draw function of the current
+	 * scene.
 	 */
 	private void draw() {
 		graphics.clear();
@@ -164,9 +170,10 @@ public class Main implements input.EventHandler {
 	}
 	
 	/**
-	 * Closes the current scene, closes the window, releases the audio resources and quits the process.
+	 * Closes the current scene, closes the window, releases the audio
+	 * resources and quits the process.
 	 */
-	public void quit() {
+	public static void quit() {
 		currentScene.close();
 		window.dispose();
 		audio.dispose();
@@ -175,19 +182,21 @@ public class Main implements input.EventHandler {
 	
 	/**
 	 * Closes the current scene, adds new scene to scene stack and starts it
-	 * @param new_scene The scene to set as current scene
+	 * @param newScene
+	 * 			The scene to set as current scene
 	 */
-	public void setScene(scn.Scene new_scene) {
-		if (currentScene != null) 
-			currentScene.close();
-		currentScene = sceneStack.push(new_scene); // Add new scene to scene stack and set to current scene
+	public static void setScene(Scene newScene) {
+		if (currentScene != null) currentScene.close();
+		// Add new scene to scene stack and set to current scene
+		currentScene = sceneStack.push(newScene);
 		currentScene.start();
 	}
 	
 	/**
-	 * Closes the current scene, pops it from the stack and sets current scene to top of stack
+	 * Closes the current scene, pops it from the stack and sets current
+	 * scene to top of stack.
 	 */
-	public void closeScene() {
+	public static void closeScene() {
 		currentScene.close();
 		sceneStack.pop();
 		currentScene = sceneStack.peek();
@@ -195,7 +204,9 @@ public class Main implements input.EventHandler {
 	
 	/** 
 	 * Updates the FPS - increments the FPS counter. 
-	 * If it has been over a second since the FPS was updated, update it
+	 * <p>
+	 * If it has been over a second since the FPS was updated, update it.
+	 * </p>
 	 */
 	public void updateFPS() {
 		long current_time = ((Sys.getTime()* 1000) / Sys.getTimerResolution());

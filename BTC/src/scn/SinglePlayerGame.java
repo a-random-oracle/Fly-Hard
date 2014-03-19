@@ -9,10 +9,7 @@ import cls.Aircraft;
 import cls.Player;
 import cls.Waypoint;
 
-import btc.Main;
-
 public class SinglePlayerGame extends Game {
-
 
 	/**
 	 * Creates a new instance of a single player game.
@@ -20,14 +17,13 @@ public class SinglePlayerGame extends Game {
 	 * If an instance of Game already exists, this will print
 	 * an error message and return the current instance.
 	 * </p>
-	 * @param main the main containing the scene
-	 * @param difficulty the difficulty the scene is to be initialised with
+	 * @param difficulty
+	 * 			the difficulty the scene is to be initialised with
 	 * @return the single player game instance
 	 */
-	public static SinglePlayerGame createSinglePlayerGame(Main main,
-			DifficultySetting difficulty) {
+	public static SinglePlayerGame createSinglePlayerGame(DifficultySetting difficulty) {
 		if (instance == null) {
-			return new SinglePlayerGame(main, difficulty);
+			return new SinglePlayerGame(difficulty);
 		} else {
 			Exception e = new Exception("Attempting to create a " +
 					"second instance of Game");
@@ -41,8 +37,8 @@ public class SinglePlayerGame extends Game {
 	 * @param main the main containing the scene
 	 * @param difficulty the difficulty the scene is to be initialised with
 	 */
-	private SinglePlayerGame(Main main, DifficultySetting difficulty) {
-		super(main, difficulty);
+	private SinglePlayerGame(DifficultySetting difficulty) {
+		super(difficulty);
 		
 		instance = this;
 	}

@@ -91,14 +91,12 @@ public abstract class Game extends Scene {
 	// Constructors ---------------------------------------------------------------------
 	
 	/**
-	 * Constructor for Demo.
-	 * @param main
-	 * 			the main containing the scene
+	 * Constructor for Game.
 	 * @param difficulty
 	 * 			the difficulty the scene is to be initialised with
 	 */
-	public Game(Main main, DifficultySetting difficulty) {
-		super(main);
+	public Game(DifficultySetting difficulty) {
+		super();
 		
 		this.difficulty = difficulty;
 		
@@ -666,7 +664,7 @@ public abstract class Game extends Scene {
 		case input.KEY_ESCAPE :
 			player.getAircraft().clear();
 			for (Airport airport : player.getAirports()) airport.clear();
-			main.closeScene();
+			Main.closeScene();
 			break;
 
 		case input.KEY_F5 :
@@ -716,8 +714,8 @@ public abstract class Game extends Scene {
 		// TODO <- add back in for release
 		//playSound(audio.newSoundEffect("sfx" + File.separator + "crash.ogg"));
 		
-		main.closeScene();
-		main.setScene(new GameOver(main, plane1, plane2, 0)); //TODO <- pass score
+		Main.closeScene();
+		Main.setScene(new GameOver(plane1, plane2, 0)); //TODO <- pass score
 	}
 	
 	/**

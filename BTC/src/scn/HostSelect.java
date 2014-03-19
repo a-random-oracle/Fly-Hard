@@ -22,14 +22,14 @@ public class HostSelect extends Scene {
 	
 	private ButtonText[] buttons;
 
-	//To allow the difficulty selection to work with multiple potential game scenes, e.g. separate Demo and a Full Game
-	private int scene;
-	//static ints for clarity of reading. Implement more to allow more game scenes.
-		public final static int CREATE_DEMO = 0;
+	// To allow the difficulty selection to work with multiple potential game
+	// scenes, e.g. separate Demo and a Full Game
+	//private int scene;
+	public final static int CREATE_DEMO = 0;
 	
-	protected HostSelect(Main main, int scn) {
-		super(main);
-		this.scene = scn;
+	protected HostSelect(int scn) {
+		super();
+		//this.scene = scn;
 	}
 	
 	
@@ -68,7 +68,7 @@ public class HostSelect extends Scene {
 	 */
 	public void keyReleased(int key) {
 		if (key == input.KEY_ESCAPE) {
-			main.closeScene();
+			Main.closeScene();
 		}
 	}
 
@@ -79,7 +79,7 @@ public class HostSelect extends Scene {
 	public void draw() {
 		graphics.setColour(0,128,0); //GREEN
 		
-		String chooseHost = " ";
+		//String chooseHost = " ";
 		
 		graphics.print("You have chosen to play multiplayer", window.width() / 6, window.height() -920, 3);
 		graphics.print("Choose to host a game or join a host", window.width() / 6, window.height() - 850, 3);

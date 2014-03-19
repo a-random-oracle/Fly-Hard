@@ -2,12 +2,14 @@ package scn;
 
 import java.io.File;
 
+import btc.Main;
+
 import lib.jog.audio;
+import lib.jog.audio.Music;
 import lib.jog.audio.Sound;
 import lib.jog.graphics;
 import lib.jog.input;
 import lib.jog.window;
-import btc.Main;
 
 public class Credits extends Scene {
 	
@@ -24,14 +26,14 @@ public class Credits extends Scene {
 	/**
 	 * Music to play during the credits
 	 */
-	private audio.Music music;
+	private Music music;
 
 	/**
 	 * Constructor
 	 * @param main The main containing the scene
 	 */
-	public Credits(Main main) {
-		super(main);
+	public Credits() {
+		super();
 	}
 	
 	/**
@@ -173,7 +175,7 @@ public class Credits extends Scene {
 	 */
 	public void keyReleased(int key) {
 		if (key == input.KEY_ESCAPE) {
-			main.closeScene();
+			Main.closeScene();
 		}
 	}
 	

@@ -1,19 +1,14 @@
 package scn;
 
-import btc.Main;
 import lib.jog.audio.Sound;
 
 public abstract class Scene implements lib.jog.input.EventHandler {
-
-	protected Main main;
 
 	/**
 	 * Top level constructor for a scene.
 	 * @param main the main class holding the scene, i.e. the running instance of the game
 	 */
-	protected Scene(Main main) {
-		this.main = main; 
-	}
+	protected Scene() {}
 
 	/**
 	 * Handles initialisation of a scene. Only runs at the start of the scene.

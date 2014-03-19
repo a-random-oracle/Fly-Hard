@@ -19,8 +19,6 @@ import cls.Airport;
 import cls.Player;
 import cls.Waypoint;
 
-import btc.Main;
-
 public class MultiPlayerGame extends Game {
 
 	/** The server-side socket */
@@ -30,7 +28,7 @@ public class MultiPlayerGame extends Game {
 	private Socket client;
 
 	/** The receive socket */
-	private Socket socket;
+	//private Socket socket; TODO
 
 	private static final String HOST_IP = "144.32.179.129";
 	
@@ -56,10 +54,9 @@ public class MultiPlayerGame extends Game {
 	 * @param difficulty the difficulty the scene is to be initialised with
 	 * @return the multi-player game instance
 	 */
-	public static MultiPlayerGame createMultiPlayerGame(Main main,
-			DifficultySetting difficulty) {
+	public static MultiPlayerGame createMultiPlayerGame(DifficultySetting difficulty) {
 		if (instance == null) {
-			return new MultiPlayerGame(main, difficulty);
+			return new MultiPlayerGame(difficulty);
 		} else {
 			Exception e = new Exception("Attempting to create a " +
 					"second instance of Game");
@@ -70,11 +67,11 @@ public class MultiPlayerGame extends Game {
 
 	/**
 	 * Constructs a multi-player game.
-	 * @param main the main containing the scene
-	 * @param difficulty the difficulty the scene is to be initialised with
+	 * @param difficulty
+	 * 			the difficulty the scene is to be initialised with
 	 */
-	private MultiPlayerGame(Main main, DifficultySetting difficulty) {
-		super(main, difficulty);
+	private MultiPlayerGame(DifficultySetting difficulty) {
+		super(difficulty);
 
 		instance = this;
 	}
@@ -159,7 +156,7 @@ public class MultiPlayerGame extends Game {
 		// Add airports to lists
 		Airport[] player0Airports = new Airport[1];
 		Airport[] player1Airports = new Airport[1];
-
+		
 		player0Airports[0] = airports[0];
 		player1Airports[0] = airports[1];
 

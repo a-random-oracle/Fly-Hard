@@ -31,8 +31,8 @@ public class Title extends Scene {
 	 * @param main
 	 * 			the main holding the scene
 	 */
-	public Title(Main main) {
-		super(main);
+	public Title() {
+		super();
 	}
 
 	/**
@@ -52,7 +52,7 @@ public class Title extends Scene {
 		lib.ButtonText.Action demo = new lib.ButtonText.Action() {
 			@Override
 			public void action() {
-				main.setScene(new DifficultySelect(main, DifficultySelect.CREATE_DEMO));
+				Main.setScene(new DifficultySelect(/*main,*/ DifficultySelect.CREATE_DEMO));
 			}
 		};
 		buttons[0] = new lib.ButtonText("Play Single Player Game", demo,
@@ -64,7 +64,7 @@ public class Title extends Scene {
 			@Override
 			public void action() {
 				//main.setScene(new DifficultySelect(main, DifficultySelect.CREATE_DEMO));
-				main.setScene(new HostSelect(main, HostSelect.CREATE_DEMO));
+				Main.setScene(new HostSelect(/*main,*/ HostSelect.CREATE_DEMO));
 			}
 		};
 		buttons[1] = new lib.ButtonText("Play Multiplayer Game", multiplayer,
@@ -75,7 +75,7 @@ public class Title extends Scene {
 		lib.ButtonText.Action credits = new lib.ButtonText.Action() {
 			@Override
 			public void action() {
-				main.setScene(new Credits(main));
+				Main.setScene(new Credits(/*main,*/));
 			}
 		};
 		buttons[2] = new lib.ButtonText("Credits", credits,
@@ -101,7 +101,7 @@ public class Title extends Scene {
 		lib.ButtonText.Action exit = new lib.ButtonText.Action() {
 			@Override
 			public void action() {
-				main.quit();
+				Main.quit();
 			}
 		};
 		buttons[4] = new lib.ButtonText("Exit", exit,
@@ -112,7 +112,7 @@ public class Title extends Scene {
 		lib.ButtonText.Action mpTest = new lib.ButtonText.Action() {
 			@Override
 			public void action() {
-				main.setScene(MultiPlayerGame.createMultiPlayerGame(main,
+				Main.setScene(MultiPlayerGame.createMultiPlayerGame(/*main,*/
 						DifficultySetting.EASY));
 			}
 		};
@@ -280,7 +280,7 @@ public class Title extends Scene {
 		// Exit if ESC key pressed
 		// Added for testing TODO - remove this for release
 		if (key == input.KEY_ESCAPE) {
-			main.quit();
+			Main.quit();
 		}
 	}
 	

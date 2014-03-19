@@ -2,15 +2,17 @@ package scn;
 
 import java.io.File;
 
+import btc.Main;
+
 import cls.Aircraft;
 import cls.Vector;
+
 import lib.SpriteAnimation;
 import lib.jog.audio;
 import lib.jog.audio.Sound;
 import lib.jog.graphics;
 import lib.jog.graphics.Image;
 import lib.jog.window;
-import btc.Main;
 
 public class GameOver extends Scene {
 	
@@ -50,15 +52,17 @@ public class GameOver extends Scene {
 	
 	/**
 	 * Constructor for the Game Over scene.
-	 * @param main main containing the scene
-	 * @param plane1 the first plane involved in the crash
-	 * @param plane2 the second plane involved in the crash
-	 * @param score the score achieved during gameplay
+	 * @param plane1
+	 * 			the first plane involved in the crash
+	 * @param plane2
+	 * 			the second plane involved in the crash
+	 * @param score
+	 * 			the score achieved by the player
 	 */
-	public GameOver(Main main, Aircraft plane1, Aircraft plane2, int score) {
-		super(main);
+	public GameOver(Aircraft plane1, Aircraft plane2, int score) {
+		super();
 		
-		// The number of frams in each dimension of the animation image
+		// The number of frames in each dimension of the animation image
 		int framesAcross = 8;
 		int framesDown = 4;
 		
@@ -150,7 +154,7 @@ public class GameOver extends Scene {
 	@Override
 	public void keyReleased(int key) {
 		if (key == keyPressed) {
-			main.closeScene();
+			Main.closeScene();
 		}
 	}
 

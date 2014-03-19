@@ -10,6 +10,7 @@ import java.net.Socket;
 
 import java.util.Scanner;
 
+import scn.Game.DifficultySetting;
 import scn.MultiPlayerGame;
 
 
@@ -38,7 +39,7 @@ public class NetworkGame {
 		
 		
 		try {
-			multiPlayerGame = MultiPlayerGame.createMultiPlayerGame(null, null); 
+			multiPlayerGame = MultiPlayerGame.createMultiPlayerGame(DifficultySetting.EASY);
 			multiPlayerGame.start();
 			
 			if (host) {
