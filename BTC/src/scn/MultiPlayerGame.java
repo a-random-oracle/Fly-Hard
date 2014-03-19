@@ -224,19 +224,19 @@ public class MultiPlayerGame extends Game {
 				System.out.println("Streams set up!");
 
 				new ThreadSend(this, outStream);
-				//new ThreadReceive(this, inStream);
+				new ThreadReceive(this, inStream);
 				System.out.println("Creating multiplayer game!");	
 			} else {
 				System.out.println("Connecting...");
 				socket = new Socket(HOST_IP, PORT);
 				System.out.println("Connected!\nBuffering...");
 				inStream = new ObjectInputStream(socket.getInputStream());
-				//outStream = new ObjectOutputStream(socket.getOutputStream());
+				outStream = new ObjectOutputStream(socket.getOutputStream());
 				System.out.println("Buffered\nPinging for 256 bytes...");
-				//outStream.flush();
+				outStream.flush();
 				System.out.println("Starting threads...");
 				new ThreadReceive(this, inStream);
-				//new ThreadSend(this, outStream);
+				new ThreadSend(this, outStream);
 				System.out.println("Started!");
 			}
 		} catch (Exception e) {
