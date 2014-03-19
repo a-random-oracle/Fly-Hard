@@ -29,6 +29,9 @@ public class NetworkGame {
 	
 	public MultiPlayerGame multiPlayerGame;
 	
+	ObjectOutputStream outStream;
+	ObjectInputStream inStream;
+	
 	
 	
 	public NetworkGame(boolean host) {
@@ -37,16 +40,16 @@ public class NetworkGame {
 		try {
 			multiPlayerGame = MultiPlayerGame.createMultiPlayerGame(null, null); 
 			
-			ObjectOutputStream outStream = new ObjectOutputStream(client.getOutputStream());
-			ObjectInputStream inStream = new ObjectInputStream(client.getInputStream());
-			
 			if (host) {
 				System.out.println("Hosting...");
 				server = new ServerSocket(port, 4, InetAddress.getByName(serverIP));
 				System.out.println("Ready!\nAwaiting client...");
 				client = server.accept();
 				System.out.println("Client connected!\nSetting up game...");
-			
+
+				outStream = new ObjectOutputStream(client.getOutputStream());
+				inStream = new ObjectInputStream(client.getInputStream());
+				
 				System.out.println("Streams set up!");
 				
 				new ThreadSend(multiPlayerGame, outStream);
