@@ -33,7 +33,10 @@ public class NetworkGame {
 	
 	public NetworkGame(boolean host) {
 		
+		
 		try {
+			multiPlayerGame = MultiPlayerGame.createMultiPlayerGame(null, null); 
+			
 			ObjectOutputStream outStream = new ObjectOutputStream(client.getOutputStream());
 			ObjectInputStream inStream = new ObjectInputStream(client.getInputStream());
 			
