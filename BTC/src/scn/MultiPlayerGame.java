@@ -14,13 +14,10 @@ import btc.Main;
 
 public class MultiPlayerGame extends Game {
 	
-	/** The unique instance of this class */
-	private static MultiPlayerGame instance = null;
-	
 	/**
 	 * Creates a new instance of a multi-player game.
 	 * <p>
-	 * If an instance of MultiPlayerGame already exists, this will print
+	 * If an instance of MultiPlayerGame already eairportxists, this will print
 	 * an error message and return the current instance.
 	 * </p>
 	 * @param main the main containing the scene
@@ -35,7 +32,7 @@ public class MultiPlayerGame extends Game {
 			Exception e = new Exception("Attempting to create a " +
 					"second instance of MultiPlayerGame");
 			e.printStackTrace();
-			return instance;
+			return (MultiPlayerGame) instance;
 		}
 	}
 
@@ -46,6 +43,8 @@ public class MultiPlayerGame extends Game {
 	 */
 	private MultiPlayerGame(Main main, DifficultySetting difficulty) {
 		super(main, difficulty);
+		
+		instance = this;
 	}
 	
 	@Override
@@ -96,9 +95,11 @@ public class MultiPlayerGame extends Game {
 		Player player0 = new Player(getNewPlayerID(), "Bob1", true, "127.0.0.1",
 				player0Airports, player0Waypoints);
 		players.add(player0);
+		out.addOrder("Player 0: " + player0.getID());
 		Player player1 = new Player(getNewPlayerID(), "Bob2", false, "127.0.0.1",
 				player1Airports, player1Waypoints);
 		players.add(player1);
+		out.addOrder("Player 1: " + player1.getID());
 		
 		player0.setScore(50);
 		player1.setScore(20);

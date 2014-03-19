@@ -59,7 +59,7 @@ public class SinglePlayerGame extends Game {
 		}
 		
 		// Set up the player
-		player = new Player("Bob1", true, "127.0.0.1",
+		player = new Player(getNewPlayerID(), "Bob1", true, "127.0.0.1",
 				airports, playersWaypoints);
 		players.add(player);
 
@@ -92,7 +92,8 @@ public class SinglePlayerGame extends Game {
 	@Override
 	public void initializeAircraftArray() {
 		super.start();
-		player = new Player("Test Player", true, "127.0.0.1", null, null);
+		player = new Player(getNewPlayerID(), "Test Player",
+				true, "127.0.0.1", null, null);
 		players.add(this.player);
 		player.setAircraft(new ArrayList<Aircraft>());
 	}

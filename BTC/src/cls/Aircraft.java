@@ -105,35 +105,41 @@ public class Aircraft implements Serializable {
 	/**
 	 * Constructor for an aircraft.
 	 * @param name
-	 *            the name of the flight
+	 * 			the name of the flight
 	 * @param nameOrigin
-	 *            the name of the location from which the plane hails
+	 * 			the name of the location from which the plane hails
 	 * @param nameDestination
-	 *            the name of the location to which the plane is going
+	 * 			the name of the location to which the plane is going
 	 * @param originPoint
-	 *            the point to initialise the plane
+	 * 			the point to initialise the plane
 	 * @param destinationPoint
-	 *            the end point of the plane's route
+	 *  		the end point of the plane's route
 	 * @param image
-	 *            the image to represent the plane
+	 * 			the image to represent the plane
 	 * @param speed
-	 *            the speed the plane will travel at
+	 * 			the speed the plane will travel at
 	 * @param sceneWaypoints
-	 *            the waypoints on the map
+	 * 			the waypoints on the map
 	 * @param difficulty
-	 *            the difficulty the game is set to
+	 * 			the difficulty the game is set to
+	 * @param originAirport
+	 * 			the airport this flight originated at
+	 * @param destinationAirport
+	 * 			the airport this flight is heading towards at
 	 */
 	public Aircraft(String name, String nameDestination, String nameOrigin,
 			Waypoint destinationPoint, Waypoint originPoint, Image image,
 			double speed, Waypoint[] sceneWaypoints,
-			DifficultySetting difficulty, Airport airport) {
+			DifficultySetting difficulty, Airport originAirport,
+			Airport destinationAirport) {
 		
 		this.flightName = name;
 		this.flightPlan = new FlightPlan(sceneWaypoints, nameOrigin,
-				nameDestination, originPoint, destinationPoint, airport);
+				nameDestination, originPoint, destinationPoint, originAirport,
+				destinationAirport);
 		this.image = image;
 		this.position = originPoint.getLocation();
-		this.isWaitingToLand = (airport != null);
+		this.isWaitingToLand = (destinationAirport != null);
 		this.score = 100;
 
 		// Set aircraft's altitude to a random height
@@ -211,8 +217,8 @@ public class Aircraft implements Serializable {
 				// ~11 seconds to fully descend
 				position.setZ(position.getZ() - 2501 * timeDifference);
 			} else { // Gone too low, land it now TODO (check this)
-				if (flightPlan.getAirport() != null) {
-					flightPlan.getAirport().isActive = false;
+				if (flightPlan.getDestinationAirport() != null) {
+					flightPlan.getDestinationAirport().isActive = false;
 					hasFinished = true;
 				}
 			}
@@ -238,8 +244,8 @@ public class Aircraft implements Serializable {
 				&& isAtDestination()) { // At finishing point
 			if (!isWaitingToLand) { // Ready to land
 				hasFinished = true;
-				if (flightPlan.getAirport() != null) { // Landed at airport
-					flightPlan.getAirport().isActive = false;
+				if (flightPlan.getDestinationAirport() != null) { // Landed at airport
+					flightPlan.getDestinationAirport().isActive = false;
 				}
 			}
 		} else if (isAt(currentTarget)) {
@@ -349,8 +355,8 @@ public class Aircraft implements Serializable {
 	 * @return <code>true</code> if the aircraft is at its destination
 	 */
 	public boolean isAtDestination() {
-		if (flightPlan.getAirport() != null) { // At airport
-			return flightPlan.getAirport().isWithinArrivals(position, false);
+		if (flightPlan.getDestinationAirport() != null) { // At airport
+			return flightPlan.getDestinationAirport().isWithinArrivals(position, false);
 		} else {
 			return isAt(flightPlan.getDestination());
 		}
@@ -758,8 +764,8 @@ public class Aircraft implements Serializable {
 		isWaitingToLand = false;
 		isLanding = true;
 		isManuallyControlled = false;
-		if (flightPlan.getAirport() != null) {
-			flightPlan.getAirport().isActive = true;
+		if (flightPlan.getDestinationAirport() != null) {
+			flightPlan.getDestinationAirport().isActive = true;
 		}
 	}
 
@@ -767,11 +773,17 @@ public class Aircraft implements Serializable {
 	 * Adds this aircraft to the player whose airport it is departing from.
 	 */
 	public void takeOff() {
-		Airport airport = Game.getAirportFromName(flightPlan.getOriginName());
-		if (airport != null) {
+		if (flightPlan.getOriginAirport() != null) {
 			// Add the aircraft to the player whose airport
 			// it is departing from
-			Game.getPlayerFromAirport(airport).getAircraft().add(this);
+			for (Player player : Game.getInstance().getPlayers()) {
+				for (Airport airport : player.getAirports()) {
+					if (airport.equals(flightPlan.getOriginAirport())) {
+						player.getAircraft().add(this);
+						return;
+					}
+				}
+			}
 		}
 	}
 

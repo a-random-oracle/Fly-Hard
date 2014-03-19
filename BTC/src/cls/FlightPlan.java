@@ -23,17 +23,22 @@ public class FlightPlan implements Serializable {
 	/** The position which the aircraft following this path will exit at */
 	private Vector destination;
 	
+	/** The airport which the aircraft following this path originated at */
+	private Airport originAirport;
+	
 	/** The airport which the aircraft following this path is heading towards */
-	private Airport airport;
+	private Airport destinationAirport;
 	
 	FlightPlan(Waypoint[] route, String originName, String destinationName,
-			Waypoint originPoint, Waypoint destinationPoint, Airport airport) {
+			Waypoint originPoint, Waypoint destinationPoint,
+			Airport originAirport, Airport destinationAirport) {
 		this.route = findGreedyRoute(originPoint, destinationPoint, route);
 		this.originName = originName;
 		this.origin = originPoint.getLocation();
 		this.destinationName = destinationName;
 		this.destination = destinationPoint.getLocation();
-		this.airport = airport;
+		this.originAirport = originAirport;
+		this.destinationAirport= destinationAirport;
 	}
 	
 	public Waypoint[] getRoute() {
@@ -56,8 +61,12 @@ public class FlightPlan implements Serializable {
 		return destination;
 	}
 	
-	public Airport getAirport() {
-		return airport;
+	public Airport getOriginAirport() {
+		return originAirport;
+	}
+	
+	public Airport getDestinationAirport() {
+		return destinationAirport;
 	}
 	
 	/**

@@ -25,6 +25,9 @@ import btc.Main;
 
 public abstract class Game extends Scene {
 	
+	/** The unique instance of this class */
+	protected static Game instance = null;
+	
 	/** The list of players currently playing the game */
 	protected ArrayList<Player> players;
 	
@@ -96,6 +99,7 @@ public abstract class Game extends Scene {
 	 */
 	public Game(Main main, DifficultySetting difficulty) {
 		super(main);
+		
 		this.difficulty = difficulty;
 		
 		// Set screen offsets
@@ -776,6 +780,7 @@ public abstract class Game extends Scene {
 		String originName = "";
 		Waypoint originPoint = null;
 		Waypoint destinationPoint;
+		Airport originAirport = null;
 		Airport destinationAirport = null;
 		
 		// Get a list of this player's location waypoints
@@ -792,6 +797,7 @@ public abstract class Game extends Scene {
 					== player.getAirports()[randomAirport].getHangarSize()) {
 				return null;
 			} else {
+				originAirport = player.getAirports()[randomAirport];
 				originPoint = player.getAirports()[randomAirport]
 						.getDeparturesCentre();
 				originName = player.getAirports()[randomAirport].name;
@@ -802,10 +808,10 @@ public abstract class Game extends Scene {
 
 			// If random point is an airport, use its departures location
 			if (originPoint instanceof Airport) {
+				originAirport = ((Airport) originPoint);
 				originName = originPoint.name;
 				originPoint = ((Airport) originPoint).getDeparturesCentre();
 			} else {
-				
 				for (int i = 0; i < playersLocationWaypoints.length; i++) {
 					if (playersLocationWaypoints[i].equals(originPoint)) {
 						originName = playersLocationWaypoints[i].getName();
@@ -852,7 +858,8 @@ public abstract class Game extends Scene {
 		
 		return new Aircraft(name, destinationName, originName,
 				destinationPoint, originPoint, aircraftImage, speed,
-				player.getWaypoints(), difficulty, destinationAirport);
+				player.getWaypoints(), difficulty, originAirport,
+				destinationAirport);
 	}
 	
 	/**
@@ -1073,6 +1080,14 @@ public abstract class Game extends Scene {
 	// Accessors ------------------------------------------------------------------------
 	
 	/**
+	 * Gets the current instance of the game.
+	 * @return the current game
+	 */
+	public static Game getInstance() {
+		return instance;
+	}
+	
+	/**
 	 * Gets the horizontal offset of the game region.
 	 * @return the horizontal offset of the game region
 	 */
@@ -1089,7 +1104,6 @@ public abstract class Game extends Scene {
 	}
 	
 	/**
-	 * This method should only be used for unit testing.
 	 * Gets the list of players.
 	 * @return the list of players
 	 */

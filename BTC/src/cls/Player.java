@@ -75,24 +75,6 @@ public class Player implements Serializable {
 	
 	public Player(int id, String name, boolean hosting, String ipAddress,
 			Airport[] airports, Waypoint[] waypoints) {
-		setDefaults();
-		
-		this.id = id;
-		this.name = name;
-		this.hosting = hosting;
-		this.ipAddress = ipAddress;
-		this.airports = airports;
-		this.waypoints = waypoints;
-	}
-	
-	
-	// Helper methods: --------------------------------------------------------
-	
-	private void setDefaults() {
-		// Set aircraft colour
-		// Default is white
-		aircraftColour = (id < AIRCRAFT_COLOURS.length)
-				? AIRCRAFT_COLOURS[id] : new Integer[] {255, 255, 255};
 		
 		// Reset values
 		this.maxAircraft = Game.DEFAULT_MAX_AIRCRAFT;
@@ -107,6 +89,19 @@ public class Player implements Serializable {
 		// Initialise arrays
 		this.aircraft = new ArrayList<Aircraft>();
 		this.powerups = new ArrayList<Powerup>();
+		
+		// Set attributes
+		this.id = id;
+		this.name = name;
+		this.hosting = hosting;
+		this.ipAddress = ipAddress;
+		this.airports = airports;
+		this.waypoints = waypoints;
+		
+		// Set aircraft colour
+		// Default is white
+		aircraftColour = (id < AIRCRAFT_COLOURS.length)
+				? AIRCRAFT_COLOURS[id] : new Integer[] {255, 255, 255};
 	}
 	
 	
