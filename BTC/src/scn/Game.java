@@ -1089,6 +1089,15 @@ public abstract class Game extends Scene {
 	}
 	
 	/**
+	 * This method should only be used for unit testing.
+	 * Gets the list of players.
+	 * @return the list of players
+	 */
+	public static ArrayList<Player> getPlayers() {
+		return players;
+	}
+	
+	/**
 	 * Gets a list of all aircraft in the airspace.
 	 * @return a list of all the aircraft in the airspace
 	 */
@@ -1231,15 +1240,5 @@ public abstract class Game extends Scene {
 	 */	
 	@Deprecated
 	public abstract void initializeAircraftArray();
-	
-	/**
-	 * This method should only be used for unit testing.
-	 * Gets the list of players.
-	 * @return the list of players
-	 */
-	@Deprecated
-	public static ArrayList<Player> getPlayers() {
-		return players;
-	}
 	
 }
