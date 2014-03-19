@@ -65,7 +65,6 @@ public class Title extends Scene {
 			public void action() {
 				//main.setScene(new DifficultySelect(main, DifficultySelect.CREATE_DEMO));
 				main.setScene(new HostSelect(main, HostSelect.CREATE_DEMO));
-				System.out.println("THIS DOESNT DO ANYTHING YET. IN TIME, ALL THINGS COME TO THOSE WHO WAIT.");
 			}
 		};
 		buttons[1] = new lib.ButtonText("Play Multiplayer Game", multiplayer,

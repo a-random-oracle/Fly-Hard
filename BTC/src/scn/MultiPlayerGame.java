@@ -84,8 +84,6 @@ public class MultiPlayerGame extends Game {
 		boolean isHost = false;
 		Socket testSocket = null;
 
-		MultiPlayerGame.createMultiPlayerGame(main, DifficultySetting.EASY);
-
 		try {
 			testSocket = new Socket(InetAddress.getByName("127.0.0.1"), PORT);
 
@@ -116,7 +114,8 @@ public class MultiPlayerGame extends Game {
 		timeToUpdate += timeDifference;
 
 		if (timeToUpdate > 2000) {
-			
+			out.addOrder("Updating");
+			System.out.println("Updating.");
 		}
 
 	}
@@ -166,11 +165,9 @@ public class MultiPlayerGame extends Game {
 		Player player0 = new Player(getNewPlayerID(), "Bob1", true, "127.0.0.1",
 				player0Airports, player0Waypoints);
 		players.add(player0);
-		out.addOrder("Player 0: " + player0.getID());
 		Player player1 = new Player(getNewPlayerID(), "Bob2", false, "127.0.0.1",
 				player1Airports, player1Waypoints);
 		players.add(player1);
-		out.addOrder("Player 1: " + player1.getID());
 
 		player0.setScore(50);
 		player1.setScore(20);
