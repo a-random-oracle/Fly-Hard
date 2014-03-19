@@ -93,10 +93,10 @@ public class MultiPlayerGame extends Game {
 		player1Airports[0] = airports[1];
 		
 		// Set up the player
-		player0 = new Player("Bob1", true, "127.0.0.1",
+		Player player0 = new Player("Bob1", true, "127.0.0.1",
 				player0Airports, player0Waypoints);
 		players.add(player0);
-		player1 = new Player("Bob2", false, "127.0.0.1",
+		Player player1 = new Player("Bob2", false, "127.0.0.1",
 				player1Airports, player1Waypoints);
 		players.add(player1);
 
