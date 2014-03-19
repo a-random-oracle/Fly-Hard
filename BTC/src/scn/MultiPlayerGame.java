@@ -32,6 +32,8 @@ public class MultiPlayerGame extends Game {
 	/** The receive socket */
 	private Socket socket;
 
+	private static final String HOST_IP = "144.32.179.129";
+	
 	/** Fixed port number to connect to */
 	private static final int PORT = 25560;
 
@@ -85,7 +87,7 @@ public class MultiPlayerGame extends Game {
 		Socket testSocket = null;
 
 		try {
-			testSocket = new Socket(InetAddress.getByName("127.0.0.1"), PORT);
+			testSocket = new Socket(InetAddress.getByName(HOST_IP), PORT);
 
 			// Need to finalise to a better solution with a specific solution
 		} catch (IOException e) {
@@ -95,10 +97,10 @@ public class MultiPlayerGame extends Game {
 		}
 
 		if (isHost) {
-			System.out.println("Will host on " + "127.0.0.1" + ":" + PORT);
+			System.out.println("Will host on " + HOST_IP + ":" + PORT);
 			setUpGame();
 		} else {
-			System.out.println("Will join to " + "127.0.0.1" + ":" + PORT);
+			System.out.println("Will join to " + HOST_IP + ":" + PORT);
 		}
 		
 		// Set up and initialise the network
@@ -162,7 +164,7 @@ public class MultiPlayerGame extends Game {
 		player1Airports[0] = airports[1];
 
 		// Set up the player
-		Player player0 = new Player(getNewPlayerID(), "Bob1", true, "127.0.0.1",
+		Player player0 = new Player(getNewPlayerID(), "Bob1", true, HOST_IP,
 				player0Airports, player0Waypoints);
 		players.add(player0);
 		Player player1 = new Player(getNewPlayerID(), "Bob2", false, "127.0.0.1",
@@ -253,7 +255,7 @@ public class MultiPlayerGame extends Game {
 	@Override
 	public void initializeAircraftArray() {
 		super.start();
-		Player player1 = new Player(getNewPlayerID(), "Test Player 1", true, "127.0.0.1", null, null);
+		Player player1 = new Player(getNewPlayerID(), "Test Player 1", true, HOST_IP, null, null);
 		players.add(player1);
 		Player player2 = new Player(getNewPlayerID(), "Test Player 2", true, "127.0.0.1", null, null);
 		players.add(player2);
