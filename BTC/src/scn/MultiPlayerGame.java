@@ -30,9 +30,6 @@ public class MultiPlayerGame extends Game {
 	/** The client socket */
 	private Socket client;
 
-	/** The receive socket */
-	//private Socket socket; TODO
-
 	private static final String HOST_IP = "144.32.179.129";
 	
 	/** Fixed port number to connect to */
@@ -82,6 +79,14 @@ public class MultiPlayerGame extends Game {
 	@Override
 	public void start() {
 		super.start();
+		
+		// Assign location waypoints to the player
+		locationWaypointMap.put(0, 0);
+		locationWaypointMap.put(1, 0);
+		locationWaypointMap.put(2, 1);
+		locationWaypointMap.put(3, 1);
+		locationWaypointMap.put(4, 0);
+		locationWaypointMap.put(5, 1);
 
 		boolean isHost = false;
 		Socket testSocket = null;
@@ -105,7 +110,37 @@ public class MultiPlayerGame extends Game {
 		
 		// Set up and initialise the network
 		establishNetworkConnection(isHost, testSocket);
+		
+		// Create the manual control buttons
+		manualControlButtons = new ButtonText[players.size()];
 
+		ButtonText.Action manual0 = new ButtonText.Action() {
+			@Override
+			public void action() {
+				toggleManualControl(players.get(0));
+			}
+		};
+
+		ButtonText.Action manual1 = new ButtonText.Action() {
+			@Override
+			public void action() {
+				toggleManualControl(players.get(1));
+			}
+		};
+
+		manualControlButtons[players.get(0).getID()]
+				= new ButtonText(" Take Control", manual0,
+						(window.width() - 128 - (2 * xOffset)) / 3,
+						32, 128, 32, 8, 4);
+
+		manualControlButtons[players.get(1).getID()]
+				= new ButtonText(" Take Control", manual1,
+						2 * (window.width() - 128 - (2 * xOffset)) / 3,
+						32, 128, 32, 8, 4);
+
+		// Reset game attributes for each player
+		deselectAircraft(players.get(0));
+		deselectAircraft(players.get(1));
 	}
 
 	@Override
@@ -123,14 +158,6 @@ public class MultiPlayerGame extends Game {
 	}
 
 	private void setUpGame() {
-		// Assign location waypoints to the player
-		locationWaypointMap.put(0, 0);
-		locationWaypointMap.put(1, 0);
-		locationWaypointMap.put(2, 1);
-		locationWaypointMap.put(3, 1);
-		locationWaypointMap.put(4, 0);
-		locationWaypointMap.put(5, 1);
-
 		// Generate the lists of waypoints to pass to the players
 		Waypoint[] player0Waypoints = new Waypoint[5 + 3];
 		Waypoint[] player1Waypoints = new Waypoint[5 + 3];
@@ -173,79 +200,71 @@ public class MultiPlayerGame extends Game {
 
 		player0.setScore(50);
 		player1.setScore(20);
-
-		// Create the manual control button
-		manualControlButtons = new ButtonText[players.size()];
-
-		ButtonText.Action manual0 = new ButtonText.Action() {
-			@Override
-			public void action() {
-				toggleManualControl(players.get(0));
-			}
-		};
-
-		ButtonText.Action manual1 = new ButtonText.Action() {
-			@Override
-			public void action() {
-				toggleManualControl(players.get(1));
-			}
-		};
-
-		manualControlButtons[players.get(0).getID()]
-				= new ButtonText(" Take Control", manual0,
-						(window.width() - 128 - (2 * xOffset)) / 3,
-						32, 128, 32, 8, 4);
-
-		manualControlButtons[players.get(1).getID()]
-				= new ButtonText(" Take Control", manual1,
-						2 * (window.width() - 128 - (2 * xOffset)) / 3,
-						32, 128, 32, 8, 4);
-
-		// Reset game attributes for each player
-		deselectAircraft(players.get(0));
-		deselectAircraft(players.get(1));
 	}
 
 
 	// Networking -----------------------------------------------------------------------
 
-	public void establishNetworkConnection(boolean host, Socket socket) {
+	public void establishNetworkConnection(boolean isHost, Socket socket) {
 		try {
-			if (host) {
-				System.out.println("Hosting...");
-				server = new ServerSocket(PORT, 4, InetAddress.getByName(getHost().getIPAddress()));
-				System.out.println("Ready!\nAwaiting client...");
+			if (isHost) {
+				// Set up a server socket
+				System.out.println("Setting up server...");
+				server = new ServerSocket(PORT, 4,
+						InetAddress.getByName(getHost().getIPAddress()));
+				System.out.println("Server set up.");
+				
+				// Wait for the client to connect
+				System.out.println("Awaiting client...");
 				client = server.accept();
-				System.out.println("Client connected!\nSetting up game...");
+				System.out.println("Client connected.");
 
+				// Set up the input/output streams
+				System.out.println("Setting up streams...");
 				outStream = new ObjectOutputStream(client.getOutputStream());
 				inStream = new ObjectInputStream(client.getInputStream());
-
-				System.out.println("Streams set up!");
-
 				outStream.flush();
+				System.out.println("Streams set up.");
 				
-				new ThreadSend(this, outStream);
-				new ThreadReceive(this, inStream);
-				System.out.println("Creating multiplayer game!");	
+				// Send the list of players
+				System.out.println("Sending data...");
+				ThreadSend ts = new ThreadSend(outStream);
+				//ThreadReceive tr = new ThreadReceive(inStream);
+				ts.start();
+				//tr.start();
+				ts.join();
+				System.out.println("Data sent.");
+				
+				System.out.println("Creating multiplayer game.");	
 			} else {
-				System.out.println("Connecting...");
-				System.out.println("Connected!\nBuffering...");
+				// Connect to he host
+				System.out.println("Connecting to host...");
 				inStream = new ObjectInputStream(socket.getInputStream());
 				outStream = new ObjectOutputStream(socket.getOutputStream());
-				System.out.println("Buffered\nPinging for 256 bytes...");
 				outStream.flush();
-				System.out.println("Starting threads...");
-				ThreadReceive tr = new ThreadReceive(this, inStream);
-				new ThreadSend(this, outStream);
-				Game.instance = tr.getInstance();
-				System.out.println("Started!");
+				System.out.println("Connected.");
+				
+				// Receive the player array from the host
+				System.out.println("Receiving data...");
+				ThreadReceive tr = new ThreadReceive(inStream);
+				//ThreadSend ts = new ThreadSend(outStream);
+				tr.start();
+				//ts.start();
+				tr.join();
+				System.out.println("Data received.");
+				
+				// Load the received players
+				System.out.println("Loading data...");
+				Game.getInstance().setPlayers(tr.getPlayers());
+				System.out.println("Data loaded.");
+				
+				// Used for debugging
+				for(Player p : players) System.out.println(p.getName());
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
-
 
 
 	// Deprecated -----------------------------------------------------------------------

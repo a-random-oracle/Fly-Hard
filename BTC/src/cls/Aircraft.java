@@ -10,7 +10,6 @@ import scn.Game.DifficultySetting;
 import lib.jog.audio;
 import lib.jog.audio.Sound;
 import lib.jog.graphics;
-import lib.jog.graphics.Image;
 import lib.jog.input;
 import lib.jog.window;
 
@@ -46,9 +45,6 @@ public class Aircraft implements Serializable {
 
 	/** The minimum distance planes should keep apart */
 	private static int minimumSeparation;
-
-	/** The image to use to represent the aircraft */
-	private Image image;
 
 	/** How much the plane can turn per second - in radians */
 	private double turnSpeed;
@@ -128,7 +124,7 @@ public class Aircraft implements Serializable {
 	 * 			the airport this flight is heading towards at
 	 */
 	public Aircraft(String name, String nameDestination, String nameOrigin,
-			Waypoint destinationPoint, Waypoint originPoint, Image image,
+			Waypoint destinationPoint, Waypoint originPoint,
 			double speed, Waypoint[] sceneWaypoints,
 			DifficultySetting difficulty, Airport originAirport,
 			Airport destinationAirport) {
@@ -137,7 +133,6 @@ public class Aircraft implements Serializable {
 		this.flightPlan = new FlightPlan(sceneWaypoints, nameOrigin,
 				nameDestination, originPoint, destinationPoint, originAirport,
 				destinationAirport);
-		this.image = image;
 		this.position = originPoint.getLocation();
 		this.isWaitingToLand = (destinationAirport != null);
 		this.score = 100;
@@ -475,12 +470,16 @@ public class Aircraft implements Serializable {
 		graphics.setColour(colour[0], colour[1], colour[2], alpha);
 
 		if (offset != null) {
-			graphics.draw(image, scale, position.getX() - (image.width() / 2)
-					+ offset.getX(), position.getY() - (image.height() / 2)
+			graphics.draw(Game.AIRCRAFT_IMAGE, scale,
+					position.getX() - (Game.AIRCRAFT_IMAGE.width() / 2)
+					+ offset.getX(), position.getY()
+					- (Game.AIRCRAFT_IMAGE.height() / 2)
 					+ offset.getY(), getBearing(), (RADIUS / 2), (RADIUS / 2));
 		} else {
-			graphics.draw(image, scale, position.getX() - (image.width() / 2),
-					position.getY() - (image.height() / 2), getBearing(),
+			graphics.draw(Game.AIRCRAFT_IMAGE, scale,
+					position.getX() - (Game.AIRCRAFT_IMAGE.width() / 2),
+					position.getY()
+					- (Game.AIRCRAFT_IMAGE.height() / 2), getBearing(),
 					(RADIUS / 2), (RADIUS / 2));
 		}
 
@@ -507,8 +506,8 @@ public class Aircraft implements Serializable {
 		graphics.setColour(graphics.green);
 
 		// Centre positions of aircraft
-		Double xpos = position.getX() - (image.width() / 2);
-		Double ypos = position.getY() - (image.height() / 2);
+		Double xpos = position.getX() - (Game.AIRCRAFT_IMAGE.width() / 2);
+		Double ypos = position.getY() - (Game.AIRCRAFT_IMAGE.height() / 2);
 		
 		// Draw the compass circle
 		graphics.circle(false, xpos, ypos, COMPASS_RADIUS, 30);
@@ -590,14 +589,16 @@ public class Aircraft implements Serializable {
 
 		if (currentTarget != destination) {
 			// Draw line from plane to next waypoint
-			graphics.line(position.getX() - image.width() / 2, position.getY()
-					- image.height() / 2, route[currentRouteStage]
+			graphics.line(position.getX() - Game.AIRCRAFT_IMAGE.width() / 2,
+					position.getY()
+					- Game.AIRCRAFT_IMAGE.height() / 2, route[currentRouteStage]
 					.getLocation().getX(), route[currentRouteStage]
 					.getLocation().getY());
 		} else {
 			// Draw line from plane to destination
-			graphics.line(position.getX() - image.width() / 2, position.getY()
-					- image.height() / 2, destination.getX(),
+			graphics.line(position.getX() - Game.AIRCRAFT_IMAGE.width() / 2,
+					position.getY()
+					- Game.AIRCRAFT_IMAGE.height() / 2, destination.getX(),
 					destination.getY());
 		}
 

@@ -1,6 +1,5 @@
 package cls;
 
-import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
 
@@ -9,14 +8,13 @@ import btc.Main;
 import scn.Game;
 
 import lib.jog.graphics;
-import lib.jog.graphics.Image;
 import lib.jog.input;
 import lib.jog.input.EventHandler;
 
 public class Airport extends Waypoint implements EventHandler, Serializable {
 	
-	// TODO last updated: 2014.03.16 18:50
-	private static final long serialVersionUID = -3563392746662125848L;
+	// TODO last updated: 2014.03.19 20:55
+	private static final long serialVersionUID = -2239129660591866487L;
 
 	/** The distance between the left edge of the airport image, and the arrivals area */
 	private static final double RELATIVE_ARRIVALS_X = 91;
@@ -82,9 +80,6 @@ public class Airport extends Waypoint implements EventHandler, Serializable {
 	/** Whether the departures area has been clicked */
 	private boolean isDeparturesClicked = false;
 	
-	/** The image used to represent the airport */
-	private Image image;
-	
 	/** The scaling factor to apply to cause the airport to 'fit in' with the map size
 	 * this is taken to be the lower (and hence smaller) of the height and width scales */
 	private double scale = Main.getMinScale();
@@ -118,11 +113,6 @@ public class Airport extends Waypoint implements EventHandler, Serializable {
 		super((x + (RELATIVE_ARRIVALS_X + (RELATIVE_ARRAVALS_WIDTH/2)) * Main.getMinScale()),
 				(y + (RELATIVE_ARRIVALS_Y + (RELATIVE_ARRIVALS_HEIGHT/2)) * Main.getMinScale()),
 				true, name);
-		
-		// Load the aircraft image
-		if (!Main.testing) {
-			image = graphics.newImage("gfx" + File.separator + "Airport.png");
-		}
 		
 		xLocation = x;
 		yLocation = y;
@@ -188,7 +178,7 @@ public class Airport extends Waypoint implements EventHandler, Serializable {
 	@Override
 	public void draw() { 
 		// Draw the airport image, applying the scale factor
-		graphics.drawScaled(image, xLocation, yLocation, scale);
+		graphics.drawScaled(Game.AIRPORT_IMAGE, xLocation, yLocation, scale);
 		
 		int greenFine = 128;
 		int greenDanger = 0;

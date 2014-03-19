@@ -28,6 +28,12 @@ public abstract class Game extends Scene implements Serializable {
 	
 	// TODO last updated: 2014.03.19 20:05
 	private static final long serialVersionUID = -5326141541318365606L;
+	
+	// The images to be used to represent objects
+	public static final Image AIRCRAFT_IMAGE = graphics.newImage("gfx"
+			+ File.separator + "plane.png");
+	public static final Image AIRPORT_IMAGE = graphics.newImage("gfx"
+			+ File.separator + "Airport.png");
 
 	/** The unique instance of this class */
 	protected static Game instance = null;
@@ -65,7 +71,7 @@ public abstract class Game extends Scene implements Serializable {
 	protected static double timeElapsed;
 	
 	/** The image to use for aircraft */
-	protected Image aircraftImage;
+	//protected Image aircraftImage;
 	
 	/** The music to play during the game scene */
 	protected Music music;
@@ -171,7 +177,6 @@ public abstract class Game extends Scene implements Serializable {
 		if (!Main.testing) {
 			// Load in graphics
 			background = graphics.newImage("gfx" + File.separator + "background_base.png");
-			aircraftImage = graphics.newImage("gfx" + File.separator + "plane.png");
 
 			// Load in music
 			music = audio.newMusic("sfx" + File.separator + "Gypsy_Shoegazer.ogg");
@@ -858,7 +863,7 @@ public abstract class Game extends Scene implements Serializable {
 		int speed = 32 + (int)(10 * Math.random());
 		
 		return new Aircraft(name, destinationName, originName,
-				destinationPoint, originPoint, aircraftImage, speed,
+				destinationPoint, originPoint, speed,
 				player.getWaypoints(), difficulty, originAirport,
 				destinationAirport);
 	}
@@ -1252,6 +1257,12 @@ public abstract class Game extends Scene implements Serializable {
 		}
 		
 		return null;
+	}
+	
+	// Mutators -------------------------------------------------------------------------
+	
+	public void setPlayers(ArrayList<Player> players) {
+		this.players = players;
 	}
 	
 	

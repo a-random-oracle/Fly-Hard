@@ -2,33 +2,33 @@ package net;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.util.ArrayList;
 
-import scn.Game;
-import scn.MultiPlayerGame;
+import cls.Player;
 
 public class ThreadReceive extends Thread {
 	
-	ObjectInputStream inStream;
-	MultiPlayerGame multiPlayerGame;
+	private ObjectInputStream inStream;
+	private ArrayList<Player> players;
 		
-	public ThreadReceive(MultiPlayerGame multiPlayerGame, ObjectInputStream inStream) {
+	public ThreadReceive(ObjectInputStream inStream) {
 		this.inStream = inStream;
-		this.multiPlayerGame = multiPlayerGame;
-		start();
 	}
 	
 	@Override
 	public void run() {
-		try {
-			multiPlayerGame = (MultiPlayerGame) inStream.readObject();
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
+		while (players == null) {
+			try {
+				players = (ArrayList<Player>) inStream.readObject();
+			} catch (ClassNotFoundException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 	
-	public Game getInstance() {
-		return (Game) multiPlayerGame;
+	public ArrayList<Player> getPlayers() {
+		return players;
 	}
 }
