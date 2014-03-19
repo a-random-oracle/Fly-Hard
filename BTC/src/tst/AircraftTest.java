@@ -28,7 +28,7 @@ public class AircraftTest {
 		
 		testAircraft = new Aircraft("testAircraft", "Berlin", "Dublin",
 				new Waypoint(100, 100, true), new Waypoint(0, 0, true),
-				null, 10.0, waypointList, DifficultySetting.MEDIUM, null);
+				null, 10.0, waypointList, DifficultySetting.MEDIUM, null, null);
 	}
 	
 	// Test get functions
@@ -106,7 +106,7 @@ public class AircraftTest {
 		
 		testAircraft = new Aircraft("testAircraft", "Berlin", "Dublin",
 				new Waypoint(100, 100, true), new Waypoint(0, 0, true),
-				null, 10.0, waypointList, DifficultySetting.MEDIUM, null);
+				null, 10.0, waypointList, DifficultySetting.MEDIUM, null, null);
 		
 		assertTrue("Out of bounds = false", testAircraft.isOutOfAirspaceBounds());
 	}
@@ -123,10 +123,10 @@ public class AircraftTest {
 	// Testing totalDistanceInFlightPlan 
 	@Test
 	public void totalDistanceInFlightPlan() {
-		SinglePlayerGame testDemo = new SinglePlayerGame(null, DifficultySetting.MEDIUM);
+		SinglePlayerGame testDemo = SinglePlayerGame.createSinglePlayerGame(null, DifficultySetting.MEDIUM);
 		testDemo.initializeAircraftArray();
-		Game.getPlayers().get(0).getAircraft().add(testAircraft);
-		Aircraft plane = Game.getPlayers().get(0).getAircraft().get(0);
+		Game.getInstance().getPlayers().get(0).getAircraft().add(testAircraft);
+		Aircraft plane = Game.getInstance().getPlayers().get(0).getAircraft().get(0);
 		int distance = 0;
 		
 		for (int i = 0; i < plane.getFlightPlan().getRoute().length - 1; i++) {
@@ -149,7 +149,7 @@ public class AircraftTest {
 		
 		testAircraft = new Aircraft("testAircraft", "Berlin", "Dublin",
 				new Waypoint(100, 100, true), new Waypoint(0, 0, true),
-				null, 10.0, waypointList, DifficultySetting.MEDIUM, null);
+				null, 10.0, waypointList, DifficultySetting.MEDIUM, null, null);
 		
 		assertTrue(testAircraft.isCloseToEntry(waypointList[0].getLocation()));			
 		assertTrue(testAircraft.isCloseToEntry(waypointList[1].getLocation()));

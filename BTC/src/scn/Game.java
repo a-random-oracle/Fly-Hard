@@ -775,8 +775,6 @@ public abstract class Game extends Scene {
 	 * @return the created aircraft object
 	 */
 	protected Aircraft createAircraft(Player player) {
-		out.addOrder(player.getName());
-		
 		String destinationName;
 		String originName = "";
 		Waypoint originPoint = null;
@@ -1228,7 +1226,6 @@ public abstract class Game extends Scene {
 		// Search through list of players to find highest ID
 		// currently in use
 		for (Player player : players) {
-			out.addOrder(player.getName() + " = " + player.getID());
 			if (player.getID() > maxPlayerID) maxPlayerID = player.getID();
 		}
 		
