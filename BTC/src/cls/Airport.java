@@ -13,7 +13,7 @@ import lib.jog.input.EventHandler;
 
 public class Airport extends Waypoint implements EventHandler, Serializable {
 	
-	// TODO last updated: 2014.03.19 20:55
+	// TODO last updated: 2014.03.19 23:45
 	private static final long serialVersionUID = -2239129660591866487L;
 
 	/** The distance between the left edge of the airport image, and the arrivals area */
@@ -178,7 +178,7 @@ public class Airport extends Waypoint implements EventHandler, Serializable {
 	@Override
 	public void draw() { 
 		// Draw the airport image, applying the scale factor
-		graphics.drawScaled(Game.AIRPORT_IMAGE, xLocation, yLocation, scale);
+		graphics.drawScaled(Game.airportImage, xLocation, yLocation, scale);
 		
 		int greenFine = 128;
 		int greenDanger = 0;

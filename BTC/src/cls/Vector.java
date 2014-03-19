@@ -10,9 +10,9 @@ import btc.Main;
  */
 public class Vector implements Serializable {
 	
-	// TODO last updated: 2014.03.13 00:05
+	// TODO last updated: 2014.03.19 23:45
 	private static final long serialVersionUID = -5086652815637818053L;
-	
+
 	/** The vector's x position */
 	private double x;
 	

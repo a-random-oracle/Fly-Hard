@@ -7,7 +7,7 @@ import scn.Game;
 
 public class ThreadSend extends Thread {
 	
-	ObjectOutputStream outStream;
+	private ObjectOutputStream outStream;
 
 	public ThreadSend(ObjectOutputStream outStream) {
 		this.outStream = outStream;
@@ -17,9 +17,12 @@ public class ThreadSend extends Thread {
 	public void run() {
 		try {
 			outStream.writeObject(Game.getInstance().getPlayers());
+			System.out.println("OUT: " + Game.getInstance().getPlayers()
+					.toString());
 			outStream.flush();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
+	
 }

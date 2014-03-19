@@ -31,7 +31,7 @@ public class AirportTest {
 		
 		test_aircraft = new Aircraft("testAircraft", "Berlin", "Dublin",
 				new Waypoint(100, 100, true), new Waypoint(0, 0, true),
-				null, 10.0, waypointList, DifficultySetting.MEDIUM, null, null);			
+				10.0, waypointList, DifficultySetting.MEDIUM, null, null);			
 	}
 	
 	/**

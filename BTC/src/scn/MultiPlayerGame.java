@@ -21,9 +21,6 @@ import cls.Waypoint;
 
 public class MultiPlayerGame extends Game {
 
-	// TODO last updated: 2014.03.19 20:10
-	private static final long serialVersionUID = -7558985356045622872L;
-
 	/** The server-side socket */
 	private ServerSocket server;
 
@@ -201,13 +198,23 @@ public class MultiPlayerGame extends Game {
 	@Override
 	public void update(double timeDifference) {
 		super.update(timeDifference);
-
+		
+		//System.out.println(players.get(1).getAircraft().size());
+		
 		// Increment the time before the next data send
 		timeToUpdate += timeDifference;
 		
-		if (timeToUpdate > 2) {
+		if (timeToUpdate > 0.5) {
 			timeToUpdate = 0;
 			
+		}
+		
+		if (player.isHosting()) {
+			sendPlayerData();
+		}
+		
+		if (!player.isHosting()) {
+			receivePlayerData();
 		}
 	}
 
@@ -227,56 +234,75 @@ public class MultiPlayerGame extends Game {
 				System.out.println("Awaiting client...");
 				client = server.accept();
 				System.out.println("Client connected.");
-
+				
 				// Set up the input/output streams
 				System.out.println("Setting up streams...");
 				outStream = new ObjectOutputStream(client.getOutputStream());
 				inStream = new ObjectInputStream(client.getInputStream());
-				outStream.flush();
 				System.out.println("Streams set up.");
 				
-				// Send the list of players
-				System.out.println("Sending data...");
-				ThreadSend ts = new ThreadSend(outStream);
-				//ThreadReceive tr = new ThreadReceive(inStream);
-				ts.start();
-				//tr.start();
-				ts.join();
-				System.out.println("Data sent.");
+				sendPlayerData();
 				
 				System.out.println("Creating multiplayer game.");	
 			} else {
 				// Connect to he host
 				System.out.println("Connecting to host...");
-				inStream = new ObjectInputStream(socket.getInputStream());
-				outStream = new ObjectOutputStream(socket.getOutputStream());
-				outStream.flush();
+				inStream = new ObjectInputStream(testSocket.getInputStream());
+				outStream = new ObjectOutputStream(testSocket.getOutputStream());
 				System.out.println("Connected.");
 				
-				// Receive the player array from the host
-				System.out.println("Receiving data...");
-				ThreadReceive tr = new ThreadReceive(inStream);
-				//ThreadSend ts = new ThreadSend(outStream);
-				tr.start();
-				//ts.start();
-				tr.join();
-				System.out.println("Data received.");
-				
-				// Load the received players
-				System.out.println("Loading data...");
-				Game.getInstance().setPlayers(tr.getPlayers());
-				System.out.println("Data loaded.");
+				receivePlayerData();
 				
 				// Used for debugging
-				for(Player p : players) System.out.println(p.getName());
+				//for(Player p : players) System.out.println(p.getName());
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 	
-	private void sendPlayers() {
-		
+	private void sendPlayerData() {
+		try {
+			// Flush the streams
+			outStream.reset();
+			outStream.flush();
+			
+			// Send the list of players
+			System.out.println("Sending data...");
+			ThreadSend ts = new ThreadSend(outStream);
+			//ThreadReceive tr = new ThreadReceive(inStream);
+			ts.start();
+			//tr.start();
+			ts.join();
+			System.out.println("Data sent.");
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private void receivePlayerData() {
+		try {
+			// Flush the streams
+			outStream.flush();
+			
+			// Receive the player array from the host
+			//System.out.println("Receiving data...");
+			ThreadReceive tr = new ThreadReceive(inStream);
+			//ThreadSend ts = new ThreadSend(outStream);
+			tr.start();
+			//ts.start();
+			//System.out.println("Data received.");
+			tr.join();
+			
+			// Used for debugging
+			//for(Player p : players) System.out.println(p.getName());
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 	}
 
 	// Close ----------------------------------------------------------------------------
@@ -294,10 +320,6 @@ public class MultiPlayerGame extends Game {
 			
 			// If sockets are open, close them too
 			if (client != null) client.close();
-			
-			// Close input/output streams
-			inStream.close();
-			outStream.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

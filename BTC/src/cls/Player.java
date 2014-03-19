@@ -7,8 +7,8 @@ import scn.Game;
 
 public class Player implements Serializable {
 	
-	// TODO last updated: 2014.03.17 22:50
-	private static final long serialVersionUID = -1355541630946018678L;
+	// TODO last updated: 2014.03.19 23:45
+	private static final long serialVersionUID = 8301743865822241010L;
 
 	/** The list of colours to associate with aircraft */
 	public static final Integer[][] AIRCRAFT_COLOURS = new Integer[][] {
@@ -333,6 +333,19 @@ public class Player implements Serializable {
 	 */
 	public void setScore(int score) {
 		this.score = score;
+	}
+	
+	
+	// Other ----------------------------------------------------------------------------
+	
+	@Override
+	public String toString() {
+		return "Player [id=" + id + ", name=" + name + ", hosting=" + hosting
+				+ ", ipAddress=" + ipAddress + ", aircraft=" + aircraft.size()
+				+ ", compassClicked=" + compassClicked + ", waypointClicked="
+				+ waypointClicked + ", flightGenerationTimeElapsed="
+				+ flightGenerationTimeElapsed + ", controlAltitude="
+				+ controlAltitude + ", score=" + score + "]";
 	}
 	
 }

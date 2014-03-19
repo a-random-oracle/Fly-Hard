@@ -1,7 +1,6 @@
 package scn;
 
 import java.io.File;
-import java.io.Serializable;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Hashtable;
@@ -24,16 +23,13 @@ import cls.Waypoint;
 
 import btc.Main;
 
-public abstract class Game extends Scene implements Serializable {
+public abstract class Game extends Scene {
 	
-	// TODO last updated: 2014.03.19 20:05
-	private static final long serialVersionUID = -5326141541318365606L;
+	/** The image to use for aircraft */
+	public static Image aircraftImage;
 	
-	// The images to be used to represent objects
-	public static final Image AIRCRAFT_IMAGE = graphics.newImage("gfx"
-			+ File.separator + "plane.png");
-	public static final Image AIRPORT_IMAGE = graphics.newImage("gfx"
-			+ File.separator + "Airport.png");
+	/** The image to use for airports */
+	public static Image airportImage;
 
 	/** The unique instance of this class */
 	protected static Game instance = null;
@@ -69,9 +65,6 @@ public abstract class Game extends Scene implements Serializable {
 	
 	/** The time since the scene began */
 	protected static double timeElapsed;
-	
-	/** The image to use for aircraft */
-	//protected Image aircraftImage;
 	
 	/** The music to play during the game scene */
 	protected Music music;
@@ -177,6 +170,9 @@ public abstract class Game extends Scene implements Serializable {
 		if (!Main.testing) {
 			// Load in graphics
 			background = graphics.newImage("gfx" + File.separator + "background_base.png");
+			
+			aircraftImage = graphics.newImage("gfx" + File.separator + "plane.png");
+			airportImage = graphics.newImage("gfx" + File.separator + "Airport.png");
 
 			// Load in music
 			music = audio.newMusic("sfx" + File.separator + "Gypsy_Shoegazer.ogg");
@@ -208,62 +204,64 @@ public abstract class Game extends Scene implements Serializable {
 		
 		// Update which player is controlling inputs
 		//player = players.get(mouseSide % players.size());
-		
-		// Check if any aircraft in the airspace have collided
-		checkCollisions(timeDifference);
 
-		for (Player player : players) {
-			// Update aircraft
-			for (Aircraft aircraft : player.getAircraft()) {
-				aircraft.update(timeDifference);
-			}
+		if (this.player.isHosting()) {
+			// Check if any aircraft in the airspace have collided
+			checkCollisions(timeDifference);
 
-			// Deselect and remove any aircraft which have completed their routes
-			for (int i = player.getAircraft().size() - 1; i >= 0; i--) {
-				if (player.getAircraft().get(i).isFinished()) {
-					if (player.getAircraft().get(i).equals(player
-							.getSelectedAircraft())) {
-						deselectAircraft(player);
-					}
-
-					player.getAircraft().remove(i);
+			for (Player player : players) {
+				// Update aircraft
+				for (Aircraft aircraft : player.getAircraft()) {
+					aircraft.update(timeDifference);
 				}
-			}
-
-			// Update the airports
-			for (Airport airport : player.getAirports()) {
-				airport.update(player.getAircraft());
-			}
-
-			// Deselect any aircraft which are outside the airspace
-			// This ensures that players can't keep controlling aircraft
-			// after they've left the airspace
-			for (Aircraft airc : player.getAircraft()) {
-				if (!(airc.isAtDestination())) {
-					if (airc.isOutOfAirspaceBounds()) {
-						deselectAircraft(airc, player);
-					}
-				}
-			}
-
-			// Update the counter used to determine when another flight should
-			// enter the airspace
-			// If the counter has reached 0, then spawn a new aircraft
-			player.setFlightGenerationTimeElapsed(player
-					.getFlightGenerationTimeElapsed() + timeDifference);
-			if (player.getFlightGenerationTimeElapsed()
-					>= getFlightGenerationInterval(player)) {
-				player.setFlightGenerationTimeElapsed(player
-						.getFlightGenerationTimeElapsed()
-						- getFlightGenerationInterval(player));
 				
-				if (player.getAircraft().size() < player.getMaxAircraft()) {
-					generateFlight(player);
-				}
-			}
+				// Deselect and remove any aircraft which have completed their routes
+				for (int i = player.getAircraft().size() - 1; i >= 0; i--) {
+					if (player.getAircraft().get(i).isFinished()) {
+						if (player.getAircraft().get(i).equals(player
+								.getSelectedAircraft())) {
+							deselectAircraft(player);
+						}
 
-			// If there are no aircraft in the airspace, spawn a new aircraft
-			if (player.getAircraft().size() == 0) generateFlight(player);
+						player.getAircraft().remove(i);
+					}
+				}
+
+				// Update the airports
+				for (Airport airport : player.getAirports()) {
+					airport.update(player.getAircraft());
+				}
+
+				// Deselect any aircraft which are outside the airspace
+				// This ensures that players can't keep controlling aircraft
+				// after they've left the airspace
+				for (Aircraft airc : player.getAircraft()) {
+					if (!(airc.isAtDestination())) {
+						if (airc.isOutOfAirspaceBounds()) {
+							deselectAircraft(airc, player);
+						}
+					}
+				}
+
+				// Update the counter used to determine when another flight should
+				// enter the airspace
+				// If the counter has reached 0, then spawn a new aircraft
+				player.setFlightGenerationTimeElapsed(player
+						.getFlightGenerationTimeElapsed() + timeDifference);
+				if (player.getFlightGenerationTimeElapsed()
+						>= getFlightGenerationInterval(player)) {
+					player.setFlightGenerationTimeElapsed(player
+							.getFlightGenerationTimeElapsed()
+							- getFlightGenerationInterval(player));
+
+					if (player.getAircraft().size() < player.getMaxAircraft()) {
+						generateFlight(player);
+					}
+				}
+
+				// If there are no aircraft in the airspace, spawn a new aircraft
+				if (player.getAircraft().size() == 0) generateFlight(player);
+			}
 		}
 		
 		if (player.getSelectedAircraft() != null) {
@@ -326,10 +324,17 @@ public abstract class Game extends Scene implements Serializable {
 		// Draw individual map features
 		for (Player player : players) {
 			drawAirports(player);
+		}
+		
+		for (Player player : players) {
 			drawWaypoints(player);
-			drawManualControlButton(player);
+		}
+		
+		for (Player player : players) {
 			drawAircraft(player);
 		}
+		
+		drawManualControlButton(player);
 		
 		// Reset the viewport - these statistics can appear outside the game
 		// area

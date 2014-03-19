@@ -21,8 +21,8 @@ import lib.jog.window;
  */
 public class Aircraft implements Serializable {
 
-	// TODO last updated: 2014.03.17 23:30
-	private static final long serialVersionUID = 5055902995723199588L;
+	// TODO last updated: 2014.03.19 23:45
+	private static final long serialVersionUID = 3827944832233974467L;
 	
 	// Static ints for use where altitude state is to be changed
 	public final static int ALTITUDE_CLIMB = 1;
@@ -470,16 +470,16 @@ public class Aircraft implements Serializable {
 		graphics.setColour(colour[0], colour[1], colour[2], alpha);
 
 		if (offset != null) {
-			graphics.draw(Game.AIRCRAFT_IMAGE, scale,
-					position.getX() - (Game.AIRCRAFT_IMAGE.width() / 2)
+			graphics.draw(Game.aircraftImage, scale,
+					position.getX() - (Game.aircraftImage.width() / 2)
 					+ offset.getX(), position.getY()
-					- (Game.AIRCRAFT_IMAGE.height() / 2)
+					- (Game.aircraftImage.height() / 2)
 					+ offset.getY(), getBearing(), (RADIUS / 2), (RADIUS / 2));
 		} else {
-			graphics.draw(Game.AIRCRAFT_IMAGE, scale,
-					position.getX() - (Game.AIRCRAFT_IMAGE.width() / 2),
+			graphics.draw(Game.aircraftImage, scale,
+					position.getX() - (Game.aircraftImage.width() / 2),
 					position.getY()
-					- (Game.AIRCRAFT_IMAGE.height() / 2), getBearing(),
+					- (Game.aircraftImage.height() / 2), getBearing(),
 					(RADIUS / 2), (RADIUS / 2));
 		}
 
@@ -506,8 +506,8 @@ public class Aircraft implements Serializable {
 		graphics.setColour(graphics.green);
 
 		// Centre positions of aircraft
-		Double xpos = position.getX() - (Game.AIRCRAFT_IMAGE.width() / 2);
-		Double ypos = position.getY() - (Game.AIRCRAFT_IMAGE.height() / 2);
+		Double xpos = position.getX() - (Game.aircraftImage.width() / 2);
+		Double ypos = position.getY() - (Game.aircraftImage.height() / 2);
 		
 		// Draw the compass circle
 		graphics.circle(false, xpos, ypos, COMPASS_RADIUS, 30);
@@ -589,16 +589,16 @@ public class Aircraft implements Serializable {
 
 		if (currentTarget != destination) {
 			// Draw line from plane to next waypoint
-			graphics.line(position.getX() - Game.AIRCRAFT_IMAGE.width() / 2,
+			graphics.line(position.getX() - Game.aircraftImage.width() / 2,
 					position.getY()
-					- Game.AIRCRAFT_IMAGE.height() / 2, route[currentRouteStage]
+					- Game.aircraftImage.height() / 2, route[currentRouteStage]
 					.getLocation().getX(), route[currentRouteStage]
 					.getLocation().getY());
 		} else {
 			// Draw line from plane to destination
-			graphics.line(position.getX() - Game.AIRCRAFT_IMAGE.width() / 2,
+			graphics.line(position.getX() - Game.aircraftImage.width() / 2,
 					position.getY()
-					- Game.AIRCRAFT_IMAGE.height() / 2, destination.getX(),
+					- Game.aircraftImage.height() / 2, destination.getX(),
 					destination.getY());
 		}
 
