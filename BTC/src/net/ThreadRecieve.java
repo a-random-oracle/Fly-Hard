@@ -21,7 +21,7 @@ public class ThreadRecieve extends Thread {
 	public void run() {
 		while (true) {
 			try {
-				multiPlayerGame.updatePlayer0(inStream.readObject());
+				multiPlayerGame.getPlayers().get(0).setScore(((Player) inStream.readObject()).getScore()); 
 			} catch (IOException | ClassNotFoundException e) {
 				e.printStackTrace();
 			}
