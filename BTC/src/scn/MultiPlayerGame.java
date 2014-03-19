@@ -29,6 +29,9 @@ public class MultiPlayerGame extends Game {
 
 	/** The client socket */
 	private Socket client;
+	
+	/** The socket used by the client */
+	private Socket testSocket;
 
 	private static final String HOST_IP = "144.32.179.129";
 	
@@ -89,12 +92,12 @@ public class MultiPlayerGame extends Game {
 		locationWaypointMap.put(5, 1);
 
 		boolean isHost = false;
-		Socket testSocket = null;
+		testSocket = null;
 
 		try {
 			testSocket = new Socket(InetAddress.getByName(HOST_IP), PORT);
 
-			// Need to finalise to a better solution with a specific solution
+			// Need to finalise to a better solution (with a specific exception)
 		} catch (IOException e) {
 			isHost = true;
 		} catch (Exception e) {
@@ -130,31 +133,24 @@ public class MultiPlayerGame extends Game {
 
 		manualControlButtons[players.get(0).getID()]
 				= new ButtonText(" Take Control", manual0,
-						(window.width() - 128 - (2 * xOffset)) / 3,
+						(window.width() - 128 - (2 * xOffset)) / 2,
 						32, 128, 32, 8, 4);
 
 		manualControlButtons[players.get(1).getID()]
 				= new ButtonText(" Take Control", manual1,
-						2 * (window.width() - 128 - (2 * xOffset)) / 3,
+						(window.width() - 128 - (2 * xOffset)) / 2,
 						32, 128, 32, 8, 4);
 
 		// Reset game attributes for each player
 		deselectAircraft(players.get(0));
 		deselectAircraft(players.get(1));
-	}
-
-	@Override
-	public void update(double timeDifference) {
-		super.update(timeDifference);
-
-		// Increment the time before the next data send
-		timeToUpdate += timeDifference;
-
-		if (timeToUpdate > 2000) {
-			out.addOrder("Updating");
-			System.out.println("Updating.");
+		
+		// Set the appropriate player
+		if (isHost) {
+			player = players.get(0);
+		} else {
+			player = players.get(1);
 		}
-
 	}
 
 	private void setUpGame() {
@@ -200,6 +196,19 @@ public class MultiPlayerGame extends Game {
 
 		player0.setScore(50);
 		player1.setScore(20);
+	}
+	
+	@Override
+	public void update(double timeDifference) {
+		super.update(timeDifference);
+
+		// Increment the time before the next data send
+		timeToUpdate += timeDifference;
+		
+		if (timeToUpdate > 2) {
+			timeToUpdate = 0;
+			
+		}
 	}
 
 
@@ -265,7 +274,34 @@ public class MultiPlayerGame extends Game {
 			e.printStackTrace();
 		}
 	}
+	
+	private void sendPlayers() {
+		
+	}
 
+	// Close ----------------------------------------------------------------------------
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void close() {
+		super.close();
+		
+		try {
+			// If server is open, close it
+			if (server != null) server.close();
+			
+			// If sockets are open, close them too
+			if (client != null) client.close();
+			
+			// Close input/output streams
+			inStream.close();
+			outStream.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 
 	// Deprecated -----------------------------------------------------------------------
 

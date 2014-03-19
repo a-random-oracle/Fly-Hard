@@ -204,10 +204,10 @@ public abstract class Game extends Scene implements Serializable {
 		timeElapsed += timeDifference;
 		
 		// Get which side of the screen the mouse is on
-		int mouseSide = (input.mouseX() < (window.width() / 2)) ? 0 : 1;
+		//int mouseSide = (input.mouseX() < (window.width() / 2)) ? 0 : 1;
 		
 		// Update which player is controlling inputs
-		player = players.get(mouseSide % players.size());
+		//player = players.get(mouseSide % players.size());
 		
 		// Check if any aircraft in the airspace have collided
 		checkCollisions(timeDifference);
@@ -457,15 +457,11 @@ public abstract class Game extends Scene implements Serializable {
 			graphics.setColour(graphics.green);
 			// Display the manual control button
 			graphics.setColour(graphics.black);
-			graphics.rectangle(true,
-					(player.getID() + 1) * (window.width()
-							- 128 - (2 * xOffset)) / (players.size() + 1),
-							32, 128, 32);
+			graphics.rectangle(true, (window.width() - 128 - (2 * xOffset)) / 2,
+					32, 128, 32);
 			graphics.setColour(graphics.green);
-			graphics.rectangle(false,
-					(player.getID() + 1) * (window.width()
-							- 128 - (2 * xOffset)) / (players.size() + 1),
-							32, 128, 32);
+			graphics.rectangle(false, (window.width() - 128 - (2 * xOffset)) / 2,
+					32, 128, 32);
 			manualControlButtons[player.getID()].draw();
 		}
 	}
