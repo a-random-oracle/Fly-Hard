@@ -39,6 +39,7 @@ public class NetworkGame {
 		
 		try {
 			multiPlayerGame = MultiPlayerGame.createMultiPlayerGame(null, null); 
+			multiPlayerGame.start();
 			
 			if (host) {
 				System.out.println("Hosting...");
