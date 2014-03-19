@@ -231,9 +231,9 @@ public class MultiPlayerGame extends Game {
 				socket = new Socket(HOST_IP, PORT);
 				System.out.println("Connected!\nBuffering...");
 				inStream = new ObjectInputStream(socket.getInputStream());
-				outStream = new ObjectOutputStream(socket.getOutputStream());
+				//outStream = new ObjectOutputStream(socket.getOutputStream());
 				System.out.println("Buffered\nPinging for 256 bytes...");
-				outStream.flush();
+				//outStream.flush();
 				System.out.println("Starting threads...");
 				new ThreadReceive(this, inStream);
 				//new ThreadSend(this, outStream);
