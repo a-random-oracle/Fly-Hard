@@ -17,12 +17,6 @@ public class MultiPlayerGame extends Game {
 	/** The unique instance of this class */
 	private static MultiPlayerGame instance = null;
 	
-	/** An instance of Player - player 0 */
-	private Player player0;
-	
-	/** An instance of Player - player 1 */
-	private Player player1;
-	
 	/**
 	 * Creates a new instance of a multi-player game.
 	 * <p>
@@ -136,18 +130,6 @@ public class MultiPlayerGame extends Game {
 		// Reset game attributes for each player
 		deselectAircraft(players.get(0));
 		deselectAircraft(players.get(1));
-	}
-	
-	public Player Player0() {
-		return player0;
-	}
-	
-	public Player Player1() {
-		return player1;
-	}
-	
-	public void updatePlayer0(Object object) {
-		player0.setScore(((Player) object).getScore());
 	}
 
 

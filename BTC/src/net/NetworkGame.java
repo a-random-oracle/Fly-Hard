@@ -21,9 +21,9 @@ public class NetworkGame {
 	
 	public static Socket socket;
 	
-	public static String serverIP = "192.168.0.7";
+	public static String serverIP = "144.32.179.129";
 	
-	public static String connectIP = "192.168.0.7";
+	public static String connectIP = "144.32.179.129";
 	
 	public static int port = 25560;
 	
