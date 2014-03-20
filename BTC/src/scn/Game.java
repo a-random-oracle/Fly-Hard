@@ -110,10 +110,10 @@ public abstract class Game extends Scene {
 		// Define airports
 		airports = new Airport[] {
 				Airport.create("Mosgrizzly Airport",
-						(window.width() - (2 * xOffset)) / 4,
+						(window.width() - (4 * xOffset)) / 4,
 						window.height() / 2),
 				Airport.create("Mosbear Airport",
-						3 * (window.width() - (2 * xOffset)) / 4,
+						3 * (window.width() - (1.25 * xOffset)) / 4,
 						window.height() / 2)
 		};
 		
