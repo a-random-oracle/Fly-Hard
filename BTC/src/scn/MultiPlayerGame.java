@@ -217,11 +217,13 @@ public class MultiPlayerGame extends Game {
 	@Override
 	public void update(double timeDifference) {
 		super.update(timeDifference);
-		
+
 		// Deselect any aircraft which are inside the airspace of the other player
 		// This ensures that players can't keep controlling aircraft
 		// after they've entered another player's airspace
 		returnToAirspace();
+		
+		checkLives();
 
 		//System.out.println(players.get(1).getAircraft().size());
 
@@ -245,7 +247,7 @@ public class MultiPlayerGame extends Game {
 	@Override
 	public void draw() {
 		super.draw();
-		
+
 		//Draw additional features that are specific to multi-player
 		drawMiddleZone();
 
@@ -280,6 +282,35 @@ public class MultiPlayerGame extends Game {
 					deselectAircraft(airc, player);
 				}
 			}
+		}
+	}
+	
+	public boolean checkLives() {
+		for (Player player : players) {
+			if (player.getLives() == 0) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	@Override
+	public void checkCollisions(double timeDifference) {
+		for (Aircraft plane : getAllAircraft()) {
+			int collisionState = plane.updateCollisions(timeDifference,
+					getAllAircraft());
+			if (collisionState >= 0) {
+				int lives = player.getLives();
+				player.setLives(lives--);
+				return;
+			}
+		}
+	}
+
+	@Override
+	public void gameOver(Aircraft plane1, Aircraft plane2) {
+		if (checkLives()) {
+			super.gameOver(plane1, plane2);
 		}
 	}
 
