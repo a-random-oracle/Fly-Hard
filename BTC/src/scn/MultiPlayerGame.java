@@ -283,20 +283,6 @@ public class MultiPlayerGame extends Game {
 		}
 	}
 
-	/**
-	 * Forces any plane within the middle zone to be under
-	 * manual control.
-	 */
-	public void forceControl() {
-		for (Aircraft airc : player.getAircraft()) {
-			if (!airc.isAtDestination()) {
-				if (airc.isInMiddleZone()) {
-					airc.toggleManualControl();
-				}
-			}
-		}
-	}
-
 
 	// Networking -----------------------------------------------------------------------
 
