@@ -7,6 +7,7 @@ import java.util.Random;
 
 import scn.Game;
 import scn.Game.DifficultySetting;
+import scn.MultiPlayerGame;
 import lib.jog.audio;
 import lib.jog.audio.Sound;
 import lib.jog.graphics;
@@ -285,6 +286,36 @@ public class Aircraft implements Serializable {
 				|| (x > window.width() - (RADIUS / 2) - (2 * Game.getXOffset()))
 				|| (y < (RADIUS / 2)) || (y > window.height() + (RADIUS / 2)
 				- (2 * Game.getYOffset())));
+	}
+	
+	/**
+	 * Checks whether the aircraft is inside the middle zone.
+	 * <p>
+	 * Specific to multiplayer.
+	 * </p>
+	 * @return <code>true</code> if the aircraft is inside the middle zone
+	 */
+	public boolean isInMiddleZone() {
+		double x = position.getX();
+		
+		return (x > (MultiPlayerGame.leftEntryX)
+				&& x < (MultiPlayerGame.rightEntryX));
+	}
+	
+	/**
+	 * Checks whether the aircraft of a player is outside its own airspace.
+	 * @return <code>true</code> if the player's aircraft goes into
+	 * the other player's airspace
+	 */
+	public boolean isOutOfPlayersAirspace() {
+		double x = position.getX();
+		double y = position.getY();
+		
+		if (Game.getInstance().getPlayerFromAircraft(this).getID() == 0) {
+			return (x > MultiPlayerGame.rightEntryX);
+		} else {
+			return (x < MultiPlayerGame.leftEntryX);
+		}
 	}
 
 	/**

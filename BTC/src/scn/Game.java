@@ -1275,6 +1275,24 @@ public abstract class Game extends Scene {
 		return null;
 	}
 	
+	/**
+	 * Finds which player is associated with a given aircraft.
+	 * @return the player associated with the supplied aircraft
+	 */
+	public Player getPlayerFromAircraft(Aircraft aircraft) {
+		for (Player player : players) {
+			ArrayList<Aircraft> playersAircraft = player.getAircraft();
+			
+			for (Aircraft a : playersAircraft) {
+				if (a.equals(aircraft)) {
+					return player;
+				}
+			}
+		}
+		
+		return null;
+	}
+	
 	// Mutators -------------------------------------------------------------------------
 	
 	public void setPlayers(ArrayList<Player> players) {
