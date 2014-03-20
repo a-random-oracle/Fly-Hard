@@ -944,6 +944,8 @@ public abstract class graphics {
 	public final static Color red_transp = new Color(128, 0, 0, 128);
 	public final static Color green = new Color(0, 128, 0, 255);
 	public final static Color green_transp = new Color(0, 128, 0, 128);
+	public final static Color blue = new Color(0, 0, 128, 255);
+	public final static Color blue_transp = new Color(0, 0, 128, 128);
 	public final static Color black = new Color(0, 0, 0, 255);
 	public final static Color black_transp = new Color(0, 0, 0, 128);
 	public final static Color white = new Color(128, 128, 128, 255);

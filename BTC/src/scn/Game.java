@@ -336,6 +336,8 @@ public abstract class Game extends Scene {
 		// area
 		graphics.setViewport();
 		drawAdditional(getAllAircraft().size());
+		
+		drawMiddleZone();
 
 		// Draw debug box
 		// PLEASE DO NOT REMOVE - this is very useful for debugging
@@ -500,6 +502,23 @@ public abstract class Game extends Scene {
 		// Print the current player
 		graphics.printCentred("Currently playing as player: " + player.getName(),
 				(((double) window.width() - (2 * xOffset)) / 2), 32d, 1, 300);
+	}
+	
+	protected void drawMiddleZone() {
+		graphics.setColour(graphics.green);
+		
+		//The y-coordinate to begin drawing at
+		int yStart = window.height() - yOffset;
+		//The y-coordinate at which to end
+		int yEnd = yOffset;
+		//The x-coordinate the draw the left barrier/line at
+		int leftEntryX = (int) (window.width() * (3d/7d));
+		//The x-coordinate to draw the right barrier/line at
+		int rightEntryX = window.width() - leftEntryX;
+		
+		//Draw the two lines
+		graphics.line(leftEntryX, yStart, leftEntryX, yEnd);
+		graphics.line(rightEntryX, yStart, rightEntryX, yEnd);
 	}
 	
 	/**
