@@ -70,6 +70,9 @@ public class Player implements Serializable {
 	/** The player's score */
 	private int score;
 	
+	/** The player's remaining lives */
+	private int lives;
+	
 	
 	// Constructor: -----------------------------------------------------------
 	
@@ -85,6 +88,7 @@ public class Player implements Serializable {
 		this.waypointClicked = false;
 		this.flightGenerationTimeElapsed = 6;
 		this.controlAltitude = 30000;
+		this.lives = 3;
 		
 		// Initialise arrays
 		this.aircraft = new ArrayList<Aircraft>();
@@ -227,6 +231,14 @@ public class Player implements Serializable {
 	}
 	
 	/**
+	 * Access the player's remaining lives.
+	 * @return the player's lives
+	 */
+	public int getLives() {
+		return lives;
+	}
+	
+	/**
 	 * @return a list of this player's active powerups
 	 */
 	public ArrayList<Powerup> getPowerups() {
@@ -333,6 +345,15 @@ public class Player implements Serializable {
 	 */
 	public void setScore(int score) {
 		this.score = score;
+	}
+	
+	/**
+	 * Mutator for the player's lives
+	 * @param lives
+	 * 				the new amount of lives
+	 */
+	public void setLives(int lives) {
+		this.lives = lives;
 	}
 	
 	
