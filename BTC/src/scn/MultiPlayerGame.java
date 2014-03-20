@@ -296,7 +296,7 @@ public class MultiPlayerGame extends Game {
 
 	@Override
 	public void checkCollisions(double timeDifference) {
-		for (Aircraft plane : getAllAircraft()) {
+		for (Aircraft plane : player.getAircraft()) {
 			int collisionState = plane.updateCollisions(timeDifference,
 					getAllAircraft());
 			if (collisionState >= 0) {
