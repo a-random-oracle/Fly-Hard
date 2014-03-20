@@ -653,6 +653,7 @@ public class Aircraft implements Serializable {
 	 * @param modified
 	 *            the index of the waypoint being modified
 	 * @param mouseX
+			
 	 *            the current x position of the mouse
 	 * @param mouseY
 	 *            the current y position of the mouse
@@ -661,6 +662,8 @@ public class Aircraft implements Serializable {
 		graphics.setColour(0, 128, 128, 128);
 		Waypoint[] route = flightPlan.getRoute();
 		Vector destination = flightPlan.getDestination();
+		
+		Game.out.addOrder(Game.getInstance().getPlayerFromAircraft(this).getName());
 
 		if (currentRouteStage > modified - 1) {
 			graphics.line(getPosition().getX(), getPosition().getY(), mouseX,
@@ -749,6 +752,7 @@ public class Aircraft implements Serializable {
 			isManuallyControlled = false;
 		} else {
 			isManuallyControlled = !isManuallyControlled;
+			
 			if (isManuallyControlled) {
 				setBearing(getBearing());
 			} else {

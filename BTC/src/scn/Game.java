@@ -52,7 +52,7 @@ public abstract class Game extends Scene {
 	protected static int yOffset;
 	
 	// PLEASE DO NOT REMOVE - this is very useful for debugging
-	protected static OrdersBox out;
+	public static OrdersBox out;
 	
 	/** Difficulty settings: easy, medium and hard */
 	public enum DifficultySetting {EASY, MEDIUM, HARD}
@@ -901,7 +901,7 @@ public abstract class Game extends Scene {
 	 * 			the player to reset the selected plane attribute for
 	 */
 	protected void deselectAircraft(Aircraft aircraft, Player player) {
-		if (aircraft != null) {
+		if (aircraft != null && aircraft.isManuallyControlled()) {
 			aircraft.toggleManualControl();
 			manualControlButtons[player.getID()].setText(" Take Control");
 		}
