@@ -24,7 +24,7 @@ public class Aircraft implements Serializable {
 
 	// TODO last updated: 2014.03.19 23:45
 	private static final long serialVersionUID = 3827944832233974467L;
-	
+
 	// Static ints for use where altitude state is to be changed
 	public final static int ALTITUDE_CLIMB = 1;
 	public final static int ALTITUDE_FALL = -1;
@@ -129,7 +129,7 @@ public class Aircraft implements Serializable {
 			double speed, Waypoint[] sceneWaypoints,
 			DifficultySetting difficulty, Airport originAirport,
 			Airport destinationAirport) {
-		
+
 		this.flightName = name;
 		this.flightPlan = new FlightPlan(sceneWaypoints, nameOrigin,
 				nameDestination, originPoint, destinationPoint, originAirport,
@@ -285,9 +285,9 @@ public class Aircraft implements Serializable {
 		return ((x < (RADIUS / 2))
 				|| (x > window.width() - (RADIUS / 2) - (2 * Game.getXOffset()))
 				|| (y < (RADIUS / 2)) || (y > window.height() + (RADIUS / 2)
-				- (2 * Game.getYOffset())));
+						- (2 * Game.getYOffset())));
 	}
-	
+
 	/**
 	 * Checks whether the aircraft is inside the middle zone.
 	 * <p>
@@ -297,24 +297,32 @@ public class Aircraft implements Serializable {
 	 */
 	public boolean isInMiddleZone() {
 		double x = position.getX();
-		
+
 		return (x > (MultiPlayerGame.leftEntryX)
 				&& x < (MultiPlayerGame.rightEntryX));
 	}
-	
+
 	/**
 	 * Checks whether the aircraft of a player is outside its own airspace.
 	 * @return <code>true</code> if the player's aircraft goes into
 	 * the other player's airspace
 	 */
 	public boolean isOutOfPlayersAirspace() {
-		double x = position.getX() - Game.getXOffset();
-						
-		if (Game.getInstance().getPlayerFromAircraft(this).getID() == 0) {
-			return (x > MultiPlayerGame.rightEntryX);
-		} else {
-			return (x < MultiPlayerGame.leftEntryX);
+		double x = position.getX() + Game.getXOffset();
+		Player player = null;
+		
+		if (Game.getInstance() != null) {
+			player = Game.getInstance().getPlayerFromAircraft(this);
 		}
+
+		if (player != null) {
+			if (Game.getInstance().getPlayerFromAircraft(this).getID() == 0) {
+				return (x > MultiPlayerGame.rightEntryX);
+			} else {
+				return (x < MultiPlayerGame.leftEntryX);
+			}
+		}
+		return false;
 	}
 
 	/**
@@ -523,7 +531,7 @@ public class Aircraft implements Serializable {
 		} else {
 			graphics.print(String.format("%.0f", position.getZ()) + "+",
 					position.getX() + (RADIUS / 2), position.getY()
-							- (RADIUS / 2));
+					- (RADIUS / 2));
 		}
 
 		drawWarningCircles(offset);
@@ -538,7 +546,7 @@ public class Aircraft implements Serializable {
 		// Centre positions of aircraft
 		Double xpos = position.getX() - (Game.aircraftImage.width() / 2);
 		Double ypos = position.getY() - (Game.aircraftImage.height() / 2);
-		
+
 		// Draw the compass circle
 		graphics.circle(false, xpos, ypos, COMPASS_RADIUS, 30);
 
@@ -562,7 +570,7 @@ public class Aircraft implements Serializable {
 					- position.getX());
 			x = xpos + (COMPASS_RADIUS * Math.cos(r));
 			y = ypos + (COMPASS_RADIUS * Math.sin(r));
-			
+
 			// Draw several lines to make the line thicker
 			graphics.line(xpos, ypos, x, y);
 			graphics.line(xpos - 1, ypos, x, y);
@@ -622,8 +630,8 @@ public class Aircraft implements Serializable {
 			graphics.line(position.getX() - Game.aircraftImage.width() / 2,
 					position.getY()
 					- Game.aircraftImage.height() / 2, route[currentRouteStage]
-					.getLocation().getX(), route[currentRouteStage]
-					.getLocation().getY());
+							.getLocation().getX(), route[currentRouteStage]
+									.getLocation().getY());
 		} else {
 			// Draw line from plane to destination
 			graphics.line(position.getX() - Game.aircraftImage.width() / 2,
@@ -636,7 +644,7 @@ public class Aircraft implements Serializable {
 		for (int i = currentRouteStage; i < route.length - 1; i++) {
 			graphics.line(route[i].getLocation().getX(), route[i].getLocation()
 					.getY(), route[i + 1].getLocation().getX(), route[i + 1]
-					.getLocation().getY());
+							.getLocation().getY());
 		}
 	}
 
@@ -699,8 +707,8 @@ public class Aircraft implements Serializable {
 				hasFinished = true;
 				return i;
 			} else if (plane != this && isWithin(plane, minimumSeparation)) { // Breaching
-																				// separation
-																				// distance
+				// separation
+				// distance
 				planesTooNear.add(plane);
 				if (!collisionWarningSoundFlag) {
 					collisionWarningSoundFlag = true;
