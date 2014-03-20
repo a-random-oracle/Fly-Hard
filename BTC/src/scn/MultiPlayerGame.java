@@ -214,13 +214,8 @@ public class MultiPlayerGame extends Game {
 			
 		}
 		
-		if (player.isHosting()) {
-			sendPlayerData();
-		}
-		
-		if (!player.isHosting()) {
-			receivePlayerData();
-		}
+		sendPlayerData();
+		receivePlayerData();
 	}
 
 
