@@ -901,7 +901,7 @@ public abstract class Game extends Scene {
 	 * 			the player to reset the selected plane attribute for
 	 */
 	protected void deselectAircraft(Aircraft aircraft, Player player) {
-		if (aircraft != null && aircraft.isManuallyControlled()) {
+		if (aircraft != null) {
 			aircraft.toggleManualControl();
 			manualControlButtons[player.getID()].setText(" Take Control");
 		}
