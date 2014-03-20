@@ -308,9 +308,8 @@ public class Aircraft implements Serializable {
 	 * the other player's airspace
 	 */
 	public boolean isOutOfPlayersAirspace() {
-		double x = position.getX();
-		double y = position.getY();
-		
+		double x = position.getX() - Game.getXOffset();
+						
 		if (Game.getInstance().getPlayerFromAircraft(this).getID() == 0) {
 			return (x > MultiPlayerGame.rightEntryX);
 		} else {

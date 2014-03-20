@@ -245,6 +245,7 @@ public class MultiPlayerGame extends Game {
 	@Override
 	public void draw() {
 		super.draw();
+		
 		//Draw additional features that are specific to multi-player
 		drawMiddleZone();
 
