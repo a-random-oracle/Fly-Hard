@@ -43,6 +43,9 @@ public class MultiPlayerGame extends Game {
 
 	/** The time frame to send data across the network */
 	protected double timeToUpdate;
+	
+	/** Player ID */
+	private int playerID;
 
 	/**
 	 * Creates a new instance of a multi-player game.
@@ -57,7 +60,7 @@ public class MultiPlayerGame extends Game {
 	public static MultiPlayerGame createMultiPlayerGame(DifficultySetting difficulty) {
 		if (instance == null) {
 			return new MultiPlayerGame(difficulty);
-		} else {
+		} else {		// Set the appropriate player
 			Exception e = new Exception("Attempting to create a " +
 					"second instance of Game");
 			e.printStackTrace();
@@ -103,9 +106,11 @@ public class MultiPlayerGame extends Game {
 
 		if (isHost) {
 			System.out.println("Will host on " + HOST_IP + ":" + PORT);
+			playerID = 0;
 			setUpGame();
 		} else {
 			System.out.println("Will join to " + HOST_IP + ":" + PORT);
+			playerID = 1;
 		}
 		
 		// Set up and initialise the network
@@ -175,7 +180,7 @@ public class MultiPlayerGame extends Game {
 		player1Waypoints[5] = locationWaypoints[2];
 		player1Waypoints[6] = locationWaypoints[3];
 		player1Waypoints[7] = locationWaypoints[5];
-
+		
 		// Add airports to lists
 		Airport[] player0Airports = new Airport[1];
 		Airport[] player1Airports = new Airport[1];
@@ -241,7 +246,16 @@ public class MultiPlayerGame extends Game {
 				inStream = new ObjectInputStream(client.getInputStream());
 				System.out.println("Streams set up.");
 				
-				sendPlayerData();
+				// Flush the streams
+				outStream.reset();
+				outStream.flush();
+				
+				// Send the list of players
+				//System.out.println("Sending data...");
+				ThreadSend ts = new ThreadSend(outStream);
+				ts.start();
+				ts.join();
+				//System.out.println("Data sent.");
 				
 				System.out.println("Creating multiplayer game.");	
 			} else {
@@ -251,7 +265,12 @@ public class MultiPlayerGame extends Game {
 				outStream = new ObjectOutputStream(testSocket.getOutputStream());
 				System.out.println("Connected.");
 				
-				receivePlayerData();
+				// Receive the player array from the host
+				//System.out.println("Receiving data...");
+				ThreadReceive tr = new ThreadReceive(inStream);
+				tr.start();
+				tr.join();
+				//System.out.println("Data received.");
 				
 				// Used for debugging
 				//for(Player p : players) System.out.println(p.getName());
@@ -269,11 +288,12 @@ public class MultiPlayerGame extends Game {
 			
 			// Send the list of players
 			System.out.println("Sending data...");
-			ThreadSend ts = new ThreadSend(outStream);
-			//ThreadReceive tr = new ThreadReceive(inStream);
+			ThreadSend ts = new ThreadSend(outStream, playerID);
+			ThreadReceive tr = new ThreadReceive(inStream, playerID);
 			ts.start();
-			//tr.start();
 			ts.join();
+			tr.start();
+			tr.join();
 			System.out.println("Data sent.");
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -289,12 +309,13 @@ public class MultiPlayerGame extends Game {
 			
 			// Receive the player array from the host
 			//System.out.println("Receiving data...");
-			ThreadReceive tr = new ThreadReceive(inStream);
-			//ThreadSend ts = new ThreadSend(outStream);
+			ThreadReceive tr = new ThreadReceive(inStream, playerID);
+			ThreadSend ts = new ThreadSend(outStream, playerID);
 			tr.start();
-			//ts.start();
-			//System.out.println("Data received.");
 			tr.join();
+			ts.start();
+			ts.join();
+			//System.out.println("Data received.");
 			
 			// Used for debugging
 			//for(Player p : players) System.out.println(p.getName());
