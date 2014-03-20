@@ -271,11 +271,11 @@ public class MultiPlayerGame extends Game {
 
 	/**
 	 * Removes control of an aircraft from the player when 
-	 * their aircraft goes into the other player's airspace
+	 * their aircraft goes into the other player's airspace.
 	 */
 	public void returnToAirspace() {
 		for (Aircraft airc : player.getAircraft()) {
-			if (!(airc.isAtDestination())) {
+			if (!airc.isAtDestination()) {
 				if (airc.isOutOfPlayersAirspace()) {
 					deselectAircraft(airc, player);
 				}
@@ -283,8 +283,18 @@ public class MultiPlayerGame extends Game {
 		}
 	}
 
+	/**
+	 * Forces any plane within the middle zone to be under
+	 * manual control.
+	 */
 	public void forceControl() {
-		//player.
+		for (Aircraft airc : player.getAircraft()) {
+			if (!airc.isAtDestination()) {
+				if (airc.isInMiddleZone()) {
+					airc.toggleManualControl();
+				}
+			}
+		}
 	}
 
 
