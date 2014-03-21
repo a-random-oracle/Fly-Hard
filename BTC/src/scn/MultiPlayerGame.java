@@ -47,7 +47,7 @@ public class MultiPlayerGame extends Game {
 	private Socket testSocket;
 
 	/** The host's ip address */
-	private String hostIP;
+	private String hostIP = "144.32.46.36";
 
 	/** Fixed port number to connect to */
 	private static final int PORT = 25560;
@@ -122,8 +122,8 @@ public class MultiPlayerGame extends Game {
 		locationWaypointMap.put(5, 1);
 
 		// Communicate with arbitration server to determine the host
-		boolean isHost;
-		String arbitrationResult = connectToArbitrationServer();
+		boolean isHost = false; //TODO
+		/*String arbitrationResult = connectToArbitrationServer();
 		System.out.println("RESULT: " + arbitrationResult);
 
 		// Assign a host based on the result of the arbitration
@@ -138,18 +138,19 @@ public class MultiPlayerGame extends Game {
 		} else {
 			isHost = false;
 			hostIP = arbitrationResult;
-		}
+		}*/
 
-		if (!isHost) {
+		//if (!isHost) {
 			testSocket = null;
 			try {
 				testSocket = new Socket(InetAddress.getByName(hostIP), PORT);
 			} catch (IOException e) {
-				e.printStackTrace();
+				isHost = true;
+				//e.printStackTrace();
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		}
+		//}
 
 		if (isHost) {
 			System.out.println("Will host on " + hostIP + ":" + PORT);
@@ -161,7 +162,7 @@ public class MultiPlayerGame extends Game {
 		}
 
 		// Set up and initialise the network
-		establishNetworkConnection(isHost, testSocket);
+		establishNetworkConnection(isHost);
 
 		// Create the manual control buttons
 		manualControlButtons = new ButtonText[players.size()];
@@ -441,7 +442,7 @@ public class MultiPlayerGame extends Game {
 
 	// Networking -----------------------------------------------------------------------
 
-	public void establishNetworkConnection(boolean isHost, Socket socket) {
+	public void establishNetworkConnection(boolean isHost) {
 		try {
 			if (isHost) {
 				// Set up a server socket
