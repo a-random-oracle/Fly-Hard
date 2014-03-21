@@ -1,12 +1,20 @@
 package scn;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+
+import org.apache.commons.validator.routines.InetAddressValidator;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.HttpClientBuilder;
 
 import net.ThreadReceive;
 import net.ThreadSend;
@@ -22,6 +30,13 @@ import cls.Waypoint;
 
 public class MultiPlayerGame extends Game {
 
+	/** The URL to the arbitration server */
+	private static final String SERVER_URL =
+			"http://tomcat-teamgoa.rhcloud.com/pool";
+	
+	/** The number of times to attempt to connect before aborting */
+	private static int abortAfter;
+
 	/** The server-side socket */
 	private ServerSocket server;
 
@@ -31,7 +46,8 @@ public class MultiPlayerGame extends Game {
 	/** The socket used by the client */
 	private Socket testSocket;
 
-	private static final String HOST_IP = "144.32.179.129";
+	/** The host's ip address */
+	private String hostIP;
 
 	/** Fixed port number to connect to */
 	private static final int PORT = 25560;
@@ -74,7 +90,7 @@ public class MultiPlayerGame extends Game {
 	public static MultiPlayerGame createMultiPlayerGame(DifficultySetting difficulty) {
 		if (instance == null) {
 			return new MultiPlayerGame(difficulty);
-		} else {		// Set the appropriate player
+		} else {
 			Exception e = new Exception("Attempting to create a " +
 					"second instance of Game");
 			e.printStackTrace();
@@ -89,8 +105,8 @@ public class MultiPlayerGame extends Game {
 	 */
 	private MultiPlayerGame(DifficultySetting difficulty) {
 		super(difficulty);
-
 		instance = this;
+		abortAfter = 15;
 	}
 
 	@Override
@@ -105,25 +121,40 @@ public class MultiPlayerGame extends Game {
 		locationWaypointMap.put(4, 0);
 		locationWaypointMap.put(5, 1);
 
-		boolean isHost = false;
-		testSocket = null;
-
-		try {
-			testSocket = new Socket(InetAddress.getByName(HOST_IP), PORT);
-
-			// Need to finalise to a better solution (with a specific exception)
-		} catch (IOException e) {
+		// Communicate with arbitration server to determine the host
+		boolean isHost;
+		String arbitrationResult = connectToArbitrationServer();
+		
+		// Assign a host based on the result of the arbitration
+		if (arbitrationResult == null) {
+			// Ensure that the result returned was valid
+			// If not, terminate the scene
+			isHost = false;
+			close();
+		} else if (arbitrationResult.equals("HOST")) {
 			isHost = true;
+		} else {
+			isHost = false;
+			hostIP = arbitrationResult;
+		}
+		
+		if (!isHost) {
+		testSocket = null;
+		try {
+			testSocket = new Socket(InetAddress.getByName(hostIP), PORT);
+		} catch (IOException e) {
+			e.printStackTrace();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		}
 
 		if (isHost) {
-			System.out.println("Will host on " + HOST_IP + ":" + PORT);
+			System.out.println("Will host on " + hostIP + ":" + PORT);
 			playerID = 0;
 			setUpGame();
 		} else {
-			System.out.println("Will join to " + HOST_IP + ":" + PORT);
+			System.out.println("Will join to " + hostIP + ":" + PORT);
 			playerID = 1;
 		}
 
@@ -169,6 +200,90 @@ public class MultiPlayerGame extends Game {
 		}
 	}
 
+	/**
+	 * Connects to the arbitration server.
+	 * <p>
+	 * The arbitration server will return "HOST" to the first player,
+	 * and the host's IP address to the second player.
+	 * </p>
+	 * <p>
+	 * This will attempt to connect to the arbitration server 
+	 * {@link MultiPlayerGame#abortAfter} times, before canceling the 
+	 * connection attempt.
+	 * </p>
+	 * @return "HOST" if the player is to be the host,
+	 * 			the host's IP address if the player is to
+	 * 			be the client, or null if the connection is
+	 * 			unsuccessful
+	 */
+	private String connectToArbitrationServer() {
+		// Track the number of attempts made to connect to
+		// the server
+		int attempts = 0;
+		
+		// Keep attempting to connect until either:
+		//   - a valid result is returned, or
+		//   - the number of attempts made exceeds the abort limit
+		do {
+			// Create a client to manage the request to the
+			// arbitration server
+			HttpClient client = HttpClientBuilder.create().build();
+			HttpGet request = new HttpGet(SERVER_URL);
+
+			// Set user agent so that the arbitration server
+			// recognises this as a valid request
+			request.addHeader("user-agent", "Fly-Hard");
+			request.addHeader("pk", "1123581321");
+
+			// Try to send a request to the arbitration server
+			HttpResponse response = null;
+			try {
+				response = client.execute(request);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+
+			if (response.getStatusLine().getStatusCode() == 200) {
+				// If the response is valid, try to read it
+				BufferedReader reader = null;
+				try {
+					reader = new BufferedReader(
+							new InputStreamReader(response.getEntity()
+									.getContent()));
+				} catch (IllegalStateException | IOException e) {
+					e.printStackTrace();
+				}
+
+				// Create a validator to check that the returned IP
+				// address is valid
+				InetAddressValidator validator = new InetAddressValidator();
+				
+				// Check if any part of the response contains:
+				//   - the term "HOST", or
+				//   - a valid IP address
+				String line = null;
+				try {
+					while ((line = reader.readLine()) != null) {
+						if (line.equals("HOST") || validator.isValid(line)) {
+							return line;
+						}
+					}
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			} else {
+				// Couldn't connect to the arbitration server
+				Exception e = new Exception("Connection to arbitration service"
+						+ "could not be established.");
+				e.printStackTrace();
+			}
+			
+			attempts++;
+		} while (attempts < abortAfter);
+		
+		return null;
+	}
+
 	private void setUpGame() {
 		// Generate the lists of waypoints to pass to the players
 		Waypoint[] player0Waypoints = new Waypoint[5 + 3];
@@ -203,7 +318,7 @@ public class MultiPlayerGame extends Game {
 		player1Airports[0] = airports[1];
 
 		// Set up the player
-		Player player0 = new Player(getNewPlayerID(), "Bob1", true, HOST_IP,
+		Player player0 = new Player(getNewPlayerID(), "Bob1", true, hostIP,
 				player0Airports, player0Waypoints);
 		players.add(player0);
 		Player player1 = new Player(getNewPlayerID(), "Bob2", false, "127.0.0.1",
@@ -222,7 +337,7 @@ public class MultiPlayerGame extends Game {
 		// This ensures that players can't keep controlling aircraft
 		// after they've entered another player's airspace
 		returnToAirspace();
-		
+
 		checkLives();
 
 		//System.out.println(players.get(1).getAircraft().size());
@@ -284,7 +399,7 @@ public class MultiPlayerGame extends Game {
 			}
 		}
 	}
-	
+
 	public boolean checkLives() {
 		for (Player player : players) {
 			if (player.getLives() == 0) {
@@ -446,7 +561,7 @@ public class MultiPlayerGame extends Game {
 	@Override
 	public void initializeAircraftArray() {
 		super.start();
-		Player player1 = new Player(getNewPlayerID(), "Test Player 1", true, HOST_IP, null, null);
+		Player player1 = new Player(getNewPlayerID(), "Test Player 1", true, hostIP, null, null);
 		players.add(player1);
 		Player player2 = new Player(getNewPlayerID(), "Test Player 2", true, "127.0.0.1", null, null);
 		players.add(player2);
