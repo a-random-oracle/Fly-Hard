@@ -58,7 +58,7 @@ public abstract class Game extends Scene {
 	public enum DifficultySetting {EASY, MEDIUM, HARD}
 	
 	/** The default maximum number of aircraft */
-	public static final int DEFAULT_MAX_AIRCRAFT = 2;
+	public static final int DEFAULT_MAX_AIRCRAFT = 10;
 	
 	/** The current difficulty setting */
 	protected DifficultySetting difficulty;
@@ -220,7 +220,7 @@ public abstract class Game extends Scene {
 						.getSelectedAircraft())) {
 					deselectAircraft(player);
 				}
-
+				player.getScore().addScore(player.getAircraft().get(i));
 				player.getAircraft().remove(i);
 			}
 		}
@@ -740,7 +740,7 @@ public abstract class Game extends Scene {
 		//playSound(audio.newSoundEffect("sfx" + File.separator + "crash.ogg"));
 		
 		Main.closeScene();
-		Main.setScene(new GameOver(plane1, plane2, 0)); //TODO <- pass score
+		Main.setScene(new GameOver(plane1, plane2, player.getScore().getScore())); //TODO <- pass score
 	}
 	
 	/**

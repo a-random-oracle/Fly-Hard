@@ -68,7 +68,7 @@ public class Player implements Serializable {
 	private ArrayList<Powerup> powerups;
 	
 	/** The player's score */
-	private int score;
+	private Score score;
 	
 	/** The player's remaining lives */
 	private int lives;
@@ -101,6 +101,8 @@ public class Player implements Serializable {
 		this.ipAddress = ipAddress;
 		this.airports = airports;
 		this.waypoints = waypoints;
+		
+		this.score = new Score();
 		
 		// Set aircraft colour
 		// Default is white
@@ -226,7 +228,7 @@ public class Player implements Serializable {
 	/**
 	 * @return the player's score
 	 */
-	public int getScore() {
+	public Score getScore() {
 		return score;
 	}
 	
@@ -343,7 +345,7 @@ public class Player implements Serializable {
 	 * @param score
 	 * 			the new score
 	 */
-	public void setScore(int score) {
+	public void setScore(Score score) {
 		this.score = score;
 	}
 	

@@ -984,4 +984,8 @@ public class Aircraft implements Serializable {
 		return true;
 	}
 
+	public int getScore() {
+		return this.score;
+	}
+
 }
