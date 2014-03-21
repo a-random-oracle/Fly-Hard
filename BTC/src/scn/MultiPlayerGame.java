@@ -124,29 +124,30 @@ public class MultiPlayerGame extends Game {
 		// Communicate with arbitration server to determine the host
 		boolean isHost;
 		String arbitrationResult = connectToArbitrationServer();
-		
+
 		// Assign a host based on the result of the arbitration
 		if (arbitrationResult == null) {
 			// Ensure that the result returned was valid
 			// If not, terminate the scene
 			isHost = false;
 			close();
-		} else if (arbitrationResult.equals("HOST")) {
+		} else if (arbitrationResult.contains("HOST")) {
 			isHost = true;
+			hostIP = arbitrationResult.replace("HOST:", "");
 		} else {
 			isHost = false;
 			hostIP = arbitrationResult;
 		}
-		
+
 		if (!isHost) {
-		testSocket = null;
-		try {
-			testSocket = new Socket(InetAddress.getByName(hostIP), PORT);
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+			testSocket = null;
+			try {
+				testSocket = new Socket(InetAddress.getByName(hostIP), PORT);
+			} catch (IOException e) {
+				e.printStackTrace();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 
 		if (isHost) {
@@ -203,17 +204,17 @@ public class MultiPlayerGame extends Game {
 	/**
 	 * Connects to the arbitration server.
 	 * <p>
-	 * The arbitration server will return "HOST" to the first player,
-	 * and the host's IP address to the second player.
+	 * The arbitration server will return "HOST:" followed by the incoming IP 
+	 * to the first player, and the host's IP address to the second player.
 	 * </p>
 	 * <p>
 	 * This will attempt to connect to the arbitration server 
 	 * {@link MultiPlayerGame#abortAfter} times, before canceling the 
 	 * connection attempt.
 	 * </p>
-	 * @return "HOST" if the player is to be the host,
-	 * 			the host's IP address if the player is to
-	 * 			be the client, or null if the connection is
+	 * @return "HOST:" followed by the host's IP address if the player
+	 * 			is to be the host, the host's IP address if the player
+	 * 			is to be the client, or null if the connection is
 	 * 			unsuccessful
 	 */
 	private String connectToArbitrationServer() {
@@ -262,9 +263,16 @@ public class MultiPlayerGame extends Game {
 				//   - the term "HOST", or
 				//   - a valid IP address
 				String line = null;
+				String linePart = null;
 				try {
 					while ((line = reader.readLine()) != null) {
-						if (line.equals("HOST") || validator.isValid(line)) {
+						if (line.contains("HOST")) {
+							linePart = line.replace("HOST:", "");
+							
+							if (validator.isValid(linePart)) {
+								return line;
+							}
+						} else if (validator.isValid(line)) {
 							return line;
 						}
 					}
