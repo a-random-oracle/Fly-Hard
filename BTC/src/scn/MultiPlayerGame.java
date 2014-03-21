@@ -124,6 +124,7 @@ public class MultiPlayerGame extends Game {
 		// Communicate with arbitration server to determine the host
 		boolean isHost;
 		String arbitrationResult = connectToArbitrationServer();
+		System.out.println("RESULT: " + arbitrationResult);
 
 		// Assign a host based on the result of the arbitration
 		if (arbitrationResult == null) {
