@@ -1133,6 +1133,18 @@ public abstract class Game extends Scene {
 		return players;
 	}
 	
+	/**
+	 * Gets the current player.
+	 * @return the current player
+	 */
+	public Player getCurrentPlayer() {
+		return player;
+	}
+	
+	/**
+	 * Gets the player who is hosting.
+	 * @return the player hosting the network connection
+	 */
 	public Player getHost() {
 		for (Player player : instance.getPlayers()) {
 			if (player.isHosting()) {
