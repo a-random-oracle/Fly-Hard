@@ -878,7 +878,7 @@ public abstract class Game extends Scene {
 		}
 		
 		// Generate a random speed, centred around 37
-		int speed = 32 + (int)(10 * Math.random());
+		int speed = 32 + (Main.getRandom().nextInt(10));
 		
 		return new Aircraft(name, destinationName, originName,
 				destinationPoint, originPoint, speed,
