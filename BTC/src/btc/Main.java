@@ -81,6 +81,9 @@ public class Main implements input.EventHandler {
 		double yOffset = 0;
 		boolean fullscreen = false;
 		
+		// Initialise the random
+		random = new Random();
+		
 		// Get screen dimensions
 		Rectangle windowBounds = GraphicsEnvironment
 				.getLocalGraphicsEnvironment()
