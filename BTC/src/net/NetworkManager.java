@@ -16,7 +16,7 @@ import org.apache.http.impl.client.HttpClientBuilder;
 
 public class NetworkManager {
 
-	/** The URL to the server */
+	/** The server's URL */
 	public static final String SERVER_URL =
 			"http://tomcat-teamgoa.rhcloud.com";
 
@@ -30,7 +30,7 @@ public class NetworkManager {
 	private static boolean verbose;
 	
 	/** The thread to send data on */
-	private Thread sendThread;
+	private NetworkThread networkThread;
 
 
 	// Constructor ----------------------------------------------------------------------
@@ -44,6 +44,26 @@ public class NetworkManager {
 	 */
 	public NetworkManager(boolean verbose) {
 		NetworkManager.verbose = verbose;
+		
+		// Create a thread for sending data
+		networkThread = new NetworkThread();
+		networkThread.start();
+	}
+	
+	
+	// Data Send and Receive ------------------------------------------------------------
+	
+	/**
+	 * Add data to the send thread.
+	 * <p>
+	 * The data will then be sent to the server after an arbitrary length
+	 * of time.
+	 * </p>
+	 * @param data
+	 * 			the data to send
+	 */
+	public void sendData(String data) {
+		networkThread.writeData(data);
 	}
 
 
@@ -188,7 +208,7 @@ public class NetworkManager {
 	 * Closes any open connections.
 	 */
 	public void close() {
-		// TODO
+		networkThread.end();
 	}
 
 

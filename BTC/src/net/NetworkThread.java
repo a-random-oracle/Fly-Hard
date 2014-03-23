@@ -8,19 +8,13 @@ import java.util.HashMap;
 
 import org.apache.http.client.ClientProtocolException;
 
-public class SendThread extends Thread {
+public class NetworkThread extends Thread {
 	
 	/** The data still to be sent */
-	private String[] dataBuffer;
+	private ArrayList<String> dataBuffer;
 	
 	/** The buffer mutex */
 	private Object bufferMutex;
-	
-	/** Pointer indicating the buffer read head */
-	private int bufferReadIndex;
-	
-	/** Pointer indicating the buffer write head */
-	private int bufferWriteIndex;
 	
 	/** The thread's status */
 	private boolean status;
@@ -28,10 +22,9 @@ public class SendThread extends Thread {
 	/**
 	 * Constructs a new thread for sending data.
 	 */
-	public SendThread() {
-		this.dataBuffer = new String[200];
-		this.bufferReadIndex = 0;
-		this.bufferWriteIndex = 0;
+	public NetworkThread() {
+		this.dataBuffer = new ArrayList<String>();
+		this.bufferMutex = new Object();
 		this.status = true;
 	}
 	
@@ -50,10 +43,7 @@ public class SendThread extends Thread {
 		// Obtain a lock on the data buffer
 		synchronized(bufferMutex) {
 			// Write data to the buffer
-			dataBuffer[bufferWriteIndex] = data;
-			
-			// Increment the write pointer
-			bufferWriteIndex++;
+			dataBuffer.add(data);
 		}
 	}
 	
@@ -62,16 +52,14 @@ public class SendThread extends Thread {
 		
 		// Obtain a lock on the data buffer
 		synchronized(bufferMutex) {
-			if (dataBuffer[bufferReadIndex] == null) {
+			if ((dataBuffer.size() == 0) || (dataBuffer.get(0) == null)) {
 				// Nothing to write, so exit
 				return;
 			} else {
 				// Get the standard headers, along with a new header
 				// containing the data to send
-				headers = setupHeaders(dataBuffer[bufferReadIndex]);
-				
-				// Increment the read pointer
-				bufferReadIndex++;
+				headers = setupHeaders(dataBuffer.get(0));
+				dataBuffer.remove(0);
 			}
 		}
 		

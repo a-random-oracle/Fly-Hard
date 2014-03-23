@@ -299,7 +299,7 @@ public class MultiPlayerGame extends Game {
 			break;
 		}
 		
-		networkManager.sendInputData(input);
+		networkManager.sendData(input);
 		
 		super.mousePressed(key, x, y);
 	}
@@ -335,7 +335,7 @@ public class MultiPlayerGame extends Game {
 			break;
 		}
 		
-		networkManager.sendInputData(input);
+		networkManager.sendData(input);
 		
 		super.mouseReleased(key, x, y);
 	}
@@ -352,7 +352,7 @@ public class MultiPlayerGame extends Game {
 		if (paused) return;
 		
 		String input = player.getID() + ":K:P:" + key + ":" + "0";
-		networkManager.sendInputData(input);
+		networkManager.sendData(input);
 		
 		super.keyPressed(key);
 	}
@@ -369,7 +369,7 @@ public class MultiPlayerGame extends Game {
 		if (paused) return;
 		
 		String input = player.getID() + ":K:R:" + key + ":" + "0";
-		networkManager.sendInputData(input);
+		networkManager.sendData(input);
 		
 		super.keyReleased(key);
 	}
@@ -383,8 +383,7 @@ public class MultiPlayerGame extends Game {
 	@Override
 	public void close() {
 		super.close();
-		
-		//networkManager.close();
+		networkManager.close();
 	}
 
 	// Deprecated -----------------------------------------------------------------------
