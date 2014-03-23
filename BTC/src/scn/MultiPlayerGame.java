@@ -21,9 +21,6 @@ public class MultiPlayerGame extends Game {
 	/** The time frame to send data across the network */
 	//private double timeToUpdate;
 
-	/** Player ID */
-	private int playerID;
-
 	/** The y-coordinate at which the middle zone borders begin */
 	public static int yStart = window.height() - yOffset;
 
@@ -83,25 +80,13 @@ public class MultiPlayerGame extends Game {
 		locationWaypointMap.put(4, 0);
 		locationWaypointMap.put(5, 1);
 		
-		System.out.println("HERE");
-		
 		// Set up the network manager
 		networkManager = new NetworkManager(true);
 		
-		System.out.println("HERE1.25");
-		
-		boolean isHost = networkManager.start();
-		playerID = (isHost) ? 0 : 1;
-		
-		System.out.println("HERE2");
-		
-		// Host sets up the game
-		if (isHost) setUpGame();
-		
-		// Perform initial connection
-		networkManager.establishNetworkConnection(isHost);
+		// Host sets up the game XXX
+		/*if (isHost)*/ setUpGame();
 
-		// Create the manual control buttons
+		// Create the manual control buttons XXX
 		manualControlButtons = new ButtonText[players.size()];
 
 		ButtonText.Action manual0 = new ButtonText.Action() {
@@ -132,12 +117,12 @@ public class MultiPlayerGame extends Game {
 		deselectAircraft(players.get(0));
 		deselectAircraft(players.get(1));
 
-		// Set the appropriate player
-		if (isHost) {
+		// Set the appropriate player TODO
+		//if (isHost) {
 			player = players.get(0);
-		} else {
-			player = players.get(1);
-		}
+		//} else {
+		//	player = players.get(1);
+		//}
 	}
 
 	/**
@@ -185,7 +170,7 @@ public class MultiPlayerGame extends Game {
 
 		// Set up the players
 		Player player0 = new Player(getNewPlayerID(), "Bob1", true,
-				networkManager.getHostIP(), player0Airports, player0Waypoints);
+				/*networkManager.getHostIP()*/"127.0.0.1", player0Airports, player0Waypoints);
 		players.add(player0);
 		Player player1 = new Player(getNewPlayerID(), "Bob2", false,
 				"127.0.0.1", player1Airports, player1Waypoints);
@@ -215,14 +200,6 @@ public class MultiPlayerGame extends Game {
 		if (timeToUpdate > 0.5) {
 			timeToUpdate = 0;
 		}*/
-
-		if (player.isHosting()) {
-			networkManager.sendPlayerData(playerID);
-			networkManager.receivePlayerData(playerID);
-		} else {
-			networkManager.receivePlayerData(playerID);
-			networkManager.sendPlayerData(playerID);
-		}
 	}
 
 	@Override
@@ -296,6 +273,107 @@ public class MultiPlayerGame extends Game {
 		}
 	}
 	
+	
+	// Event handling -------------------------------------------------------------------
+	
+	/**
+	 * Handles mouse click events.
+	 * <p>
+	 * These mouse events are then sent over the network
+	 * to the server for processing.
+	 * </p>
+	 */
+	@Override
+	public void mousePressed(int key, int x, int y) {
+		String input = "";
+		
+		switch (key) {
+		case 0:
+			input = player.getID() + ":L:P:" + x + ":" + y;
+			break;
+		case 1:
+			input = player.getID() + ":R:P:" + x + ":" + y;
+			break;
+		case 2:
+			input = player.getID() + ":M:P:" + x + ":" + y;
+			break;
+		}
+		
+		networkManager.sendInputData(input);
+		
+		super.mousePressed(key, x, y);
+	}
+	
+	/**
+	 * Handles mouse release events.
+	 * <p>
+	 * These mouse events are then sent over the network
+	 * to the server for processing.
+	 * </p>
+	 */
+	@Override
+	public void mouseReleased(int key, int x, int y) {
+		if (paused) return;
+		
+		String input = "";
+		
+		switch (key) {
+		case 0:
+			input = player.getID() + ":L:R:" + x + ":" + y;
+			break;
+		case 1:
+			input = player.getID() + ":R:R:" + x + ":" + y;
+			break;
+		case 2:
+			input = player.getID() + ":M:R:" + x + ":" + y;
+			break;
+		case 3:
+			input = player.getID() + ":M:U:" + x + ":" + y;
+			break;
+		case 4:
+			input = player.getID() + ":M:D:" + x + ":" + y;
+			break;
+		}
+		
+		networkManager.sendInputData(input);
+		
+		super.mouseReleased(key, x, y);
+	}
+	
+	/**
+	 * Handles key press events.
+	 * <p>
+	 * These mouse events are then sent over the network
+	 * to the server for processing.
+	 * </p>
+	 */
+	@Override
+	public void keyPressed(int key) {
+		if (paused) return;
+		
+		String input = player.getID() + ":K:P:" + key + ":" + "0";
+		networkManager.sendInputData(input);
+		
+		super.keyPressed(key);
+	}
+	
+	/**
+	 * Handles key release events.
+	 * <p>
+	 * These mouse events are then sent over the network
+	 * to the server for processing.
+	 * </p>
+	 */
+	@Override
+	public void keyReleased(int key) {
+		if (paused) return;
+		
+		String input = player.getID() + ":K:R:" + key + ":" + "0";
+		networkManager.sendInputData(input);
+		
+		super.keyReleased(key);
+	}
+	
 
 	// Close ----------------------------------------------------------------------------
 
@@ -306,7 +384,7 @@ public class MultiPlayerGame extends Game {
 	public void close() {
 		super.close();
 		
-		networkManager.close();
+		//networkManager.close();
 	}
 
 	// Deprecated -----------------------------------------------------------------------
@@ -320,8 +398,8 @@ public class MultiPlayerGame extends Game {
 		super.start();
 		
 		Player player1 = new Player(getNewPlayerID(),
-				"Test Player 1", true, networkManager.getHostIP(),
-				null, null);
+				"Test Player 1", true, /*networkManager.getHostIP(),*/
+				"127.0.0.1", null, null);
 		players.add(player1);
 		
 		Player player2 = new Player(getNewPlayerID(),
