@@ -1,8 +1,7 @@
 package net;
 
 import java.io.IOException;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -16,10 +15,10 @@ public class NetworkThread extends Thread {
 	/** The data still to be read */
 	private ArrayList<String> responseBuffer;
 	
-	/** The buffer mutex */
+	/** The data buffer mutex */
 	private Object dataBufferMutex;
 	
-	/** The buffer mutex */
+	/** The response buffer mutex */
 	private Object responseBufferMutex;
 	
 	/** The thread's status */
@@ -58,7 +57,7 @@ public class NetworkThread extends Thread {
 			} else {
 				// Get the standard headers, along with a new header
 				// containing the data to send
-				headers = setupHeaders(dataBuffer.get(0));
+				headers = NetworkManager.setupHeaders(dataBuffer.get(0));
 				dataBuffer.remove(0);
 			}
 		}
@@ -84,28 +83,6 @@ public class NetworkThread extends Thread {
 			}
 			NetworkManager.print("</RECEIVED>");
 		}
-	}
-	
-	public HashMap<String, String> setupHeaders(String data) {
-		// Form the request headers
-		HashMap<String, String> headers = new HashMap<String, String>();
-
-		// Set user agent so that the server recognises this as a valid
-		// request
-		headers.put("user-agent", "Fly-Hard");
-
-		// Add client's IP to the headers
-		try {
-			headers.put("ip", InetAddress.getLocalHost().getHostAddress());
-		} catch (UnknownHostException e) {
-			e.printStackTrace();
-		}
-		
-		// Add the data to the headers
-		headers.put("data", data);
-		
-		// Return the headers
-		return headers;
 	}
 	
 	public void writeData(String data) {

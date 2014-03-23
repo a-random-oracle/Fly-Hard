@@ -3,6 +3,10 @@ package net;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -42,11 +46,27 @@ public class NetworkManager {
 	 * 			should output status and connection information to
 	 * 			the standard output
 	 */
-	public NetworkManager(boolean verbose) {
+	public NetworkManager(int playerID, boolean verbose) {
 		NetworkManager.verbose = verbose;
 		
 		// Create a thread for sending data
 		networkThread = new NetworkThread();
+		
+		// Send an initial NO OP to retrieve random seed
+		boolean getRandomSeed = false;
+		while (!getRandomSeed) {
+			try {
+				httpPost(SERVER_URL + POST_EXT,
+						setupHeaders(playerID + ":NOOP:0:0:0:0"));
+				getRandomSeed = true;
+			} catch (ClientProtocolException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		print("-  SEED REEIVED  -");
+		
 		networkThread.start();
 	}
 	
@@ -75,6 +95,28 @@ public class NetworkManager {
 
 
 	// HTTP Methods ---------------------------------------------------------------------
+	
+	public static HashMap<String, String> setupHeaders(String data) {
+		// Form the request headers
+		HashMap<String, String> headers = new HashMap<String, String>();
+
+		// Set user agent so that the server recognises this as a valid
+		// request
+		headers.put("user-agent", "Fly-Hard");
+
+		// Add client's IP to the headers
+		try {
+			headers.put("ip", InetAddress.getLocalHost().getHostAddress());
+		} catch (UnknownHostException e) {
+			e.printStackTrace();
+		}
+		
+		// Add the data to the headers
+		headers.put("data", data);
+		
+		// Return the headers
+		return headers;
+	}
 	
 	public static ArrayList<String> httpGet(String url, HashMap<String, String> headers)
 			throws ClientProtocolException, IOException {

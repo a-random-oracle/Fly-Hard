@@ -85,9 +85,6 @@ public class MultiPlayerGame extends Game {
 		locationWaypointMap.put(4, 0);
 		locationWaypointMap.put(5, 1);
 		
-		// Set up the network manager
-		networkManager = new NetworkManager(true);
-		
 		// Set up the game
 		setUpGame();
 
@@ -124,10 +121,13 @@ public class MultiPlayerGame extends Game {
 
 		// Set the appropriate player TODO
 		//if (isHost) {
-			player = players.get(0);
+		player = players.get(0);
 		//} else {
 		//	player = players.get(1);
 		//}
+
+		// Set up the network manager
+		networkManager = new NetworkManager(player.getID(), true);
 	}
 
 	/**
