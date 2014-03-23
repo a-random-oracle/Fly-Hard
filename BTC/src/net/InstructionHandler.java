@@ -1,8 +1,11 @@
 package net;
 
+import com.google.gson.Gson;
+
 import btc.Main;
 import lib.jog.input;
 import scn.Game;
+import cls.Player;
 
 public class InstructionHandler {
 	
@@ -15,7 +18,7 @@ public class InstructionHandler {
 	 */
 	public static int getPlayerIDFromInstruction(String instruction) {
 		// Split the instruction into its constituent parts
-		String[] instructionArray = instruction.split(":");
+		String[] instructionArray = instruction.split("::");
 		
 		int playerID = -1;
 		try {
@@ -32,7 +35,9 @@ public class InstructionHandler {
 	 * Enacts an instruction.
 	 * <p>
 	 * Instructions should be of the form:
-	 * PlayerID:Operation:Action:SubAction:Param1:Param2
+	 * PlayerID::Operation::Action::SubAction::Param1::Param2
+	 * <b>or</b>
+	 * PlayerID::PLAYER::Player
 	 * </p>
 	 * <p>
 	 * Where:
@@ -45,6 +50,7 @@ public class InstructionHandler {
 	 * <li>SubAction = one of "P" (press), "R" (release) or "S" (scroll)</li>
 	 * <li>Param1    = the first parameter for the event</li>
 	 * <li>Param2    = the second parameter for the event</li>
+	 * <li>Player    = the JSON representation of a player</li>
 	 * </ul>
 	 * <br>
 	 * <p>
@@ -71,18 +77,11 @@ public class InstructionHandler {
 	 * @param instruction
 	 * 			the string representing the instruction to perform
 	 */
-	public static void processInputInstruction(String instruction) {
+	public static void processInstruction(String instruction) {
 		// Split the instruction into its constituent parts
-		String[] instructionArray = instruction.split(":");
+		String[] instructionArray = instruction.split("::");
 		
-		if (instructionArray.length != 6) {
-			// Invalid length
-			Exception e = new Exception("The instruction has an invalid length. "
-					+ "Length is: " + instructionArray.length
-					+ " (expected 6).");
-			e.printStackTrace();
-			return;
-		} else {
+		if (instructionArray.length == 6) {
 			// Treat the instruction as valid
 			
 			// Get the first parameter
@@ -122,6 +121,21 @@ public class InstructionHandler {
 				// Do nothing
 				break;
 			}
+		} else if (instructionArray.length == 3) {
+			switch (instructionArray[1]) {
+			case "PLAYER":
+				Game.getInstance().setPlayer(
+						getPlayerIDFromInstruction(instruction),
+						(new Gson()).fromJson(instructionArray[2], Player.class));
+				break;
+			}
+		} else {
+			// Invalid length
+			Exception e = new Exception("The instruction has an invalid length. "
+					+ "Length is: " + instructionArray.length
+					+ " (expected either 3 or 6).");
+			e.printStackTrace();
+			return;
 		}
 	}
 	

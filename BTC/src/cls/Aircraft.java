@@ -44,6 +44,9 @@ public class Aircraft implements Serializable {
 	/** The sound to play when the separation distance is violated */
 	private final static Sound WARNING_SOUND = audio.newSoundEffect("sfx"
 			+ File.separator + "beep.ogg");
+	
+	/** THe value to use to represent Double.NaN */
+	private static final double NaN = 9999999;
 
 	/** The minimum distance planes should keep apart */
 	private static int minimumSeparation;
@@ -86,7 +89,7 @@ public class Aircraft implements Serializable {
 	public Vector currentTarget;
 
 	/** The bearing specified whilst the aircraft is under manual control */
-	private double manualBearingTarget = Double.NaN;
+	private double manualBearingTarget = NaN;
 
 	/** The stage of its flight path the aircraft is at */
 	private int currentRouteStage = 0;
@@ -266,7 +269,7 @@ public class Aircraft implements Serializable {
 	 */
 	private double angleToTarget() {
 		if (isManuallyControlled) {
-			return (manualBearingTarget == Double.NaN) ? getBearing()
+			return (manualBearingTarget == NaN) ? getBearing()
 					: manualBearingTarget;
 		} else {
 			return Math.atan2(currentTarget.getY() - position.getY()
@@ -403,7 +406,7 @@ public class Aircraft implements Serializable {
 	 */
 	public void turnLeft(double timeDifference) {
 		turnBy(timeDifference * -turnSpeed);
-		manualBearingTarget = Double.NaN;
+		manualBearingTarget = NaN;
 	}
 
 	/**
@@ -413,7 +416,7 @@ public class Aircraft implements Serializable {
 	 */
 	public void turnRight(double timeDifference) {
 		turnBy(timeDifference * turnSpeed);
-		manualBearingTarget = Double.NaN;
+		manualBearingTarget = NaN;
 	}
 
 	/**

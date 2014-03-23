@@ -101,9 +101,24 @@ public class NetworkThread extends Thread {
 				// No data in the buffer
 				return null;
 			} else {
-				String data = responseBuffer.get(0);
+				String response = responseBuffer.get(0);
 				responseBuffer.remove(0);
-				return data;
+				return response;
+			}
+		}
+	}
+	
+	public ArrayList<String> readAllResponses() {
+		// Obtain a lock on the response buffer
+		synchronized(responseBufferMutex) {
+			// Read data from the buffer
+			if (responseBuffer.size() == 0) {
+				// No data in the buffer
+				return null;
+			} else {
+				ArrayList<String> allResponses = responseBuffer;
+				responseBuffer.clear();
+				return allResponses;
 			}
 		}
 	}

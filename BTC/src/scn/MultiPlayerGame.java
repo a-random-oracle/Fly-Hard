@@ -2,6 +2,8 @@ package scn;
 
 import java.util.ArrayList;
 
+import com.google.gson.Gson;
+
 import net.InstructionHandler;
 import net.NetworkManager;
 
@@ -121,9 +123,9 @@ public class MultiPlayerGame extends Game {
 
 		// Set the appropriate player TODO
 		//if (isHost) {
-		player = players.get(0);
+			player = players.get(0);
 		//} else {
-		//	player = players.get(1);
+			//player = players.get(1);
 		//}
 
 		// Set up the network manager
@@ -132,9 +134,6 @@ public class MultiPlayerGame extends Game {
 
 	/**
 	 * Sets up the game.
-	 * <p>
-	 * <b>This should only be run by *one* player</b>
-	 * </p>
 	 * <p>
 	 * This creates the waypoints and airports to assign to the
 	 * players, and then creates the players.
@@ -206,14 +205,22 @@ public class MultiPlayerGame extends Game {
 			timeToUpdate = 0;
 		}*/
 		
-		String nextInstruction = networkManager.receiveData();
-		if (nextInstruction != null) {
-			player = players.get(1);
-			contextSwitch = true;
-			InstructionHandler.processInputInstruction(nextInstruction);
-			contextSwitch = false;
-			player = players.get(0);
+		player = players.get(1);
+		contextSwitch = true;
+		ArrayList<String> instructions = networkManager.receiveAllData();
+		if (instructions != null) {
+			for (String instruction : instructions) {
+				if (instruction != null) {
+					InstructionHandler.processInstruction(instruction);
+				}
+			}
 		}
+		contextSwitch = false;
+		player = players.get(0);
+		
+		// Get next data
+		networkManager.sendData(
+				player.getID() + "::PLAYER::" + (new Gson()).toJson(player));
 	}
 
 	@Override
@@ -285,143 +292,6 @@ public class MultiPlayerGame extends Game {
 		if (checkLives()) {
 			super.gameOver(plane1, plane2);
 		}
-	}
-	
-	
-	// Event handling -------------------------------------------------------------------
-	
-	/**
-	 * Handles mouse click events.
-	 * <p>
-	 * These mouse events are then sent over the network
-	 * to the server for processing.
-	 * </p>
-	 */
-	@Override
-	public void mousePressed(int key, int x, int y) {
-		if (paused) return;
-
-		if (!contextSwitch) {
-			// If there is not currently a context switch,
-			// the input command was 'natural' and needs to be
-			// communicated over the network
-
-			// Generate the input instruction
-			String input = "";
-
-			switch (key) {
-			case 0:
-				input = player.getID() + ":OP:L:P:" + x + ":" + y;
-				break;
-			case 1:
-				input = player.getID() + ":OP:R:P:" + x + ":" + y;
-				break;
-			case 2:
-				input = player.getID() + ":OP:M:P:" + x + ":" + y;
-				break;
-			}
-
-			networkManager.sendData(input);
-		}
-
-		// Send the input instruction
-		super.mousePressed(key, x, y);
-	}
-	
-	/**
-	 * Handles mouse release events.
-	 * <p>
-	 * These mouse events are then sent over the network
-	 * to the server for processing.
-	 * </p>
-	 */
-	@Override
-	public void mouseReleased(int key, int x, int y) {
-		if (paused) return;
-		
-		if (!contextSwitch) {
-			// If there is not currently a context switch,
-			// the input command was 'natural' and needs to be
-			// communicated over the network
-			
-			String input = "";
-
-			// Generate the input instruction
-			switch (key) {
-			case 0:
-				input = player.getID() + ":OP:L:R:" + x + ":" + y;
-				break;
-			case 1:
-				input = player.getID() + ":OP:R:R:" + x + ":" + y;
-				break;
-			case 2:
-				input = player.getID() + ":OP:M:R:" + x + ":" + y;
-				break;
-			case 3:
-				input = player.getID() + ":OP:M:U:" + x + ":" + y;
-				break;
-			case 4:
-				input = player.getID() + ":OP:M:D:" + x + ":" + y;
-				break;
-			}
-
-			// Send the input instruction
-			networkManager.sendData(input);
-		}
-		
-		super.mouseReleased(key, x, y);
-	}
-	
-	/**
-	 * Handles key press events.
-	 * <p>
-	 * These mouse events are then sent over the network
-	 * to the server for processing.
-	 * </p>
-	 */
-	@Override
-	public void keyPressed(int key) {
-		if (paused) return;
-		
-		if (!contextSwitch) {
-			// If there is not currently a context switch,
-			// the input command was 'natural' and needs to be
-			// communicated over the network
-
-			// Generate the input instruction
-			String input = player.getID() + ":OP:K:P:" + key + ":" + "0";
-			
-			// Send the input instruction
-			networkManager.sendData(input);
-		}
-
-		super.keyPressed(key);
-	}
-	
-	/**
-	 * Handles key release events.
-	 * <p>
-	 * These mouse events are then sent over the network
-	 * to the server for processing.
-	 * </p>
-	 */
-	@Override
-	public void keyReleased(int key) {
-		if (paused) return;
-		
-		if (!contextSwitch) {
-			// If there is not currently a context switch,
-			// the input command was 'natural' and needs to be
-			// communicated over the network
-
-			// Generate the input instruction
-			String input = player.getID() + ":OP:K:R:" + key + ":" + "0";
-			
-			// Send the input instruction
-			networkManager.sendData(input);
-		}
-		
-		super.keyReleased(key);
 	}
 	
 

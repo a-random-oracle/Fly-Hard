@@ -54,10 +54,11 @@ public class NetworkManager {
 		
 		// Send an initial NO OP to retrieve random seed
 		boolean getRandomSeed = false;
+		ArrayList<String> response = null;
 		while (!getRandomSeed) {
 			try {
-				httpPost(SERVER_URL + POST_EXT,
-						setupHeaders(playerID + ":NOOP:0:0:0:0"));
+				response = httpPost(SERVER_URL + POST_EXT,
+						setupHeaders(playerID + "::NOOP::0::0::0::0"));
 				getRandomSeed = true;
 			} catch (ClientProtocolException e) {
 				e.printStackTrace();
@@ -65,7 +66,8 @@ public class NetworkManager {
 				e.printStackTrace();
 			}
 		}
-		print("-  SEED REEIVED  -");
+		InstructionHandler.processInstruction(response.get(0));
+		print("-  SEED REEIVED : " + response.get(0) + " -");
 		
 		networkThread.start();
 	}
@@ -91,6 +93,13 @@ public class NetworkManager {
 	 */
 	public String receiveData() {
 		return networkThread.readResponse();
+	}
+	
+	/**
+	 * Retrieve all unread responses from the network thread.
+	 */
+	public ArrayList<String> receiveAllData() {
+		return networkThread.readAllResponses();
 	}
 
 
