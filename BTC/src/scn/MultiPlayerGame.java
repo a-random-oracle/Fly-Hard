@@ -2,6 +2,7 @@ package scn;
 
 import java.util.ArrayList;
 
+import net.NetworkInputHandler;
 import net.NetworkManager;
 
 import lib.ButtonText;
@@ -200,6 +201,13 @@ public class MultiPlayerGame extends Game {
 		if (timeToUpdate > 0.5) {
 			timeToUpdate = 0;
 		}*/
+		
+		String nextInstruction = networkManager.receiveData();
+		if (nextInstruction != null) {
+			player = players.get(1);
+			NetworkInputHandler.processInputInstruction(nextInstruction);
+			player = players.get(0);
+		}
 	}
 
 	@Override
@@ -299,9 +307,13 @@ public class MultiPlayerGame extends Game {
 			break;
 		}
 		
-		networkManager.sendData(input);
-		
-		super.mousePressed(key, x, y);
+		if (player.getID() == 1) {
+			player = players.get(0);
+			super.mousePressed(key, x, y);
+			player = players.get(1);
+		} else {
+			networkManager.sendData(input);
+		}
 	}
 	
 	/**
@@ -335,9 +347,13 @@ public class MultiPlayerGame extends Game {
 			break;
 		}
 		
-		networkManager.sendData(input);
-		
-		super.mouseReleased(key, x, y);
+		if (player.getID() == 1) {
+			player = players.get(0);
+			super.mouseReleased(key, x, y);
+			player = players.get(1);
+		} else {
+			networkManager.sendData(input);
+		}
 	}
 	
 	/**
@@ -352,9 +368,14 @@ public class MultiPlayerGame extends Game {
 		if (paused) return;
 		
 		String input = player.getID() + ":K:P:" + key + ":" + "0";
-		networkManager.sendData(input);
 		
-		super.keyPressed(key);
+		if (player.getID() == 1) {
+			player = players.get(0);
+			super.keyPressed(key);
+			player = players.get(1);
+		} else {
+			networkManager.sendData(input);
+		}
 	}
 	
 	/**
@@ -369,9 +390,14 @@ public class MultiPlayerGame extends Game {
 		if (paused) return;
 		
 		String input = player.getID() + ":K:R:" + key + ":" + "0";
-		networkManager.sendData(input);
 		
-		super.keyReleased(key);
+		if (player.getID() == 1) {
+			player = players.get(0);
+			super.keyReleased(key);
+			player = players.get(1);
+		} else {
+			networkManager.sendData(input);
+		}
 	}
 	
 

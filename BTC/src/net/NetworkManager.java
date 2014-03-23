@@ -54,7 +54,7 @@ public class NetworkManager {
 	// Data Send and Receive ------------------------------------------------------------
 	
 	/**
-	 * Add data to the send thread.
+	 * Add data to the network thread.
 	 * <p>
 	 * The data will then be sent to the server after an arbitrary length
 	 * of time.
@@ -64,6 +64,13 @@ public class NetworkManager {
 	 */
 	public void sendData(String data) {
 		networkThread.writeData(data);
+	}
+	
+	/**
+	 * Retrieve the next response from the network thread.
+	 */
+	public String receiveData() {
+		return networkThread.readResponse();
 	}
 
 
@@ -95,7 +102,7 @@ public class NetworkManager {
 			while (iterator.hasNext()) {
 				currentHeader = iterator.next();
 				request.addHeader(currentHeader, headers.get(currentHeader));
-				print("         " + currentHeader + " = "
+				print("             " + currentHeader + " = "
 						+ headers.get(currentHeader));
 			}
 			print("</GET>");
@@ -161,7 +168,7 @@ public class NetworkManager {
 			while (iterator.hasNext()) {
 				currentHeader = iterator.next();
 				request.addHeader(currentHeader, headers.get(currentHeader));
-				print("         " + currentHeader + " = "
+				print("             " + currentHeader + " = "
 						+ headers.get(currentHeader));
 			}
 			print("</POST>");
