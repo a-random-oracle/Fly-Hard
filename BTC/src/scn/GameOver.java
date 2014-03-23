@@ -8,6 +8,7 @@ import cls.Aircraft;
 import cls.Vector;
 
 import lib.SpriteAnimation;
+import lib.TextBox;
 import lib.jog.audio;
 import lib.jog.audio.Sound;
 import lib.jog.graphics;
@@ -17,7 +18,7 @@ import lib.jog.window;
 public class GameOver extends Scene {
 	
 	/** Text box to write the details of the game failure */
-	private lib.TextBox textBox;
+	private TextBox textBox;
 	
 	// Used to position the explosion, and provide graphical feedback of how and where the player failed
 	/** The first plane involved in the collision */
@@ -95,7 +96,7 @@ public class GameOver extends Scene {
 	@Override
 	public void start() {
 		playSound(audio.newSoundEffect("sfx" + File.separator + "crash.ogg"));
-		deaths = (int)(Math.random() * 500) + 300;
+		deaths = 300 + Main.getRandom().nextInt(500);
 		timer = 0;
 		textBox = new lib.TextBox(window.width() / 10, 186,
 				window.width() - ((window.width() / 10) * 2), window.height() - 96, 32);

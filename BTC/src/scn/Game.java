@@ -4,7 +4,6 @@ import java.io.File;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Hashtable;
-import java.util.Random;
 
 import lib.ButtonText;
 import lib.jog.audio;
@@ -195,7 +194,7 @@ public abstract class Game extends Scene {
 	@Override
 	public void update(double timeDifference) {
 		if (paused) return;
-		
+
 		// Update the time the game has run for
 		timeElapsed += timeDifference;
 
@@ -205,91 +204,94 @@ public abstract class Game extends Scene {
 		// Update which player is controlling inputs
 		//player = players.get(mouseSide % players.size());
 
-		// Check if any aircraft in the airspace have collided
-		checkCollisions(timeDifference);
+		for (Player player : players) {
 
-		// Update aircraft
-		for (Aircraft aircraft : player.getAircraft()) {
-			aircraft.update(timeDifference);
-		}
+			// Check if any aircraft in the airspace have collided
+			checkCollisions(timeDifference);
 
-		// Deselect and remove any aircraft which have completed their routes
-		for (int i = player.getAircraft().size() - 1; i >= 0; i--) {
-			if (player.getAircraft().get(i).isFinished()) {
-				if (player.getAircraft().get(i).equals(player
-						.getSelectedAircraft())) {
-					deselectAircraft(player);
-				}
-
-				player.getAircraft().remove(i);
+			// Update aircraft
+			for (Aircraft aircraft : player.getAircraft()) {
+				aircraft.update(timeDifference);
 			}
-		}
 
-		// Update the airports
-		for (Airport airport : player.getAirports()) {
-			airport.update(player.getAircraft());
-		}
+			// Deselect and remove any aircraft which have completed their routes
+			for (int i = player.getAircraft().size() - 1; i >= 0; i--) {
+				if (player.getAircraft().get(i).isFinished()) {
+					if (player.getAircraft().get(i).equals(player
+							.getSelectedAircraft())) {
+						deselectAircraft(player);
+					}
 
-		// Deselect any aircraft which are outside the airspace
-		// This ensures that players can't keep controlling aircraft
-		// after they've left the airspace
-		for (Aircraft airc : player.getAircraft()) {
-			if (!(airc.isAtDestination())) {
-				if (airc.isOutOfAirspaceBounds()) {
-					deselectAircraft(airc, player);
+					player.getAircraft().remove(i);
 				}
 			}
-		}
 
-		// Update the counter used to determine when another flight should
-		// enter the airspace
-		// If the counter has reached 0, then spawn a new aircraft
-		player.setFlightGenerationTimeElapsed(player
-				.getFlightGenerationTimeElapsed() + timeDifference);
-		if (player.getFlightGenerationTimeElapsed()
-				>= getFlightGenerationInterval(player)) {
+			// Update the airports
+			for (Airport airport : player.getAirports()) {
+				airport.update(player.getAircraft());
+			}
+
+			// Deselect any aircraft which are outside the airspace
+			// This ensures that players can't keep controlling aircraft
+			// after they've left the airspace
+			for (Aircraft airc : player.getAircraft()) {
+				if (!(airc.isAtDestination())) {
+					if (airc.isOutOfAirspaceBounds()) {
+						deselectAircraft(airc, player);
+					}
+				}
+			}
+
+			// Update the counter used to determine when another flight should
+			// enter the airspace
+			// If the counter has reached 0, then spawn a new aircraft
 			player.setFlightGenerationTimeElapsed(player
-					.getFlightGenerationTimeElapsed()
-					- getFlightGenerationInterval(player));
+					.getFlightGenerationTimeElapsed() + timeDifference);
+			if (player.getFlightGenerationTimeElapsed()
+					>= getFlightGenerationInterval(player)) {
+				player.setFlightGenerationTimeElapsed(player
+						.getFlightGenerationTimeElapsed()
+						- getFlightGenerationInterval(player));
 
-			if (player.getAircraft().size() < player.getMaxAircraft()) {
-				generateFlight(player);
-			}
-		}
-
-		// If there are no aircraft in the airspace, spawn a new aircraft
-		if (player.getAircraft().size() == 0) generateFlight(player);
-
-		if (player.getSelectedAircraft() != null) {
-			if (player.getSelectedAircraft().isManuallyControlled()) {
-				// Handle directional control for a manually
-				// controlled aircraft
-				if (input.keyPressed(new int[]{input.KEY_LEFT, input.KEY_A})) {
-					// Turn left when 'Left' or 'A' key is pressed
-					player.getSelectedAircraft().turnLeft(timeDifference);
-				} else if (input.keyPressed(new int[]{input.KEY_RIGHT,
-						input.KEY_D})) {
-					// Turn right when 'Right' or 'D' key is pressed
-					player.getSelectedAircraft().turnRight(timeDifference);
+				if (player.getAircraft().size() < player.getMaxAircraft()) {
+					generateFlight(player);
 				}
-			} else if (input.keyPressed(new int[]{input.KEY_LEFT, input.KEY_A,
-					input.KEY_RIGHT, input.KEY_D})) {
-				// If any of the directional keys is pressed, set
-				// selected aircraft to manual control
-				toggleManualControl(player);
 			}
 
-			// Handle altitude controls
-			if (input.keyPressed(new int[]{input.KEY_S, input.KEY_DOWN})
-					&& (player.getSelectedAircraft()
-							.getPosition().getZ() > 28000)) {
-				player.getSelectedAircraft()
-						.setAltitudeState(Aircraft.ALTITUDE_FALL);
-			} else if (input.keyPressed(new int[]{input.KEY_W, input.KEY_UP})
-					&& (player.getSelectedAircraft()
-							.getPosition().getZ() < 30000)) {
-				player.getSelectedAircraft()
-						.setAltitudeState(Aircraft.ALTITUDE_CLIMB);
+			// If there are no aircraft in the airspace, spawn a new aircraft
+			if (player.getAircraft().size() == 0) generateFlight(player);
+
+			if (player.getSelectedAircraft() != null) {
+				if (player.getSelectedAircraft().isManuallyControlled()) {
+					// Handle directional control for a manually
+					// controlled aircraft
+					if (input.keyPressed(new int[]{input.KEY_LEFT, input.KEY_A})) {
+						// Turn left when 'Left' or 'A' key is pressed
+						player.getSelectedAircraft().turnLeft(timeDifference);
+					} else if (input.keyPressed(new int[]{input.KEY_RIGHT,
+							input.KEY_D})) {
+						// Turn right when 'Right' or 'D' key is pressed
+						player.getSelectedAircraft().turnRight(timeDifference);
+					}
+				} else if (input.keyPressed(new int[]{input.KEY_LEFT, input.KEY_A,
+						input.KEY_RIGHT, input.KEY_D})) {
+					// If any of the directional keys is pressed, set
+					// selected aircraft to manual control
+					toggleManualControl(player);
+				}
+
+				// Handle altitude controls
+				if (input.keyPressed(new int[]{input.KEY_S, input.KEY_DOWN})
+						&& (player.getSelectedAircraft()
+								.getPosition().getZ() > 28000)) {
+					player.getSelectedAircraft()
+					.setAltitudeState(Aircraft.ALTITUDE_FALL);
+				} else if (input.keyPressed(new int[]{input.KEY_W, input.KEY_UP})
+						&& (player.getSelectedAircraft()
+								.getPosition().getZ() < 30000)) {
+					player.getSelectedAircraft()
+					.setAltitudeState(Aircraft.ALTITUDE_CLIMB);
+				}
 			}
 		}
 
@@ -812,7 +814,7 @@ public abstract class Game extends Scene {
 		ArrayList<Waypoint> availableOrigins = getAvailableEntryPoints(player);
 
 		if (availableOrigins.isEmpty()) {
-			int randomAirport = (new Random())
+			int randomAirport = Main.getRandom()
 					.nextInt((player.getAirports().length - 1) + 1);
 			
 			if (player.getAirports()[randomAirport].aircraftHangar.size()
@@ -826,7 +828,7 @@ public abstract class Game extends Scene {
 			}
 		} else {
 			originPoint = availableOrigins.get(
-					(new Random()).nextInt((availableOrigins.size() - 1) + 1));
+					Main.getRandom().nextInt((availableOrigins.size() - 1) + 1));
 
 			// If random point is an airport, use its departures location
 			if (originPoint instanceof Airport) {
@@ -849,7 +851,7 @@ public abstract class Game extends Scene {
 		int destination = 0;
 
 		do {
-			destination = (new Random())
+			destination = Main.getRandom()
 					.nextInt((playersLocationWaypoints.length - 1) + 1);
 			destinationName = playersLocationWaypoints[destination].getName();
 			destinationPoint = playersLocationWaypoints[destination];
@@ -866,7 +868,7 @@ public abstract class Game extends Scene {
 		String name = "";
 		boolean nameTaken = true;
 		while (nameTaken) {
-			name = "Flight " + (int)(900 * Math.random() + 100);
+			name = "Flight " + (int)(Main.getRandom().nextInt(900) + 100);
 			nameTaken = false;
 			
 			// Check the generated name against every other flight name

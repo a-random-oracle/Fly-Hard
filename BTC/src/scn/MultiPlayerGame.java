@@ -2,7 +2,7 @@ package scn;
 
 import java.util.ArrayList;
 
-import net.NetworkInputHandler;
+import net.InstructionHandler;
 import net.NetworkManager;
 
 import lib.ButtonText;
@@ -21,6 +21,9 @@ public class MultiPlayerGame extends Game {
 	
 	/** The time frame to send data across the network */
 	//private double timeToUpdate;
+	
+	/** A boolean indicating whether the user context has been switched */
+	private boolean contextSwitch;
 
 	/** The y-coordinate at which the middle zone borders begin */
 	public static int yStart = window.height() - yOffset;
@@ -64,6 +67,7 @@ public class MultiPlayerGame extends Game {
 	private MultiPlayerGame(DifficultySetting difficulty) {
 		super(difficulty);
 		instance = this;
+		contextSwitch = false;
 	}
 	
 	/**
@@ -84,8 +88,8 @@ public class MultiPlayerGame extends Game {
 		// Set up the network manager
 		networkManager = new NetworkManager(true);
 		
-		// Host sets up the game XXX
-		/*if (isHost)*/ setUpGame();
+		// Set up the game
+		setUpGame();
 
 		// Create the manual control buttons XXX
 		manualControlButtons = new ButtonText[players.size()];
@@ -171,7 +175,7 @@ public class MultiPlayerGame extends Game {
 
 		// Set up the players
 		Player player0 = new Player(getNewPlayerID(), "Bob1", true,
-				/*networkManager.getHostIP()*/"127.0.0.1", player0Airports, player0Waypoints);
+				"127.0.0.1", player0Airports, player0Waypoints);
 		players.add(player0);
 		Player player1 = new Player(getNewPlayerID(), "Bob2", false,
 				"127.0.0.1", player1Airports, player1Waypoints);
@@ -205,7 +209,9 @@ public class MultiPlayerGame extends Game {
 		String nextInstruction = networkManager.receiveData();
 		if (nextInstruction != null) {
 			player = players.get(1);
-			NetworkInputHandler.processInputInstruction(nextInstruction);
+			contextSwitch = true;
+			InstructionHandler.processInputInstruction(nextInstruction);
+			contextSwitch = false;
 			player = players.get(0);
 		}
 	}
@@ -293,27 +299,33 @@ public class MultiPlayerGame extends Game {
 	 */
 	@Override
 	public void mousePressed(int key, int x, int y) {
-		String input = "";
-		
-		switch (key) {
-		case 0:
-			input = player.getID() + ":L:P:" + x + ":" + y;
-			break;
-		case 1:
-			input = player.getID() + ":R:P:" + x + ":" + y;
-			break;
-		case 2:
-			input = player.getID() + ":M:P:" + x + ":" + y;
-			break;
-		}
-		
-		if (player.getID() == 1) {
-			player = players.get(0);
-			super.mousePressed(key, x, y);
-			player = players.get(1);
-		} else {
+		if (paused) return;
+
+		if (!contextSwitch) {
+			// If there is not currently a context switch,
+			// the input command was 'natural' and needs to be
+			// communicated over the network
+
+			// Generate the input instruction
+			String input = "";
+
+			switch (key) {
+			case 0:
+				input = player.getID() + ":OP:L:P:" + x + ":" + y;
+				break;
+			case 1:
+				input = player.getID() + ":OP:R:P:" + x + ":" + y;
+				break;
+			case 2:
+				input = player.getID() + ":OP:M:P:" + x + ":" + y;
+				break;
+			}
+
 			networkManager.sendData(input);
 		}
+
+		// Send the input instruction
+		super.mousePressed(key, x, y);
 	}
 	
 	/**
@@ -327,33 +339,37 @@ public class MultiPlayerGame extends Game {
 	public void mouseReleased(int key, int x, int y) {
 		if (paused) return;
 		
-		String input = "";
-		
-		switch (key) {
-		case 0:
-			input = player.getID() + ":L:R:" + x + ":" + y;
-			break;
-		case 1:
-			input = player.getID() + ":R:R:" + x + ":" + y;
-			break;
-		case 2:
-			input = player.getID() + ":M:R:" + x + ":" + y;
-			break;
-		case 3:
-			input = player.getID() + ":M:U:" + x + ":" + y;
-			break;
-		case 4:
-			input = player.getID() + ":M:D:" + x + ":" + y;
-			break;
-		}
-		
-		if (player.getID() == 1) {
-			player = players.get(0);
-			super.mouseReleased(key, x, y);
-			player = players.get(1);
-		} else {
+		if (!contextSwitch) {
+			// If there is not currently a context switch,
+			// the input command was 'natural' and needs to be
+			// communicated over the network
+			
+			String input = "";
+
+			// Generate the input instruction
+			switch (key) {
+			case 0:
+				input = player.getID() + ":OP:L:R:" + x + ":" + y;
+				break;
+			case 1:
+				input = player.getID() + ":OP:R:R:" + x + ":" + y;
+				break;
+			case 2:
+				input = player.getID() + ":OP:M:R:" + x + ":" + y;
+				break;
+			case 3:
+				input = player.getID() + ":OP:M:U:" + x + ":" + y;
+				break;
+			case 4:
+				input = player.getID() + ":OP:M:D:" + x + ":" + y;
+				break;
+			}
+
+			// Send the input instruction
 			networkManager.sendData(input);
 		}
+		
+		super.mouseReleased(key, x, y);
 	}
 	
 	/**
@@ -367,15 +383,19 @@ public class MultiPlayerGame extends Game {
 	public void keyPressed(int key) {
 		if (paused) return;
 		
-		String input = player.getID() + ":K:P:" + key + ":" + "0";
-		
-		if (player.getID() == 1) {
-			player = players.get(0);
-			super.keyPressed(key);
-			player = players.get(1);
-		} else {
+		if (!contextSwitch) {
+			// If there is not currently a context switch,
+			// the input command was 'natural' and needs to be
+			// communicated over the network
+
+			// Generate the input instruction
+			String input = player.getID() + ":OP:K:P:" + key + ":" + "0";
+			
+			// Send the input instruction
 			networkManager.sendData(input);
 		}
+
+		super.keyPressed(key);
 	}
 	
 	/**
@@ -389,15 +409,19 @@ public class MultiPlayerGame extends Game {
 	public void keyReleased(int key) {
 		if (paused) return;
 		
-		String input = player.getID() + ":K:R:" + key + ":" + "0";
-		
-		if (player.getID() == 1) {
-			player = players.get(0);
-			super.keyReleased(key);
-			player = players.get(1);
-		} else {
+		if (!contextSwitch) {
+			// If there is not currently a context switch,
+			// the input command was 'natural' and needs to be
+			// communicated over the network
+
+			// Generate the input instruction
+			String input = player.getID() + ":OP:K:R:" + key + ":" + "0";
+			
+			// Send the input instruction
 			networkManager.sendData(input);
 		}
+		
+		super.keyReleased(key);
 	}
 	
 
@@ -423,8 +447,8 @@ public class MultiPlayerGame extends Game {
 		super.start();
 		
 		Player player1 = new Player(getNewPlayerID(),
-				"Test Player 1", true, /*networkManager.getHostIP(),*/
-				"127.0.0.1", null, null);
+				"Test Player 1", true, "127.0.0.1",
+				null, null);
 		players.add(player1);
 		
 		Player player2 = new Player(getNewPlayerID(),

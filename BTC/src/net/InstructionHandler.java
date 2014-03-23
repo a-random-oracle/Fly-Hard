@@ -1,9 +1,10 @@
 package net;
 
+import btc.Main;
 import lib.jog.input;
 import scn.Game;
 
-public class NetworkInputHandler {
+public class InstructionHandler {
 	
 	/**
 	 * Gets the player an instruction is associated with.
@@ -31,18 +32,29 @@ public class NetworkInputHandler {
 	 * Enacts an instruction.
 	 * <p>
 	 * Instructions should be of the form:
-	 * PlayerID:Action:SubAction:Param1:Param2
+	 * PlayerID:Operation:Action:SubAction:Param1:Param2
 	 * </p>
 	 * <p>
 	 * Where:
 	 * </p>
 	 * <ul>
 	 * <li>PlayerID  = the ID of the player to perform the action for</li>
+	 * <li>Operation = one of the OP codes listed below
 	 * <li>Action    = one of "L" (left mouse button), "R" (right mouse)
 	 * 					button, "M" (mouse wheel) or "K" (key)</li>
 	 * <li>SubAction = one of "P" (press), "R" (release) or "S" (scroll)</li>
 	 * <li>Param1    = the first parameter for the event</li>
 	 * <li>Param2    = the second parameter for the event</li>
+	 * </ul>
+	 * <br>
+	 * <p>
+	 * Valid OP codes:
+	 * </p>
+	 * <ul>
+	 * <li>OP        = input operation</li>
+	 * <li>SEED      = load a new random seed</li>
+	 * <li>RESET     = notes that the server has been reset</li>
+	 * <li>NOOP      = null operation</li>
 	 * </ul>
 	 * <p>
 	 * For click events, the parameters represent the x and y position
@@ -63,11 +75,11 @@ public class NetworkInputHandler {
 		// Split the instruction into its constituent parts
 		String[] instructionArray = instruction.split(":");
 		
-		if (instructionArray.length != 5) {
+		if (instructionArray.length != 6) {
 			// Invalid length
 			Exception e = new Exception("The instruction has an invalid length. "
 					+ "Length is: " + instructionArray.length
-					+ " (expected 5).");
+					+ " (expected 6).");
 			e.printStackTrace();
 			return;
 		} else {
@@ -76,7 +88,7 @@ public class NetworkInputHandler {
 			// Get the first parameter
 			int param1 = -1;
 			try {
-				param1 = Integer.parseInt(instructionArray[3]);
+				param1 = Integer.parseInt(instructionArray[4]);
 			} catch (NumberFormatException e) {
 				// Invalid first parameter
 				e.printStackTrace();
@@ -86,7 +98,7 @@ public class NetworkInputHandler {
 			// Get the second parameter
 			int param2 = -1;
 			try {
-				param2 = Integer.parseInt(instructionArray[4]);
+				param2 = Integer.parseInt(instructionArray[5]);
 			} catch (NumberFormatException e) {
 				// Invalid second parameter
 				e.printStackTrace();
@@ -94,24 +106,56 @@ public class NetworkInputHandler {
 			}
 			
 			switch (instructionArray[1]) {
-			case "L":
-				// Left mouse button
-				processLeftMouseEvent(instructionArray[2], param1, param2);
+			case "OP":
+				processInputEvent(instructionArray[2],
+						instructionArray[3], param1, param2);
 				break;
-			case "R":
-				// Right mouse button
-				processRightMouseEvent(instructionArray[2], param1, param2);
+			case "SEED":
+				processSeedEvent(instructionArray[2],
+						instructionArray[3], param1, param2);
 				break;
-			case "M":
-				// Middle mouse button
-				processMiddleMouseEvent(instructionArray[2], param1, param2);
+			case "RESET":
+				processResetEvent(instructionArray[2],
+						instructionArray[3], param1, param2);
 				break;
-			case "K":
-				// Key action
-				processKeyEvent(instructionArray[2], param1);
+			case "NOOP":
+				// Do nothing
 				break;
 			}
 		}
+	}
+	
+	private static void processInputEvent(String action, String subAction,
+			int param1, int param2) {
+		switch (action) {
+		case "L":
+			// Left mouse button
+			processLeftMouseEvent(subAction, param1, param2);
+			break;
+		case "R":
+			// Right mouse button
+			processRightMouseEvent(subAction, param1, param2);
+			break;
+		case "M":
+			// Middle mouse button
+			processMiddleMouseEvent(subAction, param1, param2);
+			break;
+		case "K":
+			// Key action
+			processKeyEvent(subAction, param1);
+			break;
+		}
+	}
+
+	private static void processSeedEvent(String action, String subAction,
+			int param1, int param2) {
+		Main.setRandomSeed(param1);
+	}
+
+	private static void processResetEvent(String action, String subAction,
+			int param1, int param2) {
+		// Cause the scent to close
+		Game.getInstance().close();
 	}
 	
 	/**

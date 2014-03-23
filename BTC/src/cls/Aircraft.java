@@ -3,7 +3,8 @@ package cls;
 import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Random;
+
+import btc.Main;
 
 import scn.Game;
 import scn.Game.DifficultySetting;
@@ -139,7 +140,7 @@ public class Aircraft implements Serializable {
 		this.score = 100;
 
 		// Set aircraft's altitude to a random height
-		int altitudeOffset = ((new Random()).nextInt(2)) == 0 ? 28000 : 30000;
+		int altitudeOffset = (Main.getRandom().nextInt(2)) == 0 ? 28000 : 30000;
 		this.position = position.add(new Vector(0, 0, altitudeOffset));
 
 		// Calculate initial velocity (direction)
