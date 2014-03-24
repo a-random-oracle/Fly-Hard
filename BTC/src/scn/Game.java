@@ -1306,12 +1306,24 @@ public abstract class Game extends Scene {
 
 	// Mutators -------------------------------------------------------------------------
 
-	public void setPlayers(ArrayList<Player> players) {
-		this.players = players;
+	/**
+	 * Sets the current player.
+	 * @param player
+	 * 			the player to set as the current player
+	 */
+	public void setCurrentPlayer(Player player) {
+		this.player = player;
 	}
 
-	public void setPlayer(int playerID, Player player) {
-		this.players.set(playerID, player);
+	/**
+	 * Sets a specific player.
+	 * @param index
+	 * 			the index of the player to set
+	 * @param player
+	 * 			the player to set
+	 */
+	public void setPlayer(int index, Player player) {
+		this.players.set(index, player);
 	}
 
 

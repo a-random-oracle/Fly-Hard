@@ -32,7 +32,7 @@ public class InstructionHandler {
 	}
 	
 	/**
-	 * Enacts an instruction.
+	 * Processes an instruction.
 	 * <p>
 	 * Instructions should be of the form:
 	 * PlayerID::Operation::Action::SubAction::Param1::Param2
@@ -61,6 +61,7 @@ public class InstructionHandler {
 	 * <li>SEED      = load a new random seed</li>
 	 * <li>RESET     = notes that the server has been reset</li>
 	 * <li>NOOP      = null operation</li>
+	 * <li>INIT      = initialises the current player</li>
 	 * </ul>
 	 * <p>
 	 * For click events, the parameters represent the x and y position
@@ -116,6 +117,11 @@ public class InstructionHandler {
 			case "RESET":
 				processResetEvent(instructionArray[2],
 						instructionArray[3], param1, param2);
+				break;
+			case "INIT":
+				int playerID = getPlayerIDFromInstruction(instruction);
+				Game.getInstance().setPlayer(playerID,
+						Game.getInstance().getPlayers().get(playerID));
 				break;
 			case "NOOP":
 				// Do nothing

@@ -23,9 +23,6 @@ public class MultiPlayerGame extends Game {
 	
 	/** The time frame to send data across the network */
 	//private double timeToUpdate;
-	
-	/** A boolean indicating whether the user context has been switched */
-	private boolean contextSwitch;
 
 	/** The y-coordinate at which the middle zone borders begin */
 	public static int yStart = window.height() - yOffset;
@@ -69,7 +66,6 @@ public class MultiPlayerGame extends Game {
 	private MultiPlayerGame(DifficultySetting difficulty) {
 		super(difficulty);
 		instance = this;
-		contextSwitch = false;
 	}
 	
 	/**
@@ -121,15 +117,8 @@ public class MultiPlayerGame extends Game {
 		deselectAircraft(players.get(0));
 		deselectAircraft(players.get(1));
 
-		// Set the appropriate player TODO
-		//if (isHost) {
-			player = players.get(0);
-		//} else {
-			//player = players.get(1);
-		//}
-
 		// Set up the network manager
-		networkManager = new NetworkManager(player.getID(), true);
+		networkManager = new NetworkManager(true);
 	}
 
 	/**
@@ -205,8 +194,6 @@ public class MultiPlayerGame extends Game {
 			timeToUpdate = 0;
 		}*/
 		
-		player = players.get(1);
-		contextSwitch = true;
 		ArrayList<String> instructions = networkManager.receiveAllData();
 		if (instructions != null) {
 			for (String instruction : instructions) {
@@ -215,8 +202,6 @@ public class MultiPlayerGame extends Game {
 				}
 			}
 		}
-		contextSwitch = false;
-		player = players.get(0);
 		
 		// Get next data
 		networkManager.sendData(

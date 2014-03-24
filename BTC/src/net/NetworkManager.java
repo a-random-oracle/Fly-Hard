@@ -46,7 +46,7 @@ public class NetworkManager {
 	 * 			should output status and connection information to
 	 * 			the standard output
 	 */
-	public NetworkManager(int playerID, boolean verbose) {
+	public NetworkManager(boolean verbose) {
 		NetworkManager.verbose = verbose;
 		
 		// Create a thread for sending data
@@ -58,7 +58,7 @@ public class NetworkManager {
 		while (!getRandomSeed) {
 			try {
 				response = httpPost(SERVER_URL + POST_EXT,
-						setupHeaders(playerID + "::NOOP::0::0::0::0"));
+						setupHeaders("0::NOOP::0::0::0::0"));
 				getRandomSeed = true;
 			} catch (ClientProtocolException e) {
 				e.printStackTrace();
@@ -67,7 +67,9 @@ public class NetworkManager {
 			}
 		}
 		InstructionHandler.processInstruction(response.get(0));
-		print("-  SEED REEIVED : " + response.get(0) + " -");
+		print("-  YOU ARE PLAYER : " + response.get(0) + "  -");
+		InstructionHandler.processInstruction(response.get(1));
+		print("-  SEED REEIVED : " + response.get(0) + "  -");
 		
 		networkThread.start();
 	}
