@@ -66,10 +66,18 @@ public class NetworkManager {
 				e.printStackTrace();
 			}
 		}
+		
+		print("<INITIAL RESPONSES>");
+		if (response != null) {
+		for (int i = 0; i < response.size(); i++)
+			print("        " + response.get(i));
+		}
+		print("</INITIAL RESPONSES>");
+		
 		InstructionHandler.processInstruction(response.get(0));
-		print("-  YOU ARE PLAYER : " + response.get(0) + "  -");
+		print("-  YOU ARE PLAYER : " + response.get(0).split("::")[0] + "  -");
 		InstructionHandler.processInstruction(response.get(1));
-		print("-  SEED REEIVED : " + response.get(0) + "  -");
+		print("-  SEED REEIVED : " + response.get(1).split("::")[4] + "  -");
 		
 		networkThread.start();
 	}
@@ -113,7 +121,7 @@ public class NetworkManager {
 
 		// Set user agent so that the server recognises this as a valid
 		// request
-		headers.put("user-agent", "Fly-Hard");
+		headers.put("User-Agent", "Fly-Hard");
 
 		// Add client's IP to the headers
 		try {
@@ -155,7 +163,7 @@ public class NetworkManager {
 			while (iterator.hasNext()) {
 				currentHeader = iterator.next();
 				request.addHeader(currentHeader, headers.get(currentHeader));
-				print("             " + currentHeader + " = "
+				print("        " + currentHeader + " = "
 						+ headers.get(currentHeader));
 			}
 			print("</GET>");
@@ -221,7 +229,7 @@ public class NetworkManager {
 			while (iterator.hasNext()) {
 				currentHeader = iterator.next();
 				request.addHeader(currentHeader, headers.get(currentHeader));
-				print("             " + currentHeader + " = "
+				print("        " + currentHeader + " = "
 						+ headers.get(currentHeader));
 			}
 			print("</POST>");

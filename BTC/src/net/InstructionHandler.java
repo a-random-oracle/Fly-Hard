@@ -120,8 +120,8 @@ public class InstructionHandler {
 				break;
 			case "INIT":
 				int playerID = getPlayerIDFromInstruction(instruction);
-				Game.getInstance().setPlayer(playerID,
-						Game.getInstance().getPlayers().get(playerID));
+				Game.getInstance().setCurrentPlayer(Game.getInstance()
+						.getPlayers().get(playerID));
 				break;
 			case "NOOP":
 				// Do nothing

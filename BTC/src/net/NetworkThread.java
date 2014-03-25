@@ -79,7 +79,7 @@ public class NetworkThread extends Thread {
 			
 			NetworkManager.print("<RECEIVED>");
 			for (String string : response) {
-				NetworkManager.print("             " + string);
+				NetworkManager.print("        " + string);
 			}
 			NetworkManager.print("</RECEIVED>");
 		}

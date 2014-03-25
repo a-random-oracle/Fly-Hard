@@ -47,7 +47,8 @@ public class MultiPlayerGame extends Game {
 	 * @param difficulty the difficulty the scene is to be initialised with
 	 * @return the multi-player game instance
 	 */
-	public static MultiPlayerGame createMultiPlayerGame(DifficultySetting difficulty) {
+	public static MultiPlayerGame createMultiPlayerGame(
+			DifficultySetting difficulty) {
 		if (instance == null) {
 			return new MultiPlayerGame(difficulty);
 		} else {
