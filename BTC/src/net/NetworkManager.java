@@ -1,22 +1,20 @@
 package net;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 
+import java.net.HttpURLConnection;
 import java.net.InetAddress;
+import java.net.MalformedURLException;
+import java.net.ProtocolException;
+import java.net.URL;
 import java.net.UnknownHostException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.HttpClientBuilder;
+import cls.Player;
 
 public class NetworkManager {
 
@@ -27,14 +25,14 @@ public class NetworkManager {
 	/** The post extension */
 	public static final String POST_EXT = "/post";
 
-	/** The number of attempts before aborting a connection */
-	private static final int ABORT_AFTER = 5;
+	/** The thread to send data on */
+	private NetworkThread networkThread;
+	
+	/** The HTTP connection to the server */
+	private static HttpURLConnection connection;
 	
 	/** Whether to output data to the standard output */
 	private static boolean verbose;
-	
-	/** The thread to send data on */
-	private NetworkThread networkThread;
 
 
 	// Constructor ----------------------------------------------------------------------
@@ -46,45 +44,20 @@ public class NetworkManager {
 	 * 			should output status and connection information to
 	 * 			the standard output
 	 */
-	public NetworkManager(boolean verbose) {
+	public NetworkManager(boolean verbose, String connectionType) {
 		NetworkManager.verbose = verbose;
 		
-		// Create a thread for sending data
+		if (connectionType.toUpperCase().contains("GET")) {
+			// TODO <- implement get connection
+		} else if (connectionType.toUpperCase().contains("GET")) {
+			openPostConnection();
+		}
+		
 		networkThread = new NetworkThread();
-		
-		// Send an initial NO OP to retrieve random seed
-		boolean getRandomSeed = false;
-		ArrayList<String> response = null;
-		while (!getRandomSeed) {
-			try {
-				response = httpPost(SERVER_URL + POST_EXT,
-						setupHeaders("0::NOOP::0::0::0::0"));
-				getRandomSeed = true;
-			} catch (ClientProtocolException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-		
-		print("<INITIAL RESPONSES>");
-		if (response != null) {
-		for (int i = 0; i < response.size(); i++)
-			print("        " + response.get(i));
-		}
-		print("</INITIAL RESPONSES>");
-		
-		InstructionHandler.processInstruction(response.get(0));
-		print("-  YOU ARE PLAYER : " + response.get(0).split("::")[0] + "  -");
-		InstructionHandler.processInstruction(response.get(1));
-		print("-  SEED REEIVED : " + response.get(1).split("::")[4] + "  -");
-		
-		networkThread.start();
 	}
-	
-	
+
 	// Data Send and Receive ------------------------------------------------------------
-	
+
 	/**
 	 * Add data to the network thread.
 	 * <p>
@@ -94,28 +67,28 @@ public class NetworkManager {
 	 * @param data
 	 * 			the data to send
 	 */
-	public void sendData(String data) {
+	public void sendData(Player data) {
 		networkThread.writeData(data);
 	}
-	
+
 	/**
 	 * Retrieve the next response from the network thread.
 	 */
-	public String receiveData() {
+	public Player receiveData() {
 		return networkThread.readResponse();
 	}
-	
+
 	/**
 	 * Retrieve all unread responses from the network thread.
 	 */
-	public ArrayList<String> receiveAllData() {
+	public ArrayList<Player> receiveAllData() {
 		return networkThread.readAllResponses();
 	}
-
-
-	// HTTP Methods ---------------------------------------------------------------------
 	
-	public static HashMap<String, String> setupHeaders(String data) {
+	
+	// HTTP Methods ---------------------------------------------------------------------
+
+	public static HashMap<String, String> setupHeaders(Player data) {
 		// Form the request headers
 		HashMap<String, String> headers = new HashMap<String, String>();
 
@@ -130,156 +103,84 @@ public class NetworkManager {
 			e.printStackTrace();
 		}
 		
-		// Add the data to the headers
-		headers.put("data", data);
-		
 		// Return the headers
 		return headers;
 	}
 	
-	public static ArrayList<String> httpGet(String url, HashMap<String, String> headers)
-			throws ClientProtocolException, IOException {
-		// The array of stings to return
-		ArrayList<String> responseArray = new ArrayList<String>();
-
-		// Create a client to manage the request to the server
-		HttpClient client = HttpClientBuilder.create().build();
-		HttpGet request = new HttpGet(url);
-
-		// Track the number of attempts made to connect to the server
-		int attempts = 0;
-
-		// Set up a boolean to break out of the while loop after
-		// a successful connection
-		boolean success = false;
-
-		do {
-			// Create an iterator for the list of headers
-			Iterator<String> iterator = headers.keySet().iterator();
+	private boolean openPostConnection() {
+		// Set up a boolean to track whether the connection
+		// has been established
+		boolean connectionSuccessful = false;
+		
+		try {
+			// Open a new HTTP connection
+			connection = (HttpURLConnection) (new URL(SERVER_URL + POST_EXT))
+					.openConnection();
 			
-			// Add headers to the request
-			print("<GET>");
-			String currentHeader = null;
-			while (iterator.hasNext()) {
-				currentHeader = iterator.next();
-				request.addHeader(currentHeader, headers.get(currentHeader));
-				print("        " + currentHeader + " = "
-						+ headers.get(currentHeader));
-			}
-			print("</GET>");
+			// Set the connection settings
+			connection.setRequestMethod("POST");
+			connection.setUseCaches(false);
+			connection.setDoInput(true);
+			connection.setDoOutput(true);
+			
+			// If code execution has reached this stage, the connection
+			// must have opened successfully
+			connectionSuccessful = true;
+		} catch (ProtocolException e) {
+			e.printStackTrace();
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		return connectionSuccessful;
+	}
+	
+	public static Player httpPostPlayer(HashMap<String, String> headers) {
+		ObjectInputStream inputStream = null;
+		ObjectOutputStream outputStream = null;
 
-			// Send the request to the server
-			HttpResponse response = client.execute(request);
+		try {
+			// Set up output stream and use it to write the data
+			outputStream = new ObjectOutputStream(connection.getOutputStream());
+			//outputStream.writeBytes(urlParameters); TODO <- handle headers
+			outputStream.flush();
+			outputStream.close();
 
-			if (response != null
-					&& response.getStatusLine().getStatusCode() == 200) {
-				// If the response is valid, try to read it
-				BufferedReader reader = new BufferedReader(
-						new InputStreamReader(response.getEntity()
-								.getContent()));
+			// Set up the input stream
+			inputStream = new ObjectInputStream(connection.getInputStream());
 
-				// Retrieve the body of the response
-				String line = null;
+			// Get the received player
+			Player receivedPlayer = (Player) inputStream.readObject();
+
+			// Return the player
+			return receivedPlayer;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		} finally {			
+			// Close the input stream
+			if (inputStream != null) {
 				try {
-					while ((line = reader.readLine()) != null) {
-						responseArray.add(line);
-					}
-
-					// Response has been read successfuly
-					success = true;
+					inputStream.close();
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
-			} else {
-				// Couldn't connect to the server
-				Exception e = new Exception("Connection to server "
-						+ "could not be established.");
-				e.printStackTrace();
 			}
 
-			attempts++;
-		} while (!success && (attempts < ABORT_AFTER));
-
-		return responseArray;
-	}
-
-	public static ArrayList<String> httpPost(String url, HashMap<String, String> headers)
-			throws ClientProtocolException, IOException {
-		// The array of stings to return
-		ArrayList<String> responseArray = new ArrayList<String>();
-
-		// Create a client to manage the request to the server
-		HttpClient client = HttpClientBuilder.create().build();
-		HttpPost request = new HttpPost(url);
-
-		// Track the number of attempts made to connect to the server
-		int attempts = 0;
-
-		// Set up a boolean to break out of the while loop after
-		// a successful connection
-		boolean success = false;
-
-		do {
-			// Create an iterator for the list of headers
-			Iterator<String> iterator = headers.keySet().iterator();
-			
-			// Add headers to the request
-			print("<POST>");
-			String currentHeader = null;
-			while (iterator.hasNext()) {
-				currentHeader = iterator.next();
-				request.addHeader(currentHeader, headers.get(currentHeader));
-				print("        " + currentHeader + " = "
-						+ headers.get(currentHeader));
-			}
-			print("</POST>");
-
-			// Send the request to the server
-			HttpResponse response = client.execute(request);
-
-			if (response != null
-					&& response.getStatusLine().getStatusCode() == 200) {
-				// If the response is valid, try to read it
-				BufferedReader reader = new BufferedReader(
-						new InputStreamReader(response.getEntity()
-								.getContent()));
-
-				// Retrieve the body of the response
-				String line = null;
+			// Close the output stream
+			if (outputStream != null) {
 				try {
-					while ((line = reader.readLine()) != null) {
-						responseArray.add(line);
-					}
-
-					// Response has been read successfuly
-					success = true;
+					outputStream.close();
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
-			} else {
-				// Couldn't connect to the server
-				Exception e = new Exception("Connection to server "
-						+ "could not be established.");
-				e.printStackTrace();
 			}
-
-			attempts++;
-		} while (!success && (attempts < ABORT_AFTER));
-
-		return responseArray;
+		}
 	}
-
-
-	// Close ----------------------------------------------------------------------------
-
-	/**
-	 * Closes any open connections.
-	 */
-	public void close() {
-		networkThread.end();
-	}
-
-
+	
+	
 	// Helper Methods -------------------------------------------------------------------
 
 	/**
@@ -296,6 +197,16 @@ public class NetworkManager {
 	 */
 	public static void print(String string) {
 		if (verbose) System.out.println(string);
+	}
+	
+	
+	// Close ----------------------------------------------------------------------------
+
+	/**
+	 * Closes any open connections.
+	 */
+	public void close() {
+		networkThread.end();
 	}
 
 }

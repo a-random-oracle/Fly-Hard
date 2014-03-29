@@ -2,9 +2,6 @@ package scn;
 
 import java.util.ArrayList;
 
-import com.google.gson.Gson;
-
-import net.InstructionHandler;
 import net.NetworkManager;
 
 import lib.ButtonText;
@@ -119,7 +116,7 @@ public class MultiPlayerGame extends Game {
 		deselectAircraft(players.get(1));
 
 		// Set up the network manager
-		networkManager = new NetworkManager(true);
+		networkManager = new NetworkManager(true, "POST");
 	}
 
 	/**
@@ -195,18 +192,17 @@ public class MultiPlayerGame extends Game {
 			timeToUpdate = 0;
 		}*/
 		
-		ArrayList<String> instructions = networkManager.receiveAllData();
-		if (instructions != null) {
+		//ArrayList<String> instructions = networkManager.receiveAllData(); XXX
+		/*if (instructions != null) {
 			for (String instruction : instructions) {
 				if (instruction != null) {
 					InstructionHandler.processInstruction(instruction);
 				}
 			}
-		}
+		}*/
 		
-		// Get next data
-		networkManager.sendData(
-				player.getID() + "::PLAYER::" + (new Gson()).toJson(player));
+		// Send current player's data to the server
+		networkManager.sendData(player);
 	}
 
 	@Override
