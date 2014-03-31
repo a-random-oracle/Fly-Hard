@@ -2,6 +2,7 @@ Mission Control - __Stripping__
 ========
 
 ## Notices
+<<<<<<< HEAD
 
 * Due to the fact I hadn't pulled in 10 days, the `iOS7` branch was making me cry, so I gave up and started afresh.
 * I will be changing `aircraft.java` in order to better accomodate a flightstrip system.
@@ -9,6 +10,14 @@ Mission Control - __Stripping__
 
 ## `mwuk`'s To Do
 
+=======
+* Due to the fact I hadn't pulled in 10 days, the `iOS7` branch was making me cry, so I gave up and started afresh.
+* I will be changing `aircraft.java` in order to better accomodate a flightstrip system.
+* Things will get funky.
+
+## `mwuk`'s To Do
+
+>>>>>>> d5c5d6be353d45514a865c14d453dcbb8fed26bf
 | Item | Remarks | ETA |
 |:-----|:--------|----:|
 | Flightstrips | [Saab](http://www.saabgroup.com/Global/Documents%20and%20Images/Civil%20Security/Air%20Transportation%20and%20Airport%20Security/e-Strip/E-Strip-WEB.pdf). | Summer/1 |
