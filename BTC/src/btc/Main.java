@@ -3,12 +3,12 @@ package btc;
 import java.awt.GraphicsEnvironment;	
 import java.awt.Rectangle;
 import java.io.File;
+import java.util.Random;
 import java.util.Stack;
 
 import org.lwjgl.Sys;
 
 import scn.Scene;
-
 import lib.jog.*;
 
 /**
@@ -50,6 +50,8 @@ public class Main implements input.EventHandler {
 	/** The scale the game has been resized to in the vertical plane */
 	private static double yScale = 1;
 	
+	private static Random random;
+	
 	/** The locations of the icon files */
 	final private String[] ICON_FILENAMES = {
 		"gfx" + File.separator + "icon16.png",
@@ -76,6 +78,9 @@ public class Main implements input.EventHandler {
 		double xOffset = 0;
 		double yOffset = 0;
 		boolean fullscreen = true;
+		
+		// Set up the random instance
+		random = new Random();
 		
 		// Get screen dimensions
 		Rectangle windowBounds = GraphicsEnvironment
@@ -228,6 +233,14 @@ public class Main implements input.EventHandler {
 	
 	public static double getMinScale() {
 		return Math.min(xScale, yScale);
+	}
+	
+	public static Random getRandom() {
+		return random;
+	}
+	
+	public static void setRandomSeed(int seed) {
+		random.setSeed(seed);
 	}
 
 	@Override
