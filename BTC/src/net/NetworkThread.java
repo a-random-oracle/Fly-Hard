@@ -1,17 +1,14 @@
 package net;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-
-import cls.Player;
 
 public class NetworkThread extends Thread {
 
 	/** The data still to be sent */
-	private ArrayList<Player> dataBuffer;
+	private ArrayList<Object> dataBuffer;
 	
 	/** The data still to be read */
-	private ArrayList<Player> responseBuffer;
+	private ArrayList<Object> responseBuffer;
 	
 	/** The data buffer mutex */
 	private Object dataBufferMutex;
@@ -26,8 +23,8 @@ public class NetworkThread extends Thread {
 	 * Constructs a new thread for sending data.
 	 */
 	public NetworkThread() {
-		this.dataBuffer = new ArrayList<Player>();
-		this.responseBuffer = new ArrayList<Player>();
+		this.dataBuffer = new ArrayList<Object>();
+		this.responseBuffer = new ArrayList<Object>();
 		this.dataBufferMutex = new Object();
 		this.responseBufferMutex = new Object();
 		this.status = true;
@@ -44,7 +41,8 @@ public class NetworkThread extends Thread {
 	}
 	
 	private void sendNextData() {
-		HashMap<String, String> headers = null;
+		//HashMap<String, String> headers = null; TODO
+		Object data = null;
 		
 		// Obtain a lock on the data buffer
 		synchronized(dataBufferMutex) {
@@ -54,25 +52,22 @@ public class NetworkThread extends Thread {
 			} else {
 				// Get the standard headers, along with a new header
 				// containing the data to send
-				headers = NetworkManager.setupHeaders(dataBuffer.get(0));
+				//headers = NetworkManager.setupHeaders();
+				data = dataBuffer.get(0);
 				dataBuffer.remove(0);
 			}
 		}
 		
 		// Send the post request to the server, and read the response
-		Player receivedplayer = NetworkManager.httpPostPlayer(headers);
+		Object receivedData = NetworkManager.postObject(data);
 
 		// Write the response to the response buffer
 		synchronized(responseBufferMutex) {
-			responseBuffer.add(receivedplayer);
-			
-			NetworkManager.print("<RECEIVED>");
-			NetworkManager.print("        " + receivedplayer.toString());
-			NetworkManager.print("</RECEIVED>");
+			responseBuffer.add(receivedData);
 		}
 	}
 	
-	public void writeData(Player data) {
+	public void writeData(Object data) {
 		// Obtain a lock on the data buffer
 		synchronized(dataBufferMutex) {
 			// Write data to the buffer
@@ -80,7 +75,7 @@ public class NetworkThread extends Thread {
 		}
 	}
 	
-	public Player readResponse() {
+	public Object readResponse() {
 		// Obtain a lock on the response buffer
 		synchronized(responseBufferMutex) {
 			// Read data from the buffer
@@ -88,14 +83,14 @@ public class NetworkThread extends Thread {
 				// No data in the buffer
 				return null;
 			} else {
-				Player response = responseBuffer.get(0);
+				Object response = responseBuffer.get(0);
 				responseBuffer.remove(0);
 				return response;
 			}
 		}
 	}
 	
-	public ArrayList<Player> readAllResponses() {
+	public ArrayList<Object> readAllResponses() {
 		// Obtain a lock on the response buffer
 		synchronized(responseBufferMutex) {
 			// Read data from the buffer
@@ -103,7 +98,7 @@ public class NetworkThread extends Thread {
 				// No data in the buffer
 				return null;
 			} else {
-				ArrayList<Player> allResponses = responseBuffer;
+				ArrayList<Object> allResponses = responseBuffer;
 				responseBuffer.clear();
 				return allResponses;
 			}

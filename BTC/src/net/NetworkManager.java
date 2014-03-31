@@ -3,18 +3,16 @@ package net;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-
 import java.net.HttpURLConnection;
 import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
 import java.net.UnknownHostException;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import cls.Player;
+import scn.Game;
 
 public class NetworkManager {
 
@@ -49,10 +47,35 @@ public class NetworkManager {
 		
 		if (connectionType.toUpperCase().contains("GET")) {
 			// TODO <- implement get connection
-		} else if (connectionType.toUpperCase().contains("GET")) {
+		} else if (connectionType.toUpperCase().contains("POST")) {
 			openPostConnection();
 		}
 		
+		// Start by sending an INIT request containing the client's
+		// public IP address
+		String initialResponse = null;
+		try {
+			initialResponse = (String) postObject("INIT:"
+					+ "127.0.0.1"/*InetAddress.getLocalHost()*/);
+		//} catch (UnknownHostException e) {
+		//	e.printStackTrace();
+		} catch (ClassCastException e) {
+			e.printStackTrace();
+		}
+		
+		// Process the response
+		if (initialResponse != null && initialResponse.startsWith("SETID")) {
+			// Get the player ID of the player to set from the response
+			int playerIDToSet = Integer.parseInt(initialResponse.split(":")[1]);
+			
+			// Set the current player
+			Game.getInstance().setCurrentPlayer(
+					Game.getInstance().getPlayers().get(playerIDToSet));
+			
+			System.out.println("Playing as: player" + playerIDToSet);
+		}
+		
+		// Create a network thread for handling asynchronous data passing
 		networkThread = new NetworkThread();
 	}
 
@@ -67,28 +90,28 @@ public class NetworkManager {
 	 * @param data
 	 * 			the data to send
 	 */
-	public void sendData(Player data) {
+	public void sendData(Object data) {
 		networkThread.writeData(data);
 	}
 
 	/**
 	 * Retrieve the next response from the network thread.
 	 */
-	public Player receiveData() {
+	public Object receiveData() {
 		return networkThread.readResponse();
 	}
 
 	/**
 	 * Retrieve all unread responses from the network thread.
 	 */
-	public ArrayList<Player> receiveAllData() {
+	public ArrayList<Object> receiveAllData() {
 		return networkThread.readAllResponses();
 	}
 	
 	
 	// HTTP Methods ---------------------------------------------------------------------
 
-	public static HashMap<String, String> setupHeaders(Player data) {
+	public static HashMap<String, String> setupHeaders() {
 		// Form the request headers
 		HashMap<String, String> headers = new HashMap<String, String>();
 
@@ -137,25 +160,25 @@ public class NetworkManager {
 		return connectionSuccessful;
 	}
 	
-	public static Player httpPostPlayer(HashMap<String, String> headers) {
+	public static Object postObject(Object data) {
 		ObjectInputStream inputStream = null;
 		ObjectOutputStream outputStream = null;
 
 		try {
 			// Set up output stream and use it to write the data
 			outputStream = new ObjectOutputStream(connection.getOutputStream());
-			//outputStream.writeBytes(urlParameters); TODO <- handle headers
+			outputStream.writeObject(data);
 			outputStream.flush();
 			outputStream.close();
 
 			// Set up the input stream
 			inputStream = new ObjectInputStream(connection.getInputStream());
 
-			// Get the received player
-			Player receivedPlayer = (Player) inputStream.readObject();
+			// Get the received data
+			Object receivedData = (Object) inputStream.readObject();
 
-			// Return the player
-			return receivedPlayer;
+			// Return the data
+			return receivedData;
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
@@ -183,6 +206,28 @@ public class NetworkManager {
 	
 	// Helper Methods -------------------------------------------------------------------
 
+	/**
+	 * Gets the current player's ID.
+	 * <p>
+	 * If the current player had not been set, returns -1.
+	 * </p>
+	 * <p>
+	 * If the game instance has not yet been set, returns -2.
+	 * </p>
+	 * @return the current player's ID
+	 */
+	private int getCurrentPlayerID() {
+		if (Game.getInstance() == null) {
+			return -2;
+		} else {
+			if (Game.getInstance().getCurrentPlayer() == null) {
+				return -1;
+			} else {
+				return Game.getInstance().getCurrentPlayer().getID();
+			}
+		}
+	}
+	
 	/**
 	 * Prints strings to the standard output.
 	 * <p>

@@ -83,6 +83,9 @@ public class MultiPlayerGame extends Game {
 		
 		// Set up the game
 		setUpGame();
+		
+		// Set up the network manager
+		networkManager = new NetworkManager(true, "POST");
 
 		// Create the manual control buttons XXX
 		manualControlButtons = new ButtonText[players.size()];
@@ -114,9 +117,8 @@ public class MultiPlayerGame extends Game {
 		// Reset game attributes for each player
 		deselectAircraft(players.get(0));
 		deselectAircraft(players.get(1));
-
-		// Set up the network manager
-		networkManager = new NetworkManager(true, "POST");
+		
+		player = players.get(0);
 	}
 
 	/**
@@ -124,7 +126,7 @@ public class MultiPlayerGame extends Game {
 	 * <p>
 	 * This creates the waypoints and airports to assign to the
 	 * players, and then creates the players.
-	 * <p>
+	 * </p>
 	 */
 	private void setUpGame() {
 		// Generate the lists of waypoints to pass to the players
@@ -228,7 +230,7 @@ public class MultiPlayerGame extends Game {
 	protected void drawMiddleZone() {
 		graphics.setColour(graphics.green);
 
-		//Draw the two lines
+		// Draw the two lines
 		graphics.line(leftEntryX, yStart, leftEntryX, yEnd);
 		graphics.line(rightEntryX, yStart, rightEntryX, yEnd);
 	}
