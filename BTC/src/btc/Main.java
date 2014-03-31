@@ -77,7 +77,7 @@ public class Main implements input.EventHandler {
 	private Main() {
 		double xOffset = 0;
 		double yOffset = 0;
-		boolean fullscreen = true;
+		boolean fullscreen = false;
 		
 		// Set up the random instance
 		random = new Random();
