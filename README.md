@@ -11,7 +11,6 @@ Mission Control - __Stripping__
 
 | Item | Remarks | ETA |
 |:-----|:--------|----:|
-
 | Flightstrips | [Saab](http://www.saabgroup.com/Global/Documents%20and%20Images/Civil%20Security/Air%20Transportation%20and%20Airport%20Security/e-Strip/E-Strip-WEB.pdf). | Summer/1 |
 | Make the game look less terrible | Less green. | _Eventually_ |
 | Merge `stripping` into `master` | I dread this. | _Even more eventually_ |
