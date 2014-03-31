@@ -11,7 +11,7 @@ public class Score {
 		
 	
 
-	
+/*	
 	public static void update() {
 		
 		for (int i = 0; i < SinglePlayerGame.getAircraftList().size(); i++) {
@@ -22,6 +22,6 @@ public class Score {
 			
 		}
 
-	}
+	}*/
 
 	}
