@@ -8,3 +8,4 @@
 # Necessary to set things up
 # so won't ignore for now
 #.project
+/classpath
