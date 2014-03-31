@@ -3,7 +3,6 @@ package btc;
 import java.awt.GraphicsEnvironment;	
 import java.awt.Rectangle;
 import java.io.File;
-import java.util.Random;
 import java.util.Stack;
 
 import org.lwjgl.Sys;
@@ -34,16 +33,16 @@ public class Main implements input.EventHandler {
 	final private String TITLE = "Bear Traffic Controller: GOA Edition";
 	
 	/** The target window width */
-	public static final int TARGET_WIDTH = 1280;
+	final public static int TARGET_WIDTH = 1280;
 	
 	/** The target window height */
-	public static final int TARGET_HEIGHT = 960;
+	final public static int TARGET_HEIGHT = 960;
 	
 	/** The default size of the gap between the window edge and the left edge of the screen */
-	public static final int WIDTH_GAP = 50;
+	final public static int WIDTH_GAP = 50;
 	
 	/** The default size of the gap between the window edge and the top edge of the screen */
-	public static final int HEIGHT_GAP = 50;
+	final public static int HEIGHT_GAP = 50;
 	
 	/** The scale the game has been resized to in the horizontal plane */
 	private static double xScale = 1;
@@ -51,11 +50,8 @@ public class Main implements input.EventHandler {
 	/** The scale the game has been resized to in the vertical plane */
 	private static double yScale = 1;
 	
-	/** The random seed to use */
-	private static Random random;
-	
 	/** The locations of the icon files */
-	private final String[] ICON_FILENAMES = {
+	final private String[] ICON_FILENAMES = {
 		"gfx" + File.separator + "icon16.png",
 		"gfx" + File.separator + "icon32.png",
 		"gfx" + File.separator + "icon64.png",
@@ -79,10 +75,7 @@ public class Main implements input.EventHandler {
 	private Main() {
 		double xOffset = 0;
 		double yOffset = 0;
-		boolean fullscreen = false;
-		
-		// Initialise the random
-		random = new Random();
+		boolean fullscreen = true;
 		
 		// Get screen dimensions
 		Rectangle windowBounds = GraphicsEnvironment
@@ -235,14 +228,6 @@ public class Main implements input.EventHandler {
 	
 	public static double getMinScale() {
 		return Math.min(xScale, yScale);
-	}
-	
-	public static Random getRandom() {
-		return random;
-	}
-	
-	public static void setRandomSeed(long seed) {
-		random.setSeed(seed);
 	}
 
 	@Override
