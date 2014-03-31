@@ -4,9 +4,6 @@ Mission Control
 ## Notices
 * __Test as you go on!__ Testing should be implemented/considered as code is implemented.
 * __Please use issue numbers when committing changes/fixes relating to defined issues, it makes everything more trackable__ (also you don't have to be as descriptive, i.e. `Fixed #n` would be easier and as descriptive than `I fixed the issue where everything explodes if you click the middle mouse button`)
-* Airspaces will adopt a zoning system a la [ice hockey](http://en.wikipedia.org/wiki/Ice_hockey_rink#Zones).
-* Planes can crash. I think? I don't know what happened or what year this is.
-* Points mean prizes. (Need to consider unit. Perhaps Jeremies?)
 * People should keep ideas for powerups. For example a power-up where all planes turn into Jeremies.
 
 ## To Do
@@ -41,6 +38,9 @@ _These are not final/rigid. Any issues, update/query as you wish :D_
  * A copy should be on Facebook - just make sure you call the project 'Fly Hard'.
 
 ## Archive
+* Airspaces will adopt a zoning system a la [ice hockey](http://en.wikipedia.org/wiki/Ice_hockey_rink#Zones).
+* Planes can crash. I think? I don't know what happened or what year this is.
+* Points mean prizes. (Need to consider unit. Perhaps Jeremies?)
 * [Tim Time happened](https://github.com/MWUK/Fly-Hard/blob/master/Docs/Tim%20Time/28-2-14.md).
 * Super SEPR Saturday Shenanigans _also happened._
 * Please declare what classes you're working on, for the benefit of others who might be working concurrently, so as to avoid conflicts.
