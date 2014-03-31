@@ -75,7 +75,7 @@ public class Main implements input.EventHandler {
 	private Main() {
 		double xOffset = 0;
 		double yOffset = 0;
-		boolean fullscreen = false;
+		boolean fullscreen = true;
 		
 		// Get screen dimensions
 		Rectangle windowBounds = GraphicsEnvironment
