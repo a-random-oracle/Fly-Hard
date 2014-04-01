@@ -116,7 +116,7 @@ public class Main implements input.EventHandler {
 		
 		// Get IP address
 		Scanner reader = new Scanner(System.in);
-		ipAddress = reader.nextLine();
+		ipAddress = reader.nextLine()/*InetAddress.getLocalHost()*/;
 		reader.close();
 
 		start(width, height, xOffset, yOffset, fullscreen);

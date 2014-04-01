@@ -12,6 +12,7 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import btc.Main;
 import scn.Game;
 
 public class NetworkManager {
@@ -55,10 +56,7 @@ public class NetworkManager {
 		// public IP address
 		String initialResponse = null;
 		try {
-			initialResponse = (String) postObject("INIT:"
-					+ "127.0.0.1"/*InetAddress.getLocalHost()*/);
-		//} catch (UnknownHostException e) {
-		//	e.printStackTrace();
+			initialResponse = (String) postObject("INIT:" + Main.getIPAddress());
 		} catch (ClassCastException e) {
 			e.printStackTrace();
 		}
