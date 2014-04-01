@@ -62,12 +62,17 @@ public class NetworkManager {
 		}
 		
 		// Process the response
-		if (initialResponse != null && initialResponse.startsWith("SETID")) {
+		if (initialResponse != null) {
+			// Break the initial response up into its constituent
+			// instructions
+			String idResponse = initialResponse.split(";")[0];
+			String seedResponse = initialResponse.split(";")[1];
+			
 			// Get the player ID of the player to set from the response
-			int playerIDToSet = Integer.parseInt(initialResponse.split(":")[1]);
+			int playerIDToSet = Integer.parseInt(idResponse.split(":")[1]);
 			
 			// Get the random seed to set from the response
-			int randomSeed = Integer.parseInt(initialResponse.split(":")[2]);
+			int randomSeed = Integer.parseInt(seedResponse.split(":")[1]);
 			
 			// Set the current player
 			Game.getInstance().setCurrentPlayer(
