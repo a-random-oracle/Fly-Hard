@@ -70,7 +70,8 @@ public class NetworkManager {
 			Game.getInstance().setCurrentPlayer(
 					Game.getInstance().getPlayers().get(playerIDToSet));
 			
-			System.out.println("Playing as: player" + playerIDToSet);
+			System.out.println("Playing as: " + Game.getInstance()
+					.getCurrentPlayer().getName());
 		}
 		
 		// Create a network thread for handling asynchronous data passing
