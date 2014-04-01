@@ -68,10 +68,10 @@ public class NetworkManager {
 			String idResponse = initialResponse.split(";")[0];
 			String seedResponse = initialResponse.split(";")[1];
 			
-			// Get the player ID of the player to set from the response
+			// Get the player ID of the player to set
 			int playerIDToSet = Integer.parseInt(idResponse.split(":")[1]);
 			
-			// Get the random seed to set from the response
+			// Get the random seed to set
 			int randomSeed = Integer.parseInt(seedResponse.split(":")[1]);
 			
 			// Set the current player
@@ -89,6 +89,7 @@ public class NetworkManager {
 		
 		// Create a network thread for handling asynchronous data passing
 		networkThread = new NetworkThread();
+		networkThread.start();
 	}
 
 	// Data Send and Receive ------------------------------------------------------------
@@ -142,7 +143,7 @@ public class NetworkManager {
 		return headers;
 	}
 	
-	private boolean openPostConnection() {
+	private static boolean openPostConnection() {
 		// Set up a boolean to track whether the connection
 		// has been established
 		boolean connectionSuccessful = false;
@@ -178,6 +179,7 @@ public class NetworkManager {
 
 		try {
 			// Set up output stream and use it to write the data
+			openPostConnection();
 			outputStream = new ObjectOutputStream(connection.getOutputStream());
 			outputStream.writeObject(data);
 			outputStream.flush();

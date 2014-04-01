@@ -2,6 +2,8 @@ package net;
 
 import java.util.ArrayList;
 
+import cls.Player;
+
 public class NetworkThread extends Thread {
 
 	/** The data still to be sent */
@@ -19,6 +21,7 @@ public class NetworkThread extends Thread {
 	/** The thread's status */
 	private boolean status;
 	
+	
 	/**
 	 * Constructs a new thread for sending data.
 	 */
@@ -29,6 +32,7 @@ public class NetworkThread extends Thread {
 		this.responseBufferMutex = new Object();
 		this.status = true;
 	}
+	
 	
 	/**
 	 * Sends data in the data buffer.
@@ -41,7 +45,6 @@ public class NetworkThread extends Thread {
 	}
 	
 	private void sendNextData() {
-		//HashMap<String, String> headers = null; TODO
 		Object data = null;
 		
 		// Obtain a lock on the data buffer
@@ -52,18 +55,31 @@ public class NetworkThread extends Thread {
 			} else {
 				// Get the standard headers, along with a new header
 				// containing the data to send
-				//headers = NetworkManager.setupHeaders();
 				data = dataBuffer.get(0);
 				dataBuffer.remove(0);
 			}
 		}
 		
 		// Send the post request to the server, and read the response
-		Object receivedData = NetworkManager.postObject(data);
+		if (data != null) {
+			Object receivedData = NetworkManager.postObject(data);
 
-		// Write the response to the response buffer
-		synchronized(responseBufferMutex) {
-			responseBuffer.add(receivedData);
+			if (receivedData != null && receivedData instanceof Player) {
+				System.out.println(((Player) receivedData).getName());
+			} else {
+				try {
+					System.out.println("Not a player: " + receivedData.getClass().toString());
+				} catch (Exception e) {
+					//
+				}
+				
+				System.out.println("Second try: " + (Player.class.cast(receivedData)));
+			}
+			
+			// Write the response to the response buffer
+			synchronized(responseBufferMutex) {
+				responseBuffer.add(receivedData);
+			}
 		}
 	}
 	

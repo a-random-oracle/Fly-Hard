@@ -19,7 +19,7 @@ public class MultiPlayerGame extends Game {
 	private NetworkManager networkManager;
 	
 	/** The time frame to send data across the network */
-	//private double timeToUpdate;
+	private double timeToUpdate;
 
 	/** The y-coordinate at which the middle zone borders begin */
 	public static int yStart = window.height() - yOffset;
@@ -188,11 +188,24 @@ public class MultiPlayerGame extends Game {
 		checkLives();
 
 		// Increment the time before the next data send
-		/*timeToUpdate += timeDifference;
+		timeToUpdate += timeDifference;
 
-		if (timeToUpdate > 0.5) {
+		if (timeToUpdate > 1) {
+			// Get data from the server
+			Object data = networkManager.receiveData();
+			
+			if (data != null && data instanceof Player) {
+				// Set the received player data
+				System.out.println("Received player: "
+						+ ((Player) data).getName());
+				//players.set((player.getID() + 1) % 2, (Player) data);
+			}
+			
+			// Send current player's data to the server
+			networkManager.sendData(player);
+
 			timeToUpdate = 0;
-		}*/
+		}
 		
 		//ArrayList<String> instructions = networkManager.receiveAllData(); XXX
 		/*if (instructions != null) {
@@ -202,9 +215,6 @@ public class MultiPlayerGame extends Game {
 				}
 			}
 		}*/
-		
-		// Send current player's data to the server
-		networkManager.sendData(player);
 	}
 
 	@Override
