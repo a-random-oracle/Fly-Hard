@@ -4,6 +4,7 @@ import java.awt.GraphicsEnvironment;
 import java.awt.Rectangle;
 import java.io.File;
 import java.util.Random;
+import java.util.Scanner;
 import java.util.Stack;
 
 import org.lwjgl.Sys;
@@ -50,7 +51,11 @@ public class Main implements input.EventHandler {
 	/** The scale the game has been resized to in the vertical plane */
 	private static double yScale = 1;
 	
+	/** The random instance to use to synchronise across the network */
 	private static Random random;
+	
+	/** The running computer's IP address */
+	private static String ipAddress;
 	
 	/** The locations of the icon files */
 	final private String[] ICON_FILENAMES = {
@@ -108,6 +113,11 @@ public class Main implements input.EventHandler {
 			xOffset = (int)((actualWidth - width) / 2);
 			yOffset = (int)((actualHeight - height) / 2);
 		}
+		
+		// Get IP address
+		Scanner reader = new Scanner(System.in);
+		ipAddress = reader.nextLine();
+		reader.close();
 
 		start(width, height, xOffset, yOffset, fullscreen);
 		
@@ -221,6 +231,10 @@ public class Main implements input.EventHandler {
 			lastFpsTime += current_time - lastFpsTime; // Add on the time difference
 		}
 		fpsCounter++;
+	}
+	
+	public static String getIPAddress() {
+		return ipAddress;
 	}
 	
 	public static double getXScale() {
