@@ -66,12 +66,20 @@ public class NetworkManager {
 			// Get the player ID of the player to set from the response
 			int playerIDToSet = Integer.parseInt(initialResponse.split(":")[1]);
 			
+			// Get the random seed to set from the response
+			int randomSeed = Integer.parseInt(initialResponse.split(":")[2]);
+			
 			// Set the current player
 			Game.getInstance().setCurrentPlayer(
 					Game.getInstance().getPlayers().get(playerIDToSet));
 			
 			System.out.println("Playing as: " + Game.getInstance()
 					.getCurrentPlayer().getName());
+			
+			// Set the random seed
+			Main.setRandomSeed(randomSeed);
+			
+			System.out.println("Random seed: " + randomSeed);
 		}
 		
 		// Create a network thread for handling asynchronous data passing
