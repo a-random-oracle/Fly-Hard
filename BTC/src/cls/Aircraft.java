@@ -348,6 +348,8 @@ public class Aircraft implements Serializable {
 	public void alterPath(int routeStage, Waypoint newWaypoint) {
 		if ((!newWaypoint.isEntryOrExit()) && (routeStage > -1)) {
 			flightPlan.alterPath(routeStage, newWaypoint);
+			//decrement score as a penalty for altering flightplan
+			decrementScore();
 			if (!isManuallyControlled)
 				resetBearing();
 			if (routeStage == currentRouteStage) {
@@ -717,6 +719,8 @@ public class Aircraft implements Serializable {
 					collisionWarningSoundFlag = true;
 					WARNING_SOUND.play();
 				}
+				//decriment score for getting within separation distance
+				decrementScore();
 			}
 		}
 		if (planesTooNear.isEmpty()) {
@@ -986,6 +990,19 @@ public class Aircraft implements Serializable {
 
 	public int getScore() {
 		return this.score;
+	}
+	public void setScore(int newScore) {
+		this.score = newScore;
+	}
+	
+	public void decrementScore(){
+		if(this.score > 50){
+			this.score = this.score - 2;
+		}
+		else if(this.score > 20){
+			this.score = this.score -1;
+		}
+		else return;
 	}
 
 }

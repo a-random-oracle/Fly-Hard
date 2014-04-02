@@ -157,5 +157,12 @@ public class AircraftTest {
 		assertFalse(testAircraft.isCloseToEntry(waypointList[3].getLocation()));
 		assertFalse(testAircraft.isCloseToEntry(waypointList[4].getLocation()));
 	}
+	
+	//Test decrementScore
+	@Test
+	public void decrementScore(){
+		testAircraft.decrementScore();
+		assertTrue("Score not successfully decremented", testAircraft.getScore()==98);
+	}
 
 }
