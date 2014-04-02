@@ -2,8 +2,6 @@ package net;
 
 import java.util.ArrayList;
 
-import cls.Player;
-
 public class NetworkThread extends Thread {
 
 	/** The data still to be sent */
@@ -60,21 +58,9 @@ public class NetworkThread extends Thread {
 			}
 		}
 		
-		// Send the post request to the server, and read the response
 		if (data != null) {
-			Object receivedData = NetworkManager.postObject(data);
-
-			if (receivedData != null && receivedData instanceof Player) {
-				System.out.println(((Player) receivedData).getName());
-			} else {
-				try {
-					System.out.println("Not a player: " + receivedData.getClass().toString());
-				} catch (Exception e) {
-					//
-				}
-				
-				System.out.println("Second try: " + (Player.class.cast(receivedData)));
-			}
+			// Send the post request to the server, and read the response
+			Object receivedData = NetworkManager.postObject(data, false);
 			
 			// Write the response to the response buffer
 			synchronized(responseBufferMutex) {

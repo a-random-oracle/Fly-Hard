@@ -3,6 +3,9 @@ package btc;
 import java.awt.GraphicsEnvironment;	
 import java.awt.Rectangle;
 import java.io.File;
+import java.io.Reader;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.Random;
 import java.util.Scanner;
 import java.util.Stack;
@@ -117,7 +120,12 @@ public class Main implements input.EventHandler {
 		// Get IP address
 		Scanner reader = new Scanner(System.in);
 		System.out.println("Enter IP address:");
-		ipAddress = reader.nextLine()/*InetAddress.getLocalHost()*/;
+		//try {
+			ipAddress = reader.nextLine() /*InetAddress.getLocalHost().getHostAddress()*/;
+		//} catch (UnknownHostException e) {
+		//	ipAddress = "0.0.0.0";
+		//	e.printStackTrace();
+		//}
 		reader.close();
 
 		start(width, height, xOffset, yOffset, fullscreen);

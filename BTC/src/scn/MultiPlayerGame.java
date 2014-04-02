@@ -85,7 +85,7 @@ public class MultiPlayerGame extends Game {
 		setUpGame();
 		
 		// Set up the network manager
-		networkManager = new NetworkManager(true, "POST");
+		networkManager = new NetworkManager(true);
 
 		// Create the manual control buttons XXX
 		manualControlButtons = new ButtonText[players.size()];
@@ -117,8 +117,6 @@ public class MultiPlayerGame extends Game {
 		// Reset game attributes for each player
 		deselectAircraft(players.get(0));
 		deselectAircraft(players.get(1));
-		
-		player = players.get(0);
 	}
 
 	/**
@@ -178,27 +176,18 @@ public class MultiPlayerGame extends Game {
 	 */
 	@Override
 	public void update(double timeDifference) {
-		super.update(timeDifference);
-
-		// Deselect any aircraft which are inside the airspace of the other player
-		// This ensures that players can't keep controlling aircraft
-		// after they've entered another player's airspace
-		returnToAirspace();
-
-		checkLives();
-
 		// Increment the time before the next data send
 		timeToUpdate += timeDifference;
 
-		if (timeToUpdate > 1) {
+		if (timeToUpdate > 0.01) {
 			// Get data from the server
 			Object data = networkManager.receiveData();
 			
 			if (data != null && data instanceof Player) {
 				// Set the received player data
-				System.out.println("Received player: "
-						+ ((Player) data).getName());
-				//players.set((player.getID() + 1) % 2, (Player) data);
+				//System.out.println("Received player: "
+				//		+ ((Player) data).getName());
+				players.set((player.getID() + 1) % 2, (Player) data);
 			}
 			
 			// Send current player's data to the server
@@ -207,14 +196,14 @@ public class MultiPlayerGame extends Game {
 			timeToUpdate = 0;
 		}
 		
-		//ArrayList<String> instructions = networkManager.receiveAllData(); XXX
-		/*if (instructions != null) {
-			for (String instruction : instructions) {
-				if (instruction != null) {
-					InstructionHandler.processInstruction(instruction);
-				}
-			}
-		}*/
+		super.update(timeDifference);
+		
+		// Deselect any aircraft which are inside the airspace of the other player
+		// This ensures that players can't keep controlling aircraft
+		// after they've entered another player's airspace
+		returnToAirspace();
+
+		checkLives();
 	}
 
 	@Override

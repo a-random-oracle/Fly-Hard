@@ -1141,19 +1141,6 @@ public abstract class Game extends Scene {
 	}
 
 	/**
-	 * Gets the player who is hosting.
-	 * @return the player hosting the network connection
-	 */
-	public Player getHost() {
-		for (Player player : instance.getPlayers()) {
-			if (player.isHosting()) {
-				return player;
-			}
-		}
-		return null;
-	}
-
-	/**
 	 * Gets a list of all aircraft in the airspace.
 	 * @return a list of all the aircraft in the airspace
 	 */
