@@ -87,30 +87,15 @@ public class MultiPlayerGame extends Game {
 		// Set up the network manager
 		networkManager = new NetworkManager(true);
 
-		// Create the manual control buttons XXX
-		manualControlButtons = new ButtonText[players.size()];
-
-		ButtonText.Action manual0 = new ButtonText.Action() {
+		// Create the manual control buttons
+		ButtonText.Action manual = new ButtonText.Action() {
 			@Override
 			public void action() {
-				toggleManualControl(players.get(0));
+				toggleManualControl(player);
 			}
 		};
 
-		ButtonText.Action manual1 = new ButtonText.Action() {
-			@Override
-			public void action() {
-				toggleManualControl(players.get(1));
-			}
-		};
-
-		manualControlButtons[players.get(0).getID()]
-				= new ButtonText(" Take Control", manual0,
-						(window.width() - 128 - (2 * xOffset)) / 2,
-						32, 128, 32, 8, 4);
-
-		manualControlButtons[players.get(1).getID()]
-				= new ButtonText(" Take Control", manual1,
+		manualControlButton = new ButtonText(" Take Control", manual,
 						(window.width() - 128 - (2 * xOffset)) / 2,
 						32, 128, 32, 8, 4);
 
@@ -185,8 +170,6 @@ public class MultiPlayerGame extends Game {
 			
 			if (data != null && data instanceof Player) {
 				// Set the received player data
-				//System.out.println("Received player: "
-				//		+ ((Player) data).getName());
 				players.set((player.getID() + 1) % 2, (Player) data);
 			}
 			

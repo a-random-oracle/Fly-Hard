@@ -82,8 +82,6 @@ public class SinglePlayerGame extends Game {
 		players.add(player);
 
 		// Create the manual control button
-		manualControlButtons = new ButtonText[players.size()];
-		
 		ButtonText.Action manual = new ButtonText.Action() {
 			@Override
 			public void action() {
@@ -91,8 +89,7 @@ public class SinglePlayerGame extends Game {
 			}
 		};
 
-		manualControlButtons[player.getID()]
-				= new ButtonText(" Take Control", manual,
+		manualControlButton = new ButtonText(" Take Control", manual,
 						(window.width() - 128 - (2 * xOffset)) / 2,
 						32, 128, 32, 8, 4);
 

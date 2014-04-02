@@ -84,7 +84,7 @@ public abstract class Game extends Scene {
 	protected Hashtable<Integer, Integer> locationWaypointMap;
 
 	/** The manual control buttons */
-	protected ButtonText[] manualControlButtons;
+	protected ButtonText manualControlButton;
 
 	/** Is the game paused */
 	protected boolean paused;
@@ -198,67 +198,63 @@ public abstract class Game extends Scene {
 		// Update the time the game has run for
 		timeElapsed += timeDifference;
 
-		// Get which side of the screen the mouse is on
-		//int mouseSide = (input.mouseX() < (window.width() / 2)) ? 0 : 1;
-
-		// Update which player is controlling inputs
-		//player = players.get(mouseSide % players.size());
-
 		// Check if any aircraft in the airspace have collided
 		checkCollisions(timeDifference);
 
-		// Update aircraft
-		for (Aircraft aircraft : player.getAircraft()) {
-			aircraft.update(timeDifference);
-		}
-
-		// Deselect and remove any aircraft which have completed their routes
-		for (int i = player.getAircraft().size() - 1; i >= 0; i--) {
-			if (player.getAircraft().get(i).isFinished()) {
-				if (player.getAircraft().get(i).equals(player
-						.getSelectedAircraft())) {
-					deselectAircraft(player);
-				}
-
-				player.getAircraft().remove(i);
+		for (Player player : players) {
+			// Update aircraft
+			for (Aircraft aircraft : player.getAircraft()) {
+				aircraft.update(timeDifference);
 			}
-		}
 
-		// Update the airports
-		for (Airport airport : player.getAirports()) {
-			airport.update(player.getAircraft());
-		}
+			// Deselect and remove any aircraft which have completed their routes
+			for (int i = player.getAircraft().size() - 1; i >= 0; i--) {
+				if (player.getAircraft().get(i).isFinished()) {
+					if (player.getAircraft().get(i).equals(player
+							.getSelectedAircraft())) {
+						deselectAircraft(player);
+					}
 
-		// Deselect any aircraft which are outside the airspace
-		// This ensures that players can't keep controlling aircraft
-		// after they've left the airspace
-		for (Aircraft airc : player.getAircraft()) {
-			if (!(airc.isAtDestination())) {
-				if (airc.isOutOfAirspaceBounds()) {
-					deselectAircraft(airc, player);
+					player.getAircraft().remove(i);
 				}
 			}
-		}
 
-		// Update the counter used to determine when another flight should
-		// enter the airspace
-		// If the counter has reached 0, then spawn a new aircraft
-		player.setFlightGenerationTimeElapsed(player
-				.getFlightGenerationTimeElapsed() + timeDifference);
-		if (player.getFlightGenerationTimeElapsed()
-				>= getFlightGenerationInterval(player)) {
+			// Update the airports
+			for (Airport airport : player.getAirports()) {
+				airport.update(player.getAircraft());
+			}
+
+			// Deselect any aircraft which are outside the airspace
+			// This ensures that players can't keep controlling aircraft
+			// after they've left the airspace
+			for (Aircraft airc : player.getAircraft()) {
+				if (!(airc.isAtDestination())) {
+					if (airc.isOutOfAirspaceBounds()) {
+						deselectAircraft(airc, player);
+					}
+				}
+			}
+
+			// Update the counter used to determine when another flight should
+			// enter the airspace
+			// If the counter has reached 0, then spawn a new aircraft
 			player.setFlightGenerationTimeElapsed(player
-					.getFlightGenerationTimeElapsed()
-					- getFlightGenerationInterval(player));
+					.getFlightGenerationTimeElapsed() + timeDifference);
+			if (player.getFlightGenerationTimeElapsed()
+					>= getFlightGenerationInterval(player)) {
+				player.setFlightGenerationTimeElapsed(player
+						.getFlightGenerationTimeElapsed()
+						- getFlightGenerationInterval(player));
 
-			if (player.getAircraft().size() < player.getMaxAircraft()) {
-				generateFlight(player);
+				if (player.getAircraft().size() < player.getMaxAircraft()) {
+					generateFlight(player);
+				}
 			}
+
+			// If there are no aircraft in the airspace, spawn a new aircraft
+			if (player.getAircraft().size() == 0) generateFlight(player);
 		}
-
-		// If there are no aircraft in the airspace, spawn a new aircraft
-		if (player.getAircraft().size() == 0) generateFlight(player);
-
+		
 		if (player.getSelectedAircraft() != null) {
 			if (player.getSelectedAircraft().isManuallyControlled()) {
 				// Handle directional control for a manually
@@ -464,7 +460,7 @@ public abstract class Game extends Scene {
 			graphics.setColour(graphics.green);
 			graphics.rectangle(false, (window.width() - 128 - (2 * xOffset)) / 2,
 					32, 128, 32);
-			manualControlButtons[player.getID()].draw();
+			manualControlButton.draw();
 		}
 	}
 
@@ -624,7 +620,7 @@ public abstract class Game extends Scene {
 
 		if (key == input.MOUSE_LEFT) {
 			if (manualOverridePressed(x, y, player)) {
-				manualControlButtons[player.getID()].act();
+				manualControlButton.act();
 			} else if (player.isWaypointClicked() && player.getSelectedAircraft() != null) {
 				Waypoint newWaypoint = findClickedWaypoint(x, y, player);
 				if (newWaypoint != null) {
@@ -902,7 +898,7 @@ public abstract class Game extends Scene {
 	protected void deselectAircraft(Aircraft aircraft, Player player) {
 		if (aircraft != null && aircraft.isManuallyControlled()) {
 			aircraft.toggleManualControl();
-			manualControlButtons[player.getID()].setText(" Take Control");
+			manualControlButton.setText(" Take Control");
 		}
 
 		if (aircraft != null && aircraft.equals(player.getSelectedAircraft())) {
@@ -922,7 +918,7 @@ public abstract class Game extends Scene {
 		if (selectedAircraft == null) return;
 
 		selectedAircraft.toggleManualControl();
-		manualControlButtons[player.getID()].setText(
+		manualControlButton.setText(
 				(selectedAircraft.isManuallyControlled() ?
 						"Remove" : " Take") + " Control");
 	}
@@ -1093,8 +1089,7 @@ public abstract class Game extends Scene {
 	 * 			pressed, otherwise <code>false</code>
 	 */
 	protected boolean manualOverridePressed(int x, int y, Player player) {
-		return manualControlButtons[player.getID()]
-				.isMouseOver(x - xOffset, y - yOffset);
+		return manualControlButton.isMouseOver(x - xOffset, y - yOffset);
 	}
 
 
