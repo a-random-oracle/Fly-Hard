@@ -29,8 +29,8 @@ public class Vector implements Serializable {
 	 * @param z the vector's z position
 	 */
 	public Vector(double x, double y, double z) {
-		this.x = x;
-		this.y = y;
+		this.x = x / Main.getXScale();
+		this.y = y / Main.getYScale();
 		this.z = z;
 	}
 	
@@ -39,7 +39,7 @@ public class Vector implements Serializable {
 	 * @return the x position of the vector
 	 */
 	public double getX() {
-		return x;
+		return x * Main.getXScale();
 	}
 
 	/**
@@ -47,7 +47,7 @@ public class Vector implements Serializable {
 	 * @return the y position of the vector
 	 */
 	public double getY() {
-		return y;
+		return y * Main.getYScale();
 	}
 	
 	/**
@@ -79,7 +79,7 @@ public class Vector implements Serializable {
 	 * @return the square of the magnitude of the vector
 	 */
 	public double magnitudeSquared() {
-		return (x*x) + (y*y) + (z*z);
+		return (getX()*getX()) + (getY()*getY()) + (getZ()*getZ());
 	}
 	
 	/**
@@ -87,7 +87,7 @@ public class Vector implements Serializable {
 	 * @return a normalised vector
 	 */
 	public Vector normalise() {
-		return this.scaleBy(1/magnitude());
+		return scaleBy(1/magnitude());
 	}
 	
 	/**
@@ -96,7 +96,7 @@ public class Vector implements Serializable {
 	 * @return the scaled vector
 	 */
 	public Vector scaleBy(double n) {
-		return new Vector(x * n, y * n, z * n);
+		return new Vector(getX() * n, getY() * n, getZ() * n);
 	}
 	
 	/**
@@ -105,7 +105,9 @@ public class Vector implements Serializable {
 	 * @return the sum of the vectors
 	 */
 	public Vector add(Vector v) {
-		return new Vector(x + v.getX(), y + v.getY(), z + v.getZ());
+		return new Vector(getX() + v.getX(),
+				getY() + v.getY(),
+				getZ() + v.getZ());
 	}
 	
 	/**
@@ -114,7 +116,9 @@ public class Vector implements Serializable {
 	 * @return the result of the subtractions
 	 */
 	public Vector sub(Vector v) {
-		return new Vector(x - v.getX(), y - v.getY(), z - v.getZ());
+		return new Vector(getX() - v.getX(),
+				getY() - v.getY(),
+				getZ() - v.getZ());
 	}
 	
 	/**
@@ -123,9 +127,10 @@ public class Vector implements Serializable {
 	 * @return the angle between this vector and another
 	 */
 	public double angleBetween(Vector v) {
-		double a = Math.acos( (x*v.x + y*v.y + z*v.z) / (magnitude() * v.magnitude()));
-		if (v.y < y) a *= -1;
-		return a;
+		double a = Math.acos((getX()*v.x + getY()*v.y + getZ()*v.z)
+				/ (magnitude() * v.magnitude()));
+		
+		return (v.y < y) ? a * -1 : a;
 	}
 	
 	/**
@@ -133,12 +138,12 @@ public class Vector implements Serializable {
 	 */
 	public Vector remapPosition() {
 		double newX = (((Main.TARGET_WIDTH * Main.getXScale()) - (2 * Game.getXOffset()))
-				/ (Main.TARGET_WIDTH - Game.getXOffset())) * this.x;
+				/ (Main.TARGET_WIDTH - Game.getXOffset())) * getX();
 		
 		double newY = (((Main.TARGET_HEIGHT * Main.getYScale()) - (2 * Game.getYOffset()))
-				/ (Main.TARGET_HEIGHT - Game.getYOffset())) * this.y;
+				/ (Main.TARGET_HEIGHT - Game.getYOffset())) * getY();
 		
-		return new Vector(newX, newY, this.z);
+		return new Vector(newX, newY, getZ());
 	}
 	
 	/**
@@ -152,7 +157,9 @@ public class Vector implements Serializable {
 			return false;
 		} else {
 			Vector v = (Vector) o;
-			return (x == v.getX()) && (y == v.getY()) && (z == v.getZ());
+			return (getX() == v.getX())
+					&& (getY() == v.getY())
+					&& (getZ() == v.getZ());
 		}
 	}
 	
@@ -162,7 +169,9 @@ public class Vector implements Serializable {
 	 */
 	@Override
 	public String toString() {
-		return "< Vector: X = " + x + " Y = " + y + " Z = " + z + " >";
+		return "< Vector: X = " + getX()
+				+ " Y = " + getY()
+				+ " Z = " + getZ() + " >";
 	}
 
 }
