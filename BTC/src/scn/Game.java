@@ -866,7 +866,7 @@ public abstract class Game extends Scene {
 		String carrierTag = "";
 
 		// Assign a random airline to the flight and generate tag for flightName.
-		switch((int)(Math.random() * 5)) {		//Generates random number between 0-5
+		switch((int)(Math.random() * 8)) {		//Generates random number between 0-5
 			case 0:
 				carrier = "Doge Air";
 				carrierTag = "DG";
@@ -890,6 +890,14 @@ public abstract class Game extends Scene {
 			case 5:
 				carrier = "Wow Such Air";
 				carrierTag = "WW";
+				break;
+			case 6:
+				carrier = "Planet Express";
+				carrierTag = "PX";
+				break;
+			case 7:
+				carrier = "Aerobonia";
+				carierTag = "AR";
 				break;
 			default:
 				Exception e = new Exception("Invalid carrier: " + carrier

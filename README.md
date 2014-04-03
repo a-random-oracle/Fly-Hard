@@ -9,7 +9,7 @@ Mission Control - __Stripping__
 * I will be changing `aircraft.java` in order to better accomodate a flightstrip system.
 * Things will get funky.
 
-## `mwuk`'s To Do
+## mwuk's To Do
 
 
 | Item | Remarks | ETA |
