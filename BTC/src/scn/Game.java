@@ -865,9 +865,8 @@ public abstract class Game extends Scene {
 		String carrier = "";
 		String carrierTag = "";
 
-
-		// Assign an airline to the flight
-		switch((int)(Math.random() * 5)) {
+		// Assign a random airline to the flight and generate tag for flightName.
+		switch((int)(Math.random() * 5)) {		//Generates random number between 0-5
 			case 0:
 				carrier = "Doge Air";
 				carrierTag = "DG";
@@ -899,11 +898,11 @@ public abstract class Game extends Scene {
 					break;
 		}
 
-		// Generate a unique, random flight name
+		// Generate a unique, random flight name, using carrierTag as prefix
 		String name = "";
 		boolean nameTaken = true;
 		while (nameTaken) {
-			name = carrierTag + (int)(900 * Math.random() + 100);
+			name = carrierTag + String.format("%03d", (int)(1 + (Math.random() * 999)));
 			nameTaken = false;
 
 			// Check the generated name against every other flight name
