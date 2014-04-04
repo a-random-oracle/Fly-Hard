@@ -2,6 +2,18 @@ package net;
 
 import java.util.ArrayList;
 
+/**
+ * Thread used to transfer data in parallel with the game.
+ * <p>
+ * This thread provides no guarantees regarding the time between
+ * data being passed to the queue and data being sent.
+ * </p>
+ * <p>
+ * However, it is guaranteed that if data is passed in the order
+ * {a, b, c}, the data will be sent in that order (and consequently
+ * will be received in that order).
+ * </p>
+ */
 public class NetworkThread extends Thread {
 
 	/** The data still to be sent */
@@ -42,6 +54,13 @@ public class NetworkThread extends Thread {
 		}
 	}
 	
+	/**
+	 * Sends the next object in the data buffer.
+	 * <p>
+	 * NOTE: this method is <b>destructive</b>, i.e. the sent data
+	 * will be removed from the data buffer after being sent.
+	 * </p>
+	 */
 	private void sendNextData() {
 		Object data = null;
 		
@@ -69,6 +88,11 @@ public class NetworkThread extends Thread {
 		}
 	}
 	
+	/**
+	 * Writes data to the data buffer.
+	 * @param data
+	 * 			the object to write to the data buffer
+	 */
 	public void writeData(Object data) {
 		// Obtain a lock on the data buffer
 		synchronized(dataBufferMutex) {
@@ -77,6 +101,14 @@ public class NetworkThread extends Thread {
 		}
 	}
 	
+	/**
+	 * Reads the next response from the received buffer.
+	 * <p>
+	 * NOTE: this method is <b>destructive</b>, i.e. the read data
+	 * will be removed from the response buffer after being read.
+	 * </p>
+	 * @return the next object in the response buffer
+	 */
 	public Object readResponse() {
 		// Obtain a lock on the response buffer
 		synchronized(responseBufferMutex) {
@@ -92,6 +124,14 @@ public class NetworkThread extends Thread {
 		}
 	}
 	
+	/**
+	 * Reads all data from the response buffer.
+	 * <p>
+	 * NOTE: this method is <b>destructive</b>, i.e. the read data
+	 * will be removed from the response buffer after being read.
+	 * </p>
+	 * @return all the objects in the response buffer
+	 */
 	public ArrayList<Object> readAllResponses() {
 		// Obtain a lock on the response buffer
 		synchronized(responseBufferMutex) {
@@ -107,6 +147,9 @@ public class NetworkThread extends Thread {
 		}
 	}
 	
+	/**
+	 * Stops the thread.
+	 */
 	public void end() {
 		this.status = false;
 	}
