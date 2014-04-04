@@ -1,5 +1,6 @@
 package net;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
@@ -16,10 +17,10 @@ import java.util.ArrayList;
 public class NetworkThread extends Thread {
 
 	/** The data still to be sent */
-	private ArrayList<Object> dataBuffer;
+	private ArrayList<Serializable> dataBuffer;
 	
 	/** The data still to be read */
-	private ArrayList<Object> responseBuffer;
+	private ArrayList<Serializable> responseBuffer;
 	
 	/** The data buffer mutex */
 	private Object dataBufferMutex;
@@ -35,8 +36,8 @@ public class NetworkThread extends Thread {
 	 * Constructs a new thread for sending data.
 	 */
 	public NetworkThread() {
-		this.dataBuffer = new ArrayList<Object>();
-		this.responseBuffer = new ArrayList<Object>();
+		this.dataBuffer = new ArrayList<Serializable>();
+		this.responseBuffer = new ArrayList<Serializable>();
 		this.dataBufferMutex = new Object();
 		this.responseBufferMutex = new Object();
 		this.status = true;
@@ -61,7 +62,7 @@ public class NetworkThread extends Thread {
 	 * </p>
 	 */
 	private void sendNextData() {
-		Object data = null;
+		Serializable data = null;
 		
 		// Obtain a lock on the data buffer
 		synchronized(dataBufferMutex) {
@@ -78,7 +79,7 @@ public class NetworkThread extends Thread {
 		
 		if (data != null) {
 			// Send the post request to the server, and read the response
-			Object receivedData = NetworkManager.postObject(data);
+			Serializable receivedData = NetworkManager.postObject(data);
 			
 			// Write the response to the response buffer
 			synchronized(responseBufferMutex) {
@@ -92,7 +93,7 @@ public class NetworkThread extends Thread {
 	 * @param data
 	 * 			the object to write to the data buffer
 	 */
-	public void writeData(Object data) {
+	public void writeData(Serializable data) {
 		// Obtain a lock on the data buffer
 		synchronized(dataBufferMutex) {
 			// Write data to the buffer
@@ -108,7 +109,7 @@ public class NetworkThread extends Thread {
 	 * </p>
 	 * @return the next object in the response buffer
 	 */
-	public Object readResponse() {
+	public Serializable readResponse() {
 		// Obtain a lock on the response buffer
 		synchronized(responseBufferMutex) {
 			// Read data from the buffer
@@ -116,7 +117,7 @@ public class NetworkThread extends Thread {
 				// No data in the buffer
 				return null;
 			} else {
-				Object response = responseBuffer.get(0);
+				Serializable response = responseBuffer.get(0);
 				responseBuffer.remove(0);
 				return response;
 			}
@@ -131,7 +132,7 @@ public class NetworkThread extends Thread {
 	 * </p>
 	 * @return all the objects in the response buffer
 	 */
-	public ArrayList<Object> readAllResponses() {
+	public ArrayList<Serializable> readAllResponses() {
 		// Obtain a lock on the response buffer
 		synchronized(responseBufferMutex) {
 			// Read data from the buffer
@@ -139,7 +140,8 @@ public class NetworkThread extends Thread {
 				// No data in the buffer
 				return null;
 			} else {
-				ArrayList<Object> allResponses = responseBuffer;
+				ArrayList<Serializable> allResponses =
+						new ArrayList<Serializable>(responseBuffer);
 				responseBuffer.clear();
 				return allResponses;
 			}

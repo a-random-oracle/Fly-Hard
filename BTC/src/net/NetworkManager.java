@@ -6,6 +6,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
@@ -95,21 +96,21 @@ public class NetworkManager {
 	 * @param data
 	 * 			the data to send
 	 */
-	public void sendData(Object data) {
+	public void sendData(Serializable data) {
 		networkThread.writeData(data);
 	}
 
 	/**
 	 * Retrieve the next response from the network thread.
 	 */
-	public Object receiveData() {
+	public Serializable receiveData() {
 		return networkThread.readResponse();
 	}
 
 	/**
 	 * Retrieve all unread responses from the network thread.
 	 */
-	public ArrayList<Object> receiveAllData() {
+	public ArrayList<Serializable> receiveAllData() {
 		return networkThread.readAllResponses();
 	}
 	
@@ -202,10 +203,10 @@ public class NetworkManager {
 	 * 			the data to send
 	 * @return the data the server responded with
 	 */
-	public static Object postObject(Object data) {
+	public static Serializable postObject(Serializable data) {
 		ObjectOutputStream outputStream = null;
 		ObjectInputStream inputStream = null;
-		Object receivedData = null;
+		Serializable receivedData = null;
 		
 		// Open the connection
 		openPostConnection(SERVER_URL + DATA_EXT);
@@ -244,7 +245,13 @@ public class NetworkManager {
 	
 	// Helper Methods -------------------------------------------------------------------
 	
-	private static byte[] serialiseData(Object data) {
+	/**
+	 * Serialises data to a byte array.
+	 * @param data
+	 * 			the data to serialise
+	 * @return
+	 */
+	private static byte[] serialiseData(Serializable data) {
 		ByteArrayOutputStream byteArrayOutputStream = null;
 		ObjectOutputStream serializeOutputStream = null;
 		
@@ -264,7 +271,7 @@ public class NetworkManager {
 		return null;
 	}
 	
-	private static Object deserialiseData(byte[] data) {
+	private static Serializable deserialiseData(byte[] data) {
 		ByteArrayInputStream byteArrayInputStream = null;
 		ObjectInputStream deserializeInputStream = null;
 		
@@ -273,7 +280,7 @@ public class NetworkManager {
 				byteArrayInputStream = new ByteArrayInputStream(data);
 				deserializeInputStream = new ObjectInputStream(
 						byteArrayInputStream);
-				return (Object) deserializeInputStream.readObject();
+				return (Serializable) deserializeInputStream.readObject();
 			} catch (IOException e) {
 				print(e);
 			} catch (ClassNotFoundException e) {
