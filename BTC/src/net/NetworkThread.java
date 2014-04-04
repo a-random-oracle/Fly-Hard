@@ -10,8 +10,7 @@ import java.util.ArrayList;
  * </p>
  * <p>
  * However, it is guaranteed that if data is passed in the order
- * {a, b, c}, the data will be sent in that order (and consequently
- * will be received in that order).
+ * {a, b, c}, the data will be sent in that order.
  * </p>
  */
 public class NetworkThread extends Thread {
@@ -79,7 +78,7 @@ public class NetworkThread extends Thread {
 		
 		if (data != null) {
 			// Send the post request to the server, and read the response
-			Object receivedData = NetworkManager.postObject(data, false);
+			Object receivedData = NetworkManager.postObject(data);
 			
 			// Write the response to the response buffer
 			synchronized(responseBufferMutex) {

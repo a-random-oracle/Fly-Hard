@@ -24,6 +24,9 @@ public class NetworkManager {
 	/** The initialisation extension */
 	public static final String INIT_EXT = "/init";
 	
+	/** The message transfer extension */
+	public static final String MSG_EXT = "/msg";
+	
 	/** The data transfer extension */
 	public static final String DATA_EXT = "/data";
 
@@ -49,31 +52,36 @@ public class NetworkManager {
 	public NetworkManager(boolean verbose) {
 		NetworkManager.verbose = verbose;
 
-		// Start by sending an initial request containing the client's
-		// public IP address
-		String initialResponse = null;
-		try {
-			initialResponse = (String) postObject("INIT", true);
-		} catch (ClassCastException e) {
-			print(e);
-		}
-		
-		// Process the response
-		if (initialResponse != null) {
-			// Get the player ID of this player
-			int playerIDToSet = Integer.parseInt(initialResponse.split(":")[1]);
-			
-			// Set the current player
-			Game.getInstance().setCurrentPlayer(
-					Game.getInstance().getPlayers().get(playerIDToSet));
-			
-			System.out.println("Playing as: " + Game.getInstance()
-					.getCurrentPlayer().getName());
-		}
+		initialiseClient();
 		
 		// Create a network thread for handling asynchronous data passing
 		networkThread = new NetworkThread();
 		networkThread.start();
+	}
+	
+	/**
+	 * Sends an initialisation request to the server.
+	 * <p>
+	 * This sets the current player.
+	 * </p>
+	 */
+	private void initialiseClient() {
+		// Start by sending an initial request containing the client's
+		// public IP address
+		String initialResponse = postMessage("INIT");
+
+		// Process the response
+		if (initialResponse != null) {
+			// Get the player ID to set from the response
+			int playerIDToSet = Integer.parseInt(initialResponse.split(":")[1]);
+
+			// Set the current player
+			Game.getInstance().setCurrentPlayer(
+					Game.getInstance().getPlayers().get(playerIDToSet));
+
+			System.out.println("Playing as: " + Game.getInstance()
+					.getCurrentPlayer().getName());
+		}
 	}
 
 	// Data Send and Receive ------------------------------------------------------------
@@ -108,20 +116,14 @@ public class NetworkManager {
 	
 	// HTTP Methods ---------------------------------------------------------------------
 	
-	private static boolean openPostConnection(boolean initialConnection) {
+	private static boolean openPostConnection(String url) {
 		// Set up a boolean to track whether the connection
 		// has been established
 		boolean connectionSuccessful = false;
 		
 		try {
-			// Construct the server's URL
-			// If this is an initial connection, use the initialisation
-			// extension, otherwise use the data transfer extension
-			URL serverURL = new URL(SERVER_URL
-					+ ((initialConnection) ? INIT_EXT : DATA_EXT));
-			
 			// Open a new HTTP connection
-			connection = (HttpURLConnection) (serverURL).openConnection();
+			connection = (HttpURLConnection) (new URL(url)).openConnection();
 			
 			// Set the connection settings
 			connection.setRequestMethod("POST");
@@ -147,26 +149,27 @@ public class NetworkManager {
 		return connectionSuccessful;
 	}
 	
-	public static Object postObject(Object data, boolean initialConnection) {
+	/**
+	 * Sends an object to the server to add to the server-side data store.
+	 * @param data
+	 * 			the data to send
+	 * @return the data the server responded with
+	 */
+	private String postMessage(String message) {
 		ObjectOutputStream outputStream = null;
 		ObjectInputStream inputStream = null;
-		Object receivedData = null;
+		String receivedData = null;
 		
 		// Open the connection
-		openPostConnection(initialConnection);
+		openPostConnection(SERVER_URL + MSG_EXT);
 		
 		try {
 			// Set up the output stream
 			outputStream = new ObjectOutputStream(connection.getOutputStream());
 			
 			// Write the data
-			if (initialConnection) {
-				// If this is an initial connection, send the data as-is
-				outputStream.writeObject(data);
-			} else {
-				// Otherwise, serialise the data
-				outputStream.writeObject(serialiseData(data));
-			}
+			outputStream.writeObject(message);
+			print("Sent message: " + message);
 			
 			// Connect to the server
 			connection.connect();
@@ -175,13 +178,53 @@ public class NetworkManager {
 			inputStream = new ObjectInputStream(connection.getInputStream());
 
 			// Get the received data
-			if (initialConnection) {
-				// If this is an initial connection, just read the data
-				receivedData = inputStream.readObject();
-			} else {
-				// Otherwise, the data needs to be deserialised first
-				receivedData = deserialiseData((byte[]) inputStream.readObject());
-			}
+			receivedData = (String) inputStream.readObject();
+			print("Received response: " + receivedData);
+
+			// Flush the output stream
+			outputStream.flush();
+			
+			// Close the connection
+			connection.disconnect();
+		} catch (EOFException e) {
+			// Do not print the error message
+		} catch (Exception e) {
+			print(e);
+		}
+		
+		// Return the data
+		return receivedData;
+	}
+	
+	/**
+	 * Sends an object to the server to add to the server-side data store.
+	 * @param data
+	 * 			the data to send
+	 * @return the data the server responded with
+	 */
+	public static Object postObject(Object data) {
+		ObjectOutputStream outputStream = null;
+		ObjectInputStream inputStream = null;
+		Object receivedData = null;
+		
+		// Open the connection
+		openPostConnection(SERVER_URL + DATA_EXT);
+		
+		try {
+			// Set up the output stream
+			outputStream = new ObjectOutputStream(connection.getOutputStream());
+			
+			// Serialise the data, then write it to the output stream
+			outputStream.writeObject(serialiseData(data));
+			
+			// Connect to the server
+			connection.connect();
+
+			// Set up the input stream
+			inputStream = new ObjectInputStream(connection.getInputStream());
+
+			// Get the received data, and deserialise it
+			receivedData = deserialiseData((byte[]) inputStream.readObject());
 
 			// Flush the output stream
 			outputStream.flush();
