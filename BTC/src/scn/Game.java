@@ -19,6 +19,7 @@ import cls.Aircraft;
 import cls.Airport;
 import cls.OrdersBox;
 import cls.Player;
+import cls.Powerup;
 import cls.Waypoint;
 
 import btc.Main;
@@ -84,6 +85,9 @@ public abstract class Game extends Scene {
 	/** The location waypoints under each players' control */
 	protected Hashtable<Integer, Integer> locationWaypointMap;
 	
+	/**the current powerup if any*/
+	protected static Powerup powerup;
+	
 	/** The manual control buttons */
 	protected ButtonText[] manualControlButtons;
 	
@@ -137,8 +141,8 @@ public abstract class Game extends Scene {
 				new Waypoint(125, 175, false),
 				new Waypoint(200, 635, false),
 				new Waypoint(250, 400, false),
-				new Waypoint(500, 200, false),
-				new Waypoint(500, 655, false),
+				new Waypoint(500, 200, false), //middle waypoints
+				new Waypoint(500, 655, false), //middle waypoints
 				new Waypoint(700, 100, false),
 				new Waypoint(800, 750, false),
 				new Waypoint(1000, 750, false),
@@ -332,6 +336,8 @@ public abstract class Game extends Scene {
 		
 		drawManualControlButton(player);
 		
+		drawPowerups();
+		
 		// Reset the viewport - these statistics can appear outside the game
 		// area
 		graphics.setViewport();
@@ -423,6 +429,10 @@ public abstract class Game extends Scene {
 		graphics.print(locationWaypoints[3].getName(),
 				locationWaypoints[3].getLocation().getX() - 91,
 				locationWaypoints[3].getLocation().getY() - 6);
+	}
+	
+	protected void drawPowerups() {
+		Powerup.draw(0, 0, null);
 	}
 
 	/**
