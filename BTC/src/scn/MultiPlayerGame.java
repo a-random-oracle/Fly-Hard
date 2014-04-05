@@ -151,9 +151,6 @@ public class MultiPlayerGame extends Game {
 		Player player1 = new Player(getNewPlayerID(), "Bob2", false,
 				"127.0.0.1", player1Airports, player1Waypoints);
 		players.add(player1);
-
-		player0.setScore(50);
-		player1.setScore(20);
 	}
 
 	/**

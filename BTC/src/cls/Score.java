@@ -1,27 +1,23 @@
 package cls;
 
 import cls.Aircraft;
-import scn.SinglePlayerGame;
 
 public class Score {
 
 	private int totalScore = 0;
 	
 	
-		
-	
-
-/*	
-	public static void update() {
-		
-		for (int i = 0; i < SinglePlayerGame.getAircraftList().size(); i++) {
-			Aircraft plane = SinglePlayerGame.getAircraftList().get(i);
-			if (plane.isFinished() == true){
-				
-			}
-			
-		}
-
-	}*/
-
+	/**
+	 * Method for adding score to total score after a plane
+	 * has landed or completed its flight plan.
+	 * @param aircraft
+	 * 			the aircraft to add the score of
+	 */
+	public void addScore(Aircraft aircraft){
+		this.totalScore += aircraft.getScore();
 	}
+	
+	public int getScore() {
+		return this.totalScore;
+	}
+}
