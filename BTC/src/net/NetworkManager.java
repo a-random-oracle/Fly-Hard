@@ -227,6 +227,7 @@ public class NetworkManager {
 		// If the received data is a string, treat it as an instruction
 		// and process it immediately
 		if (receivedData instanceof String) {
+			print("Received response: " + ((String) receivedData));
 			InstructionHandler.handleInstruction((String) receivedData);
 		}
 		
