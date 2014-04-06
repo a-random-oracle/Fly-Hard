@@ -1,6 +1,8 @@
 package net;
 
+import btc.Main;
 import scn.Game;
+import scn.GameOver;
 import scn.MultiPlayerGame;
 
 public abstract class InstructionHandler {
@@ -136,11 +138,12 @@ public abstract class InstructionHandler {
 	private static void handleEnd() {
 		// Close		
 		if (Game.getInstance() instanceof MultiPlayerGame) {
-			print("Ending.");
 			((MultiPlayerGame) Game.getInstance()).closeMultiplayer();
+			Main.setScene(new GameOver(null, null, Game.getInstance()
+					.getCurrentPlayer().getScore().getScore()));
 		}
 	}
-	
+
 	/**
 	 * Handles an INVALID_REQUEST instruction.
 	 */
