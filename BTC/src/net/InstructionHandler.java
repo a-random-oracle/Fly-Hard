@@ -131,13 +131,26 @@ public abstract class InstructionHandler {
 	 * 			otherwise <code>false</code>
 	 */
 	private static boolean isValidInstruction(String instruction) {
-		for (String validInstruction : VALID_INSTRUCTIONS) {
-			if (validInstruction.equals(instruction)) {
-				return true;
+		// Try to split out the instruction's parameters
+		String[] instructionList = instruction.split(DELIM);
+		
+		// Check either the instruction given (if there are no
+		// parameters), or the instruction part of the instruction
+		// (if there are parameters)
+		String instructionToCheck = null;
+		if (instructionList.length > 0) {
+			instructionToCheck = instructionList[0];
+			
+			// Loop through the valid instructions, and try to match
+			// these to the specified instruction
+			for (String validInstruction : VALID_INSTRUCTIONS) {
+				if (validInstruction.equals(instructionToCheck)) {
+					return true;
+				}
 			}
 		}
 		
-		// Instruction hasn't been found, so it's not valid
+		// The instruction hasn't been found, so it's not valid
 		return false;
 	}
 	
