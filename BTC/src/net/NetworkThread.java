@@ -31,6 +31,9 @@ public class NetworkThread extends Thread {
 	/** The thread's status */
 	private boolean status;
 	
+	/** The status mutex */
+	private Object statusMutex;
+	
 	
 	/**
 	 * Constructs a new thread for sending data.
@@ -49,8 +52,12 @@ public class NetworkThread extends Thread {
 	 */
 	@Override
 	public void run() {
-		while (status) {
+		while (true) {
 			sendNextData();
+			
+			synchronized (statusMutex) {
+				if (!status) break;
+			}
 		}
 	}
 	
@@ -152,7 +159,9 @@ public class NetworkThread extends Thread {
 	 * Stops the thread.
 	 */
 	public void end() {
-		this.status = false;
+		synchronized (statusMutex) {
+			status = false;
+		}
 	}
 	
 }
