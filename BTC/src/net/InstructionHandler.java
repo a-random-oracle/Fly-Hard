@@ -1,9 +1,7 @@
 package net;
 
-import cls.Aircraft;
 import btc.Main;
 import scn.Game;
-import scn.GameOver;
 import scn.MultiPlayerGame;
 
 public abstract class InstructionHandler {
