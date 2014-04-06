@@ -1,9 +1,14 @@
 package cls;
 
+import java.io.Serializable;
+
 import cls.Aircraft;
 
-public class Score {
+public class Score implements Serializable {
 
+	// TODO last updated: 2014.04.06 01:15
+	private static final long serialVersionUID = -1518491377911752885L;
+	
 	private int totalScore = 0;
 	
 	

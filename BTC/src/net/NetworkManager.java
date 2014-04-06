@@ -70,11 +70,21 @@ public class NetworkManager {
 		// Start by sending an initial request containing the client's
 		// public IP address
 		String initialResponse = postMessage("INIT");
+		String idResp = null;
+		String otherResp = null;
 
 		// Process the response
 		if (initialResponse != null) {
+			// Check if more than one instruction has been received
+			if (initialResponse.contains(";")) {
+				idResp = initialResponse.split(";")[0];
+				otherResp = initialResponse.split(";")[1];
+			} else {
+				idResp = initialResponse;
+			}
+			
 			// Get the player ID to set from the response
-			int playerIDToSet = Integer.parseInt(initialResponse.split(":")[1]);
+			int playerIDToSet = Integer.parseInt(idResp.split(":")[1]);
 
 			// Set the current player
 			Game.getInstance().setCurrentPlayer(
@@ -82,6 +92,14 @@ public class NetworkManager {
 
 			System.out.println("Playing as: " + Game.getInstance()
 					.getCurrentPlayer().getName());
+			
+			if (otherResp != null && otherResp.equals("WAIT")) {
+				// If a wait instruction was received, pause the game
+				Game.getInstance().setPaused(true);
+			} else {
+				// Otherwise, ensure that the game is not paused
+				Game.getInstance().setPaused(false);
+			}
 		}
 	}
 
@@ -156,7 +174,7 @@ public class NetworkManager {
 	 * 			the data to send
 	 * @return the data the server responded with
 	 */
-	private String postMessage(String message) {
+	public static String postMessage(String message) {
 		ObjectOutputStream outputStream = null;
 		ObjectInputStream inputStream = null;
 		String receivedData = null;

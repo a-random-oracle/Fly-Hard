@@ -1318,6 +1318,16 @@ public abstract class Game extends Scene {
 	public void setPlayer(int index, Player player) {
 		this.players.set(index, player);
 	}
+	
+	/**
+	 * Sets whether the game is paused.
+	 * @param paused
+	 * 			<code>true</code> if the game should be paused,
+	 * 			otherwise <code>false</code>
+	 */
+	public void setPaused(boolean paused) {
+		this.paused = paused;
+	}
 
 
 	// Deprecated -----------------------------------------------------------------------

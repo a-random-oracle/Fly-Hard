@@ -3,11 +3,9 @@ package scn;
 import java.util.ArrayList;
 
 import net.NetworkManager;
-
 import lib.ButtonText;
 import lib.jog.graphics;
 import lib.jog.window;
-
 import cls.Aircraft;
 import cls.Airport;
 import cls.Player;
@@ -162,17 +160,30 @@ public class MultiPlayerGame extends Game {
 		timeToUpdate += timeDifference;
 
 		if (timeToUpdate > 0.01) {
-			// Get data from the server
-			Object data = networkManager.receiveData();
-			
-			if (data != null && data instanceof Player) {
-				// Set the received player data
-				players.set((player.getID() + 1) % 2, (Player) data);
+			if (paused) {
+				// Poll the server to see if we can start
+				String check = NetworkManager.postMessage("CHECK_FOR_OPPONENT");
+				
+				if (check != null && check.equals("WAIT")) {
+					// If a wait instruction was received, pause the game
+					Game.getInstance().setPaused(true);
+				} else {
+					// Otherwise, ensure that the game is not paused
+					Game.getInstance().setPaused(false);
+				}
+			} else {
+				// Get data from the server
+				Object data = networkManager.receiveData();
+
+				if (data != null && data instanceof Player) {
+					// Set the received player data
+					players.set((player.getID() + 1) % 2, (Player) data);
+				}
+
+				// Send current player's data to the server
+				networkManager.sendData(player);
 			}
 			
-			// Send current player's data to the server
-			networkManager.sendData(player);
-
 			timeToUpdate = 0;
 		}
 		
