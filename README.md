@@ -19,5 +19,5 @@ All links given below are with respect to the [__server__](https://github.com/mw
 
 | Member | Tasks | File/Source |
 |:-------|:------|:------------|
-| [Richard A](http://github.com/a-random-oracle) | The server. Some client-side networking. | [__srv__](http://tomcat-teamgoa.rhcloud.com) (sever-side) and [__net__](https://github.com/mwuk/Fly-Hard/tree/server/BTC/src/net) (client-side) |
-| [Richard K](http://github.com/RMCKirby) | Things | Currently just [__net__](https://github.com/mwuk/Fly-Hard/tree/server/BTC/src/net) |
+| [Richard A](http://github.com/a-random-oracle) | The server. Some client-side networking. | [`srv.*`](http://tomcat-teamgoa.rhcloud.com) (sever-side) and [`net.*`](https://github.com/mwuk/Fly-Hard/tree/server/BTC/src/net) (client-side) |
+| [Richard K](http://github.com/RMCKirby) | Things | Currently just [`net.*`](https://github.com/mwuk/Fly-Hard/tree/server/BTC/src/net) |
