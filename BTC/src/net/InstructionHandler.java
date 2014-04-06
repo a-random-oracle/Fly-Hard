@@ -12,8 +12,13 @@ public abstract class InstructionHandler {
 	public static final String DELIM = ":";
 
 	/** The list of valid instructions */
-	public static final String[] VALID_INSTRUCTIONS =
-			new String[] {"SETID", "WAIT", "PROCEED", "END", "INVALID_REQUEST"};
+	public static final String[] VALID_INSTRUCTIONS = new String[] {
+		"SETID",
+		"WAIT",
+		"PROCEED",
+		"END",
+		"NULL",
+		"INVALID_REQUEST"};
 	
 	/** Whether to output data to the standard output */
 	private static boolean verbose = true;
@@ -65,6 +70,8 @@ public abstract class InstructionHandler {
 			break;
 		case "END":
 			handleEnd();
+			break;
+		case "NULL":
 			break;
 		case "INVALID_REQUEST":
 			handleInvalidRequest();
