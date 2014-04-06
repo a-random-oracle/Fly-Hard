@@ -134,10 +134,9 @@ public abstract class InstructionHandler {
 	 * Handles an END instruction.
 	 */
 	private static void handleEnd() {
-		// Close
-		print("Ending.");
-		
+		// Close		
 		if (Game.getInstance() instanceof MultiPlayerGame) {
+			print("Ending.");
 			((MultiPlayerGame) Game.getInstance()).closeMultiplayer();
 		}
 	}
