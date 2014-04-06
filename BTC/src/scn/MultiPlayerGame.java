@@ -277,7 +277,7 @@ public class MultiPlayerGame extends Game {
 	 * Performs the close operation.
 	 */
 	public void closeMultiplayer() {
-		networkManager.close();
+		if (networkManager != null) networkManager.close();
 		super.close();
 	}
 
