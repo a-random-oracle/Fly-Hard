@@ -183,6 +183,8 @@ public class MultiPlayerGame extends Game {
 		
 		super.update(timeDifference);
 		
+		if (paused) return;
+		
 		// Deselect any aircraft which are inside the airspace of the other player
 		// This ensures that players can't keep controlling aircraft
 		// after they've entered another player's airspace
