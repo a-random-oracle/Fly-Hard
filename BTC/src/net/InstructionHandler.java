@@ -1,5 +1,6 @@
 package net;
 
+import cls.Aircraft;
 import btc.Main;
 import scn.Game;
 import scn.GameOver;
@@ -139,8 +140,7 @@ public abstract class InstructionHandler {
 		// Close		
 		if (Game.getInstance() instanceof MultiPlayerGame) {
 			((MultiPlayerGame) Game.getInstance()).closeMultiplayer();
-			Main.setScene(new GameOver(null, null, Game.getInstance()
-					.getCurrentPlayer().getScore().getScore()));
+			Main.setScene(new GameOver(null, null, 0));
 		}
 	}
 
