@@ -1,6 +1,7 @@
 package net;
 
 import scn.Game;
+import scn.MultiPlayerGame;
 
 public abstract class InstructionHandler {
 	
@@ -127,7 +128,9 @@ public abstract class InstructionHandler {
 	 */
 	private static void handleEnd() {
 		// Close
-		Game.getInstance().close();
+		if (Game.getInstance() instanceof MultiPlayerGame) {
+			((MultiPlayerGame) Game.getInstance()).closeMultiplayer();
+		}
 	}
 	
 	/**
