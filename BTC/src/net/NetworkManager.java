@@ -30,9 +30,6 @@ public class NetworkManager {
 	/** The thread to send data on */
 	private NetworkThread networkThread;
 	
-	/** The HTTP connection to the server */
-	private static HttpURLConnection connection;
-	
 	/** Whether to output data to the standard output */
 	private static boolean verbose;
 
@@ -103,10 +100,8 @@ public class NetworkManager {
 	
 	// HTTP Methods ---------------------------------------------------------------------
 	
-	private static boolean openPostConnection(String url) {
-		// Set up a boolean to track whether the connection
-		// has been established
-		boolean connectionSuccessful = false;
+	private static HttpURLConnection openPostConnection(String url) {
+		HttpURLConnection connection = null;
 		
 		try {
 			// Open a new HTTP connection
@@ -121,10 +116,6 @@ public class NetworkManager {
 			// Set request properties and headers
 			connection.addRequestProperty("user-agent", "Fly-Hard");
 			connection.addRequestProperty("ip-address", Main.getIPAddress());
-			
-			// If code execution has reached this stage, the connection
-			// must have opened successfully
-			connectionSuccessful = true;
 		} catch (ProtocolException e) {
 			print(e);
 		} catch (MalformedURLException e) {
@@ -133,7 +124,7 @@ public class NetworkManager {
 			print(e);
 		}
 		
-		return connectionSuccessful;
+		return connection;
 	}
 	
 	/**
@@ -148,7 +139,7 @@ public class NetworkManager {
 		String receivedData = null;
 		
 		// Open the connection
-		openPostConnection(SERVER_URL + MSG_EXT);
+		HttpURLConnection connection = openPostConnection(SERVER_URL + MSG_EXT);
 		
 		try {
 			// Set up the output stream
@@ -195,7 +186,7 @@ public class NetworkManager {
 		Serializable receivedData = null;
 		
 		// Open the connection
-		openPostConnection(SERVER_URL + DATA_EXT);
+		HttpURLConnection connection = openPostConnection(SERVER_URL + DATA_EXT);
 		
 		try {
 			// Set up the output stream
