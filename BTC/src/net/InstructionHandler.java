@@ -135,8 +135,7 @@ public abstract class InstructionHandler {
 	 * Handles an END instruction.
 	 */
 	private static void handleEnd() {
-		// Close		
-		Game.getInstance().close();
+		// Close
 		Main.closeScene();
 	}
 
@@ -145,7 +144,6 @@ public abstract class InstructionHandler {
 	 */
 	private static void handleInvalidRequest() {
 		// TODO
-		handleEnd();
 	}
 	
 	
