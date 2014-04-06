@@ -192,6 +192,7 @@ public class NetworkManager {
 	public static Serializable postObject(Serializable data) {
 		ObjectOutputStream outputStream = null;
 		ObjectInputStream inputStream = null;
+		Object receivedSerialisedData = null;
 		Serializable receivedData = null;
 		
 		// Open the connection
@@ -210,9 +211,19 @@ public class NetworkManager {
 			// Set up the input stream
 			inputStream = new ObjectInputStream(connection.getInputStream());
 
-			// Get the received data, and deserialise it
-			receivedData = deserialiseData((byte[]) inputStream.readObject());
-
+			// Get the received data
+			receivedSerialisedData = inputStream.readObject();
+			
+			if (receivedSerialisedData instanceof String) {
+				// If the received data is a string, treat it as an instruction
+				// and process it immediately
+				InstructionHandler.handleInstruction(
+						(String) receivedSerialisedData);
+			} else {
+				// Otherwise, get the received data and deserialise it
+				receivedData = deserialiseData((byte[]) receivedSerialisedData);
+			}
+			
 			// Flush the output stream
 			outputStream.flush();
 			
@@ -222,14 +233,6 @@ public class NetworkManager {
 			// Do not print the error message
 		} catch (Exception e) {
 			print(e);
-		}
-		
-		// Check that the received data isn't an END instruction
-		if (receivedData instanceof String) {
-			// If it is, handle it immediately
-			if (((String) receivedData).equals("END")) {
-				InstructionHandler.handleInstruction((String) receivedData);
-			}
 		}
 		
 		// Return the data
