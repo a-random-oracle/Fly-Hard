@@ -45,11 +45,14 @@ public abstract class InstructionHandler {
 	 * 			the instruction to handle
 	 */
 	private static void handleIndividualInstruction(String instruction) {
+		// Get the instruction
+		String instr = getInstruction(instruction);
+		
 		// Return immediately if the instruction is invalid
-		if (!isValidInstruction(instruction)) return;
+		if (instr == null) return;
 		
 		// Otherwise, switch to the appropriate method
-		switch (instruction) {
+		switch (instr) {
 		case "SETID":
 			handleSetID(instruction);
 			break;
@@ -78,7 +81,12 @@ public abstract class InstructionHandler {
 	 */
 	private static void handleSetID(String instruction) {
 		// Get the player ID to set from the response
-		int playerIDToSet = Integer.parseInt(instruction.split(DELIM)[1]);
+		int playerIDToSet = -1;
+		try {
+			playerIDToSet = Integer.parseInt(instruction.split(DELIM)[1]);
+		} catch (Exception e) {
+			print(e);
+		}
 
 		// Set the current player
 		Game.getInstance().setCurrentPlayer(
@@ -94,7 +102,7 @@ public abstract class InstructionHandler {
 	private static void handleWait() {
 		Game.getInstance().setPaused(true);
 		
-		print("... WAITING ...");
+		print("Waiting.");
 	}
 	
 	/**
@@ -103,7 +111,7 @@ public abstract class InstructionHandler {
 	private static void handleProceed() {
 		Game.getInstance().setPaused(false);
 		
-		print("... RESUMING ...");
+		print("Resuming.");
 	}
 	
 	/**
@@ -124,13 +132,13 @@ public abstract class InstructionHandler {
 	// Helper methods -------------------------------------------------------------------
 	
 	/**
-	 * Checks if an instruction is in the list of valid instructions.
+	 * Checks if an instruction is in the list of valid instructions,
+	 * and if so returns the instruction.
 	 * @param instruction
 	 * 			the instruction to check
-	 * @return <code>true</code if the instruction is valid,
-	 * 			otherwise <code>false</code>
+	 * @return the instruction
 	 */
-	private static boolean isValidInstruction(String instruction) {
+	private static String getInstruction(String instruction) {
 		// Try to split out the instruction's parameters
 		String[] instructionList = instruction.split(DELIM);
 		
@@ -145,13 +153,13 @@ public abstract class InstructionHandler {
 			// these to the specified instruction
 			for (String validInstruction : VALID_INSTRUCTIONS) {
 				if (validInstruction.equals(instructionToCheck)) {
-					return true;
+					return instructionToCheck;
 				}
 			}
 		}
 		
 		// The instruction hasn't been found, so it's not valid
-		return false;
+		return null;
 	}
 	
 	
