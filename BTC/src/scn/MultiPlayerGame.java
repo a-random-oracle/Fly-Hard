@@ -266,20 +266,15 @@ public class MultiPlayerGame extends Game {
 	 */
 	@Override
 	public void close() {
+		super.close();
+		
 		// Send a message to the server to let it know we're closing
 		NetworkManager.postMessage("CLOSING");
 		
 		// Perform the close
-		closeMultiplayer();
+		if (networkManager != null) networkManager.close();
 	}
 	
-	/**
-	 * Performs the close operation.
-	 */
-	public void closeMultiplayer() {
-		if (networkManager != null) networkManager.close();
-		super.close();
-	}
 
 	// Deprecated -----------------------------------------------------------------------
 

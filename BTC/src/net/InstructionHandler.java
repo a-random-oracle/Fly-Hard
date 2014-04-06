@@ -1,8 +1,8 @@
 package net;
 
 import btc.Main;
+
 import scn.Game;
-import scn.MultiPlayerGame;
 
 public abstract class InstructionHandler {
 	
@@ -136,10 +136,8 @@ public abstract class InstructionHandler {
 	 */
 	private static void handleEnd() {
 		// Close		
-		if (Game.getInstance() instanceof MultiPlayerGame) {
-			((MultiPlayerGame) Game.getInstance()).closeMultiplayer();
-			Main.closeScene();
-		}
+		Game.getInstance().close();
+		Main.closeScene();
 	}
 
 	/**
