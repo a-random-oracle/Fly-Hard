@@ -266,8 +266,8 @@ public class MultiPlayerGame extends Game {
 	 */
 	@Override
 	public void close() {
-		super.close();
 		networkManager.close();
+		super.close();
 	}
 
 	// Deprecated -----------------------------------------------------------------------

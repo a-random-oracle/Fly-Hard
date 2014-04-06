@@ -133,7 +133,8 @@ public abstract class InstructionHandler {
 	 * Handles an INVALID_REQUEST instruction.
 	 */
 	private static void handleInvalidRequest() {
-		// Do nothing
+		// Close
+		Game.getInstance().close();
 	}
 	
 	
