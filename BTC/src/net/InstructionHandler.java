@@ -140,7 +140,7 @@ public abstract class InstructionHandler {
 		// Close		
 		if (Game.getInstance() instanceof MultiPlayerGame) {
 			((MultiPlayerGame) Game.getInstance()).closeMultiplayer();
-			Main.setScene(new GameOver(null, null, 0));
+			Main.closeScene();
 		}
 	}
 
