@@ -103,10 +103,18 @@ public abstract class InstructionHandler {
 		Game.getInstance().setPaused(true);
 		
 		print("Waiting.");
+		
+		try {
+			// Wait, then poll server to check for an opponent
+			Thread.sleep(10);
+			handleInstruction(NetworkManager.postMessage("CHECK_FOR_OPPONENT"));
+		} catch (InterruptedException e) {
+			print(e);
+		}
 	}
 	
 	/**
-	 * Handles a WAIT instruction.
+	 * Handles a PROCEED instruction.
 	 */
 	private static void handleProceed() {
 		Game.getInstance().setPaused(false);

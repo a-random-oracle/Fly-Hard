@@ -2,7 +2,6 @@ package scn;
 
 import java.util.ArrayList;
 
-import net.InstructionHandler;
 import net.NetworkManager;
 import lib.ButtonText;
 import lib.jog.graphics;
@@ -161,23 +160,18 @@ public class MultiPlayerGame extends Game {
 		timeToUpdate += timeDifference;
 
 		if (timeToUpdate > 0.01) {
-			if (paused) {
-				// Poll the server to see if we can start
-				InstructionHandler.handleInstruction(
-						NetworkManager.postMessage("CHECK_FOR_OPPONENT"));
-			} else {
-				// Get data from the server
-				Object data = networkManager.receiveData();
+			// Get data from the server
+			Object data = networkManager.receiveData();
 
-				if (data != null && data instanceof Player) {
-					// Set the received player data
-					players.set((player.getID() + 1) % 2, (Player) data);
-				}
-
-				// Send current player's data to the server
-				networkManager.sendData(player);
+			if (data != null && data instanceof Player) {
+				// Set the received player data
+				players.set((player.getID() + 1) % 2, (Player) data);
 			}
-			
+
+			// Send current player's data to the server
+			networkManager.sendData(player);
+
+			// Reset the time before the next data send
 			timeToUpdate = 0;
 		}
 		
