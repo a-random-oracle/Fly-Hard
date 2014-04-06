@@ -82,7 +82,7 @@ public class Airport extends Waypoint implements EventHandler, Serializable {
 	
 	/** The scaling factor to apply to cause the airport to 'fit in' with the map size
 	 * this is taken to be the lower (and hence smaller) of the height and width scales */
-	private double scale = Main.getMinScale();
+	private static double scale = Main.getMinScale();
 	
 	/** A list of aircraft waiting to land at the airport */
 	public ArrayList<Aircraft> aircraftWaitingToLand = new ArrayList<Aircraft>();
