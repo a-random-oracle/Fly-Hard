@@ -44,6 +44,7 @@ public class NetworkThread extends Thread {
 		this.dataBufferMutex = new Object();
 		this.responseBufferMutex = new Object();
 		this.status = true;
+		this.statusMutex = new Object();
 	}
 	
 	
