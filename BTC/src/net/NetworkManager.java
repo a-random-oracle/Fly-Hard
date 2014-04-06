@@ -224,6 +224,12 @@ public class NetworkManager {
 			print(e);
 		}
 		
+		// Check that the received data isn't an END instruction
+		if (receivedData instanceof String) {
+			// If it is, handle it immediately
+			InstructionHandler.handleInstruction((String) receivedData);
+		}
+		
 		// Return the data
 		return receivedData;
 	}

@@ -126,15 +126,16 @@ public abstract class InstructionHandler {
 	 * Handles an END instruction.
 	 */
 	private static void handleEnd() {
-		// TODO
+		// Close
+		Game.getInstance().close();
 	}
 	
 	/**
 	 * Handles an INVALID_REQUEST instruction.
 	 */
 	private static void handleInvalidRequest() {
-		// Close
-		Game.getInstance().close();
+		// TODO
+		handleEnd();
 	}
 	
 	
