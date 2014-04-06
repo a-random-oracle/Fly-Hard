@@ -14,16 +14,12 @@ import java.net.URL;
 import java.util.ArrayList;
 
 import btc.Main;
-import scn.Game;
 
 public class NetworkManager {
 
 	/** The server's URL */
 	public static final String SERVER_URL =
 			"http://tomcat-teamgoa.rhcloud.com";
-
-	/** The initialisation extension */
-	public static final String INIT_EXT = "/init";
 	
 	/** The message transfer extension */
 	public static final String MSG_EXT = "/msg";
@@ -69,38 +65,10 @@ public class NetworkManager {
 	private void initialiseClient() {
 		// Start by sending an initial request containing the client's
 		// public IP address
-		String initialResponse = postMessage("INIT");
-		String idResp = null;
-		String otherResp = null;
+		String response = postMessage("INIT");
 
 		// Process the response
-		if (initialResponse != null) {
-			// Check if more than one instruction has been received
-			if (initialResponse.contains(";")) {
-				idResp = initialResponse.split(";")[0];
-				otherResp = initialResponse.split(";")[1];
-			} else {
-				idResp = initialResponse;
-			}
-			
-			// Get the player ID to set from the response
-			int playerIDToSet = Integer.parseInt(idResp.split(":")[1]);
-
-			// Set the current player
-			Game.getInstance().setCurrentPlayer(
-					Game.getInstance().getPlayers().get(playerIDToSet));
-
-			System.out.println("Playing as: " + Game.getInstance()
-					.getCurrentPlayer().getName());
-			
-			if (otherResp != null && otherResp.equals("WAIT")) {
-				// If a wait instruction was received, pause the game
-				Game.getInstance().setPaused(true);
-			} else {
-				// Otherwise, ensure that the game is not paused
-				Game.getInstance().setPaused(false);
-			}
-		}
+		InstructionHandler.handleInstruction(response);
 	}
 
 	// Data Send and Receive ------------------------------------------------------------
