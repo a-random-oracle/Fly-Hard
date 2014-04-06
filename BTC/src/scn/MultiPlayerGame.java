@@ -2,6 +2,7 @@ package scn;
 
 import java.util.ArrayList;
 
+import net.InstructionHandler;
 import net.NetworkManager;
 import lib.ButtonText;
 import lib.jog.graphics;
@@ -162,15 +163,8 @@ public class MultiPlayerGame extends Game {
 		if (timeToUpdate > 0.01) {
 			if (paused) {
 				// Poll the server to see if we can start
-				String check = NetworkManager.postMessage("CHECK_FOR_OPPONENT");
-				
-				if (check != null && check.equals("WAIT")) {
-					// If a wait instruction was received, pause the game
-					Game.getInstance().setPaused(true);
-				} else {
-					// Otherwise, ensure that the game is not paused
-					Game.getInstance().setPaused(false);
-				}
+				InstructionHandler.handleInstruction(
+						NetworkManager.postMessage("CHECK_FOR_OPPONENT"));
 			} else {
 				// Get data from the server
 				Object data = networkManager.receiveData();

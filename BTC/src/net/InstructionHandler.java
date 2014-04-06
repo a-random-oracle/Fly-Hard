@@ -12,7 +12,7 @@ public abstract class InstructionHandler {
 
 	/** The list of valid instructions */
 	public static final String[] VALID_INSTRUCTIONS =
-			new String[] {"SETID", "WAIT", "END", "INVALID_REQUEST"};
+			new String[] {"SETID", "WAIT", "PROCEED", "END", "INVALID_REQUEST"};
 	
 	/** Whether to output data to the standard output */
 	private static boolean verbose = true;
@@ -56,6 +56,9 @@ public abstract class InstructionHandler {
 		case "WAIT":
 			handleWait();
 			break;
+		case "PROCEED":
+			handleProceed();
+			break;
 		case "END":
 			handleEnd();
 			break;
@@ -92,6 +95,15 @@ public abstract class InstructionHandler {
 		Game.getInstance().setPaused(true);
 		
 		print("... WAITING ...");
+	}
+	
+	/**
+	 * Handles a WAIT instruction.
+	 */
+	private static void handleProceed() {
+		Game.getInstance().setPaused(false);
+		
+		print("... RESUMING ...");
 	}
 	
 	/**
