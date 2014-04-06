@@ -14,6 +14,9 @@ public abstract class InstructionHandler {
 	public static final String[] VALID_INSTRUCTIONS =
 			new String[] {"SETID", "WAIT", "END", "INVALID_REQUEST"};
 	
+	/** Whether to output data to the standard output */
+	private static boolean verbose = true;
+	
 	
 	/**
 	 * Handles instructions.
@@ -78,8 +81,8 @@ public abstract class InstructionHandler {
 		Game.getInstance().setCurrentPlayer(
 				Game.getInstance().getPlayers().get(playerIDToSet));
 
-		System.out.println("Playing as: " + Game.getInstance()
-				.getCurrentPlayer().getName());
+		print("Playing as: " + Game.getInstance().getCurrentPlayer()
+				.getName());
 	}
 	
 	/**
@@ -87,6 +90,8 @@ public abstract class InstructionHandler {
 	 */
 	private static void handleWait() {
 		Game.getInstance().setPaused(true);
+		
+		print("... WAITING ...");
 	}
 	
 	/**
@@ -122,6 +127,41 @@ public abstract class InstructionHandler {
 		
 		// Instruction hasn't been found, so it's not valid
 		return false;
+	}
+	
+	
+	// Printing -------------------------------------------------------------------------
+	
+	/**
+	 * Prints strings to the standard output.
+	 * <p>
+	 * If {@link #verbose} is set to <code>true</code>, this will
+	 * function in the same was as {@link System.out#println()}.
+	 * </p>
+	 * <p>
+	 * Otherwise this will do nothing.
+	 * </p>
+	 * @param string
+	 * 			the string to output
+	 */
+	public static void print(String string) {
+		if (verbose) System.out.println(string);
+	}
+	
+	/**
+	 * Prints error messages to the standard output.
+	 * <p>
+	 * Uses {@link #print(String)} to print stack traces.
+	 * </p>
+	 * @param e
+	 * 			the exception to output
+	 */
+	public static void print(Exception e) {
+		print(e.toString());
+		
+		for (int i = 0; i < e.getStackTrace().length; i++) {
+			print("at " + e.getStackTrace()[i].toString());
+		}
 	}
 	
 }
