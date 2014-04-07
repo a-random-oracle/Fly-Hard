@@ -668,8 +668,6 @@ public class Aircraft implements Serializable {
 		graphics.setColour(0, 128, 128, 128);
 		Waypoint[] route = flightPlan.getRoute();
 		Vector destination = flightPlan.getDestination();
-		
-		Game.out.addOrder(Game.getInstance().getPlayerFromAircraft(this).getName());
 
 		if (currentRouteStage > modified - 1) {
 			graphics.line(getPosition().getX(), getPosition().getY(), mouseX,

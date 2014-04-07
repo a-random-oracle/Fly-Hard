@@ -44,7 +44,11 @@ public class Waypoint implements Serializable {
 		// Scale points to fit on screen
 		// Entry and exit points are scaled automatically
 		if (!entryOrExit) {
+			System.out.println("Before X: " + waypointLocation.getX());
+			System.out.println("Before Y: " + waypointLocation.getY());
 			waypointLocation = waypointLocation.remapPosition();
+			System.out.println("After  X: " + waypointLocation.getX());
+			System.out.println("After  Y: " + waypointLocation.getY());
 		}
 	}
 	
@@ -66,7 +70,11 @@ public class Waypoint implements Serializable {
 		// Scale points to fit on screen
 		// Entry and exit points are scaled automatically
 		if (!entryOrExit) {
+			System.out.println("Before X: " + waypointLocation.getX());
+			System.out.println("Before Y: " + waypointLocation.getY());
 			waypointLocation = waypointLocation.remapPosition();
+			System.out.println("After  X: " + waypointLocation.getX());
+			System.out.println("After  Y: " + waypointLocation.getY());
 		}
 	}
 	

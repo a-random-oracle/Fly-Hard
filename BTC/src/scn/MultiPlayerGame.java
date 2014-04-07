@@ -9,6 +9,7 @@ import lib.jog.window;
 import cls.Aircraft;
 import cls.Airport;
 import cls.Player;
+import cls.Powerup;
 import cls.Waypoint;
 
 public class MultiPlayerGame extends Game {
@@ -189,13 +190,13 @@ public class MultiPlayerGame extends Game {
 
 	@Override
 	public void draw() {
+		// Draw the middle zone
+		drawMiddleZone();
+		
 		super.draw();
 
-		// Draw additional features that are specific to multi-player
-		drawMiddleZone();
-
 		// Draw the power-ups
-		// TODO
+		//drawPowerups();
 	}
 
 	/**
@@ -213,6 +214,10 @@ public class MultiPlayerGame extends Game {
 		// Draw the two lines
 		graphics.line(leftEntryX, yStart, leftEntryX, yEnd);
 		graphics.line(rightEntryX, yStart, rightEntryX, yEnd);
+	}
+	
+	protected void drawPowerups() {
+		Powerup.draw(0, 0, null);
 	}
 
 	/**

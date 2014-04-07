@@ -112,41 +112,35 @@ public abstract class Game extends Scene {
 
 		// Define airports
 		airports = new Airport[] {
-				Airport.create("Mosgrizzly Airport",
-						(window.width() - (4 * xOffset)) / 4,
-						window.height() / 2),
-						Airport.create("Mosbear Airport",
-								3 * (window.width() - (1.25 * xOffset)) / 4,
-								window.height() / 2)
+				new Airport("Mosgrizzly Airport", (1d/7d), (1d/2d)),
+				new Airport("Mosbear Airport", (6d/7d), (1d/2d))
 		};
 
 		// Define entry and exit points
 		locationWaypoints = new Waypoint[] {
 				new Waypoint(8, 8,
 						true, "North West Top Leftonia"),
-						new Waypoint(8, window.height() - (2 * yOffset) - 4,
-								true, "100 Acre Woods"),
-								new Waypoint(window.width() - (2 * xOffset) - 4, 8,
-										true, "City of Rightson"),
-										new Waypoint(window.width() - (2 * xOffset) - 4,
-												window.height() - (2 * yOffset) - 4,
-												true, "South Sea"),
-												airports[0],
-												airports[1]
+				new Waypoint(8, window.height() - (2 * yOffset) - 4,
+						true, "100 Acre Woods"),
+				new Waypoint(window.width() - (2 * xOffset) - 4, 8,
+						true, "City of Rightson"),
+				new Waypoint(window.width() - (2 * xOffset) - 4,
+						window.height() - (2 * yOffset) - 4,
+						true, "South Sea"), airports[0], airports[1]
 		};
 
-		// Define other waypointsinstance = this;
+		// Define other waypoints
 		airspaceWaypoints = new Waypoint[] {
-				new Waypoint(125, 175, false),
-				new Waypoint(200, 635, false),
-				new Waypoint(250, 400, false),
-				new Waypoint(500, 200, false), //middle waypoints
-				new Waypoint(500, 655, false), //middle waypoints
-				new Waypoint(700, 100, false),
-				new Waypoint(800, 750, false),
-				new Waypoint(1000, 750, false),
-				new Waypoint(1040, 150, false),
-				new Waypoint(1050, 400, false)
+				new Waypoint(0.09766, 0.18229, false),
+				new Waypoint(0.15625, 0.66146, false),
+				new Waypoint(0.19531, 0.41667, false),
+				new Waypoint(0.39062, 0.20833, false), //middle waypoints
+				new Waypoint(0.39063, 0.68229, false), //middle waypoints
+				new Waypoint(0.54688, 0.10417, false),
+				new Waypoint(0.62500, 0.78125, false),
+				new Waypoint(0.78125, 0.78125, false),
+				new Waypoint(0.81250, 0.15625, false),
+				new Waypoint(0.82031, 0.41667, false)
 		};
 	}
 
@@ -332,14 +326,10 @@ public abstract class Game extends Scene {
 
 		drawManualControlButton(player);
 
-		drawPowerups();
-
 		// Reset the viewport - these statistics can appear outside the game
 		// area
 		graphics.setViewport();
 		drawAdditional(getAllAircraft().size());
-
-		drawMiddleZone();
 
 		// Draw debug box
 		// PLEASE DO NOT REMOVE - this is very useful for debugging
@@ -427,10 +417,6 @@ public abstract class Game extends Scene {
 				locationWaypoints[3].getLocation().getY() - 6);
 	}
 
-	protected void drawPowerups() {
-		Powerup.draw(0, 0, null);
-	}
-
 	/**
 	 * Draws airports.
 	 * <p>
@@ -508,23 +494,6 @@ public abstract class Game extends Scene {
 		// Print the current player
 		graphics.printCentred("Currently playing as player: " + player.getName(),
 				(((double) window.width() - (2 * xOffset)) / 2), 32d, 1, 300);
-	}
-
-	protected void drawMiddleZone() {
-		graphics.setColour(graphics.green);
-
-		//The y-coordinate to begin drawing at
-		int yStart = window.height() - yOffset;
-		//The y-coordinate at which to end
-		int yEnd = yOffset;
-		//The x-coordinate the draw the left barrier/line at
-		int leftEntryX = (int) (window.width() * (3d/7d));
-		//The x-coordinate to draw the right barrier/line at
-		int rightEntryX = window.width() - leftEntryX;
-
-		//Draw the two lines
-		graphics.line(leftEntryX, yStart, leftEntryX, yEnd);
-		graphics.line(rightEntryX, yStart, rightEntryX, yEnd);
 	}
 
 	/**
@@ -1317,16 +1286,6 @@ public abstract class Game extends Scene {
 	 */
 	public void setPlayer(int index, Player player) {
 		this.players.set(index, player);
-	}
-	
-	/**
-	 * Sets whether the game is paused.
-	 * @param paused
-	 * 			<code>true</code> if the game should be paused,
-	 * 			otherwise <code>false</code>
-	 */
-	public void setPaused(boolean paused) {
-		this.paused = paused;
 	}
 
 

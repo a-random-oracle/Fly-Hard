@@ -109,8 +109,6 @@ public abstract class InstructionHandler {
 	 * Handles a WAIT instruction.
 	 */
 	private static void handleWait() {
-		Game.getInstance().setPaused(true);
-		
 		print("Waiting.");
 		
 		try {
@@ -126,8 +124,6 @@ public abstract class InstructionHandler {
 	 * Handles a PROCEED instruction.
 	 */
 	private static void handleProceed() {
-		Game.getInstance().setPaused(false);
-		
 		print("Resuming.");
 	}
 	

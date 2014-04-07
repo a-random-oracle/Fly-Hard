@@ -3,9 +3,6 @@ package btc;
 import java.awt.GraphicsEnvironment;	
 import java.awt.Rectangle;
 import java.io.File;
-import java.io.Reader;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.util.Random;
 import java.util.Scanner;
 import java.util.Stack;
@@ -13,6 +10,7 @@ import java.util.Stack;
 import org.lwjgl.Sys;
 
 import scn.Scene;
+import scn.Title;
 import lib.jog.*;
 
 /**
@@ -85,7 +83,7 @@ public class Main implements input.EventHandler {
 	private Main() {
 		double xOffset = 0;
 		double yOffset = 0;
-		boolean fullscreen = true;
+		boolean fullscreen = false;
 		
 		// Set up the random instance
 		random = new Random();
@@ -153,7 +151,7 @@ public class Main implements input.EventHandler {
 		graphics.setFont(font);
 		
 		sceneStack = new Stack<Scene>();
-		setScene(new scn.Title());
+		setScene(new Title());
 		
 		lastFrameTime = (double)(Sys.getTime()) / Sys.getTimerResolution();
 		lastFpsTime = Sys.getTime()* 1000 / Sys.getTimerResolution(); // Set to current Time
@@ -252,10 +250,6 @@ public class Main implements input.EventHandler {
 	
 	public static double getYScale() {
 		return yScale;
-	}
-	
-	public static double getMinScale() {
-		return Math.min(xScale, yScale);
 	}
 	
 	public static Random getRandom() {

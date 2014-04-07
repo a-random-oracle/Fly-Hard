@@ -4,11 +4,10 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 import btc.Main;
-
 import scn.Game;
-
 import lib.jog.graphics;
 import lib.jog.input;
+import lib.jog.window;
 import lib.jog.input.EventHandler;
 
 public class Airport extends Waypoint implements EventHandler, Serializable {
@@ -81,8 +80,8 @@ public class Airport extends Waypoint implements EventHandler, Serializable {
 	private boolean isDeparturesClicked = false;
 	
 	/** The scaling factor to apply to cause the airport to 'fit in' with the map size
-	 * this is taken to be the lower (and hence smaller) of the height and width scales */
-	private static double scale = Main.getMinScale();
+	 * this is taken to be the smaller of the height and width scales */
+	private static double scale = getMinScale();
 	
 	/** A list of aircraft waiting to land at the airport */
 	public ArrayList<Aircraft> aircraftWaitingToLand = new ArrayList<Aircraft>();
@@ -105,53 +104,34 @@ public class Airport extends Waypoint implements EventHandler, Serializable {
 	 * @param name
 	 * 			the airport's name
 	 * @param x
-	 * 			the x position to display the top-left corner of the airport at
+	 * 			the position at which the centre of the airport
+	 * 			should be located
 	 * @param y
-	 * 			the y position to display the top-left corner of the airport at
+	 * 			the position at which the centre of the airport
+	 * 			should be located
 	 */
-	private Airport(String name, double x, double y) {
-		super((x + (RELATIVE_ARRIVALS_X + (RELATIVE_ARRAVALS_WIDTH/2)) * Main.getMinScale()),
-				(y + (RELATIVE_ARRIVALS_Y + (RELATIVE_ARRIVALS_HEIGHT/2)) * Main.getMinScale()),
+	public Airport(String name, double x, double y) {
+		super(x * (window.width() - (2 * Game.getXOffset())),
+				y * (window.height() - (2 * Game.getYOffset())),
 				true, name);
 		
-		xLocation = x;
-		yLocation = y;
+		double distToX = RELATIVE_ARRIVALS_X + (RELATIVE_ARRAVALS_WIDTH / 2);
+		double distToY = RELATIVE_ARRIVALS_Y + (RELATIVE_ARRIVALS_HEIGHT / 2);
+		
+		xLocation = getLocation().getX() - (distToX * scale);
+		yLocation = getLocation().getY() - (distToY * scale);
 		
 		// Scale the arrivals rectangle by the scaling factor
-		Vector arrivalsScaled = (new Vector(RELATIVE_ARRIVALS_X,
-				RELATIVE_ARRIVALS_Y, 0)).scaleBy(scale);
-		arrivalsX = x + arrivalsScaled.getX();
-		arrivalsY = y + arrivalsScaled.getY();
+		arrivalsX = xLocation + (RELATIVE_ARRIVALS_X * scale);
+		arrivalsY = yLocation + (RELATIVE_ARRIVALS_Y * scale);
 		arrivalsWidth = RELATIVE_ARRAVALS_WIDTH * scale;
 		arrivalsHeight = RELATIVE_ARRIVALS_HEIGHT * scale;
 		
 		// Scale the departures rectangle by the scaling factor
-		Vector departuresScaled = (new Vector(RELATIVE_DEPARTURES_X,
-				RELATIVE_DEPARTURES_Y, 0)).scaleBy(scale);
-		departuresX = x + departuresScaled.getX();
-		departuresY = y + departuresScaled.getY();
+		departuresX = xLocation + (RELATIVE_DEPARTURES_X * scale);
+		departuresY = yLocation + (RELATIVE_DEPARTURES_Y * scale);
 		departuresWidth = RELATIVE_DEPARTURES_WIDTH * scale;
 		departuresHeight = RELATIVE_DEPARTURES_HEIGHT * scale;
-	}
-	
-	/**
-	 * Creates an airport at the given location.
-	 * <p>
-	 * This method applies the necessary scaling to position the airport
-	 * relative to the map.
-	 * </p>
-	 * @param name
-	 * 			the name of the airport
-	 * @param x
-	 * 			the position at which the centre of the airport should be located
-	 * @param y
-	 * 			the position at which the centre of the airport should be located
-	 * @return the created airport
-	 */
-	public static Airport create(String name, double x, double y) {
-		return new Airport(name,
-				(x - RELATIVE_ARRIVALS_X - (RELATIVE_ARRAVALS_WIDTH/2)),
-				(y - RELATIVE_ARRIVALS_Y - (RELATIVE_ARRIVALS_HEIGHT/2)));
 	}
 	  
 	/** 
@@ -460,6 +440,19 @@ public class Airport extends Waypoint implements EventHandler, Serializable {
 	public Waypoint getDeparturesCentre() {
 		return new Waypoint(departuresX + (departuresWidth / 2),
 				departuresY + (departuresHeight / 2), true);
+	}
+	
+	/**
+	 * Gets the minimum of the x and y scales, considering x and y offsets.
+	 * @return the minimum scale
+	 */
+	public static double getMinScale() {
+		double xScale = (double)(window.width() - (2 * Game.getXOffset()))
+				/ (double)Main.TARGET_WIDTH;
+		double yScale = (double)(window.height() - (2 * Game.getYOffset()))
+				/ (double)Main.TARGET_HEIGHT;
+		
+		return Math.min(xScale, yScale);
 	}
 	
 	/**
