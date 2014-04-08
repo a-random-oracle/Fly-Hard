@@ -15,6 +15,7 @@ public abstract class InstructionHandler {
 	/** The list of valid instructions */
 	public static final String[] VALID_INSTRUCTIONS = new String[] {
 		"SETID",
+		"SETPOS",
 		"WAIT",
 		"PROCEED",
 		"END",
@@ -63,6 +64,9 @@ public abstract class InstructionHandler {
 		case "SETID":
 			handleSetID(instruction);
 			break;
+		case "SETPOS":
+			handleSetPos(instruction);
+			break;
 		case "WAIT":
 			handleWait();
 			break;
@@ -97,9 +101,30 @@ public abstract class InstructionHandler {
 			print(e);
 		}
 
+		// Set the current player's server-generated ID
+		Game.getInstance().getCurrentPlayer().setServerID(playerIDToSet);
+
+		print("Player has ID: " + Game.getInstance().getCurrentPlayer()
+				.getServerID());
+	}
+	
+	/**
+	 * Handles a SETPOS instruction.
+	 * @param instruction
+	 * 			the full SETPOS instruction
+	 */
+	private static void handleSetPos(String instruction) {
+		// Get the position to set from the response
+		int playerPositionToSet = -1;
+		try {
+			playerPositionToSet = Integer.parseInt(instruction.split(DELIM)[1]);
+		} catch (Exception e) {
+			print(e);
+		}
+
 		// Set the current player
 		Game.getInstance().setCurrentPlayer(
-				Game.getInstance().getPlayers().get(playerIDToSet));
+				Game.getInstance().getPlayers().get(playerPositionToSet));
 
 		print("Playing as: " + Game.getInstance().getCurrentPlayer()
 				.getName());

@@ -13,7 +13,7 @@ import java.net.ProtocolException;
 import java.net.URL;
 import java.util.ArrayList;
 
-import btc.Main;
+import scn.Game;
 
 public class NetworkManager {
 
@@ -115,7 +115,11 @@ public class NetworkManager {
 			
 			// Set request properties and headers
 			connection.addRequestProperty("user-agent", "Fly-Hard");
-			connection.addRequestProperty("ip-address", Main.getIPAddress());
+			connection.addRequestProperty("client-id",
+					String.valueOf(Game.getInstance().getCurrentPlayer()
+							.getServerID()));
+			connection.addRequestProperty("client-name",
+					Game.getInstance().getCurrentPlayer().getName());
 		} catch (ProtocolException e) {
 			print(e);
 		} catch (MalformedURLException e) {

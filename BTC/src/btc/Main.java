@@ -4,7 +4,6 @@ import java.awt.GraphicsEnvironment;
 import java.awt.Rectangle;
 import java.io.File;
 import java.util.Random;
-import java.util.Scanner;
 import java.util.Stack;
 
 import org.lwjgl.Sys;
@@ -55,9 +54,6 @@ public class Main implements input.EventHandler {
 	/** The random instance to use to synchronise across the network */
 	private static Random random;
 	
-	/** The running computer's IP address */
-	private static String ipAddress;
-	
 	/** The locations of the icon files */
 	final private String[] ICON_FILENAMES = {
 		"gfx" + File.separator + "icon16.png",
@@ -83,7 +79,7 @@ public class Main implements input.EventHandler {
 	private Main() {
 		double xOffset = 0;
 		double yOffset = 0;
-		boolean fullscreen = false;
+		boolean fullscreen = true;
 		
 		// Set up the random instance
 		random = new Random();
@@ -114,17 +110,6 @@ public class Main implements input.EventHandler {
 			xOffset = (int)((actualWidth - width) / 2);
 			yOffset = (int)((actualHeight - height) / 2);
 		}
-		
-		// Get IP address
-		Scanner reader = new Scanner(System.in);
-		System.out.println("Enter IP address:");
-		//try {
-			ipAddress = reader.nextLine() /*InetAddress.getLocalHost().getHostAddress()*/;
-		//} catch (UnknownHostException e) {
-		//	ipAddress = "0.0.0.0";
-		//	e.printStackTrace();
-		//}
-		reader.close();
 
 		start(width, height, xOffset, yOffset, fullscreen);
 		
@@ -238,10 +223,6 @@ public class Main implements input.EventHandler {
 			lastFpsTime += current_time - lastFpsTime; // Add on the time difference
 		}
 		fpsCounter++;
-	}
-	
-	public static String getIPAddress() {
-		return ipAddress;
 	}
 	
 	public static double getXScale() {

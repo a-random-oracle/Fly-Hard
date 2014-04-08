@@ -20,6 +20,9 @@ public class Player implements Serializable {
 	/** The player's unique ID */
 	private int id;
 	
+	/** The player's server ID */
+	private int serverID;
+	
 	/** The player's screen name */
 	private String name;
 	
@@ -81,6 +84,7 @@ public class Player implements Serializable {
 			Airport[] airports, Waypoint[] waypoints) {
 		
 		// Reset values
+		this.serverID = -1;
 		this.maxAircraft = Game.DEFAULT_MAX_AIRCRAFT;
 		this.selectedAircraft = null;
 		this.selectedWaypoint = null;
@@ -119,6 +123,14 @@ public class Player implements Serializable {
 	 */
 	public int getID() {
 		return id;
+	}
+	
+	/**
+	 * Gets the player's server ID.
+	 * @return the player's server ID
+	 */
+	public int getServerID() {
+		return serverID;
 	}
 	
 	/**
@@ -267,6 +279,15 @@ public class Player implements Serializable {
 	
 	
 	// Mutators: ------------------------------------------------------------------------
+	
+	/**
+	 * Sets the player's server ID
+	 * @param serverID
+	 * 			the player's server ID
+	 */
+	public void setServerID(int serverID) {
+		this.serverID = serverID;
+	}
 	
 	/**
 	 * @param aircraft
