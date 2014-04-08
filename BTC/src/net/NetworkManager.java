@@ -138,6 +138,8 @@ public class NetworkManager {
 		ObjectInputStream inputStream = null;
 		String receivedData = null;
 		
+		print("Sending message: " + message);
+		
 		// Open the connection
 		HttpURLConnection connection = openPostConnection(SERVER_URL + MSG_EXT);
 		
@@ -147,7 +149,6 @@ public class NetworkManager {
 			
 			// Write the data
 			outputStream.writeObject(message);
-			print("Sent message: " + message);
 			
 			// Connect to the server
 			connection.connect();
