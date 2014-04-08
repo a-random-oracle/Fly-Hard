@@ -156,9 +156,16 @@ public class Airport extends Waypoint implements EventHandler, Serializable {
 	 * </p>
 	 */
 	@Override
-	public void draw() { 
+	public void draw(double windowWidth, double windowHeight) {
+		// Get the scales
+		double xScale = (window.width() / windowWidth);
+		double yScale = (window.height() / windowHeight);
+		
 		// Draw the airport image, applying the scale factor
-		graphics.drawScaled(Game.airportImage, xLocation, yLocation, scale);
+		graphics.drawScaled(Game.airportImage,
+				xLocation * xScale,
+				yLocation * yScale,
+				scale);
 		
 		int greenFine = 128;
 		int greenDanger = 0;

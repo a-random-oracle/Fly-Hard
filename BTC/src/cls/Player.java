@@ -3,6 +3,7 @@ package cls;
 import java.io.Serializable;
 import java.util.ArrayList;
 
+import lib.jog.window;
 import scn.Game;
 
 public class Player implements Serializable {
@@ -22,11 +23,11 @@ public class Player implements Serializable {
 	/** The player's screen name */
 	private String name;
 	
-	/** Whether the player is hosting the connection or not */
-	private boolean hosting;
+	/** The width of the player's window */
+	private double windowWidth;
 	
-	/** The player's IP address */
-	private String ipAddress;
+	/** The height of the player's window */
+	private double windowHeight;
 	
 	/** The maximum number of aircraft which this player can control */
 	private int maxAircraft;
@@ -74,7 +75,7 @@ public class Player implements Serializable {
 	private int lives;
 	
 	
-	// Constructor: -----------------------------------------------------------
+	// Constructor: ---------------------------------------------------------------------
 	
 	public Player(int id, String name, boolean hosting, String ipAddress,
 			Airport[] airports, Waypoint[] waypoints) {
@@ -97,11 +98,10 @@ public class Player implements Serializable {
 		// Set attributes
 		this.id = id;
 		this.name = name;
-		this.hosting = hosting;
-		this.ipAddress = ipAddress;
+		this.windowWidth = window.width();
+		this.windowHeight = window.height();
 		this.airports = airports;
 		this.waypoints = waypoints;
-		
 		this.score = new Score();
 		
 		// Set aircraft colour
@@ -111,9 +111,10 @@ public class Player implements Serializable {
 	}
 	
 	
-	// Accessors: -------------------------------------------------------------
+	// Accessors: -----------------------------------------------------------------------
 	
 	/**
+	 * Gets the player's unique ID.
 	 * @return the player's unique ID
 	 */
 	public int getID() {
@@ -121,6 +122,7 @@ public class Player implements Serializable {
 	}
 	
 	/**
+	 * Gets the player's screen name.
 	 * @return the player's screen name
 	 */
 	public String getName() {
@@ -128,20 +130,23 @@ public class Player implements Serializable {
 	}
 	
 	/**
-	 * @return whether the player is currently the host
+	 * Gets the player's window's width.
+	 * @return the window's width
 	 */
-	public boolean isHosting() {
-		return hosting;
+	public double getWindowWidth() {
+		return windowWidth;
 	}
 	
 	/**
-	 * @return the player's IP address
+	 * Gets the player's window's height.
+	 * @return the window's height
 	 */
-	public String getIPAddress() {
-		return ipAddress;
+	public double getWindowHeight() {
+		return windowHeight;
 	}
 	
 	/**
+	 * Gets the maximum number of aircraft allowed for this player.
 	 * @return the maximum number of aircraft allowed for this player
 	 */
 	public int getMaxAircraft() {
@@ -149,34 +154,39 @@ public class Player implements Serializable {
 	}
 	
 	/**
-	 * @return a list of this player's airports
+	 * Gets a list of the player's airports.
+	 * @return a list of the player's airports
 	 */
 	public Airport[] getAirports() {
 		return airports;
 	}
 
 	/**
-	 * @return a list of this player's aircraft
+	 * Gets a list of the player's aircraft.
+	 * @return a list of the player's aircraft
 	 */
 	public ArrayList<Aircraft> getAircraft() {
 		return aircraft;
 	}
 	
 	/**
-	 * @return a list of this player's waypoints
+	 * Gets a list of the player's waypoints.
+	 * @return a list of the player's waypoints
 	 */
 	public Waypoint[] getWaypoints() {
 		return waypoints;
 	}
 	
 	/**
-	 * @return the colour to draw this player's aircraft
+	 * Gets the colour to draw the player's aircraft.
+	 * @return the colour to draw the player's aircraft
 	 */
 	public Integer[] getAircraftColour() {
 		return aircraftColour;
 	}
 
 	/**
+	 * Gets the aircraft the player has selected.
 	 * @return the selected aircraft
 	 */
 	public Aircraft getSelectedAircraft() {
@@ -184,6 +194,7 @@ public class Player implements Serializable {
 	}
 
 	/**
+	 * Gets the waypoint the player has selected.
 	 * @return the selected waypoint
 	 */
 	public Waypoint getSelectedWaypoint() {
@@ -191,6 +202,7 @@ public class Player implements Serializable {
 	}
 
 	/**
+	 * Gets the pathpoint the player has selected.
 	 * @return the selected pathpoint
 	 */
 	public int getSelectedPathpoint() {
@@ -198,6 +210,7 @@ public class Player implements Serializable {
 	}
 
 	/**
+	 * Gets whether the player has clicked the compass or not.
 	 * @return whether the compass has been clicked or not
 	 */
 	public boolean isCompassClicked() {
@@ -205,6 +218,7 @@ public class Player implements Serializable {
 	}
 
 	/**
+	 * Gets whether the player has clicked a waypoint or not.
 	 * @return whether a waypoint has been clicked or not
 	 */
 	public boolean isWaypointClicked() {
@@ -212,6 +226,7 @@ public class Player implements Serializable {
 	}
 	
 	/**
+	 * Gets the time since flight generation was last reset.
 	 * @return the time since flight generation was last reset
 	 */
 	public double getFlightGenerationTimeElapsed() {
@@ -219,6 +234,7 @@ public class Player implements Serializable {
 	}
 
 	/**
+	 * Gets the player's control altitude.
 	 * @return the player's control altitude
 	 */
 	public int getControlAltitude() {
@@ -226,29 +242,31 @@ public class Player implements Serializable {
 	}
 	
 	/**
+	 * Gets the player's score.
 	 * @return the player's score
 	 */
 	public Score getScore() {
 		return score;
 	}
 	
-	/**
-	 * Access the player's remaining lives.
-	 * @return the player's lives
+	/** 
+	 * Gets the player's remaining lives.
+	 * @return the player's remaining lives
 	 */
 	public int getLives() {
 		return lives;
 	}
 	
 	/**
-	 * @return a list of this player's active powerups
+	 * Gets a list of the player's active powerups.
+	 * @return a list of the player's active powerups
 	 */
 	public ArrayList<Powerup> getPowerups() {
 		return powerups;
 	}
 	
 	
-	// Mutators: --------------------------------------------------------------
+	// Mutators: ------------------------------------------------------------------------
 	
 	/**
 	 * @param aircraft
@@ -363,12 +381,14 @@ public class Player implements Serializable {
 	
 	@Override
 	public String toString() {
-		return "Player [id=" + id + ", name=" + name + ", hosting=" + hosting
-				+ ", ipAddress=" + ipAddress + ", aircraft=" + aircraft.size()
-				+ ", compassClicked=" + compassClicked + ", waypointClicked="
-				+ waypointClicked + ", flightGenerationTimeElapsed="
-				+ flightGenerationTimeElapsed + ", controlAltitude="
-				+ controlAltitude + ", score=" + score + "]";
+		return "Player [id=" + id
+				+ ", name=" + name
+				+ ", aircraft=" + aircraft.size()
+				+ ", compassClicked=" + compassClicked
+				+ ", waypointClicked=" + waypointClicked
+				+ ", flightGenerationTimeElapsed=" + flightGenerationTimeElapsed
+				+ ", controlAltitude=" + controlAltitude
+				+ ", score=" + score + "]";
 	}
 	
 }

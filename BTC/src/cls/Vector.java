@@ -4,7 +4,6 @@ import java.io.Serializable;
 
 import lib.jog.window;
 import scn.Game;
-import btc.Main;
 
 /**
  * Simplified 3D vector class with basic operations.
@@ -30,8 +29,8 @@ public class Vector implements Serializable {
 	 * @param z the vector's z position
 	 */
 	public Vector(double x, double y, double z) {
-		this.x = x / Main.getXScale();
-		this.y = y / Main.getYScale();
+		this.x = x;
+		this.y = y;
 		this.z = z;
 	}
 	
@@ -40,7 +39,7 @@ public class Vector implements Serializable {
 	 * @return the x position of the vector
 	 */
 	public double getX() {
-		return x * Main.getXScale();
+		return x;
 	}
 
 	/**
@@ -48,7 +47,7 @@ public class Vector implements Serializable {
 	 * @return the y position of the vector
 	 */
 	public double getY() {
-		return y * Main.getYScale();
+		return y;
 	}
 	
 	/**
