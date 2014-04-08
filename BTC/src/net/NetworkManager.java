@@ -26,6 +26,9 @@ public class NetworkManager {
 	
 	/** The data transfer extension */
 	public static final String DATA_EXT = "/data";
+	
+	/** The connection ID to the server */
+	private static int id;
 
 	/** The thread to send data on */
 	private NetworkThread networkThread;
@@ -44,6 +47,7 @@ public class NetworkManager {
 	 * 			the standard output
 	 */
 	public NetworkManager(boolean verbose) {
+		NetworkManager.id = -1;
 		NetworkManager.verbose = verbose;
 
 		initialiseClient();
@@ -115,19 +119,8 @@ public class NetworkManager {
 			
 			// Set request properties and headers
 			connection.addRequestProperty("user-agent", "Fly-Hard");
-			
-			if (Game.getInstance().getCurrentPlayer() != null) {
-				// If a connection is already set up, use valid details
-				connection.addRequestProperty("client-id",
-						String.valueOf(Game.getInstance().getCurrentPlayer()
-								.getServerID()));
-				connection.addRequestProperty("client-name",
-						Game.getInstance().getCurrentPlayer().getName());
-			} else {
-				// Otherwise use initialisation values
-				connection.addRequestProperty("client-id", "-1");
-				connection.addRequestProperty("client-name", "");
-			}
+			connection.addRequestProperty("client-id", String.valueOf(id));
+			connection.addRequestProperty("client-name", "");
 		} catch (ProtocolException e) {
 			print(e);
 		} catch (MalformedURLException e) {
