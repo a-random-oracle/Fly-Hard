@@ -94,18 +94,17 @@ public abstract class InstructionHandler {
 	 */
 	private static void handleSetID(String instruction) {
 		// Get the player ID to set from the response
-		int playerIDToSet = -1;
+		int IDToSet = -1;
 		try {
-			playerIDToSet = Integer.parseInt(instruction.split(DELIM)[1]);
+			IDToSet = Integer.parseInt(instruction.split(DELIM)[1]);
 		} catch (Exception e) {
 			print(e);
 		}
 
 		// Set the current player's server-generated ID
-		Game.getInstance().getCurrentPlayer().setServerID(playerIDToSet);
+		NetworkManager.setID(IDToSet);
 
-		print("Player has ID: " + Game.getInstance().getCurrentPlayer()
-				.getServerID());
+		print("Player has ID: " + NetworkManager.getID());
 	}
 	
 	/**

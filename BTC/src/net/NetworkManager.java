@@ -7,13 +7,13 @@ import java.io.ByteArrayInputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
-import java.util.ArrayList;
 
-import scn.Game;
+import java.util.ArrayList;
 
 public class NetworkManager {
 
@@ -313,6 +313,25 @@ public class NetworkManager {
 		}
 	}
 	
+	
+	// Accessors ------------------------------------------------------------------------
+	
+	/**
+	 * Gets the ID for the current connection to the server.
+	 * @return the current sever ID
+	 */
+	public static int getID() {
+		return id;
+	}
+	
+	/**
+	 * Sets the ID for the current connection to the server.
+	 * @param id
+	 * 			the server ID to set
+	 */
+	public static void setID(int id) {
+		NetworkManager.id = id;
+	}
 	
 	// Close ----------------------------------------------------------------------------
 
