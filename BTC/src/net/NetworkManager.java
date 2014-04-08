@@ -115,11 +115,19 @@ public class NetworkManager {
 			
 			// Set request properties and headers
 			connection.addRequestProperty("user-agent", "Fly-Hard");
-			connection.addRequestProperty("client-id",
-					String.valueOf(Game.getInstance().getCurrentPlayer()
-							.getServerID()));
-			connection.addRequestProperty("client-name",
-					Game.getInstance().getCurrentPlayer().getName());
+			
+			if (Game.getInstance().getCurrentPlayer() != null) {
+				// If a connection is already set up, use valid details
+				connection.addRequestProperty("client-id",
+						String.valueOf(Game.getInstance().getCurrentPlayer()
+								.getServerID()));
+				connection.addRequestProperty("client-name",
+						Game.getInstance().getCurrentPlayer().getName());
+			} else {
+				// Otherwise use initialisation values
+				connection.addRequestProperty("client-id", "-1");
+				connection.addRequestProperty("client-name", "");
+			}
 		} catch (ProtocolException e) {
 			print(e);
 		} catch (MalformedURLException e) {
