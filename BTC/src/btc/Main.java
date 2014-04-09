@@ -38,22 +38,28 @@ public class Main implements input.EventHandler {
 	
 	
 	/** The game's version number */
-	public static final String VERSION = "Fly-Hard-0.1";
+	public static final String VERSION = "Fly-Hard-0.2";
 
 	/** The title to display in the game window */
-	private final String TITLE = "Bear Traffic Controller: GOA Edition";
+	private static final String TITLE = "Bear Traffic Controller: GOA Edition";
 
 	/** The target window width */
-	public final static int TARGET_WIDTH = 1280;
+	public static final int TARGET_WIDTH = 1280;
 
 	/** The target window height */
-	public final static int TARGET_HEIGHT = 960;
+	public static final int TARGET_HEIGHT = 960;
 
 	/** The default size of the gap between the window edge and the left edge of the screen */
-	public final static int WIDTH_GAP = 50;
+	public static final int WIDTH_GAP = 50;
 
 	/** The default size of the gap between the window edge and the top edge of the screen */
-	public final static int HEIGHT_GAP = 50;
+	public static final int HEIGHT_GAP = 50;
+	
+	/** The standard font */
+	public static graphics.Font standardFont;
+	
+	/** The font to use for flight strips */
+	public static TrueTypeFont flightstripFont;
 
 	/** The scale the game has been resized to in the horizontal plane */
 	private static double xScale = 1;
@@ -64,7 +70,7 @@ public class Main implements input.EventHandler {
 	/** The random instance to use to synchronise across the network */
 	private static Random random;
 
-	/** Whether the game isbeing exited */
+	/** Whether the game is being exited */
 	private static boolean exiting;
 
 	/** The locations of the icon files */
@@ -144,23 +150,21 @@ public class Main implements input.EventHandler {
 				(int)(xOffset), (int)(yOffset), fullscreen);
 		graphics.initialise();
 		
-		//graphics.Font font = graphics.newBitmapFont("gfx" + File.separator + "font.png",
-		//		("ABCDEFGHIJKLMNOPQRSTUVWXYZ abcdefghijklmnopqrstuvwxyz" +
-		//				"1234567890.,_-!?()[]><#~:;/\\^'\"{}+=@@@@@@@@`"));
-		
-		java.awt.Font font = null;
+		standardFont = graphics.newBitmapFont("gfx" + File.separator + "font.png",
+				("ABCDEFGHIJKLMNOPQRSTUVWXYZ abcdefghijklmnopqrstuvwxyz" +
+						"1234567890.,_-!?()[]><#~:;/\\^'\"{}+=@@@@@@@@`"));
 		
 		try {
-			font = java.awt.Font.createFont(java.awt.Font.TRUETYPE_FONT,
-						ResourceLoader.getResourceAsStream(
-								"gfx" + File.separator + "Roboto-Black.ttf"))
-								.deriveFont(12F);
-			GraphicsEnvironment.getLocalGraphicsEnvironment().registerFont(font);
+			flightstripFont = new TrueTypeFont(
+					java.awt.Font.createFont(java.awt.Font.TRUETYPE_FONT,
+							ResourceLoader.getResourceAsStream(
+									"gfx" + File.separator + "Roboto-Black.ttf"))
+									.deriveFont(12F), false);
 		} catch (FontFormatException | IOException e) {
 			e.printStackTrace();
 		}
 		
-		graphics.setFont(new TrueTypeFont(font, false));
+		graphics.setFont(standardFont);
 
 		sceneStack = new Stack<Scene>();
 		setScene(new Title());

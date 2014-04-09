@@ -8,6 +8,7 @@ package cls;
 
 import java.io.Serializable;
 
+import btc.Main;
 import scn.Game;
 import lib.jog.graphics;
 
@@ -135,12 +136,14 @@ public class FlightStrip implements Serializable {
      */
     public void draw(double xOffset, double yOffset) {
     	if (isVisible) {
+    		graphics.setFont(Main.flightstripFont);
     		drawOutline(xOffset, yOffset);
     		drawFlightNumber(xOffset, yOffset);
     		drawAirline(xOffset, yOffset);
     		drawAltitude(xOffset, yOffset);
     		drawRoute(xOffset, yOffset);
     		drawStatus(xOffset, yOffset);
+    		graphics.setFont(Main.standardFont);
     	}
     }
 
@@ -187,7 +190,7 @@ public class FlightStrip implements Serializable {
             graphics.printCentred("AWW YISS", (xOffset + 100), (yOffset + positionY + height - 14), 1, 1);
     	}
     }
-
+    
     
     public void mousePressed(int key, int x, int y) {}
     
