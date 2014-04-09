@@ -40,6 +40,9 @@ public class MultiPlayerGame extends Game {
 	public static final Image TRANSFER_IMAGE =
 			graphics.newImage("gfx" + File.separator + "pup_new"
 					+ File.separator + "transfer_32.png");
+	
+	/** The instruction to send to the server on ending the game */
+	private static String endGameInstruction;
 
 	/** The y-coordinate at which the middle zone borders begin */
 	private static int yStart = window.height() - Y_OFFSET;
@@ -273,8 +276,6 @@ public class MultiPlayerGame extends Game {
 		}
 
 		super.update(timeDifference);
-
-		if (paused) return;
 
 		// Update the opposing player
 		updatePlayer(timeDifference, opposingPlayer);
@@ -525,7 +526,7 @@ public class MultiPlayerGame extends Game {
 	}
 
 	@Override
-	public Aircraft[] checkCollisions(double timeDifference) {
+	public void checkCollisions(double timeDifference) {
 		for (Aircraft plane : player.getAircraft()) {
 			if (plane.isFinished())
 				continue;
@@ -535,23 +536,9 @@ public class MultiPlayerGame extends Game {
 
 			if (collidedWith != null) {
 				player.setLives(player.getLives() - 1);
-				return new Aircraft[] {plane, collidedWith};
+				gameOver(plane, collidedWith);
 			}
 		}
-		
-		for (Aircraft plane : opposingPlayer.getAircraft()) {
-			if (plane.isFinished())
-				continue;
-
-			Aircraft collidedWith = plane.updateCollisions(timeDifference,
-					getAllAircraft());
-
-			if (collidedWith != null) {
-				return new Aircraft[] {plane, collidedWith};
-			}
-		}
-		
-		return null;
 	}
 
 	public void explodePlanes(Aircraft plane1, Aircraft plane2) {
@@ -593,6 +580,7 @@ public class MultiPlayerGame extends Game {
 				airport.clear();
 			}
 			
+			endGameInstruction = "GAME_OVER";
 			super.gameOver(plane1, plane2);
 		}
 	}
@@ -746,8 +734,11 @@ public class MultiPlayerGame extends Game {
 		// them know we're closing
 		NetworkManager.stopThread();
 		
-		if (!gameOver) {
+		if (endGameInstruction == null) {
 			NetworkManager.postMessage("END_GAME");
+		} else {
+			NetworkManager.postMessage(endGameInstruction);
+			endGameInstruction = null;
 		}
 	}
 

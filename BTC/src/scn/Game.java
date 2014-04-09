@@ -54,15 +54,6 @@ public abstract class Game extends Scene {
 
 	/** The waypoints through which aircraft must travel to reach their destination */
 	protected static Waypoint[] airspaceWaypoints;
-
-	/** Is the game paused */
-	protected static boolean paused;
-	
-	/** Whether the game about to end */
-	protected static boolean ending;
-	
-	/** Whether the game is about to go to the gameover scene */
-	protected static boolean gameOver;
 	
 	/** The manual control buttons */
 	protected static ButtonText manualControlButton;
@@ -72,11 +63,6 @@ public abstract class Game extends Scene {
 	
 	/** The current player */
 	protected Player player;
-	
-	public int flightCount = 0; // TODO Actually make this do things.
-
-	// Testing FlightStrip output
-//	private static FlightStrip flightStrip;
 	
 	/** The current difficulty setting */
 	protected DifficultySetting difficulty;
@@ -142,11 +128,6 @@ public abstract class Game extends Scene {
 	 */
 	@Override
 	public void start() {
-		// Set up variables
-		paused = false;
-		ending = false;
-		gameOver = false;
-
 		if (!Main.testing) {
 			// Load in graphics
 			background = graphics.newImage("gfx" + File.separator + "background_base.png");
@@ -174,21 +155,11 @@ public abstract class Game extends Scene {
 	 */
 	@Override
 	public void update(double timeDifference) {
-		if (paused) return;
-		
-		if (ending) {
-			ending = false;
-			Main.closeScene();
-		}
-
 		// Update the time the game has run for
 		timeElapsed += timeDifference;
 
 		// Check if any aircraft in the airspace have collided
-		Aircraft[] collidedAircraft = checkCollisions(timeDifference);
-		if (collidedAircraft != null) {
-			gameOver(collidedAircraft[0], collidedAircraft[1]);
-		}
+		checkCollisions(timeDifference);
 
 		// Update the player
 		updatePlayer(timeDifference, player);
@@ -552,8 +523,6 @@ public abstract class Game extends Scene {
 	 */
 	@Override
 	public void mousePressed(int key, int x, int y) {
-		if (paused) return;
-		
 		for (FlightStrip fs : player.getFlightStrips()) {
 			fs.mousePressed(key, x, y);
 		}
@@ -640,8 +609,6 @@ public abstract class Game extends Scene {
 	 */
 	@Override
 	public void mouseReleased(int key, int x, int y) {
-		if (paused) return;
-		
 		for (FlightStrip fs : player.getFlightStrips()) {
 			fs.mouseReleased(key, x, y);
 		}
@@ -687,9 +654,7 @@ public abstract class Game extends Scene {
 	 * @param key - the key which was pressed
 	 */
 	@Override
-	public void keyPressed(int key) {
-		if (paused) return;
-	}
+	public void keyPressed(int key) {}
 
 	/**
 	 * Handles key release events.
@@ -697,15 +662,6 @@ public abstract class Game extends Scene {
 	 */
 	@Override
 	public void keyReleased(int key) {
-		// Ensure p and escape still work when paused
-		if (key == input.KEY_P) {
-			paused = !paused;
-		} else if (key == input.KEY_ESCAPE) {
-			paused = false;
-		}
-
-		if (paused) return;
-
 		switch (key) {
 		case input.KEY_SPACE :
 			toggleManualControl(player);
@@ -733,16 +689,14 @@ public abstract class Game extends Scene {
 	 * Check if any aircraft in the airspace have collided.
 	 * @param timeDifference - the time since the last collision check
 	 */
-	protected Aircraft[] checkCollisions(double timeDifference) {
+	protected void checkCollisions(double timeDifference) {
 		for (Aircraft plane : getAllAircraft()) {
 			Aircraft collidedWith = plane.updateCollisions(timeDifference,
 					getAllAircraft());
 			if (collidedWith != null) {
-				return new Aircraft[] {plane, collidedWith};
+				gameOver(plane, collidedWith);
 			}
 		}
-		
-		return null;
 	}
 
 	/**
@@ -761,7 +715,6 @@ public abstract class Game extends Scene {
 		// TODO <- add back in for release
 		//playSound(audio.newSoundEffect("sfx" + File.separator + "crash.ogg"));
 
-		gameOver = true;
 		Main.closeScene();
 		Main.setScene(new GameOver(plane1, plane2, player.getScore().getScore())); //TODO <- pass score
 	}
@@ -1316,10 +1269,6 @@ public abstract class Game extends Scene {
 	 */
 	public void setCurrentPlayer(Player player) {
 		this.player = player;
-	}
-	
-	public void setEnding(boolean end) {
-		ending = end;
 	}
 
 
