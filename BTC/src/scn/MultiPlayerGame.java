@@ -158,7 +158,7 @@ public class MultiPlayerGame extends Game {
 		aircraftUnderTransfer = new ArrayList<Aircraft>();
 		dataUpdateTimeElapsed = 0;
 		powerupGenerationTimeElapsed = 0;
-		powerUpInterval = 5;
+		powerUpInterval = 30;
 	}
 
 	/**
