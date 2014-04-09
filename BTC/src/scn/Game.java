@@ -690,11 +690,18 @@ public abstract class Game extends Scene {
 	 * @param timeDifference - the time since the last collision check
 	 */
 	protected void checkCollisions(double timeDifference) {
-		for (Aircraft plane : getAllAircraft()) {
+		for (Aircraft plane : player.getAircraft()) {
+			if (plane.isFinished()) {
+				continue;
+			}
+
 			Aircraft collidedWith = plane.updateCollisions(timeDifference,
 					getAllAircraft());
+			
 			if (collidedWith != null) {
+				player.setLives(player.getLives() - 1);
 				gameOver(plane, collidedWith);
+				return;
 			}
 		}
 	}

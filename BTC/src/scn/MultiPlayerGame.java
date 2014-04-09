@@ -533,22 +533,6 @@ public class MultiPlayerGame extends Game {
 		}
 	}
 
-	@Override
-	public void checkCollisions(double timeDifference) {
-		for (Aircraft plane : player.getAircraft()) {
-			if (plane.isFinished())
-				continue;
-
-			Aircraft collidedWith = plane.updateCollisions(timeDifference,
-					getAllAircraft());
-
-			if (collidedWith != null) {
-				player.setLives(player.getLives() - 1);
-				gameOver(plane, collidedWith);
-			}
-		}
-	}
-
 	public void explodePlanes(Aircraft plane1, Aircraft plane2) {
 		// The number of frames in each dimension of the animation image
 		int framesAcross = 8;
@@ -587,7 +571,8 @@ public class MultiPlayerGame extends Game {
 			airport.clear();
 		}
 
-		endGameInstruction = "GAME_OVER";
+		endGameInstruction = "GAME_OVER:" + plane1.getName()
+				+ ":" + plane2.getName();
 		super.gameOver(plane1, plane2);
 	}
 
