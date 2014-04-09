@@ -725,7 +725,7 @@ public abstract class Game extends Scene {
 		//playSound(audio.newSoundEffect("sfx" + File.separator + "crash.ogg"));
 
 		Main.closeScene();
-		Main.setScene(new GameOver(plane1, plane2, player.getScore().getScore())); //TODO <- pass score
+		Main.setScene(new GameOver(plane1, plane2, player.getScore().getScore()));
 	}
 
 	/**

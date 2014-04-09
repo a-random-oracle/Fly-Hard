@@ -569,9 +569,18 @@ public class MultiPlayerGame extends Game {
 				airport.clear();
 			}
 
-			endGameInstruction = "GAME_OVER:" + plane1.getName()
-					+ ":" + plane2.getName();
-			super.gameOver(plane1, plane2, override);
+			if (!override) {
+				endGameInstruction = "GAME_OVER:" + plane1.getName()
+						+ ":" + plane2.getName();
+			} else {
+				endGameInstruction = "NULL";
+			}
+			
+			// TODO <- add back in for release
+			//playSound(audio.newSoundEffect("sfx" + File.separator + "crash.ogg"));
+			
+			Main.closeScene();
+			Main.setScene(new GameOver(plane1, plane2, player.getScore().getScore()));
 		}
 	}
 
