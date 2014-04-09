@@ -1,8 +1,9 @@
 package net;
 
+import cls.Player;
 import btc.Main;
-
 import scn.Game;
+import scn.MultiPlayerGame;
 
 public abstract class InstructionHandler {
 	
@@ -114,16 +115,26 @@ public abstract class InstructionHandler {
 	 */
 	private static void handleSetPos(String instruction) {
 		// Get the position to set from the response
-		int playerPositionToSet = -1;
+		int playerPosition = -1;
 		try {
-			playerPositionToSet = Integer.parseInt(instruction.split(DELIM)[1]);
+			playerPosition = Integer.parseInt(instruction.split(DELIM)[1]);
 		} catch (Exception e) {
 			print(e);
 		}
 
 		// Set the current player
-		Game.getInstance().setCurrentPlayer(
-				Game.getInstance().getPlayers().get(playerPositionToSet));
+		switch (playerPosition) {
+		case 0:
+			// Player with ID = 0 should already be set as the current player
+			break;
+		case 1:
+			// Swap the player with the opposing player
+			Player tempPlayer = Game.getInstance().getCurrentPlayer();
+			((MultiPlayerGame) Game.getInstance()).setCurrentPlayer(
+					((MultiPlayerGame) Game.getInstance()).getOpposingPlayer());
+			((MultiPlayerGame) Game.getInstance()).setOpposingPlayer(tempPlayer);
+			break;
+		}
 
 		print("Playing as: " + Game.getInstance().getCurrentPlayer()
 				.getName());

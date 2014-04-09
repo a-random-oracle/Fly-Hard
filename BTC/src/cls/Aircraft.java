@@ -825,12 +825,11 @@ public class Aircraft implements Serializable {
 		if (flightPlan.getOriginAirport() != null) {
 			// Add the aircraft to the player whose airport
 			// it is departing from
-			for (Player player : Game.getInstance().getPlayers()) {
-				for (Airport airport : player.getAirports()) {
-					if (airport.equals(flightPlan.getOriginAirport())) {
-						player.getAircraft().add(this);
-						return;
-					}
+			for (Airport airport : Game.getInstance().getAllAirports()) {
+				if (airport.equals(flightPlan.getOriginAirport())) {
+					Game.getInstance().getPlayerFromAirport(
+							airport).getAircraft().add(this);
+					return;
 				}
 			}
 		}

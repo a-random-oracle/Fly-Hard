@@ -13,9 +13,12 @@ import cls.Powerup;
 import cls.Waypoint;
 
 public class MultiPlayerGame extends Game {
-
+	
 	/** The network manager responsible for managing network requests */
 	private NetworkManager networkManager;
+	
+	/** The opposing player */
+	protected Player opposingPlayer;
 	
 	/** The time frame to send data across the network */
 	private double timeToUpdate;
@@ -97,10 +100,6 @@ public class MultiPlayerGame extends Game {
 		manualControlButton = new ButtonText(" Take Control", manual,
 						(window.width() - 128 - (2 * xOffset)) / 2,
 						32, 128, 32, 8, 4);
-
-		// Reset game attributes for each player
-		deselectAircraft(players.get(0));
-		deselectAircraft(players.get(1));
 	}
 
 	/**
@@ -144,12 +143,8 @@ public class MultiPlayerGame extends Game {
 		player1Airports[0] = airports[1];
 
 		// Set up the players
-		Player player0 = new Player(getNewPlayerID(), "Bob1", true,
-				"127.0.0.1", player0Airports, player0Waypoints);
-		players.add(player0);
-		Player player1 = new Player(getNewPlayerID(), "Bob2", false,
-				"127.0.0.1", player1Airports, player1Waypoints);
-		players.add(player1);
+		player = new Player(0, "Bob1", player0Airports, player0Waypoints);
+		opposingPlayer = new Player(1, "Bob2", player1Airports, player1Waypoints);
 	}
 
 	/**
@@ -165,8 +160,8 @@ public class MultiPlayerGame extends Game {
 			Object data = networkManager.receiveData();
 
 			if (data != null && data instanceof Player) {
-				// Set the received player data
-				players.set((player.getID() + 1) % 2, (Player) data);
+				// Set the opposing player's data
+				opposingPlayer = (Player) data;
 			}
 
 			// Send current player's data to the server
@@ -179,6 +174,9 @@ public class MultiPlayerGame extends Game {
 		super.update(timeDifference);
 		
 		if (paused) return;
+		
+		// Update the opposing player
+		updatePlayer(timeDifference, opposingPlayer);
 		
 		// Deselect any aircraft which are inside the airspace of the other player
 		// This ensures that players can't keep controlling aircraft
@@ -197,6 +195,21 @@ public class MultiPlayerGame extends Game {
 
 		// Draw the power-ups
 		//drawPowerups();
+	}
+	
+	@Override
+	protected void drawMapFeatures() {
+		drawAirports(player);
+		drawAirports(opposingPlayer);
+		
+		drawWaypoints(player);
+		drawWaypoints(opposingPlayer);
+		
+		drawAircraft(player);
+		drawAircraft(opposingPlayer);
+		
+		drawManualControlButton(player);
+		drawManualControlButton(opposingPlayer);
 	}
 
 	/**
@@ -235,11 +248,10 @@ public class MultiPlayerGame extends Game {
 	}
 
 	public boolean checkLives() {
-		for (Player player : players) {
-			if (player.getLives() == 0) {
-				return true;
-			}
+		if (player.getLives() == 0 || opposingPlayer.getLives() == 0) {
+			return true;
 		}
+		
 		return false;
 	}
 
@@ -259,8 +271,136 @@ public class MultiPlayerGame extends Game {
 	@Override
 	public void gameOver(Aircraft plane1, Aircraft plane2) {
 		if (checkLives()) {
+			player.getAircraft().clear();
+			opposingPlayer.getAircraft().clear();
+
+			for (Airport airport : player.getAirports()) {
+				airport.clear();
+			}
+			
+			for (Airport airport : opposingPlayer.getAirports()) {
+				airport.clear();
+			}
+			
 			super.gameOver(plane1, plane2);
 		}
+	}
+	
+	public Player getOpposingPlayer() {
+		return opposingPlayer;
+	}
+	
+	public void setOpposingPlayer(Player opposingPlayer) {
+		this.opposingPlayer = opposingPlayer;
+	}
+	
+	/**
+	 * Gets a player from an aircraft.
+	 * @param aircraft
+	 * 			the aircraft to get the controlling player of
+	 * @return the player controlling the specified aircraft
+	 */
+	@Override
+	public Player getPlayerFromAircraft(Aircraft aircraft) {
+		for (Aircraft a : player.getAircraft()) {
+			if (a.equals(aircraft)) {
+				return player;
+			}
+		}
+		
+		for (Aircraft a : opposingPlayer.getAircraft()) {
+			if (a.equals(aircraft)) {
+				return opposingPlayer;
+			}
+		}
+		
+		return null;
+	}
+	
+	/**
+	 * Gets a player from an airport.
+	 * @param airport
+	 * 			the airport to get the controlling player of
+	 * @return the player controlling the specified airport
+	 */
+	@Override
+	public Player getPlayerFromAirport(Airport airport) {
+		for (int i = 0; i < player.getAirports().length; i++) {
+			if (player.getAirports()[i].equals(airport)) {
+				return player;
+			}
+		}
+		
+		for (int i = 0; i < opposingPlayer.getAirports().length; i++) {
+			if (opposingPlayer.getAirports()[i].equals(airport)) {
+				return opposingPlayer;
+			}
+		}
+		
+		return null;
+	}
+	
+	/**
+	 * Returns whether a given name is an airport or not.
+	 * @param name
+	 * 			the name to test
+	 * @return <code>true</code> if the name matches an airport name,
+	 * 			otherwise <code>false</code>
+	 */
+	@Override
+	public Airport getAirportFromName(String name) {
+		for (Airport airport : getAllAirports()) {
+			// If a match is found, return true
+			if (airport.name.equals(name)) return airport;
+		}
+
+		// Otherwise
+		return null;
+	}
+	
+	/**
+	 * Gets a list of all airports in the airspace.
+	 * @return a list of all the airports in the airspace
+	 */
+	@Override
+	public Airport[] getAllAirports() {
+		int count = 0;
+
+		// Count the number of airports in the airspace
+		count += player.getAirports().length;
+		count += opposingPlayer.getAirports().length;
+
+		// Initialise a new array to store all the airports
+		Airport[] allAirports = new Airport[count];
+
+		// Loop through each player, adding their airports to the list
+		int index = 0;
+		
+		for (Airport airport : player.getAirports()) {
+			allAirports[index] = airport;
+			index++;
+		}
+		
+		for (Airport airport : opposingPlayer.getAirports()) {
+			allAirports[index] = airport;
+			index++;
+		}
+
+		return allAirports;
+	}
+	
+	/**
+	 * Gets a list of all aircraft in the airspace.
+	 * @return a list of all the aircraft in the airspace
+	 */
+	@Override
+	public ArrayList<Aircraft> getAllAircraft() {
+		ArrayList<Aircraft> allAircraft = new ArrayList<Aircraft>();
+
+		allAircraft.addAll(player.getAircraft());
+		allAircraft.addAll(opposingPlayer.getAircraft());
+
+		return allAircraft;
 	}
 	
 
@@ -291,18 +431,12 @@ public class MultiPlayerGame extends Game {
 	public void initializeAircraftArray() {
 		super.start();
 		
-		Player player1 = new Player(getNewPlayerID(),
-				"Test Player 1", true, "127.0.0.1",
-				null, null);
-		players.add(player1);
+		player = new Player(0, "Test Player 1", null, null);
 		
-		Player player2 = new Player(getNewPlayerID(),
-				"Test Player 2", true, "127.0.0.1",
-				null, null);
-		players.add(player2);
+		opposingPlayer = new Player(1, "Test Player 2", null, null);
 		
-		player1.setAircraft(new ArrayList<Aircraft>());
-		player2.setAircraft(new ArrayList<Aircraft>());
+		player.setAircraft(new ArrayList<Aircraft>());
+		opposingPlayer.setAircraft(new ArrayList<Aircraft>());
 	}
 
 }

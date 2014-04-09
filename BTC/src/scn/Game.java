@@ -34,9 +34,6 @@ public abstract class Game extends Scene {
 	/** The unique instance of this class */
 	protected static Game instance = null;
 
-	/** The list of players currently playing the game */
-	protected ArrayList<Player> players;
-
 	/** The current player */
 	protected Player player;
 
@@ -153,9 +150,6 @@ public abstract class Game extends Scene {
 	 */
 	@Override
 	public void start() {
-		// Set up players
-		players = new ArrayList<Player>();
-
 		// Set up waypoints
 		locationWaypointMap = new Hashtable<Integer, Integer>();
 
@@ -199,60 +193,8 @@ public abstract class Game extends Scene {
 		// Check if any aircraft in the airspace have collided
 		checkCollisions(timeDifference);
 
-		for (Player player : players) {
-			// Update aircraft
-			for (Aircraft aircraft : player.getAircraft()) {
-				aircraft.update(timeDifference);
-			}
-
-			// Deselect and remove any aircraft which have completed their routes
-			for (int i = player.getAircraft().size() - 1; i >= 0; i--) {
-				if (player.getAircraft().get(i).isFinished()) {
-					if (player.getAircraft().get(i).equals(player
-							.getSelectedAircraft())) {
-						deselectAircraft(player);
-					}
-
-					player.getScore().addScore(player.getAircraft().get(i));
-					player.getAircraft().remove(i);
-				}
-			}
-
-			// Update the airports
-			for (Airport airport : player.getAirports()) {
-				airport.update(player.getAircraft());
-			}
-
-			// Deselect any aircraft which are outside the airspace
-			// This ensures that players can't keep controlling aircraft
-			// after they've left the airspace
-			for (Aircraft airc : player.getAircraft()) {
-				if (!(airc.isAtDestination())) {
-					if (airc.isOutOfAirspaceBounds()) {
-						deselectAircraft(airc, player);
-					}
-				}
-			}
-
-			// Update the counter used to determine when another flight should
-			// enter the airspace
-			// If the counter has reached 0, then spawn a new aircraft
-			player.setFlightGenerationTimeElapsed(player
-					.getFlightGenerationTimeElapsed() + timeDifference);
-			if (player.getFlightGenerationTimeElapsed()
-					>= getFlightGenerationInterval(player)) {
-				player.setFlightGenerationTimeElapsed(player
-						.getFlightGenerationTimeElapsed()
-						- getFlightGenerationInterval(player));
-
-				if (player.getAircraft().size() < player.getMaxAircraft()) {
-					generateFlight(player);
-				}
-			}
-
-			// If there are no aircraft in the airspace, spawn a new aircraft
-			if (player.getAircraft().size() == 0) generateFlight(player);
-		}
+		// Update the player
+		updatePlayer(timeDifference, player);
 
 		if (player.getSelectedAircraft() != null) {
 			if (player.getSelectedAircraft().isManuallyControlled()) {
@@ -291,6 +233,61 @@ public abstract class Game extends Scene {
 		// PLEASE DO NOT REMOVE - this is very useful for debugging
 		out.update(timeDifference);
 	}
+	
+	protected void updatePlayer(double timeDifference, Player player) {
+		// Update aircraft
+		for (Aircraft aircraft : player.getAircraft()) {
+			aircraft.update(timeDifference);
+		}
+
+		// Deselect and remove any aircraft which have completed their routes
+		for (int i = player.getAircraft().size() - 1; i >= 0; i--) {
+			if (player.getAircraft().get(i).isFinished()) {
+				if (player.getAircraft().get(i).equals(player
+						.getSelectedAircraft())) {
+					deselectAircraft(player);
+				}
+
+				player.getScore().addScore(player.getAircraft().get(i));
+				player.getAircraft().remove(i);
+			}
+		}
+
+		// Update the airports
+		for (Airport airport : player.getAirports()) {
+			airport.update(player.getAircraft());
+		}
+
+		// Deselect any aircraft which are outside the airspace
+		// This ensures that players can't keep controlling aircraft
+		// after they've left the airspace
+		for (Aircraft airc : player.getAircraft()) {
+			if (!(airc.isAtDestination())) {
+				if (airc.isOutOfAirspaceBounds()) {
+					deselectAircraft(airc, player);
+				}
+			}
+		}
+
+		// Update the counter used to determine when another flight should
+		// enter the airspace
+		// If the counter has reached 0, then spawn a new aircraft
+		player.setFlightGenerationTimeElapsed(player
+				.getFlightGenerationTimeElapsed() + timeDifference);
+		if (player.getFlightGenerationTimeElapsed()
+				>= getFlightGenerationInterval(player)) {
+			player.setFlightGenerationTimeElapsed(player
+					.getFlightGenerationTimeElapsed()
+					- getFlightGenerationInterval(player));
+
+			if (player.getAircraft().size() < player.getMaxAircraft()) {
+				generateFlight(player);
+			}
+		}
+
+		// If there are no aircraft in the airspace, spawn a new aircraft
+		if (player.getAircraft().size() == 0) generateFlight(player);
+	}
 
 	/**
 	 * Draw the scene GUI and all drawables within it, e.g. aircraft and waypoints.
@@ -312,19 +309,7 @@ public abstract class Game extends Scene {
 				Math.max(Main.getXScale(), Main.getYScale()));
 
 		// Draw individual map features
-		for (Player player : players) {
-			drawAirports(player);
-		}
-
-		for (Player player : players) {
-			drawWaypoints(player);
-		}
-
-		for (Player player : players) {
-			drawAircraft(player);
-		}
-
-		drawManualControlButton(player);
+		drawMapFeatures();
 
 		// Reset the viewport - these statistics can appear outside the game
 		// area
@@ -334,6 +319,16 @@ public abstract class Game extends Scene {
 		// Draw debug box
 		// PLEASE DO NOT REMOVE - this is very useful for debugging
 		out.draw();
+	}
+	
+	/**
+	 * Draws map features.
+	 */
+	protected void drawMapFeatures() {
+		drawAirports(player);
+		drawWaypoints(player);
+		drawAircraft(player);
+		drawManualControlButton(player);
 	}
 
 	/**
@@ -703,12 +698,10 @@ public abstract class Game extends Scene {
 	 * 			the second plane in the collision
 	 */
 	public void gameOver(Aircraft plane1, Aircraft plane2) {
-		for (Player player : players) {
-			player.getAircraft().clear();
+		player.getAircraft().clear();
 
-			for (Airport airport : player.getAirports()) {
-				airport.clear();
-			}
+		for (Airport airport : player.getAirports()) {
+			airport.clear();
 		}
 
 		// TODO <- add back in for release
@@ -951,7 +944,7 @@ public abstract class Game extends Scene {
 	 * 			otherwise <code>false</code>
 	 */
 	public Airport getAirportFromName(String name) {
-		for (Airport airport : getAllAirports()) {
+		for (Airport airport : player.getAirports()) {
 			// If a match is found, return true
 			if (airport.name.equals(name)) return airport;
 		}
@@ -1100,61 +1093,19 @@ public abstract class Game extends Scene {
 	}
 
 	/**
-	 * Gets the list of players.
-	 * @return the list of players
-	 */
-	public ArrayList<Player> getPlayers() {
-		return players;
-	}
-
-	/**
 	 * Gets the current player.
 	 * @return the current player
 	 */
 	public Player getCurrentPlayer() {
 		return player;
 	}
-
+	
 	/**
 	 * Gets a list of all aircraft in the airspace.
 	 * @return a list of all the aircraft in the airspace
 	 */
 	public ArrayList<Aircraft> getAllAircraft() {
-		ArrayList<Aircraft> allAircraft = new ArrayList<Aircraft>();
-
-		for (Player player : players) {
-			allAircraft.addAll(player.getAircraft());
-		}
-
-		return allAircraft;
-	}
-
-	/**
-	 * Gets a list of all airports in the airspace.
-	 * @return a list of all the airports in the airspace
-	 */
-	public Airport[] getAllAirports() {
-		int count = 0;
-
-		// Count the number of airports in the airspace
-		for (Player player : players) count += player.getAirports().length;
-
-		// Initialise a new array to store all the airports
-		Airport[] allAirports = new Airport[count];
-
-		// Loop through each player, adding their airports to the list
-		int index = 0;
-		Airport[] curAirports;
-		for (Player player : players) {
-			curAirports = player.getAirports();
-
-			for (Airport airport : curAirports) {
-				allAirports[index] = airport;
-				index++;
-			}
-		}
-
-		return allAirports;
+		return player.getAircraft();
 	}
 
 	/**
@@ -1198,73 +1149,55 @@ public abstract class Game extends Scene {
 
 		return playersLocationWaypoints;
 	}
+	
+	/**
+	 * Gets a player from an aircraft.
+	 * @param aircraft
+	 * 			the aircraft to get the controlling player of
+	 * @return the player controlling the specified aircraft
+	 */
+	public Player getPlayerFromAircraft(Aircraft aircraft) {
+		for (Aircraft a : player.getAircraft()) {
+			if (a.equals(aircraft)) {
+				return player;
+			}
+		}
+		
+		return null;
+	}
+	
+	/**
+	 * Gets a player from an airport.
+	 * @param airport
+	 * 			the airport to get the controlling player of
+	 * @return the player controlling the specified airport
+	 */
+	public Player getPlayerFromAirport(Airport airport) {
+		for (int i = 0; i < player.getAirports().length; i++) {
+			if (player.getAirports()[i].equals(airport)) {
+				return player;
+			}
+		}
+		
+		return null;
+	}
+	
+	/**
+	 * Gets a list of all airports in the airspace.
+	 * @return a list of all the airports in the airspace
+	 */
+	public Airport[] getAllAirports() {
+		return player.getAirports();
+	}
 
 	/**
 	 * Gets how long the game has been played for.
 	 * @return the length of time the game has been running for
 	 */
-	public static double getTime() {
+	public double getTime() {
 		return timeElapsed;
 	}
-
-	/**
-	 * Generates a new unique player ID.
-	 * <p>
-	 * This will be one higher than the highest ID currently
-	 * in use.
-	 * </p>
-	 * @return a new unique player ID
-	 */
-	public int getNewPlayerID() {
-		// Start player ID's at 0
-		int maxPlayerID = -1;
-
-		// Search through list of players to find highest ID
-		// currently in use
-		for (Player player : players) {
-			if (player.getID() > maxPlayerID) maxPlayerID = player.getID();
-		}
-
-		// Return an ID one higher than the highest ID currently
-		// in use
-		return maxPlayerID + 1;
-	}
-
-	/**
-	 * Finds which player is associated with a given airport.
-	 * @return the player associated with the supplied airport
-	 */
-	public Player getPlayerFromAirport(Airport airport) {
-		for (Player player : players) {
-			Airport[] playersAirports = player.getAirports();
-
-			for (Airport a : playersAirports) {
-				if (a.equals(airport)) {
-					return player;
-				}
-			}
-		}
-
-		return null;
-	}
-
-	/**
-	 * Finds which player is associated with a given aircraft.
-	 * @return the player associated with the supplied aircraft
-	 */
-	public Player getPlayerFromAircraft(Aircraft aircraft) {
-		for (Player player : players) {
-			ArrayList<Aircraft> playersAircraft = player.getAircraft();
-
-			for (Aircraft a : playersAircraft) {
-				if (a.equals(aircraft)) {
-					return player;
-				}
-			}
-		}
-
-		return null;
-	}
+	
 
 	// Mutators -------------------------------------------------------------------------
 
@@ -1275,17 +1208,6 @@ public abstract class Game extends Scene {
 	 */
 	public void setCurrentPlayer(Player player) {
 		this.player = player;
-	}
-
-	/**
-	 * Sets a specific player.
-	 * @param index
-	 * 			the index of the player to set
-	 * @param player
-	 * 			the player to set
-	 */
-	public void setPlayer(int index, Player player) {
-		this.players.set(index, player);
 	}
 
 

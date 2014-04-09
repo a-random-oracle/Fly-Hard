@@ -175,7 +175,7 @@ public class Airport extends Waypoint implements EventHandler, Serializable {
 		// Draw the hangar button if plane is waiting (departing flights)
 		if (aircraftHangar.size() > 0) {
 			// Colour fades from green (fine) to red (danger) over 5 seconds as plane is waiting
-			int timeWaiting = (int)(Game.getTime() - timeEntered.get(0));
+			int timeWaiting = (int)(Game.getInstance().getTime() - timeEntered.get(0));
 			// Assume it hasn't been waiting
 			int greenNow = greenFine; 
 			int redNow = redFine;
@@ -403,7 +403,7 @@ public class Airport extends Waypoint implements EventHandler, Serializable {
 	public void addToHangar(Aircraft aircraft) {
 		if (aircraftHangar.size() < hangarSize) {
 			aircraftHangar.add(aircraft);
-			timeEntered.add(Game.getTime());
+			timeEntered.add(Game.getInstance().getTime());
 		}
 	}
 	

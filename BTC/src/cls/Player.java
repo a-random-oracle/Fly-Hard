@@ -77,8 +77,7 @@ public class Player implements Serializable {
 	
 	// Constructor: ---------------------------------------------------------------------
 	
-	public Player(int id, String name, boolean hosting, String ipAddress,
-			Airport[] airports, Waypoint[] waypoints) {
+	public Player(int id, String name, Airport[] airports, Waypoint[] waypoints) {
 		
 		// Reset values
 		this.maxAircraft = Game.DEFAULT_MAX_AIRCRAFT;
