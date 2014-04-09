@@ -224,7 +224,8 @@ public class MultiPlayerGame extends Game {
 		
 		if (exitingToGameOver) {
 			exitingToGameOver = false;
-			gameOver(passedCollidingAircraft[0], passedCollidingAircraft[1]);
+			gameOver(passedCollidingAircraft[0],
+					passedCollidingAircraft[1], true);
 		}
 		
 		// Update powerups
@@ -232,10 +233,6 @@ public class MultiPlayerGame extends Game {
 
 		if (powerupGenerationTimeElapsed > powerUpInterval) {
 			powerupGenerationTimeElapsed = 0;
-
-			if (player.getSelectedAircraft() != null) {
-				System.out.println(player.getSelectedAircraft().getCurrentRouteStage());
-			}
 
 			// Only one player is responsible for generating powerups
 			if (playerPosition == 1) {
@@ -559,8 +556,8 @@ public class MultiPlayerGame extends Game {
 	}
 
 	@Override
-	public void gameOver(Aircraft plane1, Aircraft plane2) {
-		if (player.getLives() == 0 || opposingPlayer.getLives() == 0) {
+	public void gameOver(Aircraft plane1, Aircraft plane2, boolean override) {
+		if (override || player.getLives() == 0 || opposingPlayer.getLives() == 0) {
 			player.getAircraft().clear();
 			opposingPlayer.getAircraft().clear();
 
@@ -574,7 +571,7 @@ public class MultiPlayerGame extends Game {
 
 			endGameInstruction = "GAME_OVER:" + plane1.getName()
 					+ ":" + plane2.getName();
-			super.gameOver(plane1, plane2);
+			super.gameOver(plane1, plane2, override);
 		}
 	}
 

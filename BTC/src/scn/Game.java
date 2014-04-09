@@ -677,7 +677,7 @@ public abstract class Game extends Scene {
 		case input.KEY_F5 :
 			Aircraft a1 = createAircraft(player);
 			Aircraft a2 = createAircraft(player);
-			gameOver(a1, a2);
+			gameOver(a1, a2, true);
 			break;
 		}
 	}
@@ -700,7 +700,7 @@ public abstract class Game extends Scene {
 			
 			if (collidedWith != null) {
 				player.setLives(player.getLives() - 1);
-				gameOver(plane, collidedWith);
+				gameOver(plane, collidedWith, false);
 				return;
 			}
 		}
@@ -711,8 +711,10 @@ public abstract class Game extends Scene {
 	 * Create a GameOver scene and make it the current scene.
 	 * @param plane1 - the first plane involved in the collision
 	 * @param plane2 - the second plane in the collision
+	 * @param override - <code>true</code> if the game should exit regardless of
+	 * 						life values
 	 */
-	public void gameOver(Aircraft plane1, Aircraft plane2) {
+	public void gameOver(Aircraft plane1, Aircraft plane2, boolean override) {
 		player.getAircraft().clear();
 
 		for (Airport airport : player.getAirports()) {
