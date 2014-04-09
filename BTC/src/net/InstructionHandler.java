@@ -176,7 +176,9 @@ public abstract class InstructionHandler {
 		if (Game.getInstance() != null) {
 			// Obtain a lock on the game instance
 			synchronized(Game.getInstance()) {
-				Game.getInstance().gameOver(a1, a2);
+				((MultiPlayerGame) Game.getInstance())
+						.setPassedCollidingAircraft(new Aircraft[] {a1, a2});
+				((MultiPlayerGame) Game.getInstance()).setExitingToGameOver();
 			}
 		}
 	}
@@ -191,7 +193,7 @@ public abstract class InstructionHandler {
 		if (Game.getInstance() != null) {
 			// Obtain a lock on the game instance
 			synchronized(Game.getInstance()) {
-				Game.getInstance().close();
+				((MultiPlayerGame) Game.getInstance()).setExitingToLobby();
 			}
 		}
 	}

@@ -78,6 +78,14 @@ public class MultiPlayerGame extends Game {
 	
 	/** A sprite animation to handle the frame by frame drawing of the explosion */
 	private SpriteAnimation explosionAnim;
+	
+	/** Whether the game is about to exit to the lobby */
+	private boolean exitingToLobby;
+	
+	/** Whether the game is about to exit to game over */
+	private boolean exitingToGameOver;
+	
+	private Aircraft[] passedCollidingAircraft;
 
 
 	/**
@@ -118,6 +126,9 @@ public class MultiPlayerGame extends Game {
 	@Override
 	public void start() {
 		super.start();
+		
+		exitingToLobby = false;
+		exitingToGameOver = false;
 
 		// Set up the network manager
 		NetworkManager.startThread();
@@ -206,6 +217,16 @@ public class MultiPlayerGame extends Game {
 
 	@Override
 	public void update(double timeDifference) {
+		if (exitingToLobby) {
+			exitingToLobby = false;
+			Main.closeScene();
+		}
+		
+		if (exitingToGameOver) {
+			exitingToGameOver = false;
+			gameOver(passedCollidingAircraft[0], passedCollidingAircraft[1]);
+		}
+		
 		// Update powerups
 		powerupGenerationTimeElapsed += timeDifference;
 
@@ -473,19 +494,6 @@ public class MultiPlayerGame extends Game {
 	}
 
 	/**
-	 * Checks if either player has run out of lives.
-	 * @return <code>true</code> if either player has run out of lives,
-	 * 			otherwise <code>false</code>
-	 */
-	public boolean checkLives() {
-		if (player.getLives() == 0 || opposingPlayer.getLives() == 0) {
-			return true;
-		} else {
-			return false;
-		}
-	}
-
-	/**
 	 * Checks if an aircraft has flown over a waypoint which is holding a powerup.
 	 * <p>
 	 * If so, the powerup is added to the appropriate player and removed from
@@ -568,21 +576,19 @@ public class MultiPlayerGame extends Game {
 
 	@Override
 	public void gameOver(Aircraft plane1, Aircraft plane2) {
-		if (checkLives()) {
-			player.getAircraft().clear();
-			opposingPlayer.getAircraft().clear();
+		player.getAircraft().clear();
+		opposingPlayer.getAircraft().clear();
 
-			for (Airport airport : player.getAirports()) {
-				airport.clear();
-			}
-
-			for (Airport airport : opposingPlayer.getAirports()) {
-				airport.clear();
-			}
-			
-			endGameInstruction = "GAME_OVER";
-			super.gameOver(plane1, plane2);
+		for (Airport airport : player.getAirports()) {
+			airport.clear();
 		}
+
+		for (Airport airport : opposingPlayer.getAirports()) {
+			airport.clear();
+		}
+
+		endGameInstruction = "GAME_OVER";
+		super.gameOver(plane1, plane2);
 	}
 
 
@@ -721,6 +727,18 @@ public class MultiPlayerGame extends Game {
 
 	public Player getOpposingPlayer() {
 		return opposingPlayer;
+	}
+	
+	public void setPassedCollidingAircraft(Aircraft[] aircraft) {
+		passedCollidingAircraft = aircraft;
+	}
+	
+	public void setExitingToLobby() {
+		exitingToLobby = true;
+	}
+	
+	public void setExitingToGameOver() {
+		exitingToGameOver = true;
 	}
 
 
