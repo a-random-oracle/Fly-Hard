@@ -5,7 +5,7 @@ import java.util.ArrayList;
 
 public class FlightPlan implements Serializable {
 	
-	// TODO last updated: 2014.03.19 23:45
+	/** Serialisation ID */
 	private static final long serialVersionUID = 1991043602981895063L;
 
 	/** The waypoints the aircraft following this path will pass through */

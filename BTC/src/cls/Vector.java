@@ -10,7 +10,7 @@ import scn.Game;
  */
 public class Vector implements Serializable {
 	
-	// TODO last updated: 2014.03.19 23:45
+	/** Serialisation ID */
 	private static final long serialVersionUID = -5086652815637818053L;
 
 	/** The vector's x position */

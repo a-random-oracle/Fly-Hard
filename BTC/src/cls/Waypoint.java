@@ -7,7 +7,7 @@ import lib.jog.window;
 
 public class Waypoint implements Serializable {
 	
-	// TODO last updated: 2014.03.19 23:45
+	/** Serialisation ID */
 	private static final long serialVersionUID = 1413476488063120300L;
 
 	/** Leniency to allow mouse input to be accepted in a small area around the waypoint  */

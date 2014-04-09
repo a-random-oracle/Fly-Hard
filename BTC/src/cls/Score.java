@@ -6,7 +6,7 @@ import cls.Aircraft;
 
 public class Score implements Serializable {
 
-	// TODO last updated: 2014.04.06 01:15
+	/** Serialisation ID */
 	private static final long serialVersionUID = -1518491377911752885L;
 	
 	private int totalScore = 0;
