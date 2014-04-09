@@ -283,6 +283,9 @@ public abstract class NetworkManager {
 				if (connection.getHeaderField("fh-client-messages") != null
 						&& !"".equals(connection
 								.getHeaderField("fh-client-messages"))) {
+					
+					print("Received response: " + connection
+							.getHeaderField("fh-client-messages"));
 					InstructionHandler.handleInstruction(connection
 							.getHeaderField("fh-client-messages"));
 				}
