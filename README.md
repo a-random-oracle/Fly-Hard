@@ -9,7 +9,7 @@ Mission Control - Server Branch
 | Item | Remarks | Affects | Due |
 |:-----|:--------|:--------|----:|
 | Get startup times synchronised ✔ | Currently when one player starts multiplayer before the other, they will just enter the game early. It would be better to have them wait until all players are ready (and then start all players at once). | Server | __Complete__ |
-| Get game exits synchronised | The game should stop for both players when either one exits early. | Server and clients | This weekend |
+| Get game exits synchronised ✔ | The game should stop for both players when either one exits early. | Server and clients | __Complete__ |
 | Get different screen sizes working | At present, waypoints etc. appear in a subsection of the screen when viewed from a larger monitor. | Clients | Easter weekend |
 | Add a game lobby | It would be nice if players could select which opponent they wish to play. | Server and clients | Some point in the near future |
 
