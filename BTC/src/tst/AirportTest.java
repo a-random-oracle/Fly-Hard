@@ -29,7 +29,7 @@ public class AirportTest {
 				new Waypoint(75, 25, false),
 				new Waypoint(50,50, false)};
 		
-		test_aircraft = new Aircraft("testAircraft", "Berlin", "Dublin",
+		test_aircraft = new Aircraft("TSTAircraft", "TestAir", "Berlin", "Dublin",
 				new Waypoint(100, 100, true), new Waypoint(0, 0, true),
 				10.0, waypointList, DifficultySetting.MEDIUM, null, null);			
 	}

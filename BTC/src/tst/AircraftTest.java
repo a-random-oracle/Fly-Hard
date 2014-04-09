@@ -26,7 +26,7 @@ public class AircraftTest {
 				new Waypoint(75, 25, false),
 				new Waypoint(50, 50, false)};
 		
-		testAircraft = new Aircraft("testAircraft", "Berlin", "Dublin",
+		testAircraft = new Aircraft("TSTAircraft", "TestAir", "Berlin", "Dublin",
 				new Waypoint(100, 100, true), new Waypoint(0, 0, true),
 				10.0, waypointList, DifficultySetting.MEDIUM, null, null);
 	}
@@ -104,7 +104,7 @@ public class AircraftTest {
 				new Waypoint(75, 25, false),
 				new Waypoint(50,50, false)};
 		
-		testAircraft = new Aircraft("testAircraft", "Berlin", "Dublin",
+		testAircraft = new Aircraft("TSTAircraft", "TestAir", "Berlin", "Dublin",
 				new Waypoint(100, 100, true), new Waypoint(0, 0, true),
 				10.0, waypointList, DifficultySetting.MEDIUM, null, null);
 		
@@ -147,7 +147,7 @@ public class AircraftTest {
 				new Waypoint(675, 125, false),
 				new Waypoint(530,520, false)};
 		
-		testAircraft = new Aircraft("testAircraft", "Berlin", "Dublin",
+		testAircraft = new Aircraft("TSTAircraft", "TestAir", "Berlin", "Dublin",
 				new Waypoint(100, 100, true), new Waypoint(0, 0, true),
 				10.0, waypointList, DifficultySetting.MEDIUM, null, null);
 		
