@@ -560,20 +560,22 @@ public class MultiPlayerGame extends Game {
 
 	@Override
 	public void gameOver(Aircraft plane1, Aircraft plane2) {
-		player.getAircraft().clear();
-		opposingPlayer.getAircraft().clear();
+		if (player.getLives() == 0 || opposingPlayer.getLives() == 0) {
+			player.getAircraft().clear();
+			opposingPlayer.getAircraft().clear();
 
-		for (Airport airport : player.getAirports()) {
-			airport.clear();
+			for (Airport airport : player.getAirports()) {
+				airport.clear();
+			}
+
+			for (Airport airport : opposingPlayer.getAirports()) {
+				airport.clear();
+			}
+
+			endGameInstruction = "GAME_OVER:" + plane1.getName()
+					+ ":" + plane2.getName();
+			super.gameOver(plane1, plane2);
 		}
-
-		for (Airport airport : opposingPlayer.getAirports()) {
-			airport.clear();
-		}
-
-		endGameInstruction = "GAME_OVER:" + plane1.getName()
-				+ ":" + plane2.getName();
-		super.gameOver(plane1, plane2);
 	}
 
 
