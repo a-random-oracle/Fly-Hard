@@ -55,7 +55,7 @@ public abstract class Game extends Scene {
 	public enum DifficultySetting {EASY, MEDIUM, HARD}
 
 	/** The default maximum number of aircraft */
-	public static final int DEFAULT_MAX_AIRCRAFT = 2;
+	public static final int DEFAULT_MAX_AIRCRAFT = 6;
 
 	/** The current difficulty setting */
 	protected DifficultySetting difficulty;
@@ -310,7 +310,7 @@ public abstract class Game extends Scene {
 
 		// Draw individual map features
 		drawMapFeatures();
-
+		
 		// Reset the viewport - these statistics can appear outside the game
 		// area
 		graphics.setViewport();
@@ -320,7 +320,7 @@ public abstract class Game extends Scene {
 		// PLEASE DO NOT REMOVE - this is very useful for debugging
 		out.draw();
 	}
-	
+
 	/**
 	 * Draws map features.
 	 */
@@ -575,7 +575,7 @@ public abstract class Game extends Scene {
 					if (player.getSelectedAircraft().isManuallyControlled()) {
 						toggleManualControl(player);
 					} else {
-						deselectAircraft(player);					
+						deselectAircraft(player);
 					}
 				}
 			}
@@ -734,15 +734,15 @@ public abstract class Game extends Scene {
 			return (30 / (player.getMaxAircraft() * 2));
 		case HARD:
 			// Planes move 3x faster on hard so this makes them spawn
-			// 3 times as often to keep the ratio 
+			// 3 times as often to keep the ratio
 			return (30 / (player.getMaxAircraft() * 3) );
 		default:
 			return (30 / player.getMaxAircraft());
-		}	
+		}
 	}
 
 	/**
-	 * Creates a new aircraft object and introduces it to the airspace. 
+	 * Creates a new aircraft object and introduces it to the airspace.
 	 */
 	protected void generateFlight(Player player) {
 		Aircraft aircraft = createAircraft(player);
@@ -830,11 +830,55 @@ public abstract class Game extends Scene {
 			destinationAirport = (Airport) destinationPoint;
 		}
 
-		// Generate a unique, random flight name
+		String carrier = "";
+		String carrierTag = "";
+
+		// Assign a random airline to the flight and generate tag for flightName.
+		switch((int)(Math.random() * 8)) {		//Generates random number between 0-5
+			case 0:
+				carrier = "Doge Air";
+				carrierTag = "DG";
+				break;
+			case 1:
+				carrier = "Britaniair";
+				carrierTag = "BA";
+				break;
+			case 2:
+				carrier = "KDT";
+				carrierTag = "KT";
+				break;
+			case 3:
+				carrier = "Canadair";
+				carrierTag = "CA";
+				break;
+			case 4:
+				carrier = "Wandairline";
+				carrierTag = "WZ";
+				break;
+			case 5:
+				carrier = "Wow Such Air";
+				carrierTag = "WW";
+				break;
+			case 6:
+				carrier = "Planet Express";
+				carrierTag = "PX";
+				break;
+			case 7:
+				carrier = "Aerobonia";
+				carrierTag = "AR";
+				break;
+			default:
+				Exception e = new Exception("Invalid carrier: " + carrier
+					+ ".");
+					e.printStackTrace();
+					break;
+		}
+
+		// Generate a unique, random flight name, using carrierTag as prefix
 		String name = "";
 		boolean nameTaken = true;
 		while (nameTaken) {
-			name = "Flight " + (int)(Main.getRandom().nextInt(900) + 100);
+			name = carrierTag + String.format("%03d", (int)(1 + (Math.random() * 999)));
 			nameTaken = false;
 
 			// Check the generated name against every other flight name
@@ -844,9 +888,9 @@ public abstract class Game extends Scene {
 		}
 
 		// Generate a random speed, centred around 37
-		int speed = 32 + (Main.getRandom().nextInt(10));
+		int speed = 32 + (int)(10 * Math.random());
 
-		return new Aircraft(name, destinationName, originName,
+		return new Aircraft(name, carrier, destinationName, originName,
 				destinationPoint, originPoint, speed,
 				player.getWaypoints(), difficulty, originAirport,
 				destinationAirport);
@@ -905,7 +949,7 @@ public abstract class Game extends Scene {
 	 * @param player
 	 * 			the player whose entry points should be checked
 	 * @return a list of available entry points
-	 */	
+	 */
 	public ArrayList<Waypoint> getAvailableEntryPoints(Player player) {
 		ArrayList<Waypoint> availableEntryPoints = new ArrayList<Waypoint>();
 
@@ -926,12 +970,12 @@ public abstract class Game extends Scene {
 				if (aircraft.currentTarget.equals(entryPoint.getLocation())
 						|| aircraft.isCloseToEntry(entryPoint.getLocation())) {
 					isAvailable = false;
-				}	
+				}
 			}
 
 			if (isAvailable) {
 				availableEntryPoints.add(entryPoint);
-			}	
+			}
 		}
 		return availableEntryPoints;
 	}
@@ -1099,7 +1143,7 @@ public abstract class Game extends Scene {
 	public Player getCurrentPlayer() {
 		return player;
 	}
-	
+
 	/**
 	 * Gets a list of all aircraft in the airspace.
 	 * @return a list of all the aircraft in the airspace
@@ -1149,7 +1193,7 @@ public abstract class Game extends Scene {
 
 		return playersLocationWaypoints;
 	}
-	
+
 	/**
 	 * Gets a player from an aircraft.
 	 * @param aircraft
@@ -1165,7 +1209,7 @@ public abstract class Game extends Scene {
 		
 		return null;
 	}
-	
+
 	/**
 	 * Gets a player from an airport.
 	 * @param airport
@@ -1178,10 +1222,10 @@ public abstract class Game extends Scene {
 				return player;
 			}
 		}
-		
+
 		return null;
 	}
-	
+
 	/**
 	 * Gets a list of all airports in the airspace.
 	 * @return a list of all the airports in the airspace
@@ -1216,7 +1260,7 @@ public abstract class Game extends Scene {
 	/**
 	 * This method should only be used for unit testing (avoiding instantiation of main class).
 	 * Its purpose is to initialise the list of aircraft.
-	 */	
+	 */
 	@Deprecated
 	public abstract void initializeAircraftArray();
 

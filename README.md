@@ -4,7 +4,11 @@ Mission Control - Server Branch
 ## Notices
 * People will need to get themselves set up with Openshift accounts if they want access to the server ([Openshift Sign Up](https://www.openshift.com/app/account/new)). Once you have an account, text/message me and I'll add you to the list of collaborators on the server.
 
-## To Do
+* `Aircraft.java` now has an extra attribute, `carrier`.
+ * This will now alter the `flightNumber` and instantiation in `Game.java`.
+* Due to the fact I hadn't pulled in 10 days, the `iOS7` branch was making me cry, so I gave up and started afresh.
+* I will be changing `aircraft.java` in order to better accomodate a flightstrip system.
+* Things will get funky.
 
 | Item | Remarks | Affects | Due |
 |:-----|:--------|:--------|----:|

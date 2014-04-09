@@ -55,6 +55,8 @@ public class Aircraft implements Serializable {
 	 * number between 100 and 900. */
 	private String flightName;
 
+	private String airline;
+
 	/** The aircraft's current position */
 	private Vector position;
 
@@ -125,13 +127,14 @@ public class Aircraft implements Serializable {
 	 * @param destinationAirport
 	 * 			the airport this flight is heading towards at
 	 */
-	public Aircraft(String name, String nameDestination, String nameOrigin,
+	public Aircraft(String name, String carrier, String nameDestination, String nameOrigin,
 			Waypoint destinationPoint, Waypoint originPoint,
 			double speed, Waypoint[] sceneWaypoints,
 			DifficultySetting difficulty, Airport originAirport,
 			Airport destinationAirport) {
 
 		this.flightName = name;
+    this.airline = carrier;
 		this.flightPlan = new FlightPlan(sceneWaypoints, nameOrigin,
 				nameDestination, originPoint, destinationPoint, originAirport,
 				destinationAirport);
@@ -311,7 +314,7 @@ public class Aircraft implements Serializable {
 	public boolean isOutOfPlayersAirspace() {
 		double x = position.getX() + Game.getXOffset();
 		Player player = null;
-		
+
 		if (Game.getInstance() != null) {
 			player = Game.getInstance().getPlayerFromAircraft(this);
 		}
@@ -394,6 +397,8 @@ public class Aircraft implements Serializable {
 		if (flightPlan.getDestinationAirport() != null) { // At airport
 			return flightPlan.getDestinationAirport().isWithinArrivals(position, false);
 		} else {
+			// System.out.println(this.airline);
+			// System.out.println(this.flightName);
 			return isAt(flightPlan.getDestination());
 		}
 	}
@@ -656,7 +661,7 @@ public class Aircraft implements Serializable {
 	 * @param modified
 	 *            the index of the waypoint being modified
 	 * @param mouseX
-			
+
 	 *            the current x position of the mouse
 	 * @param mouseY
 	 *            the current y position of the mouse
@@ -755,7 +760,7 @@ public class Aircraft implements Serializable {
 			isManuallyControlled = false;
 		} else {
 			isManuallyControlled = !isManuallyControlled;
-			
+
 			if (isManuallyControlled) {
 				setBearing(getBearing());
 			} else {
