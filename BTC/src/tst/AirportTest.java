@@ -22,15 +22,16 @@ public class AirportTest {
 	public void setUp() {
 		test_airport = new Airport("", window.width(), window.height());
 		
-		Waypoint[] waypointList = new Waypoint[]{
-				new Waypoint(0, 0, true),
-				new Waypoint(100, 100, true),
-				new Waypoint(25, 75, false),
-				new Waypoint(75, 25, false),
-				new Waypoint(50,50, false)};
+		Waypoint[] waypointList = new Waypoint[] {
+				new Waypoint(0, 0, true, false),
+				new Waypoint(100, 100, true, false),
+				new Waypoint(25, 75, false, false),
+				new Waypoint(75, 25, false, false),
+				new Waypoint(50,50, false, false)
+		};
 		
 		test_aircraft = new Aircraft("TSTAircraft", "TestAir", "Berlin", "Dublin",
-				new Waypoint(100, 100, true), new Waypoint(0, 0, true),
+				new Waypoint(100, 100, true, false), new Waypoint(0, 0, true, false),
 				10.0, waypointList, DifficultySetting.MEDIUM, null, null);			
 	}
 	

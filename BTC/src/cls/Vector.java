@@ -22,24 +22,46 @@ public class Vector implements Serializable {
 	/** The vector's z position */
 	private double z;
 	
+	
 	/**
 	 * Constructor for a vector.
-	 * @param x the vector's x position
-	 * @param y the vector's y position
-	 * @param z the vector's z position
+	 * @param x
+	 * 			the vector's x position
+	 * @param y
+	 * 			the vector's y position
+	 * @param z
+	 * 			the vector's z position
 	 */
 	public Vector(double x, double y, double z) {
+		this.x = x / (window.width() - (2 * Game.X_OFFSET));
+		this.y = y / (window.height() - (2 * Game.Y_OFFSET));
+		this.z = z;
+	}
+	
+	/**
+	 * Constructor for a relative vector.
+	 * @param x
+	 * 			the vector's x position
+	 * @param y
+	 * 			the vector's y position
+	 * @param z
+	 * 			the vector's z position
+	 * @param relative
+	 * 			this value is ignored
+	 */
+	public Vector(double x, double y, double z, boolean valueIgnored) {
 		this.x = x;
 		this.y = y;
 		this.z = z;
 	}
+	
 	
 	/**
 	 * Gets the x position of the vector.
 	 * @return the x position of the vector
 	 */
 	public double getX() {
-		return x;
+		return x * (window.width() - (2 * Game.X_OFFSET));
 	}
 
 	/**
@@ -47,7 +69,7 @@ public class Vector implements Serializable {
 	 * @return the y position of the vector
 	 */
 	public double getY() {
-		return y;
+		return y * (window.height() - (2 * Game.Y_OFFSET));
 	}
 	
 	/**
@@ -60,7 +82,8 @@ public class Vector implements Serializable {
 	
 	/**
 	 * Sets the z value of the vector.
-	 * @param z the z value to be set
+	 * @param z
+	 * 		the z value to be set
 	 */
 	public void setZ(double z) {
 		this.z = z;
@@ -92,7 +115,8 @@ public class Vector implements Serializable {
 	
 	/**
 	 * Scales the vector by a given scalar.
-	 * @param n the scalar to scale by
+	 * @param n
+	 * 			the scalar to scale by
 	 * @return the scaled vector
 	 */
 	public Vector scaleBy(double n) {
@@ -101,7 +125,8 @@ public class Vector implements Serializable {
 	
 	/**
 	 * Adds two vectors together.
-	 * @param v a vector to be added
+	 * @param v
+	 * 			a vector to be added
 	 * @return the sum of the vectors
 	 */
 	public Vector add(Vector v) {
@@ -112,7 +137,8 @@ public class Vector implements Serializable {
 	
 	/**
 	 * Subtracts two vectors
-	 * @param v a vector to be subtracted
+	 * @param v
+	 * 			a vector to be subtracted
 	 * @return the result of the subtractions
 	 */
 	public Vector sub(Vector v) {
@@ -123,30 +149,21 @@ public class Vector implements Serializable {
 	
 	/**
 	 * Gets the angle between this vector and a specified vector.
-	 * @param v the vector to find the angle to
+	 * @param v
+	 * 			the vector to find the angle to
 	 * @return the angle between this vector and another
 	 */
 	public double angleBetween(Vector v) {
-		double a = Math.acos((getX()*v.x + getY()*v.y + getZ()*v.z)
+		double a = Math.acos((getX()*v.getX() + getY()*v.getY() + getZ()*v.getZ())
 				/ (magnitude() * v.magnitude()));
 		
-		return (v.y < y) ? a * -1 : a;
-	}
-	
-	/**
-	 * Maps between a position on the target screen and the actual screen.
-	 */
-	public Vector remapPosition() {
-		double newX = (window.width() - (2 * Game.getXOffset())) * getX();
-		
-		double newY = (window.height() - (2 * Game.getYOffset())) * getY();
-		
-		return new Vector(newX, newY, getZ());
+		return (v.getY() < getY()) ? a * -1 : a;
 	}
 	
 	/**
 	 * Checks a vector for equality with this vector.
-	 * @param o the object to be tested for equality
+	 * @param o
+	 * 			the object to be tested for equality
 	 * @return a boolean result of the equality test
 	 */
 	@Override

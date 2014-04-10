@@ -25,6 +25,12 @@ import btc.Main;
 
 public abstract class Game extends Scene {
 
+	/** The distance between the left edge of the screen and the map area */
+	public final static int X_OFFSET = 196;
+
+	/** The distance between the top edge of the screen and the map area */
+	public final static int Y_OFFSET = 48;
+	
 	/** The image to use for aircraft */
 	public static Image aircraftImage;
 
@@ -41,12 +47,6 @@ public abstract class Game extends Scene {
 	// these variables are needed to manually adjust mouse listeners and elements
 	// drawn outside the airspace so that they align with the airspace elements.
 	// These variables can be used to adjust the size of the airspace view.
-
-	/** The distance between the left edge of the screen and the map area */
-	protected static int xOffset;
-
-	/** The distance between the top edge of the screen and the map area */
-	protected static int yOffset;
 
 	// PLEASE DO NOT REMOVE - this is very useful for debugging
 	public static OrdersBox out;
@@ -103,10 +103,6 @@ public abstract class Game extends Scene {
 
 		this.difficulty = difficulty;
 
-		// Set screen offsets
-		xOffset = 196;
-		yOffset = 48;
-
 		// Define airports
 		airports = new Airport[] {
 				new Airport("Mosgrizzly Airport", (1d/7d), (1d/2d)),
@@ -116,28 +112,28 @@ public abstract class Game extends Scene {
 		// Define entry and exit points
 		locationWaypoints = new Waypoint[] {
 				new Waypoint(8, 8,
-						true, "North West Top Leftonia"),
-				new Waypoint(8, window.height() - (2 * yOffset) - 4,
-						true, "100 Acre Woods"),
-				new Waypoint(window.width() - (2 * xOffset) - 4, 8,
-						true, "City of Rightson"),
-				new Waypoint(window.width() - (2 * xOffset) - 4,
-						window.height() - (2 * yOffset) - 4,
-						true, "South Sea"), airports[0], airports[1]
+						true, "North West Top Leftonia", false),
+				new Waypoint(8, window.height() - (2 * Y_OFFSET) - 4,
+						true, "100 Acre Woods", false),
+				new Waypoint(window.width() - (2 * X_OFFSET) - 4, 8,
+						true, "City of Rightson", false),
+				new Waypoint(window.width() - (2 * X_OFFSET) - 4,
+						window.height() - (2 * Y_OFFSET) - 4,
+						true, "South Sea", false), airports[0], airports[1]
 		};
 
 		// Define other waypoints
 		airspaceWaypoints = new Waypoint[] {
-				new Waypoint(0.09766, 0.18229, false),
-				new Waypoint(0.15625, 0.66146, false),
-				new Waypoint(0.19531, 0.41667, false),
-				new Waypoint(0.39062, 0.20833, false), //middle waypoints
-				new Waypoint(0.39063, 0.68229, false), //middle waypoints
-				new Waypoint(0.54688, 0.10417, false),
-				new Waypoint(0.62500, 0.78125, false),
-				new Waypoint(0.78125, 0.78125, false),
-				new Waypoint(0.81250, 0.15625, false),
-				new Waypoint(0.82031, 0.41667, false)
+				new Waypoint(0.09766, 0.18229, false, true),
+				new Waypoint(0.15625, 0.66146, false, true),
+				new Waypoint(0.19531, 0.41667, false, true),
+				new Waypoint(0.39062, 0.20833, false, true), //middle waypoints
+				new Waypoint(0.39063, 0.68229, false, true), //middle waypoints
+				new Waypoint(0.54688, 0.10417, false, true),
+				new Waypoint(0.62500, 0.78125, false, true),
+				new Waypoint(0.78125, 0.78125, false, true),
+				new Waypoint(0.81250, 0.15625, false, true),
+				new Waypoint(0.82031, 0.41667, false, true)
 		};
 	}
 
@@ -154,8 +150,8 @@ public abstract class Game extends Scene {
 		locationWaypointMap = new Hashtable<Integer, Integer>();
 
 		// Set up variables
-		out = new OrdersBox(window.width() - xOffset + 20,
-				yOffset, xOffset - 40, window.height() - (2 * yOffset), 30);
+		out = new OrdersBox(window.width() - X_OFFSET + 20,
+				Y_OFFSET, X_OFFSET - 40, window.height() - (2 * Y_OFFSET), 30);
 		paused = false;
 
 		if (!Main.testing) {
@@ -296,12 +292,12 @@ public abstract class Game extends Scene {
 	public void draw() {
 		// Draw the rectangle surrounding the map area
 		graphics.setColour(graphics.green);
-		graphics.rectangle(false, xOffset, yOffset, window.width() - (2 * xOffset),
-				window.height() - (2 * yOffset));
+		graphics.rectangle(false, X_OFFSET, Y_OFFSET, window.width() - (2 * X_OFFSET),
+				window.height() - (2 * Y_OFFSET));
 
 		// Set the viewport - this is the boundary used when drawing objects
-		graphics.setViewport(xOffset, yOffset, window.width() - (2 * xOffset),
-				window.height() - (2 * yOffset));
+		graphics.setViewport(X_OFFSET, Y_OFFSET, window.width() - (2 * X_OFFSET),
+				window.height() - (2 * Y_OFFSET));
 
 		// Draw the map background
 		graphics.setColour(255, 255, 255, 48);
@@ -367,8 +363,8 @@ public abstract class Game extends Scene {
 					&& !player.getSelectedAircraft().isManuallyControlled()) {
 				player.getSelectedAircraft().drawModifiedPath(
 						player.getSelectedPathpoint(),
-						input.mouseX() - xOffset,
-						input.mouseY() - yOffset);
+						input.mouseX() - X_OFFSET,
+						input.mouseY() - Y_OFFSET);
 			}
 
 			// Draw the selected aircraft's flight path
@@ -447,10 +443,10 @@ public abstract class Game extends Scene {
 			graphics.setColour(graphics.green);
 			// Display the manual control button
 			graphics.setColour(graphics.black);
-			graphics.rectangle(true, (window.width() - 128 - (2 * xOffset)) / 2,
+			graphics.rectangle(true, (window.width() - 128 - (2 * X_OFFSET)) / 2,
 					32, 128, 32);
 			graphics.setColour(graphics.green);
-			graphics.rectangle(false, (window.width() - 128 - (2 * xOffset)) / 2,
+			graphics.rectangle(false, (window.width() - 128 - (2 * X_OFFSET)) / 2,
 					32, 128, 32);
 			manualControlButton.draw();
 		}
@@ -475,7 +471,7 @@ public abstract class Game extends Scene {
 				+ df.format(seconds);
 
 		// Print this to the screen
-		graphics.print(timePlayed, window.width() - xOffset
+		graphics.print(timePlayed, window.width() - X_OFFSET
 				- (timePlayed.length() * 8 + 32), 32);
 
 		// Print the highlighted altitude to the screen TODO <- check with Mark
@@ -484,11 +480,11 @@ public abstract class Game extends Scene {
 
 		// Print the number of aircraft in the airspace to the screen
 		graphics.print(String.valueOf(aircraftCount)
-				+ " aircraft in the airspace.", 32 + xOffset, 32);
+				+ " aircraft in the airspace.", 32 + X_OFFSET, 32);
 
 		// Print the current player
 		graphics.printCentred("Currently playing as player: " + player.getName(),
-				(((double) window.width() - (2 * xOffset)) / 2), 32d, 1, 300);
+				(((double) window.width() - (2 * X_OFFSET)) / 2), 32d, 1, 300);
 	}
 
 	/**
@@ -609,10 +605,10 @@ public abstract class Game extends Scene {
 			player.setSelectedWaypoint(null);
 		} else if (key == input.MOUSE_RIGHT) {
 			if (player.isCompassClicked() && player.getSelectedAircraft() != null) {
-				double dx = (input.mouseX() - xOffset)
+				double dx = (input.mouseX() - X_OFFSET)
 						- player.getSelectedAircraft().getPosition().getX()
 						- 8;
-				double dy = (input.mouseY() - yOffset)
+				double dy = (input.mouseY() - Y_OFFSET)
 						- player.getSelectedAircraft().getPosition().getY()
 						- 8;
 				double newBearing = Math.atan2(dy, dx);
@@ -1013,8 +1009,8 @@ public abstract class Game extends Scene {
 	 */
 	protected boolean compassClicked(int x, int y, Aircraft aircraft) {
 		if (aircraft != null) {
-			double dx = aircraft.getPosition().getX() - x + xOffset;
-			double dy = aircraft.getPosition().getY() - y + yOffset;
+			double dx = aircraft.getPosition().getX() - x + X_OFFSET;
+			double dy = aircraft.getPosition().getY() - y + Y_OFFSET;
 			int r = Aircraft.COMPASS_RADIUS;
 			return  dx*dx + dy*dy < r*r;
 		}
@@ -1049,7 +1045,7 @@ public abstract class Game extends Scene {
 	 */
 	protected Aircraft findClickedAircraft(int x, int y, Player player) {
 		for (Aircraft a : player.getAircraft()) {
-			if (a.isMouseOver(x - xOffset, y - yOffset)) {
+			if (a.isMouseOver(x - X_OFFSET, y - Y_OFFSET)) {
 				return a;
 			}
 		}
@@ -1087,7 +1083,7 @@ public abstract class Game extends Scene {
 	 */
 	protected Waypoint findClickedWaypoint(int x, int y, Player player) {
 		for (Waypoint w : player.getWaypoints()) {
-			if (w.isMouseOver(x - xOffset, y - yOffset)) {
+			if (w.isMouseOver(x - X_OFFSET, y - Y_OFFSET)) {
 				return w;
 			}
 		}
@@ -1106,7 +1102,7 @@ public abstract class Game extends Scene {
 	 * 			pressed, otherwise <code>false</code>
 	 */
 	protected boolean manualOverridePressed(int x, int y, Player player) {
-		return manualControlButton.isMouseOver(x - xOffset, y - yOffset);
+		return manualControlButton.isMouseOver(x - X_OFFSET, y - Y_OFFSET);
 	}
 
 
@@ -1118,22 +1114,6 @@ public abstract class Game extends Scene {
 	 */
 	public static Game getInstance() {
 		return instance;
-	}
-
-	/**
-	 * Gets the horizontal offset of the game region.
-	 * @return the horizontal offset of the game region
-	 */
-	public static int getXOffset() {
-		return xOffset;
-	}
-
-	/**
-	 * Gets the vertical offset of the game region.
-	 * @return the vertical offset of the game region
-	 */
-	public static int getYOffset() {
-		return yOffset;
 	}
 
 	/**

@@ -111,9 +111,7 @@ public class Airport extends Waypoint implements EventHandler, Serializable {
 	 * 			should be located
 	 */
 	public Airport(String name, double x, double y) {
-		super(x * (window.width() - (2 * Game.getXOffset())),
-				y * (window.height() - (2 * Game.getYOffset())),
-				true, name);
+		super(x, y, true, name, true);
 		
 		double distToX = RELATIVE_ARRIVALS_X + (RELATIVE_ARRAVALS_WIDTH / 2);
 		double distToY = RELATIVE_ARRIVALS_Y + (RELATIVE_ARRIVALS_HEIGHT / 2);
@@ -334,8 +332,8 @@ public class Airport extends Waypoint implements EventHandler, Serializable {
 		return isWithinRect(
 				(int)position.getX(),
 				(int)position.getY(),
-				(int)(arrivalsX) + Game.getXOffset(),
-				(int)(arrivalsY) + Game.getYOffset(),
+				(int)(arrivalsX) + Game.X_OFFSET,
+				(int)(arrivalsY) + Game.Y_OFFSET,
 				(int)arrivalsWidth,
 				(int)arrivalsHeight);
 	}
@@ -371,8 +369,8 @@ public class Airport extends Waypoint implements EventHandler, Serializable {
 		return isWithinRect(
 				(int)position.getX(),
 				(int)position.getY(),
-				(int)(departuresX) + Game.getXOffset(),
-				(int)(departuresY) + Game.getYOffset(),
+				(int)(departuresX) + Game.X_OFFSET,
+				(int)(departuresY) + Game.Y_OFFSET,
 				(int)departuresWidth,
 				(int)departuresHeight);
 	}
@@ -446,7 +444,7 @@ public class Airport extends Waypoint implements EventHandler, Serializable {
 	 */
 	public Waypoint getDeparturesCentre() {
 		return new Waypoint(departuresX + (departuresWidth / 2),
-				departuresY + (departuresHeight / 2), true);
+				departuresY + (departuresHeight / 2), true, false);
 	}
 	
 	/**
@@ -454,9 +452,9 @@ public class Airport extends Waypoint implements EventHandler, Serializable {
 	 * @return the minimum scale
 	 */
 	public static double getMinScale() {
-		double xScale = (double)(window.width() - (2 * Game.getXOffset()))
+		double xScale = (double)(window.width() - (2 * Game.X_OFFSET))
 				/ (double)Main.TARGET_WIDTH;
-		double yScale = (double)(window.height() - (2 * Game.getYOffset()))
+		double yScale = (double)(window.height() - (2 * Game.Y_OFFSET))
 				/ (double)Main.TARGET_HEIGHT;
 		
 		return Math.min(xScale, yScale);

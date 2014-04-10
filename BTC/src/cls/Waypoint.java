@@ -25,6 +25,7 @@ public class Waypoint implements Serializable {
 	/** Marks whether the waypoint is an entry point, exit point or airport */
 	private boolean entryOrExit;
 	
+	
 	/**
 	 * Constructor for waypoints.
 	 * @param x
@@ -36,21 +37,20 @@ public class Waypoint implements Serializable {
 	 * 			enter and leave the airspace
 	 * @param name
 	 * 			the waypoint's name
+	 * @param relative
+	 * 			<code>true</code> if the co-ordinates are relative
+	 * 			to the screen
 	 */
-	public Waypoint(double x, double y, boolean entryOrExit, String name) {
-		this.waypointLocation = new Vector(x, y, 0);
+	public Waypoint(double x, double y, boolean entryOrExit,
+			String name, boolean relative) {
+		if (relative) {
+			this.waypointLocation = new Vector(x, y, 0, true);
+		} else {
+			this.waypointLocation = new Vector(x, y, 0);
+		}
+		
 		this.entryOrExit = entryOrExit;
 		this.name = name;
-		
-		// Scale points to fit on screen
-		// Entry and exit points are scaled automatically
-		if (!entryOrExit) {
-			System.out.println("Before X: " + waypointLocation.getX());
-			System.out.println("Before Y: " + waypointLocation.getY());
-			waypointLocation = waypointLocation.remapPosition();
-			System.out.println("After  X: " + waypointLocation.getX());
-			System.out.println("After  Y: " + waypointLocation.getY());
-		}
 	}
 	
 	/**
@@ -62,21 +62,19 @@ public class Waypoint implements Serializable {
 	 * @param entryOrExit
 	 * 			whether the waypoint is a point where planes may
 	 * 			enter and leave the airspace
+	 * @param relative
+	 * 			<code>true</code> if the co-ordinates are relative
+	 * 			to the screen
 	 */
-	public Waypoint(double x, double y, boolean entryOrExit) {
-		this.waypointLocation = new Vector(x, y, 0);
+	public Waypoint(double x, double y, boolean entryOrExit, boolean relative) {
+		if (relative) {
+			this.waypointLocation = new Vector(x, y, 0, true);
+		} else {
+			this.waypointLocation = new Vector(x, y, 0);
+		}
+		
 		this.entryOrExit = entryOrExit;
 		this.name = "";
-		
-		// Scale points to fit on screen
-		// Entry and exit points are scaled automatically
-		if (!entryOrExit) {
-			System.out.println("Before X: " + waypointLocation.getX());
-			System.out.println("Before Y: " + waypointLocation.getY());
-			waypointLocation = waypointLocation.remapPosition();
-			System.out.println("After  X: " + waypointLocation.getX());
-			System.out.println("After  Y: " + waypointLocation.getY());
-		}
 	}
 	
 	/**

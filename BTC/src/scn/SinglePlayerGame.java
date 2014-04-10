@@ -88,7 +88,7 @@ public class SinglePlayerGame extends Game {
 		};
 
 		manualControlButton = new ButtonText(" Take Control", manual,
-						(window.width() - 128 - (2 * xOffset)) / 2,
+						(window.width() - 128 - (2 * X_OFFSET)) / 2,
 						32, 128, 32, 8, 4);
 
 		// Reset game attributes for each player

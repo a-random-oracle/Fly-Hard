@@ -20,14 +20,14 @@ public class AircraftTest {
 	@Before
 	public void setUp() {
 		Waypoint[] waypointList = new Waypoint[]{
-				new Waypoint(0, 0, true),
-				new Waypoint(100, 100, true),
-				new Waypoint(25, 75, false),
-				new Waypoint(75, 25, false),
-				new Waypoint(50, 50, false)};
+				new Waypoint(0, 0, true, false),
+				new Waypoint(100, 100, true, false),
+				new Waypoint(25, 75, false, false),
+				new Waypoint(75, 25, false, false),
+				new Waypoint(50, 50, false, false)};
 		
 		testAircraft = new Aircraft("TSTAircraft", "TestAir", "Berlin", "Dublin",
-				new Waypoint(100, 100, true), new Waypoint(0, 0, true),
+				new Waypoint(100, 100, true, false), new Waypoint(0, 0, true, false),
 				10.0, waypointList, DifficultySetting.MEDIUM, null, null);
 	}
 	
@@ -97,15 +97,16 @@ public class AircraftTest {
 	// Test outOfBounds
 	@Test
 	public void testOutOfBounds() {
-		Waypoint[] waypointList = new Waypoint[]{
-				new Waypoint(0, 0, true),
-				new Waypoint(100, 100, true),
-				new Waypoint(25, 75, false),
-				new Waypoint(75, 25, false),
-				new Waypoint(50,50, false)};
+		Waypoint[] waypointList = new Waypoint[] {
+				new Waypoint(0, 0, true, false),
+				new Waypoint(100, 100, true, false),
+				new Waypoint(25, 75, false, false),
+				new Waypoint(75, 25, false, false),
+				new Waypoint(50,50, false, false)
+		};
 		
 		testAircraft = new Aircraft("TSTAircraft", "TestAir", "Berlin", "Dublin",
-				new Waypoint(100, 100, true), new Waypoint(0, 0, true),
+				new Waypoint(100, 100, true, false), new Waypoint(0, 0, true, false),
 				10.0, waypointList, DifficultySetting.MEDIUM, null, null);
 		
 		assertTrue("Out of bounds = false", testAircraft.isOutOfAirspaceBounds());
@@ -140,15 +141,16 @@ public class AircraftTest {
 	//Testing isCloseToEntry
 	@Test
 	public void isCloseToEntry() {
-		Waypoint[] waypointList = new Waypoint[]{
-				new Waypoint(0, 0, true),
-				new Waypoint(100, 100, true),
-				new Waypoint(25, 75, false),
-				new Waypoint(675, 125, false),
-				new Waypoint(530,520, false)};
+		Waypoint[] waypointList = new Waypoint[] {
+				new Waypoint(0, 0, true, false),
+				new Waypoint(100, 100, true, false),
+				new Waypoint(25, 75, false, false),
+				new Waypoint(675, 125, false, false),
+				new Waypoint(530,520, false, false)
+		};
 		
 		testAircraft = new Aircraft("TSTAircraft", "TestAir", "Berlin", "Dublin",
-				new Waypoint(100, 100, true), new Waypoint(0, 0, true),
+				new Waypoint(100, 100, true, false), new Waypoint(0, 0, true, false),
 				10.0, waypointList, DifficultySetting.MEDIUM, null, null);
 		
 		assertTrue(testAircraft.isCloseToEntry(waypointList[0].getLocation()));			

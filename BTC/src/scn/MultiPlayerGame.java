@@ -24,10 +24,10 @@ public class MultiPlayerGame extends Game {
 	private double timeToUpdate;
 
 	/** The y-coordinate at which the middle zone borders begin */
-	public static int yStart = window.height() - yOffset;
+	public static int yStart = window.height() - Y_OFFSET;
 
 	/** The y-coordinate at which the middle zone borders end */
-	public static int yEnd = yOffset;
+	public static int yEnd = Y_OFFSET;
 
 	/** The x-coordinate at which the left middle zone border is located */
 	public static int leftEntryX = (int) (window.width() * (3d/7d));
@@ -98,7 +98,7 @@ public class MultiPlayerGame extends Game {
 		};
 
 		manualControlButton = new ButtonText(" Take Control", manual,
-						(window.width() - 128 - (2 * xOffset)) / 2,
+						(window.width() - 128 - (2 * X_OFFSET)) / 2,
 						32, 128, 32, 8, 4);
 	}
 
