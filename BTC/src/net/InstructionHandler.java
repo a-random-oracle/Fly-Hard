@@ -218,8 +218,11 @@ public abstract class InstructionHandler {
 	 * 			the parameters accompanying the instruction
 	 */
 	private static void handleRemove(String parameters) {
-		Game.getInstance().getCurrentPlayer().getAircraft().remove(
-				Game.getInstance().getAircraftFromName(parameters));
+		// Obtain a lock on the aircraft array
+		synchronized (Game.getInstance().getCurrentPlayer().getAircraft()) {
+			Game.getInstance().getCurrentPlayer().getAircraft().remove(
+					Game.getInstance().getAircraftFromName(parameters));
+		}
 	}
 	
 	/**
