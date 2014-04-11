@@ -17,6 +17,7 @@ public abstract class InstructionHandler {
 	public static final String[] VALID_INSTRUCTIONS = new String[] {
 		"SETID",
 		"SETPOS",
+		"SETSEED",
 		"WAIT",
 		"PROCEED",
 		"END",
@@ -67,6 +68,9 @@ public abstract class InstructionHandler {
 			break;
 		case "SETPOS":
 			handleSetPos(instruction);
+			break;
+		case "SETSEED":
+			handleSetSeed(instruction);
 			break;
 		case "WAIT":
 			handleWait();
@@ -138,6 +142,26 @@ public abstract class InstructionHandler {
 
 		print("Playing as: " + Game.getInstance().getCurrentPlayer()
 				.getName());
+	}
+	
+	/**
+	 * Handles a SETSEED instruction.
+	 * @param instruction
+	 * 			the full SETSEED instruction
+	 */
+	private static void handleSetSeed(String instruction) {
+		// Get the player ID to set from the response
+		int seedToSet = 0;
+		try {
+			seedToSet = Integer.parseInt(instruction.split(DELIM)[1]);
+		} catch (Exception e) {
+			print(e);
+		}
+
+		// Set the current player's random seed
+		Main.setRandomSeed(seedToSet);
+
+		print("Using random seed: " + seedToSet);
 	}
 	
 	/**

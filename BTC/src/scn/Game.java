@@ -830,7 +830,7 @@ public abstract class Game extends Scene {
 		String carrierTag = "";
 
 		// Assign a random airline to the flight and generate tag for flightName.
-		switch((int)(Math.random() * 8)) {		//Generates random number between 0-5
+		switch(Main.getRandom().nextInt(8)) {		//Generates random number between 0-5
 			case 0:
 				carrier = "Doge Air";
 				carrierTag = "DG";
@@ -874,7 +874,7 @@ public abstract class Game extends Scene {
 		String name = "";
 		boolean nameTaken = true;
 		while (nameTaken) {
-			name = carrierTag + String.format("%03d", (int)(1 + (Math.random() * 999)));
+			name = carrierTag + String.format("%03d", (int)(1 + Main.getRandom().nextInt(999)));
 			nameTaken = false;
 
 			// Check the generated name against every other flight name
@@ -884,7 +884,7 @@ public abstract class Game extends Scene {
 		}
 
 		// Generate a random speed, centred around 37
-		int speed = 32 + (int)(10 * Math.random());
+		int speed = 32 + (int)(Main.getRandom().nextInt(10));
 
 		return new Aircraft(name, carrier, destinationName, originName,
 				destinationPoint, originPoint, speed,
