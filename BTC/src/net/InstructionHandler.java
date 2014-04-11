@@ -66,7 +66,7 @@ public abstract class InstructionHandler {
 		// Check if the received data has parameters
 		String parameters = null;
 		if (instruction != null && instruction.contains(DELIM)) {
-			parameters = instruction.substring(instruction.indexOf(DELIM));
+			parameters = instruction.substring(instruction.indexOf(DELIM) + 1);
 		}
 		
 		// Otherwise, switch to the appropriate method
