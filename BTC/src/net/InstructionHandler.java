@@ -209,7 +209,7 @@ public abstract class InstructionHandler {
 		Game.getInstance().getCurrentPlayer().getAircraft().add(
 				Game.getInstance().getAircraftFromName(parameters));
 		
-		NetworkManager.postMessage("REMOVE:" + parameters);
+		NetworkManager.postMessage("SEND:REMOVE:" + parameters);
 	}
 	
 	/**
