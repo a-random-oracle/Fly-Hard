@@ -179,7 +179,7 @@ public class MultiPlayerGame extends Game {
 		if (player.getSelectedAircraft() != null) {
 			if (input.isKeyDown(input.KEY_M)) {
 				// Send the transfer instruction to the opponent
-				NetworkManager.postMessage("SEND:TRANSFER"
+				NetworkManager.postMessage("SEND:TRANSFER:"
 						+ player.getSelectedAircraft().getName());
 			}
 		}
