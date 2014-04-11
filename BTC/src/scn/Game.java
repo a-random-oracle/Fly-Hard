@@ -324,12 +324,7 @@ public abstract class Game extends Scene {
 		drawAirports(player);
 		drawWaypoints(player);
 		drawAircraft(player);
-		
-		if (player.getSelectedAircraft() != null
-				&& player.getSelectedAircraft().isManuallyControlled()) {
-			player.getSelectedAircraft().drawCompass();
-		}
-		
+		drawSelectedAircraft();
 		drawManualControlButton(player);
 	}
 
@@ -354,22 +349,34 @@ public abstract class Game extends Scene {
 				aircraft.drawFlightPath(false);
 			}
 		}
-
-		// Handle the selected aircraft
+	}
+	
+	/**
+	 * Draws additional features around the selected aircraft.
+	 */
+	protected void drawSelectedAircraft() {
 		if (player.getSelectedAircraft() != null) {
-			// If the selected aircraft's flight path is being manipulated,
-			// draw the manipulated path
-			if (player.getSelectedWaypoint() != null
-					&& !player.getSelectedAircraft().isManuallyControlled()) {
-				player.getSelectedAircraft().drawModifiedPath(
-						player.getSelectedPathpoint(),
-						input.mouseX() - X_OFFSET,
-						input.mouseY() - Y_OFFSET);
+			// If the selected aircraft is under manual control,
+			// draw a directional compass around it
+			if (player.getSelectedAircraft().isManuallyControlled()) {
+				player.getSelectedAircraft().drawCompass();
 			}
 
-			// Draw the selected aircraft's flight path
-			player.getSelectedAircraft().drawFlightPath(true);
-			graphics.setColour(graphics.green);
+			if (player.getSelectedAircraft() != null) {
+				// If the selected aircraft's flight path is being manipulated,
+				// draw the manipulated path
+				if (player.getSelectedWaypoint() != null
+						&& !player.getSelectedAircraft().isManuallyControlled()) {
+					player.getSelectedAircraft().drawModifiedPath(
+							player.getSelectedPathpoint(),
+							input.mouseX() - X_OFFSET,
+							input.mouseY() - Y_OFFSET);
+				}
+
+				// Draw the selected aircraft's flight path
+				player.getSelectedAircraft().drawFlightPath(true);
+				graphics.setColour(graphics.green);
+			}
 		}
 	}
 

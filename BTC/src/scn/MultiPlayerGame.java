@@ -208,10 +208,7 @@ public class MultiPlayerGame extends Game {
 		drawAircraft(player);
 		drawAircraft(opposingPlayer);
 		
-		if (player.getSelectedAircraft() != null
-				&& player.getSelectedAircraft().isManuallyControlled()) {
-			player.getSelectedAircraft().drawCompass();
-		}
+		drawSelectedAircraft();
 		
 		drawManualControlButton(player);
 		drawManualControlButton(opposingPlayer);
