@@ -22,7 +22,7 @@ public class Airport extends Waypoint implements EventHandler, Serializable {
 	private static final double RELATIVE_ARRIVALS_Y = 36;
 	
 	/** The relative width of the arrivals area */
-	private static final double RELATIVE_ARRAVALS_WIDTH = 102;
+	private static final double RELATIVE_ARRIVALS_WIDTH = 102;
 	
 	/** The relative height of the arrivals area */
 	private static final double RELATIVE_ARRIVALS_HEIGHT = 53;
@@ -39,35 +39,14 @@ public class Airport extends Waypoint implements EventHandler, Serializable {
 	/** The relative height of the departures area */
 	private static final double RELATIVE_DEPARTURES_HEIGHT = 37;
 
-	/** The airport's x position (measured to the top-left of the image) */
-	private double xLocation;
+	/** The airport's position (measured to the top-left of the image) */
+	private Vector location;
 	
-	/** The airport's y position (measured to the top-left of the image) */
-	private double yLocation;
+	/** The airport's arrivals area's position (measured to the top-left of the image) */
+	private Vector arrivals;
 	
-	/** The absolute distance from the map edge to the left of the arrivals area */
-	private double arrivalsX;
-	
-	/** The absolute distance from the map edge to the top of the arrivals area */
-	private double arrivalsY;
-	
-	/** The width of the arrivals area */
-	private double arrivalsWidth;
-	
-	/** The height of the arrivals area */
-	private double arrivalsHeight;
-	
-	/** The absolute distance from the map edge to the left of the departures area */
-	private double departuresX;
-	
-	/** The absolute distance from the map edge to the top of the departures area */
-	private double departuresY;
-	
-	/** The width of the departures area */
-	private double departuresWidth;
-	
-	/** The height of the departures area */
-	private double departuresHeight;
+	/** The airport's departures area's position (measured to the top-left of the image) */
+	private Vector departures;
 	
 	/** Whether the airport currently in use - i.e. whether an aircraft is either
 	 * arriving or departing */
@@ -78,10 +57,6 @@ public class Airport extends Waypoint implements EventHandler, Serializable {
 	
 	/** Whether the departures area has been clicked */
 	private boolean isDeparturesClicked = false;
-	
-	/** The scaling factor to apply to cause the airport to 'fit in' with the map size
-	 * this is taken to be the smaller of the height and width scales */
-	private static double scale = getMinScale();
 	
 	/** A list of aircraft waiting to land at the airport */
 	public ArrayList<Aircraft> aircraftWaitingToLand = new ArrayList<Aircraft>();
@@ -113,23 +88,19 @@ public class Airport extends Waypoint implements EventHandler, Serializable {
 	public Airport(String name, double x, double y) {
 		super(x, y, true, name, true);
 		
-		double distToX = RELATIVE_ARRIVALS_X + (RELATIVE_ARRAVALS_WIDTH / 2);
+		double distToX = RELATIVE_ARRIVALS_X + (RELATIVE_ARRIVALS_WIDTH / 2);
 		double distToY = RELATIVE_ARRIVALS_Y + (RELATIVE_ARRIVALS_HEIGHT / 2);
 		
-		xLocation = getLocation().getX() - (distToX * scale);
-		yLocation = getLocation().getY() - (distToY * scale);
+		location = new Vector(getLocation().getX() - (distToX * getMinScale()),
+				getLocation().getY() - (distToY * getMinScale()), 0);
 		
 		// Scale the arrivals rectangle by the scaling factor
-		arrivalsX = xLocation + (RELATIVE_ARRIVALS_X * scale);
-		arrivalsY = yLocation + (RELATIVE_ARRIVALS_Y * scale);
-		arrivalsWidth = RELATIVE_ARRAVALS_WIDTH * scale;
-		arrivalsHeight = RELATIVE_ARRIVALS_HEIGHT * scale;
+		arrivals = new Vector(location.getX() + (RELATIVE_ARRIVALS_X * getMinScale()),
+				location.getY() + (RELATIVE_ARRIVALS_Y * getMinScale()), 0);
 		
 		// Scale the departures rectangle by the scaling factor
-		departuresX = xLocation + (RELATIVE_DEPARTURES_X * scale);
-		departuresY = yLocation + (RELATIVE_DEPARTURES_Y * scale);
-		departuresWidth = RELATIVE_DEPARTURES_WIDTH * scale;
-		departuresHeight = RELATIVE_DEPARTURES_HEIGHT * scale;
+		departures = new Vector(location.getX() + (RELATIVE_DEPARTURES_X * getMinScale()),
+				location.getY() + (RELATIVE_DEPARTURES_Y * getMinScale()), 0);
 	}
 	  
 	/** 
@@ -154,16 +125,10 @@ public class Airport extends Waypoint implements EventHandler, Serializable {
 	 * </p>
 	 */
 	@Override
-	public void draw(double windowWidth, double windowHeight) {
-		// Get the scales
-		double xScale = (window.width() / windowWidth);
-		double yScale = (window.height() / windowHeight);
-		
+	public void draw() {
 		// Draw the airport image, applying the scale factor
 		graphics.drawScaled(Game.airportImage,
-				xLocation * xScale,
-				yLocation * yScale,
-				scale);
+				getLocationX(), getLocationY(), getMinScale());
 		
 		int greenFine = 128;
 		int greenDanger = 0;
@@ -172,53 +137,63 @@ public class Airport extends Waypoint implements EventHandler, Serializable {
 		
 		// Draw the hangar button if plane is waiting (departing flights)
 		if (aircraftHangar.size() > 0) {
-			// Colour fades from green (fine) to red (danger) over 5 seconds as plane is waiting
-			int timeWaiting = (int)(Game.getInstance().getTime() - timeEntered.get(0));
+			// Colour fades from green (fine) to red (danger)
+			// over 5 seconds as plane is waiting
+			int timeWaiting = (int)(Game.getInstance().getTime()
+					- timeEntered.get(0));
+			
 			// Assume it hasn't been waiting
 			int greenNow = greenFine; 
 			int redNow = redFine;
+			
 			if (timeWaiting > 0) { // Prevent division by 0
 				if (timeWaiting >= 5) { // Cap at 5 seconds
 					greenNow = greenDanger;
 					redNow = redDanger;
 				} else {
 					// Colour between fine and danger, scaled by timeWaiting
-					greenNow = greenFine - (int)(Math.abs(greenFine-greenDanger) * (timeWaiting/5.0)); 
-					redNow = (int)(Math.abs(redFine-redDanger) * (timeWaiting/5.0));
+					greenNow = greenFine - (int)(Math.abs(greenFine-greenDanger)
+							* (timeWaiting/5.0)); 
+					redNow = (int)(Math.abs(redFine-redDanger)
+							* (timeWaiting/5.0));
 				}
 			}
 
 			// Draw border, draw as filled if clicked
 			graphics.setColour(redNow, greenNow, 0, 256);
-			graphics.rectangle(isDeparturesClicked, departuresX,
-					departuresY, departuresWidth, departuresHeight);
+			graphics.rectangle(isDeparturesClicked,
+					getDeparturesX(), getDeparturesY(),
+					getDeparturesWidth(), getDeparturesHeight());
 
 			// Draw box
 			graphics.setColour(redNow, greenNow, 0, 64);
-			graphics.rectangle(true, departuresX + 1, departuresY + 1,
-					departuresWidth - 1, departuresHeight - 1);
+			graphics.rectangle(true, getDeparturesX() + 1, getDeparturesY() + 1,
+					getDeparturesWidth() - 1, getDeparturesHeight() - 1);
 			
 			// Print number of aircraft waiting
 			graphics.setColour(255, 255, 255, 128);
 			graphics.print(Integer.toString(aircraftHangar.size()),
-					departuresX + (departuresWidth / 2), departuresY + (departuresHeight / 2));
+					getDeparturesX() + (getDeparturesWidth() / 2),
+					getDeparturesY() + (getDeparturesHeight() / 2));
 		}
 		
 		graphics.setColour(0, 128, 0, 128);
 		// Draw the arrivals button if at least one plane is waiting (arriving flights)
 		if (aircraftWaitingToLand.size() > 0) {
-			graphics.rectangle(isArrivalsClicked, arrivalsX, arrivalsY,
-					arrivalsWidth, arrivalsHeight);
+			graphics.rectangle(isArrivalsClicked,
+					getArrivalsX(), getArrivalsY(),
+					getArrivalsWidth(), getArrivalsHeight());
 			
 			// Draw box
 			graphics.setColour(128, 128, 0, 64);
-			graphics.rectangle(true, arrivalsX + 1, arrivalsY + 1,
-					arrivalsWidth - 1, arrivalsHeight - 1);
+			graphics.rectangle(true, getArrivalsX() + 1, getArrivalsY() + 1,
+					getArrivalsWidth() - 1, getArrivalsHeight() - 1);
 			
 			// Print number of aircraft waiting
 			graphics.setColour(255, 255, 255, 128);
 			graphics.print(Integer.toString(aircraftWaitingToLand.size()),
-					arrivalsX + (arrivalsWidth / 2), arrivalsY + (arrivalsHeight / 2));
+					getArrivalsX() + (getArrivalsWidth() / 2),
+					getArrivalsY() + (getArrivalsHeight() / 2));
 		}
 	}
 
@@ -332,10 +307,10 @@ public class Airport extends Waypoint implements EventHandler, Serializable {
 		return isWithinRect(
 				(int)position.getX(),
 				(int)position.getY(),
-				(int)(arrivalsX) + Game.X_OFFSET,
-				(int)(arrivalsY) + Game.Y_OFFSET,
-				(int)arrivalsWidth,
-				(int)arrivalsHeight);
+				(int)getArrivalsX() + Game.X_OFFSET,
+				(int)getArrivalsY() + Game.Y_OFFSET,
+				(int)getArrivalsWidth(),
+				(int)getArrivalsHeight());
 	}
 	
 	/**
@@ -352,10 +327,10 @@ public class Airport extends Waypoint implements EventHandler, Serializable {
 		return (applyOffset ? isWithinArrivals(position) : isWithinRect(
 				(int)position.getX(),
 				(int)position.getY(),
-				(int)arrivalsX,
-				(int)arrivalsY,
-				(int)arrivalsWidth,
-				(int)arrivalsHeight));
+				(int)getArrivalsX(),
+				(int)getArrivalsY(),
+				(int)getArrivalsWidth(),
+				(int)getArrivalsHeight()));
 	}
 	
 	/**
@@ -369,10 +344,10 @@ public class Airport extends Waypoint implements EventHandler, Serializable {
 		return isWithinRect(
 				(int)position.getX(),
 				(int)position.getY(),
-				(int)(departuresX) + Game.X_OFFSET,
-				(int)(departuresY) + Game.Y_OFFSET,
-				(int)departuresWidth,
-				(int)departuresHeight);
+				(int)getDeparturesX() + Game.X_OFFSET,
+				(int)getDeparturesY() + Game.Y_OFFSET,
+				(int)getDeparturesWidth(),
+				(int)getDeparturesHeight());
 	}
 	
 	/**
@@ -443,8 +418,8 @@ public class Airport extends Waypoint implements EventHandler, Serializable {
 	 * @return a waypoint at the centre of the departures area
 	 */
 	public Waypoint getDeparturesCentre() {
-		return new Waypoint(departuresX + (departuresWidth / 2),
-				departuresY + (departuresHeight / 2), true, false);
+		return new Waypoint(getDeparturesX() + (getDeparturesWidth() / 2),
+				getDeparturesY() + (getDeparturesHeight() / 2), true, false);
 	}
 	
 	/**
@@ -458,6 +433,46 @@ public class Airport extends Waypoint implements EventHandler, Serializable {
 				/ (double)Main.TARGET_HEIGHT;
 		
 		return Math.min(xScale, yScale);
+	}
+	
+	private double getLocationX() {
+		return location.getX() * getMinScale();
+	}
+	
+	private double getLocationY() {
+		return location.getY() * getMinScale();
+	}
+	
+	private double getArrivalsX() {
+		return arrivals.getX() * getMinScale();
+	}
+	
+	private double getArrivalsY() {
+		return arrivals.getY() * getMinScale();
+	}
+	
+	private double getArrivalsWidth() {
+		return RELATIVE_ARRIVALS_WIDTH * getMinScale();
+	}
+	
+	private double getArrivalsHeight() {
+		return RELATIVE_ARRIVALS_HEIGHT * getMinScale();
+	}
+	
+	private double getDeparturesX() {
+		return departures.getX() * getMinScale();
+	}
+	
+	private double getDeparturesY() {
+		return departures.getY() * getMinScale();
+	}
+	
+	private double getDeparturesWidth() {
+		return RELATIVE_DEPARTURES_WIDTH * getMinScale();
+	}
+	
+	private double getDeparturesHeight() {
+		return RELATIVE_DEPARTURES_HEIGHT * getMinScale();
 	}
 	
 	/**

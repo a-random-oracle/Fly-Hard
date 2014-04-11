@@ -3,7 +3,6 @@ package cls;
 import java.io.Serializable;
 
 import lib.jog.graphics;
-import lib.jog.window;
 
 public class Waypoint implements Serializable {
 	
@@ -109,9 +108,8 @@ public class Waypoint implements Serializable {
 	/**
 	 * Draws the waypoint.
 	 */
-	public void draw(double windowWidth, double windowHeight) {
-		draw(windowWidth, windowHeight,
-				waypointLocation.getX(), waypointLocation.getY());
+	public void draw() {
+		draw(waypointLocation.getX(), waypointLocation.getY());
 	}
 	
 	/**
@@ -121,20 +119,17 @@ public class Waypoint implements Serializable {
 	 * @param y
 	 * 			the y location to draw the waypoint at
 	 */
-	public void draw(double windowWidth, double windowHeight, double x, double y) {
+	public void draw(double x, double y) {
 		if (this.isEntryOrExit()) {
 			graphics.setColour(64, 128, 0, 192);
 		} else {
 			graphics.setColour(graphics.red_transp);
 		}
 		
-		double xScale = (window.width() / windowWidth);
-		double yScale = (window.height() / windowHeight);
-		
-		graphics.circle(false, (x * xScale)-WAYPOINT_ICON_RADIUS/2 + 2,
-				(y * yScale)-WAYPOINT_ICON_RADIUS/2 + 2, WAYPOINT_ICON_RADIUS);
-		graphics.circle(true, (x * xScale)-WAYPOINT_ICON_RADIUS/2 + 2,
-				(y * yScale)-WAYPOINT_ICON_RADIUS/2 + 2, WAYPOINT_ICON_RADIUS - 2);
+		graphics.circle(false, x-WAYPOINT_ICON_RADIUS/2 + 2,
+				y-WAYPOINT_ICON_RADIUS/2 + 2, WAYPOINT_ICON_RADIUS);
+		graphics.circle(true, x-WAYPOINT_ICON_RADIUS/2 + 2,
+				y-WAYPOINT_ICON_RADIUS/2 + 2, WAYPOINT_ICON_RADIUS - 2);
 	}
 	
 	/**
