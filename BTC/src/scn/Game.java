@@ -387,7 +387,7 @@ public abstract class Game extends Scene {
 		// Draw all waypoints, except airport waypoints
 		for (Waypoint waypoint : player.getWaypoints()) {
 			if (!(waypoint instanceof Airport)) {
-				waypoint.draw(player.getWindowWidth(), player.getWindowHeight());
+				waypoint.draw();
 			}
 		}
 
@@ -421,7 +421,7 @@ public abstract class Game extends Scene {
 		// Draw the airports
 		for (Airport airport : player.getAirports()) {
 			graphics.setColour(255, 255, 255, 64);
-			airport.draw(player.getWindowWidth(), player.getWindowHeight());
+			airport.draw();
 		}
 
 		// Draw the airport names
