@@ -397,8 +397,8 @@ public class Aircraft implements Serializable {
 		if (flightPlan.getDestinationAirport() != null) { // At airport
 			return flightPlan.getDestinationAirport().isWithinArrivals(position, false);
 		} else {
-			// System.out.println(this.airline);
-			// System.out.println(this.flightName);
+			//System.out.println(this.airline);
+			//System.out.println(this.flightName);
 			return isAt(flightPlan.getDestination());
 		}
 	}

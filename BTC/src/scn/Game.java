@@ -352,8 +352,10 @@ public abstract class Game extends Scene {
 		// Handle the selected aircraft
 		if (player.getSelectedAircraft() != null) {
 			// Draw the compass around the selected aircraft, but only if it is
-			// being manually controlled
-			if (player.getSelectedAircraft().isManuallyControlled()) {
+			// being manually controlled, and the player controlling it is the
+			// current player
+			if (player == this.player
+					&& player.getSelectedAircraft().isManuallyControlled()) {
 				player.getSelectedAircraft().drawCompass();
 			}
 
