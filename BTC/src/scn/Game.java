@@ -25,6 +25,11 @@ import btc.Main;
 
 public abstract class Game extends Scene {
 
+	// Due to the way the airspace elements are drawn (graphics.setviewport)
+	// these variables are needed to manually adjust mouse listeners and elements
+	// drawn outside the airspace so that they align with the airspace elements.
+	// These variables can be used to adjust the size of the airspace view.
+	
 	/** The distance between the left edge of the screen and the map area */
 	public final static int X_OFFSET = 196;
 
@@ -42,11 +47,6 @@ public abstract class Game extends Scene {
 
 	/** The current player */
 	protected Player player;
-
-	// Due to the way the airspace elements are drawn (graphics.setviewport)
-	// these variables are needed to manually adjust mouse listeners and elements
-	// drawn outside the airspace so that they align with the airspace elements.
-	// These variables can be used to adjust the size of the airspace view.
 
 	// PLEASE DO NOT REMOVE - this is very useful for debugging
 	public static OrdersBox out;
@@ -89,6 +89,9 @@ public abstract class Game extends Scene {
 
 	/** Is the game paused */
 	protected boolean paused;
+	
+	/** The the game about to end */
+	protected boolean ending;
 
 
 	// Constructors ---------------------------------------------------------------------
@@ -182,6 +185,8 @@ public abstract class Game extends Scene {
 	@Override
 	public void update(double timeDifference) {
 		if (paused) return;
+		
+		if (ending) Main.closeScene();
 
 		// Update the time the game has run for
 		timeElapsed += timeDifference;
@@ -1239,6 +1244,10 @@ public abstract class Game extends Scene {
 	 */
 	public void setCurrentPlayer(Player player) {
 		this.player = player;
+	}
+	
+	public void setEnding(boolean end) {
+		this.ending = end;
 	}
 
 

@@ -1,7 +1,9 @@
 package net;
 
-import cls.Player;
 import btc.Main;
+
+import cls.Player;
+
 import scn.Game;
 import scn.MultiPlayerGame;
 
@@ -191,7 +193,7 @@ public abstract class InstructionHandler {
 	 */
 	private static void handleEnd() {
 		// Close
-		Main.closeScene();
+		Game.getInstance().setEnding(true);
 	}
 
 	/**
