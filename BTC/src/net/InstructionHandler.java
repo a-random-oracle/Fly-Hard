@@ -1,9 +1,7 @@
 package net;
 
 import btc.Main;
-
 import cls.Player;
-
 import scn.Game;
 import scn.MultiPlayerGame;
 
@@ -22,6 +20,8 @@ public abstract class InstructionHandler {
 		"SETSEED",
 		"WAIT",
 		"PROCEED",
+		"TRANSFER",
+		"REMOVE",
 		"END",
 		"NULL",
 		"INVALID_REQUEST"};
@@ -63,22 +63,34 @@ public abstract class InstructionHandler {
 		// Return immediately if the instruction is invalid
 		if (instr == null) return;
 		
+		// Check if the received data has parameters
+		String parameters = null;
+		if (instruction != null && instruction.contains(DELIM)) {
+			parameters = instruction.substring(instruction.indexOf(DELIM));
+		}
+		
 		// Otherwise, switch to the appropriate method
 		switch (instr) {
 		case "SETID":
-			handleSetID(instruction);
+			handleSetID(parameters);
 			break;
 		case "SETPOS":
-			handleSetPos(instruction);
+			handleSetPos(parameters);
 			break;
 		case "SETSEED":
-			handleSetSeed(instruction);
+			handleSetSeed(parameters);
 			break;
 		case "WAIT":
 			handleWait();
 			break;
 		case "PROCEED":
 			handleProceed();
+			break;
+		case "TRANSFER":
+			handleTransfer(parameters);
+			break;
+		case "REMOVE":
+			handleRemove(parameters);
 			break;
 		case "END":
 			handleEnd();
@@ -96,14 +108,14 @@ public abstract class InstructionHandler {
 	
 	/**
 	 * Handles a SETID instruction.
-	 * @param instruction
-	 * 			the full SETID instruction
+	 * @param parameters
+	 * 			the parameters accompanying the instruction
 	 */
-	private static void handleSetID(String instruction) {
+	private static void handleSetID(String parameters) {
 		// Get the player ID to set from the response
 		int IDToSet = -1;
 		try {
-			IDToSet = Integer.parseInt(instruction.split(DELIM)[1]);
+			IDToSet = Integer.parseInt(parameters);
 		} catch (Exception e) {
 			print(e);
 		}
@@ -116,14 +128,14 @@ public abstract class InstructionHandler {
 	
 	/**
 	 * Handles a SETPOS instruction.
-	 * @param instruction
-	 * 			the full SETPOS instruction
+	 * @param parameters
+	 * 			the parameters accompanying the instruction
 	 */
-	private static void handleSetPos(String instruction) {
+	private static void handleSetPos(String parameters) {
 		// Get the position to set from the response
 		int playerPosition = -1;
 		try {
-			playerPosition = Integer.parseInt(instruction.split(DELIM)[1]);
+			playerPosition = Integer.parseInt(parameters);
 		} catch (Exception e) {
 			print(e);
 		}
@@ -148,14 +160,14 @@ public abstract class InstructionHandler {
 	
 	/**
 	 * Handles a SETSEED instruction.
-	 * @param instruction
-	 * 			the full SETSEED instruction
+	 * @param parameters
+	 * 			the parameters accompanying the instruction
 	 */
-	private static void handleSetSeed(String instruction) {
+	private static void handleSetSeed(String parameters) {
 		// Get the player ID to set from the response
 		int seedToSet = 0;
 		try {
-			seedToSet = Integer.parseInt(instruction.split(DELIM)[1]);
+			seedToSet = Integer.parseInt(parameters);
 		} catch (Exception e) {
 			print(e);
 		}
@@ -189,10 +201,31 @@ public abstract class InstructionHandler {
 	}
 	
 	/**
+	 * Handles a TRANSFER instruction.
+	 * @param parameters
+	 * 			the parameters accompanying the instruction
+	 */
+	private static void handleTransfer(String parameters) {
+		Game.getInstance().getCurrentPlayer().getAircraft().add(
+				Game.getInstance().getAircraftFromName(parameters));
+		
+		NetworkManager.postMessage("REMOVE:" + parameters);
+	}
+	
+	/**
+	 * Handles a REMOVE instruction.
+	 * @param parameters
+	 * 			the parameters accompanying the instruction
+	 */
+	private static void handleRemove(String parameters) {
+		Game.getInstance().getCurrentPlayer().getAircraft().remove(
+				Game.getInstance().getAircraftFromName(parameters));
+	}
+	
+	/**
 	 * Handles an END instruction.
 	 */
 	private static void handleEnd() {
-		// Close
 		Game.getInstance().setEnding(true);
 	}
 

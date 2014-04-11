@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import net.NetworkManager;
 import lib.ButtonText;
 import lib.jog.graphics;
+import lib.jog.input;
 import lib.jog.window;
 import cls.Aircraft;
 import cls.Airport;
@@ -174,6 +175,14 @@ public class MultiPlayerGame extends Game {
 		super.update(timeDifference);
 		
 		if (paused) return;
+		
+		if (player.getSelectedAircraft() != null) {
+			if (input.isKeyDown(input.KEY_M)) {
+				// Send the transfer instruction to the opponent
+				NetworkManager.postMessage("SEND:TRANSFER"
+						+ player.getSelectedAircraft().getName());
+			}
+		}
 		
 		// Update the opposing player
 		updatePlayer(timeDifference, opposingPlayer);

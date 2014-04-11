@@ -1225,6 +1225,22 @@ public abstract class Game extends Scene {
 	public Airport[] getAllAirports() {
 		return player.getAirports();
 	}
+	
+	/**
+	 * Gets an aircraft from its name.
+	 * @param name
+	 * 			the aircraft's name
+	 * @return the aircraft with the specified name
+	 */
+	public Aircraft getAircraftFromName(String name) {
+		for (Aircraft aircraft : getAllAircraft()) {
+			if (aircraft.getName().equals(name)) {
+				return aircraft;
+			}
+		}
+		
+		return null;
+	}
 
 	/**
 	 * Gets how long the game has been played for.
