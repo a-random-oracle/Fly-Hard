@@ -75,7 +75,7 @@ public class NetworkManager {
 	// Data Send and Receive ------------------------------------------------------------
 
 	/**
-	 * Add data to the network thread.
+	 * Adds data to the network thread.
 	 * <p>
 	 * The data will then be sent to the server after an arbitrary length
 	 * of time.
@@ -85,6 +85,19 @@ public class NetworkManager {
 	 */
 	public void sendData(Serializable data) {
 		networkThread.writeData(data);
+	}
+	
+	/**
+	 * Adds a message to the network thread.
+	 * <p>
+	 * The message will then be sent to the server after an arbitrary length
+	 * of time.
+	 * </p>
+	 * @param message
+	 * 			the message to send
+	 */
+	public void sendMessage(String message) {
+		networkThread.writeMessage(message);
 	}
 
 	/**

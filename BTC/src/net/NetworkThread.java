@@ -19,11 +19,17 @@ public class NetworkThread extends Thread {
 	/** The data still to be sent */
 	private ArrayList<Serializable> dataBuffer;
 	
+	/** The messages still to be sent */
+	private String messages;
+	
 	/** The data still to be read */
 	private ArrayList<Serializable> responseBuffer;
 	
 	/** The data buffer mutex */
 	private Object dataBufferMutex;
+	
+	/** The message string mutex */
+	private Object messageStringMutex;
 	
 	/** The response buffer mutex */
 	private Object responseBufferMutex;
@@ -40,6 +46,7 @@ public class NetworkThread extends Thread {
 	 */
 	public NetworkThread() {
 		this.dataBuffer = new ArrayList<Serializable>();
+		this.messages = "";
 		this.responseBuffer = new ArrayList<Serializable>();
 		this.dataBufferMutex = new Object();
 		this.responseBufferMutex = new Object();
@@ -55,6 +62,7 @@ public class NetworkThread extends Thread {
 	public void run() {
 		while (true) {
 			sendNextData();
+			sendMessages();
 			
 			synchronized (statusMutex) {
 				if (!status) break;
@@ -75,11 +83,11 @@ public class NetworkThread extends Thread {
 		// Obtain a lock on the data buffer
 		synchronized(dataBufferMutex) {
 			if ((dataBuffer.size() == 0) || (dataBuffer.get(0) == null)) {
-				// Nothing to write, so exit
+				// Nothing to send, so exit
 				return;
 			} else {
-				// Get the standard headers, along with a new header
-				// containing the data to send
+				// Get the next data element, and remove it from the
+				// data buffer
 				data = dataBuffer.get(0);
 				dataBuffer.remove(0);
 			}
@@ -97,15 +105,64 @@ public class NetworkThread extends Thread {
 	}
 	
 	/**
+	 * Sends the messages in the message string.
+	 * <p>
+	 * NOTE: this method is <b>destructive</b>, i.e. the sent messages
+	 * will be removed from the message string after being sent.
+	 * </p>
+	 */
+	private void sendMessages() {
+		String messageString = null;
+		
+		// Obtain a lock on the message string
+		synchronized(messageStringMutex) {
+			if ((dataBuffer.size() == 0) || (dataBuffer.get(0) == null)) {
+				// Nothing to send, so exit
+				return;
+			} else {
+				// Get (and clear) the message string
+				messageString = messages;
+				messages = "";
+			}
+		}
+		
+		if (messageString != null) {
+			// Send the post request to the server, and read the response
+			String receivedMessages = NetworkManager
+					.postMessage(messageString);
+			
+			// Handle the received message(s)
+			InstructionHandler.handleInstruction(receivedMessages);
+		}
+	}
+	
+	/**
 	 * Writes data to the data buffer.
 	 * @param data
-	 * 			the object to write to the data buffer
+	 * 			the data to write to the data buffer
 	 */
 	public void writeData(Serializable data) {
 		// Obtain a lock on the data buffer
 		synchronized(dataBufferMutex) {
-			// Write data to the buffer
-			dataBuffer.add(data);
+			if (data != null) {
+				// Write the data to the data buffer
+				dataBuffer.add(data);
+			}
+		}
+	}
+	
+	/**
+	 * Writes a message to the message string.
+	 * @param message
+	 * 			the message to write to the message string
+	 */
+	public void writeMessage(String message) {
+		// Obtain a lock on the message string
+		synchronized(messageStringMutex) {
+			if (message != null) {
+				// Write the message to the message string
+				messages += message;
+			}
 		}
 	}
 	
