@@ -127,7 +127,7 @@ public class NetworkThread extends Thread {
 			}
 		}
 		
-		if (messageString != null) {
+		if (!messageString.equals("")) {
 			// Send the post request to the server, and read the response
 			String receivedMessages = NetworkManager
 					.postMessage(messageString);
@@ -160,7 +160,7 @@ public class NetworkThread extends Thread {
 	public void writeMessage(String message) {
 		// Obtain a lock on the message string
 		synchronized(messageStringMutex) {
-			if (message != null) {
+			if (message != null && !message.equals("")) {
 				// Write the message to the message string
 				messages += message;
 			}
