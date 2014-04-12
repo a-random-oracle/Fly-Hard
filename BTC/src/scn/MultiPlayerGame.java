@@ -181,6 +181,8 @@ public class MultiPlayerGame extends Game {
 				// Send the transfer instruction to the opponent
 				NetworkManager.postMessage("SEND:TRANSFER:"
 						+ player.getSelectedAircraft().getName());
+				
+				deselectAircraft(player);
 			}
 		}
 		
