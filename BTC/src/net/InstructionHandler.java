@@ -231,7 +231,10 @@ public abstract class InstructionHandler {
 	 * Handles an END instruction.
 	 */
 	private static void handleEnd() {
-		Game.getInstance().setEnding(true);
+		// Obtain a lock on the game instance
+		synchronized(Game.getInstance()) {
+			Game.getInstance().setEnding(true);
+		}
 	}
 
 	/**
