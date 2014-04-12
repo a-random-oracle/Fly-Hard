@@ -36,16 +36,18 @@ public abstract class InstructionHandler {
 	 * 			the instruction(s) to handle
 	 */
 	public static void handleInstruction(String instruction) {
-		// Split the instruction string into individual instructions
-		String[] instructionList = instruction.split(LIST_DELIM);
+		if (instruction != null) {
+			// Split the instruction string into individual instructions
+			String[] instructionList = instruction.split(LIST_DELIM);
 
-		// Check that there is at least one instruction
-		if (instructionList != null) {
-			if (instructionList.length > 0) {
-				// Loop through the instructions, handling them
-				// sequentially
-				for (String instr : instructionList) {
-					handleIndividualInstruction(instr);
+			// Check that there is at least one instruction
+			if (instructionList != null) {
+				if (instructionList.length > 0) {
+					// Loop through the instructions, handling them
+					// sequentially
+					for (String instr : instructionList) {
+						handleIndividualInstruction(instr);
+					}
 				}
 			}
 		}
