@@ -49,6 +49,7 @@ public class NetworkThread extends Thread {
 		this.messages = "";
 		this.responseBuffer = new ArrayList<Serializable>();
 		this.dataBufferMutex = new Object();
+		this.messageStringMutex = new Object();
 		this.responseBufferMutex = new Object();
 		this.status = true;
 		this.statusMutex = new Object();
