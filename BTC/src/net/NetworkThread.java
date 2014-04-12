@@ -94,14 +94,12 @@ public class NetworkThread extends Thread {
 			}
 		}
 		
-		if (data != null) {
-			// Send the post request to the server, and read the response
-			Serializable receivedData = NetworkManager.postObject(data);
-			
-			// Write the response to the response buffer
-			synchronized(responseBufferMutex) {
-				responseBuffer.add(receivedData);
-			}
+		// Send the post request to the server, and read the response
+		Serializable receivedData = NetworkManager.postObject(data);
+
+		// Write the response to the response buffer
+		synchronized(responseBufferMutex) {
+			responseBuffer.add(receivedData);
 		}
 	}
 	
@@ -127,14 +125,12 @@ public class NetworkThread extends Thread {
 			}
 		}
 		
-		if (!messageString.equals("")) {
-			// Send the post request to the server, and read the response
-			String receivedMessages = NetworkManager
-					.postMessage(messageString);
+		// Send the post request to the server, and read the response
+		String receivedMessages = NetworkManager
+				.postMessage(messageString);
 			
-			// Handle the received message(s)
-			InstructionHandler.handleInstruction(receivedMessages);
-		}
+		// Handle the received message(s)
+		InstructionHandler.handleInstruction(receivedMessages);
 	}
 	
 	/**
