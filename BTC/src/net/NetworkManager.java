@@ -236,10 +236,10 @@ public class NetworkManager {
 		
 		// If the received data is a string, treat it as an instruction
 		// and process it immediately
-		if (receivedData instanceof String) {
+		/*if (receivedData instanceof String) { XXX
 			print("Received response: " + ((String) receivedData));
 			InstructionHandler.handleInstruction((String) receivedData);
-		}
+		}*/
 		
 		// Return the data
 		return receivedData;
