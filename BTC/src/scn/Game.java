@@ -139,7 +139,7 @@ public abstract class Game extends Scene {
 				new Waypoint(0.82031, 0.41667, false, true)
 		};
 		
-		this.powerup = new Powerup(400, 400, "testPowerUp", 20);
+		this.powerup = new Powerup(800, 400, "testPowerUp", 20);
 	}
 
 
@@ -324,7 +324,7 @@ public abstract class Game extends Scene {
 		out.draw();
 		
 		//draw the test powerup
-		//this.powerup.draw();
+		this.powerup.draw();
 	}
 
 	/**
