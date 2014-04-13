@@ -243,7 +243,7 @@ public class MultiPlayerGame extends Game {
 	}
 	
 	protected void drawPowerups() {
-		Powerup.draw(0, 0, null);
+		//Powerup.draw(0, 0, null);
 	}
 
 	/**

@@ -3,6 +3,8 @@ package cls;
 import java.io.File;
 import java.util.Random;
 
+import org.newdawn.slick.Color;
+
 import lib.jog.graphics;
 import lib.jog.graphics.Image;
 
@@ -40,7 +42,7 @@ public class Powerup {
 		private static final Random RANDOM = new Random();
 		
 		public static PowerUp randomPowerUp()  {
-		    return POWER_UP_NAMES[RANDOM.nextInt(SIZE) - 1];
+		    return POWER_UP_NAMES[RANDOM.nextInt(SIZE)];
 		  }
 	}
 	
@@ -63,8 +65,9 @@ public class Powerup {
 	}
 	
 	//draw the powerup icon, depending on waypoint
-	public static void draw(double x, double y, String name) {
-		graphics.rectangle(false, 500, 200, 10, 10);
+	public void draw() {
+		graphics.setColour(Color.white);
+		graphics.draw(this.image, powerupLocation.getX(), powerupLocation.getY());
 	}
 
 	
@@ -95,16 +98,16 @@ public class Powerup {
 		
 		switch (powerUp) {
 		case FOG: 
-			image = graphics.newImage("gfx.pUp" + File.separator + "SET TO FILE NAME HERE");
+			image = graphics.newImage("gfx/pUp" + File.separator + "fog9a.png");
 			break;
 		case SLOW_DOWN:
-			image = graphics.newImage("gfx.pUp" + File.separator + "SET TO FILE NAME HERE");
+			image = graphics.newImage("gfx/pUp" + File.separator + "slow2a.png");
 			break;
 		case SPEED_UP:
-			image = graphics.newImage("gfx.pUp" + File.separator + "SET TO FILE NAME HERE");
+			image = graphics.newImage("gfx/pUp" + File.separator + "speed3a.png");
 			break;
 		case TRANSFER:
-			image = graphics.newImage("gfx.pUp" + File.separator + "SET TO FILE NAME HERE");
+			image = graphics.newImage("gfx/pUp" + File.separator + "transfer1a.png");
 			break;
 		}
 	}

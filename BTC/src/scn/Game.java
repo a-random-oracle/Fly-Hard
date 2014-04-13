@@ -82,7 +82,7 @@ public abstract class Game extends Scene {
 	protected Hashtable<Integer, Integer> locationWaypointMap;
 
 	/** The current powerup if any*/
-	protected static Powerup powerup;
+	protected Powerup powerup;
 
 	/** The manual control buttons */
 	protected ButtonText manualControlButton;
@@ -138,6 +138,8 @@ public abstract class Game extends Scene {
 				new Waypoint(0.81250, 0.15625, false, true),
 				new Waypoint(0.82031, 0.41667, false, true)
 		};
+		
+		this.powerup = new Powerup(400, 400, "testPowerUp", 20);
 	}
 
 
@@ -320,6 +322,9 @@ public abstract class Game extends Scene {
 		// Draw debug box
 		// PLEASE DO NOT REMOVE - this is very useful for debugging
 		out.draw();
+		
+		//draw the test powerup
+		//this.powerup.draw();
 	}
 
 	/**
