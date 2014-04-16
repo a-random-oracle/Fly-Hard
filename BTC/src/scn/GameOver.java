@@ -98,7 +98,7 @@ public class GameOver extends Scene {
 		playSound(audio.newSoundEffect("sfx" + File.separator + "crash.ogg"));
 		deaths = 300 + Main.getRandom().nextInt(500);
 		timer = 0;
-		textBox = new lib.TextBox(Color.black, window.width() / 10, 186,
+		textBox = new lib.TextBox(Color.green, window.width() / 10, 186,
 				window.width() - ((window.width() / 10) * 2), window.height() - 96, 32);
 		
 		textBox.addText(String.valueOf(deaths) + " people died in the crash.");
