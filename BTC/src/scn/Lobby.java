@@ -1,10 +1,11 @@
 package scn;
 
+import net.NetworkManager;
+
 import org.newdawn.slick.Color;
 
 import btc.Main;
 import cls.InputBox;
-
 import lib.jog.graphics;
 import lib.jog.input;
 import lib.jog.audio.Sound;
@@ -38,9 +39,16 @@ public class Lobby extends Scene {
 		
 		buttons = new ButtonText[1];
 		
-		buttons[0] = new lib.ButtonText("Create Game", null, CREATE_BUTTON_X, CREATE_BUTTON_Y,
+		ButtonText.Action createGame = new ButtonText.Action() {
+			@Override
+			public void action() {
+				NetworkManager.setPlayerName(inputBox.getText());
+				Main.getNetworkManager().sendMessage("INIT");
+			}
+		};
+		
+		buttons[0] = new lib.ButtonText("Create Game", createGame, CREATE_BUTTON_X, CREATE_BUTTON_Y,
 				CREATE_BUTTON_W, CREATE_BUTTON_H);
-
 	}
 
 	@Override

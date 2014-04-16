@@ -115,7 +115,7 @@ public class NetworkThread extends Thread {
 		
 		// Obtain a lock on the message string
 		synchronized(messageStringMutex) {
-			if ((dataBuffer.size() == 0) || (dataBuffer.get(0) == null)) {
+			if (messages.length() == 0) {
 				// Nothing to send, so exit
 				return;
 			} else {
@@ -124,7 +124,6 @@ public class NetworkThread extends Thread {
 				messages = "";
 			}
 		}
-		
 		// Send the post request to the server, and read the response
 		String receivedMessages = NetworkManager
 				.postMessage(messageString);

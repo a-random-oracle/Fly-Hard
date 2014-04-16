@@ -68,13 +68,8 @@ public class NetworkManager {
 	 * </p>
 	 */
 	private void initialiseClient() {
-		// Start by sending an initial request containing the client's
-		// public IP address
-		networkThread.writeMessage("START");
-		//String response = postMessage("INIT");
-
-		// Process the response
-		//InstructionHandler.handleInstruction(response);
+		// Start by sending an initial request
+		sendMessage("START");
 	}
 
 	// Data Send and Receive ------------------------------------------------------------
@@ -364,7 +359,7 @@ public class NetworkManager {
 	 * @param name
 	 * 			the name to set
 	 */
-	public static void serPlayerName(String name) {
+	public static void setPlayerName(String name) {
 		NetworkManager.playerName = name;
 	}
 	

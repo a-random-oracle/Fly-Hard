@@ -151,7 +151,7 @@ public class MultiPlayerGame extends Game {
 		// Increment the time before the next data send
 		timeToUpdate += timeDifference;
 
-		if (timeToUpdate > 0.01) {
+		if (timeToUpdate > 0.001) {
 			// Get data from the server
 			Object data = Main.getNetworkManager().receiveData();
 
