@@ -49,12 +49,12 @@ public class NetworkManager {
 	public NetworkManager(boolean verbose) {
 		NetworkManager.id = -1;
 		NetworkManager.verbose = verbose;
-
-		initialiseClient();
 		
 		// Create a network thread for handling asynchronous data passing
 		networkThread = new NetworkThread();
 		networkThread.start();
+		
+		initialiseClient();
 	}
 	
 	/**
