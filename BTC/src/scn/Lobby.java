@@ -1,11 +1,13 @@
 package scn;
 
+import org.newdawn.slick.Color;
+
 import btc.Main;
+import cls.InputBox;
+
 import lib.jog.graphics;
 import lib.jog.input;
-import lib.jog.window;
 import lib.jog.audio.Sound;
-
 import lib.ButtonText;
 
 public class Lobby extends Scene {
@@ -14,6 +16,8 @@ public class Lobby extends Scene {
 	private final int CREATE_BUTTON_H = 32;
 	private final int CREATE_BUTTON_X = 500;
 	private final int CREATE_BUTTON_Y = 200;
+	
+	private InputBox inputBox;
 	
 	private ButtonText[] buttons;
 
@@ -30,6 +34,8 @@ public class Lobby extends Scene {
 	
 	@Override
 	public void start() {
+		inputBox = new InputBox(Color.white, Color.red, 400, 500, 200, 30);
+		
 		buttons = new ButtonText[1];
 		
 		buttons[0] = new lib.ButtonText("Create Game", null, CREATE_BUTTON_X, CREATE_BUTTON_Y,
@@ -66,12 +72,16 @@ public class Lobby extends Scene {
 	}
 
 	@Override
-	public void update(double timeDifference) {}
+	public void update(double timeDifference) {
+		
+		inputBox.update(timeDifference);
+	}
 
 	@Override
 	public void draw() {
 		graphics.setColour(256,256,256); //WHITE
 
+		inputBox.draw();
 
 		//graphics.printCentred(chooseHost, window.width()/2 - 50,
 				//window.height()/2 + 50, 1, 100);

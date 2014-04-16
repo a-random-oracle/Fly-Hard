@@ -4,6 +4,8 @@
 
 package cls;
 
+import org.newdawn.slick.Color;
+
 import lib.TextBox;
 import lib.jog.graphics;
 // import lib.jog.input;                        // <= May not be required
@@ -24,7 +26,7 @@ public class FlightStrip extends TextBox {
    * @param h the height of the strip
    */
 	public FlightStrip(double x, double y, int width, int height) {
-		super((int) x, (int) y, width, height, 1);
+		super(Color.green, (int) x, (int) y, width, height, 1);
 		
 		positionX = x;
 		positionY = y;

@@ -1,5 +1,7 @@
 package cls;
 
+import org.newdawn.slick.Color;
+
 /**
  * Class for a visual representation of orders given to aircraft.
  * It has word wrap enabled and prints out orders character by character in a retro style.
@@ -19,7 +21,7 @@ public class OrdersBox extends lib.TextBox {
 	 * @param lines the maximum amount of lines to display at a time.
 	 */
 	public OrdersBox(int x, int y, int width, int height, int lines) {
-		super(x, y, width, height, lines);
+		super(Color.green, x, y, width, height, lines);
 		removal_timer = 0;
 	}
 	

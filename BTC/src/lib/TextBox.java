@@ -1,5 +1,7 @@
 package lib;
 
+import org.newdawn.slick.Color;
+
 import lib.jog.graphics;
 
 /**
@@ -10,6 +12,7 @@ import lib.jog.graphics;
  */
 public class TextBox {
 	
+	protected Color colour;
 	protected final int LINES;
 	protected final char SEPARATOR = '|';
 	public static final char DELAY_START = '{';
@@ -33,7 +36,8 @@ public class TextBox {
 	 * @param height the height of the box.
 	 * @param lines the maximum amount of lines to display at a time.
 	 */
-	public TextBox(int x, int y, int width, int height, int lines) {
+	public TextBox(Color colour, int x, int y, int width, int height, int lines) {
+		this.colour = colour;
 		LINES = lines;
 		this.x = x;
 		this.y = y;
@@ -178,8 +182,8 @@ public class TextBox {
 	 * Prints the currently available characters of the TextBox.
 	 */
 	public void draw() {
-		graphics.setColour(graphics.green);
-		for (int i = 0; i < linesBeingUsed(); i ++) {
+		graphics.setColour(colour);
+		for (int i = 0; i < linesBeingUsed(); i++) {
 			graphics.print(orders[i], x + 4, y + 4 + (i * (height-8) / LINES));
 		}
 	}
