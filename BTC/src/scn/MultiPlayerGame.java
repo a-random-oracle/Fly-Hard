@@ -2,6 +2,8 @@ package scn;
 
 import java.util.ArrayList;
 
+import btc.Main;
+
 import net.NetworkManager;
 import lib.ButtonText;
 import lib.jog.graphics;
@@ -10,13 +12,9 @@ import lib.jog.window;
 import cls.Aircraft;
 import cls.Airport;
 import cls.Player;
-import cls.Powerup;
 import cls.Waypoint;
 
 public class MultiPlayerGame extends Game {
-	
-	/** The network manager responsible for managing network requests */
-	private NetworkManager networkManager;
 	
 	/** The opposing player */
 	protected Player opposingPlayer;
@@ -86,9 +84,6 @@ public class MultiPlayerGame extends Game {
 		
 		// Set up the game
 		setUpGame();
-		
-		// Set up the network manager
-		networkManager = new NetworkManager(true);
 
 		// Create the manual control buttons
 		ButtonText.Action manual = new ButtonText.Action() {
@@ -158,7 +153,7 @@ public class MultiPlayerGame extends Game {
 
 		if (timeToUpdate > 0.01) {
 			// Get data from the server
-			Object data = networkManager.receiveData();
+			Object data = Main.getNetworkManager().receiveData();
 
 			if (data != null && data instanceof Player) {
 				// Set the opposing player's data
@@ -166,7 +161,7 @@ public class MultiPlayerGame extends Game {
 			}
 
 			// Send current player's data to the server
-			networkManager.sendData(player);
+			Main.getNetworkManager().sendData(player);
 
 			// Reset the time before the next data send
 			timeToUpdate = 0;
@@ -179,7 +174,7 @@ public class MultiPlayerGame extends Game {
 		if (player.getSelectedAircraft() != null) {
 			if (input.isKeyDown(input.KEY_M)) {
 				// Send the transfer instruction to the opponent
-				networkManager.sendMessage("SEND:TRANSFER:"
+				Main.getNetworkManager().sendMessage("SEND:TRANSFER:"
 						+ player.getSelectedAircraft().getName());
 				
 				deselectAircraft(player);
@@ -428,9 +423,6 @@ public class MultiPlayerGame extends Game {
 		
 		// Send a message to the server to let it know we're closing
 		NetworkManager.postMessage("SEND:END");
-		
-		// Perform the close
-		if (networkManager != null) networkManager.close();
 	}
 	
 

@@ -6,6 +6,8 @@ import java.io.File;
 import java.util.Random;
 import java.util.Stack;
 
+import net.NetworkManager;
+
 import org.lwjgl.Sys;
 
 import scn.Scene;
@@ -31,19 +33,22 @@ public class Main implements input.EventHandler {
 	}
 	
 	/** The title to display in the game window */
-	final private String TITLE = "Bear Traffic Controller: GOA Edition";
+	private final String TITLE = "Bear Traffic Controller: GOA Edition";
 	
 	/** The target window width */
-	final public static int TARGET_WIDTH = 1280;
+	public final static int TARGET_WIDTH = 1280;
 	
 	/** The target window height */
-	final public static int TARGET_HEIGHT = 960;
+	public final static int TARGET_HEIGHT = 960;
 	
 	/** The default size of the gap between the window edge and the left edge of the screen */
-	final public static int WIDTH_GAP = 50;
+	public final static int WIDTH_GAP = 50;
 	
 	/** The default size of the gap between the window edge and the top edge of the screen */
-	final public static int HEIGHT_GAP = 50;
+	public final static int HEIGHT_GAP = 50;
+	
+	/** The network manager responsible for managing network requests */
+	private static NetworkManager networkManager;
 	
 	/** The scale the game has been resized to in the horizontal plane */
 	private static double xScale = 1;
@@ -83,6 +88,9 @@ public class Main implements input.EventHandler {
 		
 		// Set up the random instance
 		random = new Random();
+		
+		// Instantiate the network manager
+		networkManager = new NetworkManager(true);
 		
 		// Get screen dimensions
 		Rectangle windowBounds = GraphicsEnvironment
@@ -235,6 +243,10 @@ public class Main implements input.EventHandler {
 	
 	public static Random getRandom() {
 		return random;
+	}
+	
+	public static NetworkManager getNetworkManager() {
+		return networkManager;
 	}
 	
 	public static void setRandomSeed(int seed) {

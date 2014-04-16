@@ -66,10 +66,11 @@ public class NetworkManager {
 	private void initialiseClient() {
 		// Start by sending an initial request containing the client's
 		// public IP address
-		String response = postMessage("INIT");
+		networkThread.writeMessage("START");
+		//String response = postMessage("INIT");
 
 		// Process the response
-		InstructionHandler.handleInstruction(response);
+		//InstructionHandler.handleInstruction(response);
 	}
 
 	// Data Send and Receive ------------------------------------------------------------
