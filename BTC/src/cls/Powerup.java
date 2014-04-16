@@ -1,9 +1,10 @@
 package cls;
 
 import java.io.File;
-import java.util.Random;
 
 import org.newdawn.slick.Color;
+
+import btc.Main;
 
 import lib.jog.graphics;
 import lib.jog.graphics.Image;
@@ -39,10 +40,9 @@ public class Powerup {
 		
 		private static final PowerUp[] POWER_UP_NAMES = values();
 		private static final int SIZE = POWER_UP_NAMES.length;
-		private static final Random RANDOM = new Random();
 		
 		public static PowerUp randomPowerUp()  {
-		    return POWER_UP_NAMES[RANDOM.nextInt(SIZE)];
+		    return POWER_UP_NAMES[Main.getRandom().nextInt(SIZE)];
 		  }
 	}
 	
