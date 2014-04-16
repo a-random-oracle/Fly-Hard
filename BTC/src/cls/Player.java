@@ -73,6 +73,9 @@ public class Player implements Serializable {
 	
 	/** The player's remaining lives */
 	private int lives;
+
+	/** The current powerup if any*/
+	protected Powerup powerup;
 	
 	
 	// Constructor: ---------------------------------------------------------------------
