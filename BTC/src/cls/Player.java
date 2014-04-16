@@ -20,9 +20,6 @@ public class Player implements Serializable {
 	/** The player's unique ID */
 	private int id;
 	
-	/** The player's screen name */
-	private String name;
-	
 	/** The width of the player's window */
 	private double windowWidth;
 	
@@ -80,7 +77,7 @@ public class Player implements Serializable {
 	
 	// Constructor: ---------------------------------------------------------------------
 	
-	public Player(int id, String name, Airport[] airports, Waypoint[] waypoints) {
+	public Player(int id, Airport[] airports, Waypoint[] waypoints) {
 		
 		// Reset values
 		this.maxAircraft = Game.DEFAULT_MAX_AIRCRAFT;
@@ -99,7 +96,6 @@ public class Player implements Serializable {
 		
 		// Set attributes
 		this.id = id;
-		this.name = name;
 		this.windowWidth = window.width();
 		this.windowHeight = window.height();
 		this.airports = airports;
@@ -121,14 +117,6 @@ public class Player implements Serializable {
 	 */
 	public int getID() {
 		return id;
-	}
-	
-	/**
-	 * Gets the player's screen name.
-	 * @return the player's screen name
-	 */
-	public String getName() {
-		return name;
 	}
 	
 	/**
@@ -384,7 +372,6 @@ public class Player implements Serializable {
 	@Override
 	public String toString() {
 		return "Player [id=" + id
-				+ ", name=" + name
 				+ ", aircraft=" + aircraft.size()
 				+ ", compassClicked=" + compassClicked
 				+ ", waypointClicked=" + waypointClicked
