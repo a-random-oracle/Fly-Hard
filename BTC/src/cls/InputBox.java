@@ -7,8 +7,17 @@ import org.newdawn.slick.Color;
 import lib.jog.graphics;
 import lib.jog.input;
 
+/**
+ * <code>InputBox</code> represents a blank field in the window.
+ * It acts as a blank box in which text can be input.
+ *
+ */
 public class InputBox {
 	
+	/**
+	 * <code>validKeys</code> are the legal keys
+	 *  permitted for entry into the input box.
+	 */
 	private final static int[] validKeys = {
 		input.KEY_0, input.KEY_1, input.KEY_2,
 		input.KEY_3, input.KEY_4, input.KEY_5,
@@ -26,27 +35,46 @@ public class InputBox {
 		input.KEY_BACKSPACE
 	};
 
+	/** The foreground colour of the input box */
 	private Color foreColour;
 
+	/** The border colour of the input box */
 	private Color borderColour;
 
+	/** The x-origin of the input box */
 	private int x;
 
+	/** The y-origin of the input box */
 	private int y;
 
+	/** The width in pixels of the input box */
 	private int width;
 
+	/** The height in pixels of the input box */
 	private int height;
 
+	/** The text typed into the input box */
 	private String text;
 
 	/** Are we editing? */
 	private boolean editing;
+	
+	/** The user may still select/enter text into the input box */
+	private boolean enabled;
 
 	/** Old text value */
 	private String oldText;
 
 
+	/**
+	 * The default constructor.
+	 * @param foreColour - the colour of the foreground
+	 * @param borderColour - the colour of the background
+	 * @param x - the x-origin of the input box
+	 * @param y - the y-origin of the input box
+	 * @param width - the width in pixels of the input box
+	 * @param height - the height in pixels of the input box
+	 */
 	public InputBox(Color foreColour, Color borderColour,
 			int x, int y, int width, int height) {
 		this.foreColour = foreColour;
@@ -57,19 +85,32 @@ public class InputBox {
 		this.height = height;
 
 		this.editing = false;
+		this.enabled = true;
 		this.text = "";
 		this.oldText = "";
 	}
 
+	/**
+	 * Allows text to be entered into the input box.
+	 * <p>Called upon clicking on the input box.</p>
+	 */
 	public void activate() {
 		editing = true;
 		oldText = text;
 	}
 
+	/**
+	 * Removes control from the input box.
+	 * Text may not be entered.
+	 * <p>Called upon the following conditions:</p>
+	 * <p> - The mouse has been clicked at 
+	 * 			a position outside of the input box</p>
+	 * <p> - The return key was pressed while entering text</p>
+	 */
 	public void deactivate() {
 		editing = false;
 	}
-
+	
 	public void update(double dt) {
 		if (Mouse.isButtonDown(input.MOUSE_LEFT)) {
 			if (editing) {
@@ -116,6 +157,12 @@ public class InputBox {
 		}
 	}
 
+	/**
+	 * Poll the valid set of input keys.
+	 * @return The valid key pressed
+	 * <p>Will return an integer value of -1
+	 * if no valid key was found during the poll</p>
+	 */
 	private int pollKeys() {
 		for (int i = 0; i < validKeys.length; i++) {
 			if (input.isKeyDown(validKeys[i])) {
@@ -126,6 +173,9 @@ public class InputBox {
 		return -1;
 	}
 	
+	/**
+	 * Render/draw the input box and the text, if any
+	 */
 	public void draw() {
 		graphics.setColour(borderColour);
 		graphics.rectangle(true, x, y, width, height);
@@ -140,6 +190,14 @@ public class InputBox {
 		}
 	}
 	
+	public void setEnabled(boolean enabled) {
+		this.enabled = enabled;
+	}
+	
+	/**
+	 * Allows access to the text entered
+	 * @return The text within the input box
+	 */
 	public String getText() {
 		return text;
 	}

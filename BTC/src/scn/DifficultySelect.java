@@ -122,7 +122,7 @@ public class DifficultySelect extends Scene {
 		buttons[2] = new lib.ButtonText("Hard", hard,
 				HARD_BUTTON_X, HARD_BUTTON_Y, HARD_BUTTON_W, HARD_BUTTON_H);
 		
-		textBox = new lib.TextBox(Color.black, 128, 96,
+		textBox = new lib.TextBox(Color.green, 128, 96,
 				window.width() - 256, window.height() - 96, 32);
 		
 		textBox.addText("You are a 500 kilogram ferocious Grizzly Bear."
