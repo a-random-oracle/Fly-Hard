@@ -58,6 +58,9 @@ public class InputBox {
 
 	/** Are we editing? */
 	private boolean editing;
+	
+	/** The user may still select/enter text into the input box */
+	private boolean enabled;
 
 	/** Old text value */
 	private String oldText;
@@ -82,6 +85,7 @@ public class InputBox {
 		this.height = height;
 
 		this.editing = false;
+		this.enabled = true;
 		this.text = "";
 		this.oldText = "";
 	}
@@ -184,6 +188,10 @@ public class InputBox {
 		} else {
 			graphics.printScaled(text, x + 4, y + 4, 2, 1);
 		}
+	}
+	
+	public void setEnabled(boolean enabled) {
+		this.enabled = enabled;
 	}
 	
 	/**
