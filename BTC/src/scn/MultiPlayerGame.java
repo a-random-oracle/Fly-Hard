@@ -139,8 +139,8 @@ public class MultiPlayerGame extends Game {
 		player1Airports[0] = airports[1];
 
 		// Set up the players
-		player = new Player(0, "Bob1", player0Airports, player0Waypoints);
-		opposingPlayer = new Player(1, "Bob2", player1Airports, player1Waypoints);
+		player = new Player(0, player0Airports, player0Waypoints);
+		opposingPlayer = new Player(1, player1Airports, player1Waypoints);
 	}
 
 	/**
@@ -436,9 +436,9 @@ public class MultiPlayerGame extends Game {
 	public void initializeAircraftArray() {
 		super.start();
 		
-		player = new Player(0, "Test Player 1", null, null);
+		player = new Player(0, null, null);
 		
-		opposingPlayer = new Player(1, "Test Player 2", null, null);
+		opposingPlayer = new Player(1, null, null);
 		
 		player.setAircraft(new ArrayList<Aircraft>());
 		opposingPlayer.setAircraft(new ArrayList<Aircraft>());

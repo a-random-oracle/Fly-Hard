@@ -18,7 +18,6 @@ import cls.Aircraft;
 import cls.Airport;
 import cls.OrdersBox;
 import cls.Player;
-import cls.Powerup;
 import cls.Waypoint;
 
 import btc.Main;
@@ -490,10 +489,6 @@ public abstract class Game extends Scene {
 		// Print the number of aircraft in the airspace to the screen
 		graphics.print(String.valueOf(aircraftCount)
 				+ " aircraft in the airspace.", 32 + X_OFFSET, 32);
-
-		// Print the current player
-		graphics.printCentred("Currently playing as player: " + player.getName(),
-				(((double) window.width() - (2 * X_OFFSET)) / 2), 32d, 1, 300);
 	}
 
 	/**

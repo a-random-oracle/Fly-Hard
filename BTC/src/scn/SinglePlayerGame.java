@@ -77,7 +77,7 @@ public class SinglePlayerGame extends Game {
 		}
 		
 		// Set up the player
-		player = new Player(0, "", airports, playersWaypoints);
+		player = new Player(0, airports, playersWaypoints);
 
 		// Create the manual control button
 		ButtonText.Action manual = new ButtonText.Action() {
@@ -105,7 +105,7 @@ public class SinglePlayerGame extends Game {
 	@Override
 	public void initializeAircraftArray() {
 		super.start();
-		player = new Player(0, "Test Player", null, null);
+		player = new Player(0, null, null);
 		player.setAircraft(new ArrayList<Aircraft>());
 	}
 

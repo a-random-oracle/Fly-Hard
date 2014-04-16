@@ -155,9 +155,6 @@ public abstract class InstructionHandler {
 			((MultiPlayerGame) Game.getInstance()).setOpposingPlayer(tempPlayer);
 			break;
 		}
-
-		print("Playing as: " + Game.getInstance().getCurrentPlayer()
-				.getName());
 	}
 	
 	/**
