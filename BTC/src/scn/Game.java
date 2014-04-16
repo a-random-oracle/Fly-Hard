@@ -58,7 +58,7 @@ public abstract class Game extends Scene {
 	public enum DifficultySetting {EASY, MEDIUM, HARD}
 	
 	/** The default maximum number of aircraft */
-	public static final int DEFAULT_MAX_AIRCRAFT = 10;
+	public static final int DEFAULT_MAX_AIRCRAFT = 3;
 	
 	/** The current difficulty setting */
 	protected DifficultySetting difficulty;
@@ -137,8 +137,10 @@ public abstract class Game extends Scene {
 				new Waypoint(125, 175, false),
 				new Waypoint(200, 635, false),
 				new Waypoint(250, 400, false),
+				//middle waypoints
 				new Waypoint(500, 200, false),
 				new Waypoint(500, 655, false),
+
 				new Waypoint(700, 100, false),
 				new Waypoint(800, 750, false),
 				new Waypoint(1000, 750, false),

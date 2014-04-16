@@ -98,6 +98,12 @@ public class Aircraft implements Serializable {
 
 	/** A list of the aircraft violation this aircraft's separation distance */
 	private ArrayList<Aircraft> planesTooNear = new ArrayList<Aircraft>();
+	
+	/** How long the aircraft has been waiting to take off in the airport */
+	private int timeWaiting = 0;
+	
+	/** Whether or not a point penalty has been applied to an aircraft waiting to take off */
+	private boolean airportPenaltyApplied = false;
 
 	/**
 	 * Constructor for an aircraft.
@@ -349,7 +355,7 @@ public class Aircraft implements Serializable {
 		if ((!newWaypoint.isEntryOrExit()) && (routeStage > -1)) {
 			flightPlan.alterPath(routeStage, newWaypoint);
 			//decrement score as a penalty for altering flightplan
-			decrementScore();
+			decrementScoreSmall();
 			if (!isManuallyControlled)
 				resetBearing();
 			if (routeStage == currentRouteStage) {
@@ -524,19 +530,35 @@ public class Aircraft implements Serializable {
 		}
 
 		// Draw altitude label
+//		graphics.setColour(128, 128, 128, alpha / 2.5);
+//
+//		if (offset != null) {
+//			graphics.print(String.format("%.0f", position.getZ()) + "+",
+//					position.getX() + (RADIUS / 2) + offset.getX(),
+//					position.getY() - (RADIUS / 2) + offset.getY());
+//		} else {
+//			graphics.print(String.format("%.0f", position.getZ()) + "+",
+//					position.getX() + (RADIUS / 2), position.getY()
+//					- (RADIUS / 2));
+//		}
+//
+//
+		
+		drawWarningCircles(offset);
+		
+		//test draw score
+		
 		graphics.setColour(128, 128, 128, alpha / 2.5);
 
 		if (offset != null) {
-			graphics.print(String.format("%.0f", position.getZ()) + "+",
+			graphics.print(String.format("%d", score) + "+",
 					position.getX() + (RADIUS / 2) + offset.getX(),
 					position.getY() - (RADIUS / 2) + offset.getY());
 		} else {
-			graphics.print(String.format("%.0f", position.getZ()) + "+",
+			graphics.print(String.format("%d", score) + "+",
 					position.getX() + (RADIUS / 2), position.getY()
 					- (RADIUS / 2));
 		}
-
-		drawWarningCircles(offset);
 	}
 
 	/**
@@ -720,7 +742,7 @@ public class Aircraft implements Serializable {
 					WARNING_SOUND.play();
 				}
 				//decriment score for getting within separation distance
-				decrementScore();
+				decrementScoreSmall();
 			}
 		}
 		if (planesTooNear.isEmpty()) {
@@ -995,14 +1017,35 @@ public class Aircraft implements Serializable {
 		this.score = newScore;
 	}
 	
-	public void decrementScore(){
-		if(this.score > 50){
-			this.score = this.score - 2;
-		}
-		else if(this.score > 20){
-			this.score = this.score -1;
+	public void decrementScoreSmall(){
+		if(this.score > 0){
+			this.score = this.score - 1;
 		}
 		else return;
+	}
+	
+	public void decrementScoreLarge() {
+		if(this.score > 0) {
+			this.score = this.score - 10;
+		}
+		else return;
+	}
+	
+
+	public boolean isAirportPenaltyApplied() {
+		return airportPenaltyApplied;
+	}
+
+	public void setAirportPenaltyApplied(boolean airportPenaltyApplied) {
+		this.airportPenaltyApplied = airportPenaltyApplied;
+	}
+
+	public int getTimeWaiting() {
+		return timeWaiting;
+	}
+
+	public void setTimeWaiting(int timeWaiting) {
+		this.timeWaiting = timeWaiting;
 	}
 
 }
