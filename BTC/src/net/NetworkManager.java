@@ -29,6 +29,9 @@ public class NetworkManager {
 	
 	/** The connection ID to the server */
 	private static int id;
+	
+	/** The player's screen name */
+	private static String playerName;
 
 	/** The thread to send data on */
 	private NetworkThread networkThread;
@@ -48,6 +51,7 @@ public class NetworkManager {
 	 */
 	public NetworkManager(boolean verbose) {
 		NetworkManager.id = -1;
+		NetworkManager.playerName = "DEFAULT PLAYER";
 		NetworkManager.verbose = verbose;
 		
 		// Create a network thread for handling asynchronous data passing
@@ -134,7 +138,7 @@ public class NetworkManager {
 			// Set request properties and headers
 			connection.addRequestProperty("user-agent", "Fly-Hard");
 			connection.addRequestProperty("client-id", String.valueOf(id));
-			connection.addRequestProperty("client-name", "");
+			connection.addRequestProperty("client-name", playerName);
 		} catch (ProtocolException e) {
 			print(e);
 		} catch (MalformedURLException e) {
@@ -328,7 +332,7 @@ public class NetworkManager {
 	}
 	
 	
-	// Accessors ------------------------------------------------------------------------
+	// Accessors and mutators -----------------------------------------------------------
 	
 	/**
 	 * Gets the ID for the current connection to the server.
@@ -339,12 +343,29 @@ public class NetworkManager {
 	}
 	
 	/**
+	 * Gets the name of the player the connection is handling.
+	 * @return the name of the player
+	 */
+	public static String getPlayerName() {
+		return playerName;
+	}
+	
+	/**
 	 * Sets the ID for the current connection to the server.
 	 * @param id
 	 * 			the server ID to set
 	 */
 	public static void setID(int id) {
 		NetworkManager.id = id;
+	}
+	
+	/**
+	 * Sets the name f the player the connection is handling.
+	 * @param name
+	 * 			the name to set
+	 */
+	public static void serPlayerName(String name) {
+		NetworkManager.playerName = name;
 	}
 	
 	// Close ----------------------------------------------------------------------------
