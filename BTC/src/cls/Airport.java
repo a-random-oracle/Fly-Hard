@@ -116,8 +116,12 @@ public class Airport extends Waypoint implements EventHandler, Serializable {
 		if (aircraftHangar.size() > 0) {
 			// Colour fades from green (fine) to red (danger)
 			// over 5 seconds as plane is waiting
-			int timeWaiting = (timeEntered.size() > 0) ?
-					(int)(Game.getInstance().getTime() - timeEntered.get(0)) : 0;
+			int timeWaiting = (int)(Game.getInstance().getTime() - timeEntered.get(0));
+			
+			for(int i = 0; i < aircraftHangar.size(); i++ ) {
+				int planeTimeWaiting = (int)(Game.getInstance().getTime() - timeEntered.get(0));
+				aircraftHangar.get(i).setTimeWaiting(planeTimeWaiting);
+			}
 			
 			// Assume it hasn't been waiting
 			int greenNow = greenFine; 
@@ -127,6 +131,17 @@ public class Airport extends Waypoint implements EventHandler, Serializable {
 				if (timeWaiting >= 5) { // Cap at 5 seconds
 					greenNow = greenDanger;
 					redNow = redDanger;
+					
+					//Decrement the score of an aircraft that has stayed in the airport too long
+					//Only decrement score once
+					for(int i = 0; i < aircraftHangar.size(); i++ ) {
+						Aircraft currentAircraft = aircraftHangar.get(i);
+						if(currentAircraft.isAirportPenaltyApplied() == false && currentAircraft.getTimeWaiting() >= 5) {
+							currentAircraft.decrementScoreLarge();
+							currentAircraft.setAirportPenaltyApplied(true);
+						}
+					}
+					
 				} else {
 					// Colour between fine and danger, scaled by timeWaiting
 					greenNow = greenFine - (int)(Math.abs(greenFine-greenDanger)

@@ -19,13 +19,12 @@ public class ScoreTest {
 	public void setUp(){
 		testScore = new Score();
 		
-		Waypoint[] waypointList = new Waypoint[] {
+		Waypoint[] waypointList = new Waypoint[]{
 				new Waypoint(0, 0, true, false),
 				new Waypoint(100, 100, true, false),
 				new Waypoint(25, 75, false, false),
 				new Waypoint(75, 25, false, false),
-				new Waypoint(50,50, false, false)
-		};
+				new Waypoint(50,50, false, false)};
 		
 		testAircraft = new Aircraft("TSTAircraft", "TestAir", "Berlin", "Dublin",
 				new Waypoint(100, 100, true, false), new Waypoint(0, 0, true, false),
@@ -49,6 +48,7 @@ public class ScoreTest {
 	@Test
 	public void testScoreDecrementAlterPath(){
 		testAircraft.alterPath(1, new Waypoint(25, 75, false, false));
-		assertTrue("Score not decremented successfully", testAircraft.getScore()==98);
+		assertTrue("Score not decremented successfully", testAircraft.getScore()==99);
 	}
+	
 }

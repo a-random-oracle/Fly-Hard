@@ -52,10 +52,10 @@ public abstract class Game extends Scene {
 
 	/** Difficulty settings: easy, medium and hard */
 	public enum DifficultySetting {EASY, MEDIUM, HARD}
-
+	
 	/** The default maximum number of aircraft */
-	public static final int DEFAULT_MAX_AIRCRAFT = 6;
-
+	public static final int DEFAULT_MAX_AIRCRAFT = 3;
+	
 	/** The current difficulty setting */
 	protected DifficultySetting difficulty;
 
