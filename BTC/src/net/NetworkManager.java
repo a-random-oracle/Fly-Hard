@@ -7,12 +7,10 @@ import java.io.ByteArrayInputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
-
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
-
 import java.util.ArrayList;
 
 public class NetworkManager {
@@ -369,6 +367,10 @@ public class NetworkManager {
 	 * Closes any open connections.
 	 */
 	public void close() {
+		// Send a message to the opponent to let
+		// them know we're closing
+		NetworkManager.postMessage("END");
+
 		if (networkThread != null) networkThread.end();
 	}
 
