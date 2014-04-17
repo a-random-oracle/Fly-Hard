@@ -159,10 +159,24 @@ public class AircraftTest {
 	}
 	
 	//Test decrementScore
+	
+	//test score starts at 100
 	@Test
-	public void decrementScore(){
-		testAircraft.decrementScore();
-		assertTrue("Score not successfully decremented", testAircraft.getScore()==98);
+	public void correctStartScore() {
+		assertTrue("Incorrect starting score", testAircraft.getScore()==100);
+	}
+	
+	//Test decrementScore
+	@Test
+	public void decrementScoreSmall() {
+		testAircraft.decrementScoreSmall();
+		assertTrue("Score not successfully decremented", testAircraft.getScore()==99);
+	}
+	
+	@Test
+	public void decrementScoreLarge() {
+		testAircraft.decrementScoreLarge();
+		assertTrue("Score not successfully decremented", testAircraft.getScore()==90);
 	}
 
 }

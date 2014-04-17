@@ -48,6 +48,6 @@ public class ScoreTest {
 	@Test
 	public void testScoreDecrementAlterPath(){
 		testAircraft.alterPath(1, new Waypoint(25, 75, false));
-		assertTrue("Score not decremented successfully", testAircraft.getScore()==98);
+		assertTrue("Score not decremented successfully", testAircraft.getScore()==99);
 	}
 }
