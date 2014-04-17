@@ -190,6 +190,7 @@ public class Main implements input.EventHandler {
 	 */
 	public static void quit() {
 		currentScene.close();
+		networkManager.close();
 		window.dispose();
 		audio.dispose();
 		System.exit(0);
