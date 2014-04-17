@@ -16,11 +16,14 @@ import cls.Waypoint;
 
 public class MultiPlayerGame extends Game {
 	
+	/** The player's position: 0 = left-hand side, 1 = right-hand side */
+	private int playerPosition;
+	
 	/** The opposing player */
 	protected Player opposingPlayer;
 	
 	/** The time frame to send data across the network */
-	private double timeToUpdate;
+	private double timeUntilUpdate;
 
 	/** The y-coordinate at which the middle zone borders begin */
 	public static int yStart = window.height() - Y_OFFSET;
@@ -36,19 +39,19 @@ public class MultiPlayerGame extends Game {
 
 
 	/**
-	 * Creates a new instance of a multi-player game.
+	 * Creates a new instance of a multiplayer game.
 	 * <p>
 	 * If an instance of Game already exists, this will print
 	 * an error message and return the current instance.
 	 * </p>
-	 * @param main the main containing the scene
-	 * @param difficulty the difficulty the scene is to be initialised with
-	 * @return the multi-player game instance
+	 * @param difficulty - the difficulty the scene is to be initialised with
+	 * @param playerPosition - the side of the screen the player will control
+	 * @return the multiplayer game instance
 	 */
 	public static MultiPlayerGame createMultiPlayerGame(
-			DifficultySetting difficulty) {
+			DifficultySetting difficulty, int playerPosition) {
 		if (instance == null) {
-			return new MultiPlayerGame(difficulty);
+			return new MultiPlayerGame(difficulty, playerPosition);
 		} else {
 			Exception e = new Exception("Attempting to create a " +
 					"second instance of Game");
@@ -58,14 +61,15 @@ public class MultiPlayerGame extends Game {
 	}
 
 	/**
-	 * Constructs a multi-player game.
-	 * @param difficulty
-	 * 			the difficulty the scene is to be initialised with
+	 * Constructs a multiplayer game.
+	 * @param difficulty - the difficulty the scene is to be initialised with
+	 * @param playerPosition - the side of the screen the player will control
 	 */
-	private MultiPlayerGame(DifficultySetting difficulty) {
+	private MultiPlayerGame(DifficultySetting difficulty, int playerPosition) {
 		super(difficulty);
 		instance = this;
 	}
+	
 	
 	/**
 	 * {@inheritDoc}
@@ -83,7 +87,7 @@ public class MultiPlayerGame extends Game {
 		locationWaypointMap.put(5, 1);
 		
 		// Set up the game
-		setUpGame();
+		setUpGame(playerPosition);
 
 		// Create the manual control buttons
 		ButtonText.Action manual = new ButtonText.Action() {
@@ -105,7 +109,7 @@ public class MultiPlayerGame extends Game {
 	 * players, and then creates the players.
 	 * </p>
 	 */
-	private void setUpGame() {
+	private void setUpGame(int playerPosition) {
 		// Generate the lists of waypoints to pass to the players
 		Waypoint[] player0Waypoints = new Waypoint[5 + 3];
 		Waypoint[] player1Waypoints = new Waypoint[5 + 3];
@@ -139,8 +143,13 @@ public class MultiPlayerGame extends Game {
 		player1Airports[0] = airports[1];
 
 		// Set up the players
-		player = new Player(0, player0Airports, player0Waypoints);
-		opposingPlayer = new Player(1, player1Airports, player1Waypoints);
+		if (playerPosition == 0) {
+			player = new Player(0, player0Airports, player0Waypoints);
+			opposingPlayer = new Player(1, player1Airports, player1Waypoints);
+		} else if (playerPosition == 1) {
+			player = new Player(1, player1Airports, player1Waypoints);
+			opposingPlayer = new Player(0, player0Airports, player0Waypoints);
+		}
 	}
 
 	/**
@@ -149,9 +158,9 @@ public class MultiPlayerGame extends Game {
 	@Override
 	public void update(double timeDifference) {
 		// Increment the time before the next data send
-		timeToUpdate += timeDifference;
+		timeUntilUpdate += timeDifference;
 
-		if (timeToUpdate > 0.001) {
+		if (timeUntilUpdate > 0.1) {
 			// Get data from the server
 			Object data = Main.getNetworkManager().receiveData();
 
@@ -164,7 +173,7 @@ public class MultiPlayerGame extends Game {
 			Main.getNetworkManager().sendData(player);
 
 			// Reset the time before the next data send
-			timeToUpdate = 0;
+			timeUntilUpdate = 0;
 		}
 		
 		super.update(timeDifference);

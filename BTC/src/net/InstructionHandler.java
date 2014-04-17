@@ -1,8 +1,9 @@
 package net;
 
 import btc.Main;
-import cls.Player;
+
 import scn.Game;
+import scn.Game.DifficultySetting;
 import scn.MultiPlayerGame;
 
 public abstract class InstructionHandler {
@@ -12,28 +13,11 @@ public abstract class InstructionHandler {
 	
 	/** The instruction delimiter */
 	public static final String DELIM = ":";
-
-	/** The list of valid instructions */
-	public static final String[] VALID_INSTRUCTIONS = new String[] {
-		"SETID",
-		"SETPOS",
-		"SETSEED",
-		"WAIT",
-		"PROCEED",
-		"TRANSFER",
-		"REMOVE",
-		"CLOSE",
-		"NULL",
-		"INVALID_REQUEST"};
-	
-	/** Whether to output data to the standard output */
-	private static boolean verbose = true;
 	
 	
 	/**
 	 * Handles instructions.
-	 * @param instruction
-	 * 			the instruction(s) to handle
+	 * @param instruction - the instruction(s) to handle
 	 */
 	public static void handleInstruction(String instruction) {
 		if (instruction != null) {
@@ -55,12 +39,11 @@ public abstract class InstructionHandler {
 	
 	/**
 	 * Handles an instruction.
-	 * @param instruction
-	 * 			the instruction to handle
+	 * @param instruction - the instruction to handle
 	 */
 	private static void handleIndividualInstruction(String instruction) {
 		// Get the instruction
-		String instr = getInstruction(instruction);
+		String instr = instruction.split(DELIM)[0];
 		
 		// Return immediately if the instruction is invalid
 		if (instr == null) return;
@@ -73,14 +56,8 @@ public abstract class InstructionHandler {
 		
 		// Otherwise, switch to the appropriate method
 		switch (instr) {
-		case "SETID":
+		case "SET_ID":
 			handleSetID(parameters);
-			break;
-		case "SETPOS":
-			handleSetPos(parameters);
-			break;
-		case "SETSEED":
-			handleSetSeed(parameters);
 			break;
 		case "WAIT":
 			handleWait();
@@ -88,14 +65,20 @@ public abstract class InstructionHandler {
 		case "PROCEED":
 			handleProceed();
 			break;
+		case "SET_SEED":
+			handleSetSeed(parameters);
+			break;
+		case "START_GAME":
+			handleStartGame(parameters);
+			break;
 		case "TRANSFER":
 			handleTransfer(parameters);
 			break;
 		case "REMOVE":
 			handleRemove(parameters);
 			break;
-		case "CLOSE":
-			handleClose();
+		case "END_GAME":
+			handleEndGame();
 			break;
 		case "NULL":
 			break;
@@ -106,12 +89,9 @@ public abstract class InstructionHandler {
 	}
 	
 	
-	// Instruction handling -------------------------------------------------------------
-	
 	/**
-	 * Handles a SETID instruction.
-	 * @param parameters
-	 * 			the parameters accompanying the instruction
+	 * Handles a SET_ID instruction.
+	 * @param parameters - the parameters accompanying the instruction
 	 */
 	private static void handleSetID(String parameters) {
 		// Get the player ID to set from the response
@@ -119,76 +99,27 @@ public abstract class InstructionHandler {
 		try {
 			IDToSet = Integer.parseInt(parameters);
 		} catch (Exception e) {
-			print(e);
+			NetworkManager.print(e);
 		}
 
 		// Set the current player's server-generated ID
 		NetworkManager.setID(IDToSet);
 
-		print("Player has ID: " + NetworkManager.getID());
-	}
-	
-	/**
-	 * Handles a SETPOS instruction.
-	 * @param parameters
-	 * 			the parameters accompanying the instruction
-	 */
-	private static void handleSetPos(String parameters) {
-		// Get the position to set from the response
-		int playerPosition = -1;
-		try {
-			playerPosition = Integer.parseInt(parameters);
-		} catch (Exception e) {
-			print(e);
-		}
-
-		// Set the current player
-		switch (playerPosition) {
-		case 0:
-			// Player with ID = 0 should already be set as the current player
-			break;
-		case 1:
-			// Swap the player with the opposing player
-			Player tempPlayer = Game.getInstance().getCurrentPlayer();
-			((MultiPlayerGame) Game.getInstance()).setCurrentPlayer(
-					((MultiPlayerGame) Game.getInstance()).getOpposingPlayer());
-			((MultiPlayerGame) Game.getInstance()).setOpposingPlayer(tempPlayer);
-			break;
-		}
-	}
-	
-	/**
-	 * Handles a SETSEED instruction.
-	 * @param parameters
-	 * 			the parameters accompanying the instruction
-	 */
-	private static void handleSetSeed(String parameters) {
-		// Get the player ID to set from the response
-		int seedToSet = 0;
-		try {
-			seedToSet = Integer.parseInt(parameters);
-		} catch (Exception e) {
-			print(e);
-		}
-
-		// Set the current player's random seed
-		Main.setRandomSeed(seedToSet);
-
-		print("Using random seed: " + seedToSet);
+		NetworkManager.print("Player has ID: " + NetworkManager.getID());
 	}
 	
 	/**
 	 * Handles a WAIT instruction.
 	 */
 	private static void handleWait() {
-		print("Waiting.");
+		NetworkManager.print("Waiting.");
 		
 		try {
 			// Wait, then poll server to check for an opponent
-			Thread.sleep(10);
+			Thread.sleep(100);
 			handleInstruction(NetworkManager.postMessage("CHECK_FOR_OPPONENT"));
 		} catch (InterruptedException e) {
-			print(e);
+			NetworkManager.print(e);
 		}
 	}
 	
@@ -196,7 +127,44 @@ public abstract class InstructionHandler {
 	 * Handles a PROCEED instruction.
 	 */
 	private static void handleProceed() {
-		print("Resuming.");
+		NetworkManager.print("Resuming.");
+	}
+	
+	/**
+	 * Handles a SET_SEED instruction.
+	 * @param parameters - the parameters accompanying the instruction
+	 */
+	private static void handleSetSeed(String parameters) {
+		// Get the player ID to set from the response
+		int seedToSet = 0;
+		try {
+			seedToSet = Integer.parseInt(parameters);
+		} catch (Exception e) {
+			NetworkManager.print(e);
+		}
+
+		// Set the current player's random seed
+		Main.setRandomSeed(seedToSet);
+
+		NetworkManager.print("Using random seed: " + seedToSet);
+	}
+	
+	/**
+	 * Handles a START_GAME instruction.
+	 * @param parameters - the parameters accompanying the instruction
+	 */
+	private static void handleStartGame(String parameters) {
+		// Get the position to set from the response
+		int playerPosition = -1;
+		try {
+			playerPosition = Integer.parseInt(parameters);
+		} catch (Exception e) {
+			NetworkManager.print(e);
+		}
+
+		// Start a new multiplayer game
+		Main.setScene(MultiPlayerGame
+				.createMultiPlayerGame(DifficultySetting.EASY, playerPosition));
 	}
 	
 	/**
@@ -225,9 +193,9 @@ public abstract class InstructionHandler {
 	}
 	
 	/**
-	 * Handles an END instruction.
+	 * Handles an END_GAME instruction.
 	 */
-	private static void handleClose() {
+	private static void handleEndGame() {
 		// Obtain a lock on the game instance
 		synchronized(Game.getInstance()) {
 			Game.getInstance().setEnding(true);
@@ -239,75 +207,6 @@ public abstract class InstructionHandler {
 	 */
 	private static void handleInvalidRequest() {
 		// TODO
-	}
-	
-	
-	// Helper methods -------------------------------------------------------------------
-	
-	/**
-	 * Checks if an instruction is in the list of valid instructions,
-	 * and if so returns the instruction.
-	 * @param instruction
-	 * 			the instruction to check
-	 * @return the instruction
-	 */
-	private static String getInstruction(String instruction) {
-		// Try to split out the instruction's parameters
-		String[] instructionList = instruction.split(DELIM);
-		
-		// Check either the instruction given (if there are no
-		// parameters), or the instruction part of the instruction
-		// (if there are parameters)
-		String instructionToCheck = null;
-		if (instructionList.length > 0) {
-			instructionToCheck = instructionList[0];
-			
-			// Loop through the valid instructions, and try to match
-			// these to the specified instruction
-			for (String validInstruction : VALID_INSTRUCTIONS) {
-				if (validInstruction.equals(instructionToCheck)) {
-					return instructionToCheck;
-				}
-			}
-		}
-		
-		// The instruction hasn't been found, so it's not valid
-		return null;
-	}
-	
-	
-	// Printing -------------------------------------------------------------------------
-	
-	/**
-	 * Prints strings to the standard output.
-	 * <p>
-	 * If {@link #verbose} is set to <code>true</code>, this will
-	 * function in the same was as {@link System.out#println()}.
-	 * </p>
-	 * <p>
-	 * Otherwise this will do nothing.
-	 * </p>
-	 * @param string
-	 * 			the string to output
-	 */
-	public static void print(String string) {
-		if (verbose) System.out.println(string);
-	}
-	
-	/**
-	 * Prints error messages to the standard output.
-	 * <p>
-	 * Uses {@link #print(String)} to print stack traces.
-	 * </p>
-	 * @param e
-	 * 			the exception to output
-	 */
-	public static void print(Exception e) {
-		print(e.toString());
-		
-		for (int i = 0; i < e.getStackTrace().length; i++) {
-			print("at " + e.getStackTrace()[i].toString());
-		}
 	}
 	
 }
