@@ -3,9 +3,6 @@ package cls;
 import java.io.Serializable;
 import java.util.ArrayList;
 
-import lib.jog.window;
-import scn.Game;
-
 public class Player implements Serializable {
 	
 	/** Serialisation ID */
@@ -17,14 +14,14 @@ public class Player implements Serializable {
 		new Integer[] {202, 0, 5}		// Red
 	};
 	
+	/** The default maximum number of aircraft */
+	private static final int DEFAULT_MAX_AIRCRAFT = 3;
+	
+	/** The possible turning states - not turning, turning left and turning right */
+	public enum TurningState {NOT_TURNING, TURNING_LEFT, TURNING_RIGHT};
+	
 	/** The player's unique ID */
 	private int id;
-	
-	/** The width of the player's window */
-	private double windowWidth;
-	
-	/** The height of the player's window */
-	private double windowHeight;
 	
 	/** The maximum number of aircraft which this player can control */
 	private int maxAircraft;
@@ -56,6 +53,9 @@ public class Player implements Serializable {
 	/** Tracks if a waypoint in the selected aircraft's flight plan has been clicked */
 	private boolean waypointClicked;
 	
+	/** The player's current turning state */
+	private TurningState turningState;
+	
 	/** The time elapsed since the last flight was generated */
 	private double flightGenerationTimeElapsed;
 	
@@ -70,17 +70,30 @@ public class Player implements Serializable {
 	
 	/** The player's remaining lives */
 	private int lives;
-
-	/** The current powerup if any*/
-	protected Powerup powerup;
 	
 	
 	// Constructor: ---------------------------------------------------------------------
 	
+	/**
+	 * Creates a player.
+	 * <p>
+	 * Players store the data which can be modified during gameplay
+	 * by the user.
+	 * </p>
+	 * <p>
+	 * In the multiplayer game, this is the data which is sent over
+	 * the network to keep the games in sync.
+	 * </p>
+	 * @param id - the player's <b>unique</b> ID
+	 * @param airports - the airports under this player's control
+	 * @param waypoints - the waypoints under this player's control
+	 */
 	public Player(int id, Airport[] airports, Waypoint[] waypoints) {
+		this.id = id;
+		this.airports = airports;
+		this.waypoints = waypoints;
 		
-		// Reset values
-		this.maxAircraft = Game.DEFAULT_MAX_AIRCRAFT;
+		this.maxAircraft = Player.DEFAULT_MAX_AIRCRAFT;
 		this.selectedAircraft = null;
 		this.selectedWaypoint = null;
 		this.selectedPathpoint = -1;
@@ -89,18 +102,9 @@ public class Player implements Serializable {
 		this.flightGenerationTimeElapsed = 6;
 		this.controlAltitude = 30000;
 		this.lives = 3;
-		
-		// Initialise arrays
+		this.score = new Score();
 		this.aircraft = new ArrayList<Aircraft>();
 		this.powerups = new ArrayList<Powerup>();
-		
-		// Set attributes
-		this.id = id;
-		this.windowWidth = window.width();
-		this.windowHeight = window.height();
-		this.airports = airports;
-		this.waypoints = waypoints;
-		this.score = new Score();
 		
 		// Set aircraft colour
 		// Default is white
@@ -117,22 +121,6 @@ public class Player implements Serializable {
 	 */
 	public int getID() {
 		return id;
-	}
-	
-	/**
-	 * Gets the player's window's width.
-	 * @return the window's width
-	 */
-	public double getWindowWidth() {
-		return windowWidth;
-	}
-	
-	/**
-	 * Gets the player's window's height.
-	 * @return the window's height
-	 */
-	public double getWindowHeight() {
-		return windowHeight;
 	}
 	
 	/**
@@ -216,6 +204,24 @@ public class Player implements Serializable {
 	}
 	
 	/**
+	 * Gets whether the player is currently instructing an aircraft to turn left.
+	 * @return <code>true</code> if the player is instructing an aircraft to
+	 * 			turn left, otherwise <code>false</code>
+	 */
+	public boolean isTurningLeft() {
+		return (turningState == TurningState.TURNING_LEFT) ? true : false;
+	}
+	
+	/**
+	 * Gets whether the player is currently instructing an aircraft to turn right.
+	 * @return <code>true</code> if the player is instructing an aircraft to
+	 * 			turn right, otherwise <code>false</code>
+	 */
+	public boolean isTurningRight() {
+		return (turningState == TurningState.TURNING_RIGHT) ? true : false;
+	}
+	
+	/**
 	 * Gets the time since flight generation was last reset.
 	 * @return the time since flight generation was last reset
 	 */
@@ -259,80 +265,96 @@ public class Player implements Serializable {
 	// Mutators: ------------------------------------------------------------------------
 	
 	/**
-	 * @param aircraft
-	 * 			the new list of aircraft
+	 * Sets the list of aircraft under the player's control.
+	 * @param aircraft - the new list of aircraft
 	 */
 	public void setAircraft(ArrayList<Aircraft> aircraft) {
 		this.aircraft = aircraft;
 	}
 	
 	/**
-	 * @param aircraft
-	 * 			the aircraft to select
+	 * Sets the selected aircraft.
+	 * @param aircraft - the aircraft to select
 	 */
 	public void setSelectedAircraft(Aircraft aircraft) {
 		this.selectedAircraft = aircraft;
 	}
 	
 	/**
-	 * @param waypoint
-	 * 			the waypoint to select
+	 * Sets the selected waypoint.
+	 * @param waypoint - the waypoint to select
 	 */
 	public void setSelectedWaypoint(Waypoint waypoint) {
 		this.selectedWaypoint = waypoint;
 	}
 	
 	/**
-	 * @param pathpoint
-	 * 			the pathpoint to select
+	 * Sets the selected pathpoint.
+	 * @param pathpoint - the pathpoint to select
 	 */
 	public void setSelectedPathpoint(int pathpoint) {
 		this.selectedPathpoint = pathpoint;
 	}
 	
 	/**
-	 * @param clicked
-	 * 			whether a waypoint has been clicked or not
+	 * Sets whether the player has clicked a waypoint.
+	 * @param clicked - whether a waypoint has been clicked or not
 	 */
 	public void setWaypointClicked(boolean clicked) {
 		this.waypointClicked = clicked;
 	}
 	
 	/**
-	 * @param clicked
-	 * 			whether the compass has been clicked or not
+	 * Sets whether the player has clicked an aircraft's compass.
+	 * @param clicked - whether a compass has been clicked or not
 	 */
 	public void setCompassClicked(boolean clicked) {
 		this.compassClicked = clicked;
 	}
 	
 	/**
-	 * @param time
-	 * 			the time to set
+	 * Sets the player's turning state.
+	 * <p>
+	 * <ul>
+	 * <li>NOT_TURNING indicates that the currently seleted aircraft is not
+	 * being turned</li>
+	 * <li>TURNING_LEFT indicates that the player is turning the currently
+	 * selected aircraft to the left</li>
+	 * <li>TURNING_RIGHT indicates that the player is turning the currently
+	 * selected aircraft to the right</li>
+	 * @param state - the state to set
+	 */
+	public void setTurningState(TurningState state) {
+		this.turningState = state;
+	}
+	
+	/**
+	 * Sets the time since an aircraft was last generated for the player.
+	 * @param time - the time to set
 	 */
 	public void setFlightGenerationTimeElapsed(double time) {
 		this.flightGenerationTimeElapsed = time;
 	}
 	
 	/**
-	 * @param altitude
-	 * 			the altitude to set to be highlighted
+	 * Sets the player's control altitude.
+	 * @param altitude - the altitude to set to be highlighted
 	 */
 	public void setControlAltitude(int altitude) {
 		this.controlAltitude = altitude;
 	}
 	
 	/**
-	 * @param powerup
-	 * 			the powerup to add
+	 * Addsa powerup to the player.
+	 * @param powerup - the powerup to add
 	 */
 	public void addPowerup(Powerup powerup) {
 		powerups.add(powerup);
 	}
 	
 	/**
-	 * @param powerup
-	 * 			the powerup to remove
+	 * Removes a powerup from the player.
+	 * @param powerup - the powerup to remove
 	 */
 	public void removePowerup(Powerup powerup) {
 		for (int i = (powerups.size() - 1); i >= 0; i--) {
@@ -343,24 +365,23 @@ public class Player implements Serializable {
 	}
 	
 	/**
-	 * Removes all powerups from this player.
+	 * Removes all powerups from the player.
 	 */
 	public void clearPowerups() {
 		powerups = new ArrayList<Powerup>();
 	}
 	
 	/**
-	 * @param score
-	 * 			the new score
+	 * Sets the player's score.
+	 * @param score - the new score
 	 */
 	public void setScore(Score score) {
 		this.score = score;
 	}
 	
 	/**
-	 * Mutator for the player's lives
-	 * @param lives
-	 * 				the new amount of lives
+	 * Sets the player's lives.
+	 * @param lives - the new amount of lives
 	 */
 	public void setLives(int lives) {
 		this.lives = lives;

@@ -18,6 +18,7 @@ import cls.Aircraft;
 import cls.Airport;
 import cls.OrdersBox;
 import cls.Player;
+import cls.Player.TurningState;
 import cls.Waypoint;
 
 import btc.Main;
@@ -52,9 +53,6 @@ public abstract class Game extends Scene {
 
 	/** Difficulty settings: easy, medium and hard */
 	public enum DifficultySetting {EASY, MEDIUM, HARD}
-	
-	/** The default maximum number of aircraft */
-	public static final int DEFAULT_MAX_AIRCRAFT = 3;
 	
 	/** The current difficulty setting */
 	protected DifficultySetting difficulty;
@@ -197,15 +195,18 @@ public abstract class Game extends Scene {
 			if (player.getSelectedAircraft().isManuallyControlled()) {
 				// Handle directional control for a manually
 				// controlled aircraft
-				if (input.keyPressed(new int[]{input.KEY_LEFT, input.KEY_A})) {
+				if (input.keyPressed(new int[] {input.KEY_LEFT, input.KEY_A})) {
 					// Turn left when 'Left' or 'A' key is pressed
-					player.getSelectedAircraft().turnLeft(timeDifference);
-				} else if (input.keyPressed(new int[]{input.KEY_RIGHT,
+					player.setTurningState(TurningState.TURNING_LEFT);
+				} else if (input.keyPressed(new int[] {input.KEY_RIGHT,
 						input.KEY_D})) {
 					// Turn right when 'Right' or 'D' key is pressed
-					player.getSelectedAircraft().turnRight(timeDifference);
+					player.setTurningState(TurningState.TURNING_RIGHT);
+				} else {
+					// Clear the turning state
+					player.setTurningState(TurningState.NOT_TURNING);
 				}
-			} else if (input.keyPressed(new int[]{input.KEY_LEFT, input.KEY_A,
+			} else if (input.keyPressed(new int[] {input.KEY_LEFT, input.KEY_A,
 					input.KEY_RIGHT, input.KEY_D})) {
 				// If any of the directional keys is pressed, set
 				// selected aircraft to manual control
@@ -213,12 +214,12 @@ public abstract class Game extends Scene {
 			}
 
 			// Handle altitude controls
-			if (input.keyPressed(new int[]{input.KEY_S, input.KEY_DOWN})
+			if (input.keyPressed(new int[] {input.KEY_S, input.KEY_DOWN})
 					&& (player.getSelectedAircraft()
 							.getPosition().getZ() > 28000)) {
 				player.getSelectedAircraft()
 				.setAltitudeState(Aircraft.ALTITUDE_FALL);
-			} else if (input.keyPressed(new int[]{input.KEY_W, input.KEY_UP})
+			} else if (input.keyPressed(new int[] {input.KEY_W, input.KEY_UP})
 					&& (player.getSelectedAircraft()
 							.getPosition().getZ() < 30000)) {
 				player.getSelectedAircraft()
@@ -265,16 +266,27 @@ public abstract class Game extends Scene {
 				}
 			}
 		}
+		
+		// Handle turning
+		if (player.getSelectedAircraft() != null
+				&& player.getSelectedAircraft().isManuallyControlled()) {
+			if (player.isTurningLeft()) {
+				player.getSelectedAircraft().turnLeft(timeDifference);
+			} else if (player.isTurningRight()) {
+				player.getSelectedAircraft().turnRight(timeDifference);
+			}
+		}
 
 		// Update the counter used to determine when another flight should
 		// enter the airspace
 		// If the counter has reached 0, then spawn a new aircraft
 		player.setFlightGenerationTimeElapsed(player
 				.getFlightGenerationTimeElapsed() + timeDifference);
+		
 		if (player.getFlightGenerationTimeElapsed()
 				>= getFlightGenerationInterval(player)) {
-			player.setFlightGenerationTimeElapsed(player
-					.getFlightGenerationTimeElapsed()
+			player.setFlightGenerationTimeElapsed(
+					player.getFlightGenerationTimeElapsed()
 					- getFlightGenerationInterval(player));
 
 			if (player.getAircraft().size() < player.getMaxAircraft()) {
@@ -283,7 +295,7 @@ public abstract class Game extends Scene {
 		}
 
 		// If there are no aircraft in the airspace, spawn a new aircraft
-		if (player.getAircraft().size() == 0) generateFlight(player);
+		//if (player.getAircraft().size() == 0) generateFlight(player);
 	}
 
 	/**
