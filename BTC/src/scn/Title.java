@@ -50,7 +50,7 @@ public class Title extends Scene {
 		lib.ButtonText.Action demo = new lib.ButtonText.Action() {
 			@Override
 			public void action() {
-				Main.setScene(new DifficultySelect(/*main,*/ DifficultySelect.CREATE_DEMO));
+				Main.setScene(new DifficultySelect(DifficultySelect.CREATE_DEMO));
 			}
 		};
 		buttons[0] = new lib.ButtonText("Play Single Player Game", demo,
@@ -61,7 +61,6 @@ public class Title extends Scene {
 		lib.ButtonText.Action multiplayer = new lib.ButtonText.Action() {
 			@Override
 			public void action() {
-				//main.setScene(new DifficultySelect(main, DifficultySelect.CREATE_DEMO));
 				Main.setScene(new Lobby());
 			}
 		};
@@ -73,7 +72,7 @@ public class Title extends Scene {
 		lib.ButtonText.Action credits = new lib.ButtonText.Action() {
 			@Override
 			public void action() {
-				Main.setScene(new Credits(/*main,*/));
+				Main.setScene(new Credits());
 			}
 		};
 		buttons[2] = new lib.ButtonText("Credits", credits,
