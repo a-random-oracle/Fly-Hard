@@ -21,15 +21,9 @@ public class Lobby extends Scene {
 	private InputBox inputBox;
 	
 	private ButtonText[] buttons;
-
-	// To allow the difficulty selection to work with multiple potential game
-	// scenes, e.g. separate Demo and a Full Game
-	//private int scene;
-	public final static int CREATE_DEMO = 0;
 	
-	protected Lobby(int scn) {
+	protected Lobby() {
 		super();
-		//this.scene = scn;
 	}
 	
 	
@@ -47,7 +41,7 @@ public class Lobby extends Scene {
 			}
 		};
 		
-		buttons[0] = new lib.ButtonText("Create Game", createGame, CREATE_BUTTON_X, CREATE_BUTTON_Y,
+		buttons[0] = new ButtonText("Create Game", createGame, CREATE_BUTTON_X, CREATE_BUTTON_Y,
 				CREATE_BUTTON_W, CREATE_BUTTON_H);
 		
 		// Get the available opponents from the server
@@ -70,12 +64,12 @@ public class Lobby extends Scene {
 	@Override
 	public void mousePressed(int key, int x, int y) {}
 
-	@Override
 	/**
 	 * Causes a button to act if mouse released over it
 	 */
+	@Override
 	public void mouseReleased(int key, int x, int y) {
-		for (lib.ButtonText b : buttons) {
+		for (ButtonText b : buttons) {
 			if (b.isMouseOver(x, y)) {
 				b.act();
 			}
@@ -85,10 +79,10 @@ public class Lobby extends Scene {
 	@Override
 	public void keyPressed(int key) {}
 
-	@Override
 	/**
 	 * Quits back to title scene on escape button
 	 */
+	@Override
 	public void keyReleased(int key) {
 		if (key == input.KEY_ESCAPE) {
 			Main.closeScene();
@@ -107,13 +101,10 @@ public class Lobby extends Scene {
 
 		inputBox.draw();
 
-		//graphics.printCentred(chooseHost, window.width()/2 - 50,
-				//window.height()/2 + 50, 1, 100);
-
 		graphics.rectangle(false, CREATE_BUTTON_X, CREATE_BUTTON_Y,
 				CREATE_BUTTON_W, CREATE_BUTTON_H);
 
-		for (lib.ButtonText b : buttons) {
+		for (ButtonText b : buttons) {
 			b.draw();
 		}
 	}

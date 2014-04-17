@@ -62,7 +62,7 @@ public class Title extends Scene {
 			@Override
 			public void action() {
 				//main.setScene(new DifficultySelect(main, DifficultySelect.CREATE_DEMO));
-				Main.setScene(new Lobby(/*main,*/ Lobby.CREATE_DEMO));
+				Main.setScene(new Lobby());
 			}
 		};
 		buttons[1] = new lib.ButtonText("Play Multiplayer Game", multiplayer,
