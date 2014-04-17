@@ -49,6 +49,22 @@ public class Lobby extends Scene {
 		
 		buttons[0] = new lib.ButtonText("Create Game", createGame, CREATE_BUTTON_X, CREATE_BUTTON_Y,
 				CREATE_BUTTON_W, CREATE_BUTTON_H);
+		
+		// Get the available opponents from the server
+		String[] openConnections = NetworkManager
+				.postMessage("GET_OPEN_CONNECTIONS").split(";");
+		
+		// Get the names of the available opponents
+		String[] availablePlayers = new String[openConnections.length];
+		for (int i = 0; i < openConnections.length; i++) {
+			if (openConnections[i].split(":").length > 1) {
+				availablePlayers[i] = openConnections[i].split(":")[1];
+			} else {
+				availablePlayers[i] = "DEFAULT PLAYER NAME";
+			}
+			
+			System.out.println("Found player: " + availablePlayers[i]);
+		}
 	}
 
 	@Override
