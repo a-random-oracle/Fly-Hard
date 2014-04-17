@@ -22,7 +22,7 @@ public abstract class InstructionHandler {
 		"PROCEED",
 		"TRANSFER",
 		"REMOVE",
-		"END",
+		"CLOSE",
 		"NULL",
 		"INVALID_REQUEST"};
 	
@@ -94,8 +94,8 @@ public abstract class InstructionHandler {
 		case "REMOVE":
 			handleRemove(parameters);
 			break;
-		case "END":
-			handleEnd();
+		case "CLOSE":
+			handleClose();
 			break;
 		case "NULL":
 			break;
@@ -227,7 +227,7 @@ public abstract class InstructionHandler {
 	/**
 	 * Handles an END instruction.
 	 */
-	private static void handleEnd() {
+	private static void handleClose() {
 		// Obtain a lock on the game instance
 		synchronized(Game.getInstance()) {
 			Game.getInstance().setEnding(true);
