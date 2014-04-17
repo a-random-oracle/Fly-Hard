@@ -4,8 +4,6 @@ import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
 
-import scn.Game.DifficultySetting;
-
 import lib.jog.audio;
 import lib.jog.audio.Sound;
 import lib.jog.graphics;
@@ -46,7 +44,7 @@ public class Title extends Scene {
 		beep = audio.newSoundEffect("sfx" + File.separator + "beep.ogg");
 		beep.setVolume(0.2f);
 
-		buttons = new lib.ButtonText[6];
+		buttons = new lib.ButtonText[5];
 
 		// Single player Button
 		lib.ButtonText.Action demo = new lib.ButtonText.Action() {
@@ -106,18 +104,6 @@ public class Title extends Scene {
 		};
 		buttons[4] = new lib.ButtonText("Exit", exit,
 				window.height(), window.height()/2 + 186,
-				window.width() - window.height(), 24, 8, 6);
-		
-		// Multiplayer Test Button
-		lib.ButtonText.Action mpTest = new lib.ButtonText.Action() {
-			@Override
-			public void action() {
-				Main.setScene(MultiPlayerGame.createMultiPlayerGame(/*main,*/
-						DifficultySetting.EASY));
-			}
-		};
-		buttons[5] = new lib.ButtonText("Multiplayer TEST", mpTest,
-				window.height(), window.height()/2 + 216,
 				window.width() - window.height(), 24, 8, 6);
 
 		angle = 0;
@@ -242,7 +228,6 @@ public class Title extends Scene {
 		graphics.line(window.height(), window.height()/2 + 150, window.width() - 16, window.height()/2 + 150);
 		graphics.line(window.height(), window.height()/2 + 180, window.width() - 16, window.height()/2 + 180);
 		graphics.line(window.height(), window.height()/2 + 210, window.width() - 16, window.height()/2 + 210);
-		graphics.line(window.height(), window.height()/2 + 240, window.width() - 16, window.height()/2 + 240);
 	}
 
 	/**
