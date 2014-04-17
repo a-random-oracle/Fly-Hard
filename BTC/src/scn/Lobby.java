@@ -49,8 +49,7 @@ public class Lobby extends Scene {
 		ButtonText.Action createGame = new ButtonText.Action() {
 			@Override
 			public void action() {
-				NetworkManager.setPlayerName(inputBox.getText());
-				NetworkManager.postMessage("INIT");
+				NetworkManager.postMessage("INIT:" + inputBox.getText());
 			}
 		};
 		

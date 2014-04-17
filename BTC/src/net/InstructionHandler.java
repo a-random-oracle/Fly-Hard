@@ -6,6 +6,21 @@ import scn.Game;
 import scn.Game.DifficultySetting;
 import scn.MultiPlayerGame;
 
+/**
+ * Handles instructions.
+ * <p>
+ * Instructions should be of the form:
+ * 'COMMAND':'PARAMETERS;
+ * </p>
+ * <p>
+ * Multiple instructions can be handled by passing
+ * in a string of the form:
+ * 'Instruction1';'Instruction2'
+ * When multiple instructions are passed, they will be
+ * handled sequentially, in the order they appear in the
+ * string.
+ * </p>
+ */
 public abstract class InstructionHandler {
 	
 	/** The instruction list delimiter */
@@ -169,8 +184,7 @@ public abstract class InstructionHandler {
 	
 	/**
 	 * Handles a TRANSFER instruction.
-	 * @param parameters
-	 * 			the parameters accompanying the instruction
+	 * @param parameters - the parameters accompanying the instruction
 	 */
 	private static void handleTransfer(String parameters) {
 		Game.getInstance().getCurrentPlayer().getAircraft().add(
@@ -181,8 +195,7 @@ public abstract class InstructionHandler {
 	
 	/**
 	 * Handles a REMOVE instruction.
-	 * @param parameters
-	 * 			the parameters accompanying the instruction
+	 * @param parameters - the parameters accompanying the instruction
 	 */
 	private static void handleRemove(String parameters) {
 		// Obtain a lock on the aircraft array
