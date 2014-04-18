@@ -194,7 +194,9 @@ public class NetworkManager {
 			outputStream = new ObjectOutputStream(connection.getOutputStream());
 			
 			// Serialise the data
-			dataEntry.setValue(serialiseData(dataEntry.getValue()));
+			if (dataEntry.getValue() != null) {
+				dataEntry.setValue(serialiseData(dataEntry.getValue()));
+			}
 			
 			// Write the data to the output stream
 			outputStream.writeObject(dataEntry);
