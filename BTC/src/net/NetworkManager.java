@@ -147,7 +147,7 @@ public class NetworkManager {
 	public static String postMessage(String message) {
 		ObjectOutputStream outputStream = null;
 		ObjectInputStream inputStream = null;
-		String receivedData = null;
+		String receivedMessages = null;
 		
 		print("Sending message: " + message);
 		
@@ -168,8 +168,8 @@ public class NetworkManager {
 			inputStream = new ObjectInputStream(connection.getInputStream());
 
 			// Get the received data
-			receivedData = (String) inputStream.readObject();
-			print("Received response: " + receivedData);
+			receivedMessages = (String) inputStream.readObject();
+			print("Received response: " + receivedMessages);
 
 			// Flush the output stream
 			outputStream.flush();
@@ -182,8 +182,10 @@ public class NetworkManager {
 			print(e);
 		}
 		
-		// Return the data
-		return receivedData;
+		// Handle the received message(s)
+		InstructionHandler.handleInstruction(receivedMessages);
+		
+		return receivedMessages;
 	}
 	
 	/**

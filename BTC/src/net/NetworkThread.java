@@ -124,12 +124,9 @@ public class NetworkThread extends Thread {
 				messages = "";
 			}
 		}
-		// Send the post request to the server, and read the response
-		String receivedMessages = NetworkManager
-				.postMessage(messageString);
-			
-		// Handle the received message(s)
-		InstructionHandler.handleInstruction(receivedMessages);
+		
+		// Send the post request to the server
+		NetworkManager.postMessage(messageString);
 	}
 	
 	/**
