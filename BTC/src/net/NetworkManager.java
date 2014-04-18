@@ -39,10 +39,9 @@ public class NetworkManager {
 
 	/**
 	 * Constructs a new network manager.
-	 * @param verbose
-	 * 			<code>true</code> indicates that the network manager
-	 * 			should output status and connection information to
-	 * 			the standard output
+	 * @param verbose - <code>true</code> indicates that the network manager
+	 * 					should output status and connection information to
+	 * 					the standard output
 	 */
 	public NetworkManager(boolean verbose) {
 		NetworkManager.id = -1;
@@ -74,8 +73,7 @@ public class NetworkManager {
 	 * The data will then be sent to the server after an arbitrary length
 	 * of time.
 	 * </p>
-	 * @param data
-	 * 			the data to send
+	 * @param data - the data to send
 	 */
 	public void sendData(Serializable data) {
 		networkThread.writeData(data);
@@ -87,8 +85,7 @@ public class NetworkManager {
 	 * The message will then be sent to the server after an arbitrary length
 	 * of time.
 	 * </p>
-	 * @param message
-	 * 			the message to send
+	 * @param message - the message to send
 	 */
 	public void sendMessage(String message) {
 		networkThread.writeMessage(message);
@@ -140,8 +137,7 @@ public class NetworkManager {
 	
 	/**
 	 * Sends an object to the server to add to the server-side data store.
-	 * @param data
-	 * 			the data to send
+	 * @param data - the data to send
 	 * @return the data the server responded with
 	 */
 	public static String postMessage(String message) {
@@ -190,8 +186,7 @@ public class NetworkManager {
 	
 	/**
 	 * Sends an object to the server to add to the server-side data store.
-	 * @param data
-	 * 			the data to send
+	 * @param data - the data to send
 	 * @return the data the server responded with
 	 */
 	public static Serializable postObject(Serializable data) {
@@ -229,13 +224,6 @@ public class NetworkManager {
 			print(e);
 		}
 		
-		// If the received data is a string, treat it as an instruction
-		// and process it immediately
-		/*if (receivedData instanceof String) { XXX
-			print("Received response: " + ((String) receivedData));
-			InstructionHandler.handleInstruction((String) receivedData);
-		}*/
-		
 		// Return the data
 		return receivedData;
 	}
@@ -245,8 +233,7 @@ public class NetworkManager {
 	
 	/**
 	 * Serialises data to a byte array.
-	 * @param data
-	 * 			the data to serialise
+	 * @param data - the data to serialise
 	 * @return
 	 */
 	private static byte[] serialiseData(Serializable data) {
@@ -298,8 +285,7 @@ public class NetworkManager {
 	 * <p>
 	 * Otherwise this will do nothing.
 	 * </p>
-	 * @param string
-	 * 			the string to output
+	 * @param string - the string to output
 	 */
 	public static void print(String string) {
 		if (verbose) System.out.println(string);
@@ -310,8 +296,7 @@ public class NetworkManager {
 	 * <p>
 	 * Uses {@link #print(String)} to print stack traces.
 	 * </p>
-	 * @param e
-	 * 			the exception to output
+	 * @param e - the exception to output
 	 */
 	public static void print(Exception e) {
 		print(e.toString());
@@ -334,8 +319,7 @@ public class NetworkManager {
 	
 	/**
 	 * Sets the ID for the current connection to the server.
-	 * @param id
-	 * 			the server ID to set
+	 * @param id - the server ID to set
 	 */
 	public static void setID(int id) {
 		NetworkManager.id = id;
