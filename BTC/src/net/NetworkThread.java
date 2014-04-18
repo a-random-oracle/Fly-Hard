@@ -77,12 +77,12 @@ public class NetworkThread extends Thread {
 		
 		// Obtain a lock on the data buffer
 		synchronized(dataBuffer) {
-			if ((dataBuffer.size() == 0) || (dataBuffer.get(0) == null)) {
+			if ((dataBuffer.size() == 0) || (dataBuffer.lastEntry() == null)) {
 				// Send null
 			} else {
 				// Get the next data element, and remove it from the
 				// data buffer
-				dataEntry = dataBuffer.firstEntry();
+				dataEntry = dataBuffer.lastEntry();
 				dataBuffer.clear();
 			}
 		}
