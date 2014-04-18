@@ -163,20 +163,21 @@ public class MultiPlayerGame extends Game {
 		timeUntilUpdate += timeDifference;
 
 		if (timeUntilUpdate > 0.1) {
-			// Get data from the server
-			Object data = Main.getNetworkManager().receiveData();
-
-			if (data != null && data instanceof Player) {
-				// Set the opposing player's data
-				opposingPlayer = (Player) data;
-			}
-
-			// Send current player's data to the server
-			Main.getNetworkManager().sendData(player);
 
 			// Reset the time before the next data send
 			timeUntilUpdate = 0;
 		}
+		
+		// Get data from the server
+		Object data = Main.getNetworkManager().receiveData();
+
+		if (data != null && data instanceof Player) {
+			// Set the opposing player's data
+			opposingPlayer = (Player) data;
+		}
+
+		// Send current player's data to the server
+		Main.getNetworkManager().sendData(player);
 		
 		super.update(timeDifference);
 		
