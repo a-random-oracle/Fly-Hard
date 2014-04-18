@@ -177,7 +177,7 @@ public class MultiPlayerGame extends Game {
 		}
 
 		// Send current player's data to the server
-		Main.getNetworkManager().sendData(player);
+		Main.getNetworkManager().sendData(System.currentTimeMillis(), player);
 		
 		super.update(timeDifference);
 		

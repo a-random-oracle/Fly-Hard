@@ -1,7 +1,9 @@
 package net;
 
 import java.io.Serializable;
-import java.util.ArrayList;
+
+import java.util.Map.Entry;
+import java.util.TreeMap;
 
 /**
  * Thread used to transfer data in parallel with the game.
@@ -10,29 +12,20 @@ import java.util.ArrayList;
  * data being passed to the queue and data being sent.
  * </p>
  * <p>
- * However, it is guaranteed that if data is passed in the order
- * {a, b, c}, the data will be sent in that order.
+ * There is also no guarantee that data written to the thread
+ * will ever get sent.
  * </p>
  */
 public class NetworkThread extends Thread {
 
 	/** The data still to be sent */
-	private ArrayList<Serializable> dataBuffer;
+	private TreeMap<Long, Serializable> dataBuffer;
 	
 	/** The messages still to be sent */
 	private String messages;
 	
 	/** The data still to be read */
-	private ArrayList<Serializable> responseBuffer;
-	
-	/** The data buffer mutex */
-	private Object dataBufferMutex;
-	
-	/** The message string mutex */
-	private Object messageStringMutex;
-	
-	/** The response buffer mutex */
-	private Object responseBufferMutex;
+	private TreeMap<Long, Serializable> responseBuffer;
 	
 	/** The thread's status */
 	private boolean status;
@@ -45,12 +38,9 @@ public class NetworkThread extends Thread {
 	 * Constructs a new thread for sending data.
 	 */
 	public NetworkThread() {
-		this.dataBuffer = new ArrayList<Serializable>();
+		this.dataBuffer = new TreeMap<Long, Serializable>();
 		this.messages = "";
-		this.responseBuffer = new ArrayList<Serializable>();
-		this.dataBufferMutex = new Object();
-		this.messageStringMutex = new Object();
-		this.responseBufferMutex = new Object();
+		this.responseBuffer = new TreeMap<Long, Serializable>();
 		this.status = true;
 		this.statusMutex = new Object();
 	}
@@ -79,26 +69,65 @@ public class NetworkThread extends Thread {
 	 * </p>
 	 */
 	private void sendNextData() {
-		Serializable data = null;
+		Entry<Long, Serializable> dataEntry = null;
 		
 		// Obtain a lock on the data buffer
-		synchronized(dataBufferMutex) {
+		synchronized(dataBuffer) {
 			if ((dataBuffer.size() == 0) || (dataBuffer.get(0) == null)) {
 				// Send null
 			} else {
 				// Get the next data element, and remove it from the
 				// data buffer
-				data = dataBuffer.get(0);
-				dataBuffer.remove(0);
+				dataEntry = dataBuffer.firstEntry();
+				dataBuffer.clear();
 			}
 		}
 		
 		// Send the post request to the server, and read the response
-		Serializable receivedData = NetworkManager.postObject(data);
+		Entry<Long, Serializable> receivedData =
+				NetworkManager.postObject(dataEntry);
 
 		// Write the response to the response buffer
-		synchronized(responseBufferMutex) {
-			responseBuffer.add(receivedData);
+		synchronized(responseBuffer) {
+			responseBuffer.put(receivedData.getKey(), receivedData.getValue());
+		}
+	}
+	
+	/**
+	 * Writes data to the data buffer.
+	 * @param timeValid - the time at which the data was valid
+	 * @param data - the data to write to the data buffer
+	 */
+	public void writeData(long timeValid, Serializable data) {
+		// Obtain a lock on the data buffer
+		synchronized(dataBuffer) {
+			if (data != null) {
+				// Write the data to the data buffer
+				dataBuffer.put(timeValid, data);
+			}
+		}
+	}
+	
+	/**
+	 * Reads the next response from the received buffer.
+	 * <p>
+	 * NOTE: this method is <b>destructive</b>, i.e. the response buffer
+	 * will be cleared after being read.
+	 * </p>
+	 * @return the next object in the response buffer
+	 */
+	public Serializable readResponse() {
+		// Obtain a lock on the response buffer
+		synchronized(responseBuffer) {
+			// Read data from the buffer
+			if (responseBuffer.size() == 0) {
+				// No data in the buffer
+				return null;
+			} else {
+				Serializable response = responseBuffer.firstEntry().getValue();
+				responseBuffer.clear();
+				return response;
+			}
 		}
 	}
 	
@@ -113,7 +142,7 @@ public class NetworkThread extends Thread {
 		String messageString = "";
 		
 		// Obtain a lock on the message string
-		synchronized(messageStringMutex) {
+		synchronized(messageString) {
 			// Get (and clear) the message string
 			messageString = messages;
 			messages = "";
@@ -124,78 +153,15 @@ public class NetworkThread extends Thread {
 	}
 	
 	/**
-	 * Writes data to the data buffer.
-	 * @param data
-	 * 			the data to write to the data buffer
-	 */
-	public void writeData(Serializable data) {
-		// Obtain a lock on the data buffer
-		synchronized(dataBufferMutex) {
-			if (data != null) {
-				// Write the data to the data buffer
-				dataBuffer.add(data);
-			}
-		}
-	}
-	
-	/**
 	 * Writes a message to the message string.
-	 * @param message
-	 * 			the message to write to the message string
+	 * @param message - the message to write to the message string
 	 */
 	public void writeMessage(String message) {
 		// Obtain a lock on the message string
-		synchronized(messageStringMutex) {
+		synchronized(messages) {
 			if (message != null && !message.equals("")) {
 				// Write the message to the message string
 				messages += message;
-			}
-		}
-	}
-	
-	/**
-	 * Reads the next response from the received buffer.
-	 * <p>
-	 * NOTE: this method is <b>destructive</b>, i.e. the read data
-	 * will be removed from the response buffer after being read.
-	 * </p>
-	 * @return the next object in the response buffer
-	 */
-	public Serializable readResponse() {
-		// Obtain a lock on the response buffer
-		synchronized(responseBufferMutex) {
-			// Read data from the buffer
-			if (responseBuffer.size() == 0) {
-				// No data in the buffer
-				return null;
-			} else {
-				Serializable response = responseBuffer.get(0);
-				responseBuffer.remove(0);
-				return response;
-			}
-		}
-	}
-	
-	/**
-	 * Reads all data from the response buffer.
-	 * <p>
-	 * NOTE: this method is <b>destructive</b>, i.e. the read data
-	 * will be removed from the response buffer after being read.
-	 * </p>
-	 * @return all the objects in the response buffer
-	 */
-	public ArrayList<Serializable> readAllResponses() {
-		// Obtain a lock on the response buffer
-		synchronized(responseBufferMutex) {
-			// Read data from the buffer
-			if (responseBuffer.size() == 0) {
-				// No data in the buffer
-				return null;
-			} else {
-				ArrayList<Serializable> allResponses =
-						new ArrayList<Serializable>(responseBuffer);
-				responseBuffer.clear();
-				return allResponses;
 			}
 		}
 	}

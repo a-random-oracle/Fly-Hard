@@ -11,7 +11,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
-import java.util.ArrayList;
+import java.util.Map.Entry;
 
 public class NetworkManager {
 
@@ -73,10 +73,18 @@ public class NetworkManager {
 	 * The data will then be sent to the server after an arbitrary length
 	 * of time.
 	 * </p>
+	 * @param timeValid - the time at which the data was valid
 	 * @param data - the data to send
 	 */
-	public void sendData(Serializable data) {
-		networkThread.writeData(data);
+	public void sendData(long timeValid, Serializable data) {
+		networkThread.writeData(timeValid, data);
+	}
+	
+	/**
+	 * Retrieve the next response from the network thread.
+	 */
+	public Serializable receiveData() {
+		return networkThread.readResponse();
 	}
 	
 	/**
@@ -90,24 +98,19 @@ public class NetworkManager {
 	public void sendMessage(String message) {
 		networkThread.writeMessage(message);
 	}
-
-	/**
-	 * Retrieve the next response from the network thread.
-	 */
-	public Serializable receiveData() {
-		return networkThread.readResponse();
-	}
-
-	/**
-	 * Retrieve all unread responses from the network thread.
-	 */
-	public ArrayList<Serializable> receiveAllData() {
-		return networkThread.readAllResponses();
-	}
 	
 	
 	// HTTP Methods ---------------------------------------------------------------------
 	
+	/**
+	 * Opens an HTTP POST connection to the server,
+	 * <p>
+	 * This initialises the connection to the URL specified, and sets request
+	 * properties such as the user agent and client ID.
+	 * </p>
+	 * @param url - the URL to connect to
+	 * @return a connection object representing the connection to the URL
+	 */
 	private static HttpURLConnection openPostConnection(String url) {
 		HttpURLConnection connection = null;
 		
@@ -136,8 +139,8 @@ public class NetworkManager {
 	}
 	
 	/**
-	 * Sends an object to the server to add to the server-side data store.
-	 * @param data - the data to send
+	 * Sends a message to the server.
+	 * @param message - the message to send
 	 * @return the data the server responded with
 	 */
 	public static String postMessage(String message) {
@@ -185,14 +188,15 @@ public class NetworkManager {
 	}
 	
 	/**
-	 * Sends an object to the server to add to the server-side data store.
-	 * @param data - the data to send
-	 * @return the data the server responded with
+	 * Sends an object to the server.
+	 * @param dataEntry - the data entry to send
+	 * @return the data entry the server responded with
 	 */
-	public static Serializable postObject(Serializable data) {
+	public static Entry<Long, Serializable> postObject(
+			Entry<Long, Serializable> dataEntry) {
 		ObjectOutputStream outputStream = null;
 		ObjectInputStream inputStream = null;
-		Serializable receivedData = null;
+		Entry<Long, Serializable> receivedData = null;
 		
 		// Open the connection
 		HttpURLConnection connection = openPostConnection(SERVER_URL + DATA_EXT);
@@ -202,7 +206,7 @@ public class NetworkManager {
 			outputStream = new ObjectOutputStream(connection.getOutputStream());
 			
 			// Serialise the data, then write it to the output stream
-			outputStream.writeObject(serialiseData(data));
+			outputStream.writeObject(serialiseData(dataEntry));
 			
 			// Connect to the server
 			connection.connect();
@@ -234,9 +238,9 @@ public class NetworkManager {
 	/**
 	 * Serialises data to a byte array.
 	 * @param data - the data to serialise
-	 * @return
+	 * @return the data in a serialised form
 	 */
-	private static byte[] serialiseData(Serializable data) {
+	private static byte[] serialiseData(Entry<Long, Serializable> data) {
 		ByteArrayOutputStream byteArrayOutputStream = null;
 		ObjectOutputStream serializeOutputStream = null;
 		
@@ -256,7 +260,13 @@ public class NetworkManager {
 		return null;
 	}
 	
-	private static Serializable deserialiseData(byte[] data) {
+	/**
+	 * Deserialises data from a byte array.
+	 * @param data - the byte array to deserialise
+	 * @return the dererialised data entry
+	 */
+	@SuppressWarnings("unchecked")
+	private static Entry<Long, Serializable> deserialiseData(byte[] data) {
 		ByteArrayInputStream byteArrayInputStream = null;
 		ObjectInputStream deserializeInputStream = null;
 		
@@ -265,7 +275,8 @@ public class NetworkManager {
 				byteArrayInputStream = new ByteArrayInputStream(data);
 				deserializeInputStream = new ObjectInputStream(
 						byteArrayInputStream);
-				return (Serializable) deserializeInputStream.readObject();
+				return (Entry<Long, Serializable>)
+						deserializeInputStream.readObject();
 			} catch (IOException e) {
 				print(e);
 			} catch (ClassNotFoundException e) {
