@@ -1,9 +1,10 @@
 package net;
 
 import java.io.Serializable;
-
 import java.util.Map.Entry;
 import java.util.TreeMap;
+
+import cls.Player;
 
 /**
  * Thread used to transfer data in parallel with the game.
@@ -94,8 +95,12 @@ public class NetworkThread extends Thread {
 		// Write the response to the response buffer
 		if (receivedData != null) {
 			synchronized(responseBuffer) {
-				responseBuffer.put(receivedData.getKey(),
-						NetworkManager.deserialiseData(receivedData.getValue()));
+				Serializable deserialisedData = NetworkManager
+						.deserialiseData(receivedData.getValue());
+				
+				responseBuffer.put(receivedData.getKey(), deserialisedData);
+				
+				System.out.println("Recieved data: " + (Player) deserialisedData);
 			}
 		}
 	}
