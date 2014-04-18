@@ -37,9 +37,7 @@ public class NetworkManager {
 	/** Whether to output data to the standard output */
 	private static boolean verbose;
 
-
-	// Constructor ----------------------------------------------------------------------
-
+	
 	/**
 	 * Constructs a new network manager.
 	 * @param verbose - <code>true</code> indicates that the network manager
@@ -139,7 +137,9 @@ public class NetworkManager {
 		ObjectInputStream inputStream = null;
 		String receivedMessages = null;
 		
-		print("Sending message: " + message);
+		if (message != null && !message.equals("")) {
+			print("Sending message: " + message);
+		}
 		
 		// Open the connection
 		HttpURLConnection connection = openPostConnection(SERVER_URL + MSG_EXT);
@@ -159,7 +159,10 @@ public class NetworkManager {
 
 			// Get the received data
 			receivedMessages = (String) inputStream.readObject();
-			print("Received response: " + receivedMessages);
+			
+			if (message != null && !message.equals("")) {
+				print("Received response: " + receivedMessages);
+			}
 
 			// Flush the output stream
 			outputStream.flush();
