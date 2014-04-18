@@ -83,10 +83,14 @@ public class NetworkThread extends Thread {
 		
 		// Obtain a lock on the data buffer
 		synchronized(dataBufferMutex) {
-			// Get the next data element, and remove it from the
-			// data buffer
-			data = dataBuffer.get(0);
-			dataBuffer.remove(0);
+			if ((dataBuffer.size() == 0) || (dataBuffer.get(0) == null)) {
+				// Send null
+			} else {
+				// Get the next data element, and remove it from the
+				// data buffer
+				data = dataBuffer.get(0);
+				dataBuffer.remove(0);
+			}
 		}
 		
 		// Send the post request to the server, and read the response
@@ -106,7 +110,7 @@ public class NetworkThread extends Thread {
 	 * </p>
 	 */
 	private void sendMessages() {
-		String messageString = null;
+		String messageString = "";
 		
 		// Obtain a lock on the message string
 		synchronized(messageStringMutex) {
