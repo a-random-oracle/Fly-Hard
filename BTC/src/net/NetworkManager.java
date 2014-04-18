@@ -12,6 +12,7 @@ import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
 import java.util.Map.Entry;
+import java.util.TreeMap;
 
 public class NetworkManager {
 
@@ -31,6 +32,8 @@ public class NetworkManager {
 	/** The thread to send data on */
 	private NetworkThread networkThread;
 	
+	private static TreeMap<Long, byte[]> transientDataBuffer;
+	
 	/** Whether to output data to the standard output */
 	private static boolean verbose;
 
@@ -46,6 +49,7 @@ public class NetworkManager {
 	public NetworkManager(boolean verbose) {
 		NetworkManager.id = -1;
 		NetworkManager.verbose = verbose;
+		NetworkManager.transientDataBuffer = new TreeMap<Long, byte[]>();
 		
 		// Create a network thread for handling asynchronous data passing
 		networkThread = new NetworkThread();
@@ -195,11 +199,15 @@ public class NetworkManager {
 			
 			// Serialise the data
 			if (dataEntry != null && dataEntry.getValue() != null) {
-				dataEntry.setValue(serialiseData(dataEntry.getValue()));
+				transientDataBuffer.put(dataEntry.getKey(),
+						serialiseData(dataEntry.getValue()));
 			}
 			
 			// Write the data to the output stream
-			outputStream.writeObject(dataEntry);
+			outputStream.writeObject(transientDataBuffer.lastEntry());
+			
+			// Clear the transient data buffer
+			transientDataBuffer.clear();
 			
 			// Connect to the server
 			connection.connect();
