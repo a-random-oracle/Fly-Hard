@@ -435,7 +435,7 @@ public class MultiPlayerGame extends Game {
 		
 		// Send a message to the opponent to let
 		// them know we're closing
-		NetworkManager.postMessage("SEND:CLOSE");
+		NetworkManager.postMessage("SEND:END_GAME");
 	}
 	
 
