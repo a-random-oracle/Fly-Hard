@@ -45,7 +45,7 @@ public class NetworkThread extends Thread {
 		this.dataBuffer = new TreeMap<Long, Serializable>();
 		this.messages = "";
 		this.responseBuffer = new TreeMap<Long, Serializable>();
-		this.mostRecent = Long.MAX_VALUE;
+		this.mostRecent = 0;
 		this.status = true;
 		this.statusMutex = new Object();
 	}
