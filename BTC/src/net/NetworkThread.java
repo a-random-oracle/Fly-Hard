@@ -92,8 +92,10 @@ public class NetworkThread extends Thread {
 				NetworkManager.postObject(dataEntry);
 
 		// Write the response to the response buffer
-		synchronized(responseBuffer) {
-			responseBuffer.put(receivedData.getKey(), receivedData.getValue());
+		if (receivedData != null) {
+			synchronized(responseBuffer) {
+				responseBuffer.put(receivedData.getKey(), receivedData.getValue());
+			}
 		}
 	}
 	
@@ -130,13 +132,16 @@ public class NetworkThread extends Thread {
 			} else {
 				Serializable response = null;
 				
-				// Check if the data in the buffer is up-to-date
-				if (responseBuffer.lastEntry().getKey() > mostRecent) {
-					// Update the most recent value
-					mostRecent = responseBuffer.lastEntry().getKey();
-					
-					// Data is more up-to-date than any seen so far, so return it
-					response = responseBuffer.lastEntry().getValue();
+				if (responseBuffer.lastEntry() != null) {
+					// Check if the data in the buffer is up-to-date
+					if (responseBuffer.lastEntry().getKey() > mostRecent) {
+						// Update the most recent value
+						mostRecent = responseBuffer.lastEntry().getKey();
+
+						// Data is more up-to-date than any seen so far,
+						// so return it
+						response = responseBuffer.lastEntry().getValue();
+					}
 				}
 				
 				responseBuffer.clear();
