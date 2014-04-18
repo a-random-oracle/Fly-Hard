@@ -68,6 +68,8 @@ public class MultiPlayerGame extends Game {
 	private MultiPlayerGame(DifficultySetting difficulty, int playerPosition) {
 		super(difficulty);
 		instance = this;
+		
+		this.playerPosition = playerPosition;
 	}
 	
 	
