@@ -132,7 +132,7 @@ public abstract class InstructionHandler {
 		try {
 			// Wait, then poll server to check for an opponent
 			Thread.sleep(100);
-			handleInstruction(NetworkManager.postMessage("CHECK_FOR_OPPONENT"));
+			NetworkManager.postMessage("CHECK_FOR_OPPONENT");
 		} catch (InterruptedException e) {
 			NetworkManager.print(e);
 		}
