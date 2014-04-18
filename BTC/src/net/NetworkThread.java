@@ -88,13 +88,14 @@ public class NetworkThread extends Thread {
 		}
 		
 		// Send the post request to the server, and read the response
-		Entry<Long, Serializable> receivedData =
+		Entry<Long, byte[]> receivedData =
 				NetworkManager.postObject(dataEntry);
 
 		// Write the response to the response buffer
 		if (receivedData != null) {
 			synchronized(responseBuffer) {
-				responseBuffer.put(receivedData.getKey(), receivedData.getValue());
+				responseBuffer.put(receivedData.getKey(),
+						NetworkManager.deserialiseData(receivedData.getValue()));
 			}
 		}
 	}

@@ -51,22 +51,11 @@ public class NetworkManager {
 		networkThread = new NetworkThread();
 		networkThread.start();
 		
-		initialiseClient();
-	}
-	
-	/**
-	 * Sends an initialisation request to the server.
-	 * <p>
-	 * This sets the current player.
-	 * </p>
-	 */
-	private void initialiseClient() {
 		// Start by sending an initial request
 		sendMessage("START");
 	}
 
-	// Data Send and Receive ------------------------------------------------------------
-
+	
 	/**
 	 * Adds data to the network thread.
 	 * <p>
@@ -99,8 +88,6 @@ public class NetworkManager {
 		networkThread.writeMessage(message);
 	}
 	
-	
-	// HTTP Methods ---------------------------------------------------------------------
 	
 	/**
 	 * Opens an HTTP POST connection to the server,
@@ -192,11 +179,12 @@ public class NetworkManager {
 	 * @param dataEntry - the data entry to send
 	 * @return the data entry the server responded with
 	 */
-	public static Entry<Long, Serializable> postObject(
+	@SuppressWarnings("unchecked")
+	public static Entry<Long, byte[]> postObject(
 			Entry<Long, Serializable> dataEntry) {
 		ObjectOutputStream outputStream = null;
 		ObjectInputStream inputStream = null;
-		Entry<Long, Serializable> receivedData = null;
+		Entry<Long, byte[]> receivedData = null;
 		
 		// Open the connection
 		HttpURLConnection connection = openPostConnection(SERVER_URL + DATA_EXT);
@@ -205,8 +193,11 @@ public class NetworkManager {
 			// Set up the output stream
 			outputStream = new ObjectOutputStream(connection.getOutputStream());
 			
-			// Serialise the data, then write it to the output stream
-			outputStream.writeObject(serialiseData(dataEntry));
+			// Serialise the data
+			dataEntry.setValue(serialiseData(dataEntry.getValue()));
+			
+			// Write the data to the output stream
+			outputStream.writeObject(dataEntry);
 			
 			// Connect to the server
 			connection.connect();
@@ -214,8 +205,8 @@ public class NetworkManager {
 			// Set up the input stream
 			inputStream = new ObjectInputStream(connection.getInputStream());
 			
-			// Get the received data and deserialise it
-			receivedData = deserialiseData((byte[]) inputStream.readObject());
+			// Get the received data
+			receivedData = (Entry<Long, byte[]>) inputStream.readObject();
 			
 			// Flush the output stream
 			outputStream.flush();
@@ -233,14 +224,12 @@ public class NetworkManager {
 	}
 	
 	
-	// Helper Methods -------------------------------------------------------------------
-	
 	/**
 	 * Serialises data to a byte array.
 	 * @param data - the data to serialise
 	 * @return the data in a serialised form
 	 */
-	private static byte[] serialiseData(Entry<Long, Serializable> data) {
+	public static byte[] serialiseData(Serializable data) {
 		ByteArrayOutputStream byteArrayOutputStream = null;
 		ObjectOutputStream serializeOutputStream = null;
 		
@@ -263,10 +252,9 @@ public class NetworkManager {
 	/**
 	 * Deserialises data from a byte array.
 	 * @param data - the byte array to deserialise
-	 * @return the dererialised data entry
+	 * @return the deserialised data entry
 	 */
-	@SuppressWarnings("unchecked")
-	private static Entry<Long, Serializable> deserialiseData(byte[] data) {
+	public static Serializable deserialiseData(byte[] data) {
 		ByteArrayInputStream byteArrayInputStream = null;
 		ObjectInputStream deserializeInputStream = null;
 		
@@ -275,8 +263,7 @@ public class NetworkManager {
 				byteArrayInputStream = new ByteArrayInputStream(data);
 				deserializeInputStream = new ObjectInputStream(
 						byteArrayInputStream);
-				return (Entry<Long, Serializable>)
-						deserializeInputStream.readObject();
+				return (Serializable) deserializeInputStream.readObject();
 			} catch (IOException e) {
 				print(e);
 			} catch (ClassNotFoundException e) {
@@ -286,6 +273,7 @@ public class NetworkManager {
 		
 		return null;
 	}
+	
 	
 	/**
 	 * Prints strings to the standard output.
@@ -318,8 +306,6 @@ public class NetworkManager {
 	}
 	
 	
-	// Accessors and mutators -----------------------------------------------------------
-	
 	/**
 	 * Gets the ID for the current connection to the server.
 	 * @return the current sever ID
@@ -336,8 +322,6 @@ public class NetworkManager {
 		NetworkManager.id = id;
 	}
 	
-	
-	// Close ----------------------------------------------------------------------------
 
 	/**
 	 * Closes any open connections.
