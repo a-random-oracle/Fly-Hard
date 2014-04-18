@@ -32,6 +32,10 @@ public abstract class InstructionHandler {
 	
 	/**
 	 * Handles instructions.
+	 * <p>
+	 * Takes a semicolon-delimited list of instructions and
+	 * processes them sequentially.
+	 * </p>
 	 * @param instruction - the instruction(s) to handle
 	 */
 	public static void handleInstruction(String instruction) {
@@ -54,6 +58,12 @@ public abstract class InstructionHandler {
 	
 	/**
 	 * Handles an instruction.
+	 * <p>
+	 * Breaks an instruction down into an instruction part
+	 * and a parameter part, and passes these to the
+	 * appropriate method (as specified in the instruction
+	 * part.
+	 * </p>
 	 * @param instruction - the instruction to handle
 	 */
 	private static void handleIndividualInstruction(String instruction) {
@@ -106,6 +116,10 @@ public abstract class InstructionHandler {
 	
 	/**
 	 * Handles a SET_ID instruction.
+	 * <p>
+	 * SET_ID instructions set the ID which the NetworkManager passes
+	 * to the server with each request.
+	 * </p>
 	 * @param parameters - the parameters accompanying the instruction
 	 */
 	private static void handleSetID(String parameters) {
@@ -125,6 +139,10 @@ public abstract class InstructionHandler {
 	
 	/**
 	 * Handles a WAIT instruction.
+	 * <p>
+	 * WAIT instructions cause execution to pause for several
+	 * milliseconds, before sending a CHECK_FOR_OPPONENT instruction.
+	 * </p>
 	 */
 	private static void handleWait() {
 		NetworkManager.print("Waiting.");
@@ -140,6 +158,13 @@ public abstract class InstructionHandler {
 	
 	/**
 	 * Handles a PROCEED instruction.
+	 * <p>
+	 * PROCEED instructions don't cause any actions to be performed.
+	 * </p>
+	 * <p>
+	 * They do, however, cause 'Resuming.' to be printed to the standard
+	 * output (provided that the network manager is in verbose mode).
+	 * </p>
 	 */
 	private static void handleProceed() {
 		NetworkManager.print("Resuming.");
@@ -147,6 +172,13 @@ public abstract class InstructionHandler {
 	
 	/**
 	 * Handles a SET_SEED instruction.
+	 * <p>
+	 * SET_SEED instructions set the random seed used by the game.
+	 * </p>
+	 * <p>
+	 * This will cause random events to by synchronised across all
+	 * players using the seed provided.
+	 * </p>
 	 * @param parameters - the parameters accompanying the instruction
 	 */
 	private static void handleSetSeed(String parameters) {
@@ -166,6 +198,10 @@ public abstract class InstructionHandler {
 	
 	/**
 	 * Handles a START_GAME instruction.
+	 * <p>
+	 * START_GAME instructions cause a new instance of MultiPlayerGame
+	 * to be created.
+	 * </p>
 	 * @param parameters - the parameters accompanying the instruction
 	 */
 	private static void handleStartGame(String parameters) {
@@ -184,6 +220,14 @@ public abstract class InstructionHandler {
 	
 	/**
 	 * Handles a TRANSFER instruction.
+	 * <p>
+	 * TRANSFER instructions cause an aircraft (specified in the parameters)
+	 * to be added to the current player's list of aircraft.
+	 * </p>
+	 * <p>
+	 * A REMOVE instruction is then sent to the opposing player to remove
+	 * their copy of the aircraft.
+	 * </p>
 	 * @param parameters - the parameters accompanying the instruction
 	 */
 	private static void handleTransfer(String parameters) {
@@ -195,6 +239,10 @@ public abstract class InstructionHandler {
 	
 	/**
 	 * Handles a REMOVE instruction.
+	 * <p>
+	 * REMOVE instructions cause an aircraft to be removed from the current
+	 * player's list of aircraft.
+	 * </p>
 	 * @param parameters - the parameters accompanying the instruction
 	 */
 	private static void handleRemove(String parameters) {
@@ -207,16 +255,24 @@ public abstract class InstructionHandler {
 	
 	/**
 	 * Handles an END_GAME instruction.
+	 * <p>
+	 * END_GAME instructions cause the current game instance to end.
+	 * </p>
 	 */
 	private static void handleEndGame() {
-		// Obtain a lock on the game instance
-		synchronized(Game.getInstance()) {
-			Game.getInstance().setEnding(true);
+		if (Game.getInstance() != null) {
+			// Obtain a lock on the game instance
+			synchronized(Game.getInstance()) {
+				Game.getInstance().setEnding(true);
+			}
 		}
 	}
 
 	/**
 	 * Handles an INVALID_REQUEST instruction.
+	 * <p>
+	 * INVALID_REQUEST instructions presently do nothing.
+	 * </p>
 	 */
 	private static void handleInvalidRequest() {
 		// TODO
