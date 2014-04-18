@@ -27,6 +27,9 @@ public class NetworkThread extends Thread {
 	/** The data still to be read */
 	private TreeMap<Long, Serializable> responseBuffer;
 	
+	/** The most recent data received so far */
+	private long mostRecent;
+	
 	/** The thread's status */
 	private boolean status;
 	
@@ -41,6 +44,7 @@ public class NetworkThread extends Thread {
 		this.dataBuffer = new TreeMap<Long, Serializable>();
 		this.messages = "";
 		this.responseBuffer = new TreeMap<Long, Serializable>();
+		this.mostRecent = Long.MAX_VALUE;
 		this.status = true;
 		this.statusMutex = new Object();
 	}
@@ -124,7 +128,17 @@ public class NetworkThread extends Thread {
 				// No data in the buffer
 				return null;
 			} else {
-				Serializable response = responseBuffer.firstEntry().getValue();
+				Serializable response = null;
+				
+				// Check if the data in the buffer is up-to-date
+				if (responseBuffer.lastEntry().getKey() > mostRecent) {
+					// Update the most recent value
+					mostRecent = responseBuffer.lastEntry().getKey();
+					
+					// Data is more up-to-date than any seen so far, so return it
+					response = responseBuffer.lastEntry().getValue();
+				}
+				
 				responseBuffer.clear();
 				return response;
 			}
