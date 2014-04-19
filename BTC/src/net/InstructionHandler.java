@@ -224,7 +224,7 @@ public abstract class InstructionHandler {
 			// Obtain a lock on the message buffer
 			synchronized (messages) {
 				// Add a START_GAME instruction to the message buffer
-				messages += "START_GAME";
+				messages += "START_GAME:" + parameters;
 			}
 		}
 	}
