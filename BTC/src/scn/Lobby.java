@@ -19,7 +19,10 @@ import lib.ButtonText;
 public class Lobby extends Scene {
 	
 	/** The time since the list of available players was last updated */
-	private double timeSinceUpdate;
+	private double timeSincePlayerUpdate = 1;
+	
+	/** The time since the list of available players was last updated */
+	private double timeSinceStartGameUpdate = 0.1;
 	
 	private final int CREATE_BUTTON_W = 200;
 	private final int CREATE_BUTTON_H = 32;
@@ -71,10 +74,11 @@ public class Lobby extends Scene {
 	@Override
 	public void update(double timeDifference) {
 		// Increment the time before the next data send
-		timeSinceUpdate += timeDifference;
+		timeSincePlayerUpdate += timeDifference;
+		timeSinceStartGameUpdate += timeDifference;
 
-		// Update the map of available players approximately every two seconds
-		if (timeSinceUpdate > 2) {
+		// Update the map of available players approximately every second
+		if (timeSincePlayerUpdate > 1) {
 			// Update the list of players
 			updateAvailablePlayers();
 			
@@ -86,7 +90,23 @@ public class Lobby extends Scene {
 			}
 
 			// Reset the time
-			timeSinceUpdate = 0;
+			timeSincePlayerUpdate = 0;
+		}
+		
+		// Check for instructions approximately every tenth of a second
+		if (timeSinceStartGameUpdate > 0.1) {
+			// Update the list of players
+			updateAvailablePlayers();
+
+			// Process queued instructions
+			String waitingInstructions = InstructionHandler.getMessages();
+
+			if (waitingInstructions != null) {
+				InstructionHandler.handleInstruction(waitingInstructions);
+			}
+
+			// Reset the time
+			timeSinceStartGameUpdate = 0;
 		}
 			
 		/*
