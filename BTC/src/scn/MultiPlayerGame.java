@@ -73,9 +73,6 @@ public class MultiPlayerGame extends Game {
 	}
 	
 	
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void start() {
 		super.start();
@@ -154,9 +151,6 @@ public class MultiPlayerGame extends Game {
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void update(double timeDifference) {
 		// Increment the time before the next data send
@@ -238,8 +232,10 @@ public class MultiPlayerGame extends Game {
 	 * The middle zone is shared by both players.
 	 * Players are forced to take manual control when in this zone
 	 * and are not permitted to fly into the other player's flight area.
+	 * </p>
 	 * <p>
 	 * It is in this zone that the power-ups spawn.
+	 * </p>
 	 */
 	protected void drawMiddleZone() {
 		graphics.setColour(graphics.green);
@@ -306,18 +302,9 @@ public class MultiPlayerGame extends Game {
 		}
 	}
 	
-	public Player getOpposingPlayer() {
-		return opposingPlayer;
-	}
-	
-	public void setOpposingPlayer(Player opposingPlayer) {
-		this.opposingPlayer = opposingPlayer;
-	}
-	
 	/**
 	 * Gets a player from an aircraft.
-	 * @param aircraft
-	 * 			the aircraft to get the controlling player of
+	 * @param aircraft - the aircraft to get the controlling player of
 	 * @return the player controlling the specified aircraft
 	 */
 	@Override
@@ -339,8 +326,7 @@ public class MultiPlayerGame extends Game {
 	
 	/**
 	 * Gets a player from an airport.
-	 * @param airport
-	 * 			the airport to get the controlling player of
+	 * @param airport - the airport to get the controlling player of
 	 * @return the player controlling the specified airport
 	 */
 	@Override
@@ -362,8 +348,7 @@ public class MultiPlayerGame extends Game {
 	
 	/**
 	 * Returns whether a given name is an airport or not.
-	 * @param name
-	 * 			the name to test
+	 * @param name - the name to test
 	 * @return <code>true</code> if the name matches an airport name,
 	 * 			otherwise <code>false</code>
 	 */
@@ -426,9 +411,6 @@ public class MultiPlayerGame extends Game {
 
 	// Close ----------------------------------------------------------------------------
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void close() {
 		super.close();
@@ -441,9 +423,6 @@ public class MultiPlayerGame extends Game {
 
 	// Deprecated -----------------------------------------------------------------------
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Deprecated
 	@Override
 	public void initializeAircraftArray() {

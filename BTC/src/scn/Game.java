@@ -92,8 +92,7 @@ public abstract class Game extends Scene {
 
 	/**
 	 * Constructor for Game.
-	 * @param difficulty
-	 * 			the difficulty the scene is to be initialised with
+	 * @param difficulty - the difficulty the scene is to be initialised with
 	 */
 	public Game(DifficultySetting difficulty) {
 		super();
@@ -232,6 +231,14 @@ public abstract class Game extends Scene {
 		out.update(timeDifference);
 	}
 	
+	/**
+	 * Updates a player's attributes.
+	 * <p>
+	 * This updates aircraft, airports etc.
+	 * </p>
+	 * @param timeDifference - the time since the last update
+	 * @param player - the player to update
+	 */
 	protected void updatePlayer(double timeDifference, Player player) {
 		// Update aircraft
 		for (Aircraft aircraft : player.getAircraft()) {
@@ -517,6 +524,9 @@ public abstract class Game extends Scene {
 
 	/**
 	 * Handles mouse click events.
+	 * @param key - the button which was pressed
+	 * @param x - the x position of the click event
+	 * @param y - the y position of the click event
 	 */
 	@Override
 	public void mousePressed(int key, int x, int y) {
@@ -596,6 +606,9 @@ public abstract class Game extends Scene {
 
 	/**
 	 * Handles mouse release events.
+	 * @param key - the button which was pressed
+	 * @param x - the x position of the release event
+	 * @param y - the y position of the release event
 	 */
 	@Override
 	public void mouseReleased(int key, int x, int y) {
@@ -639,6 +652,7 @@ public abstract class Game extends Scene {
 
 	/**
 	 * Handles key press events.
+	 * @param key - the key which was pressed
 	 */
 	@Override
 	public void keyPressed(int key) {
@@ -647,6 +661,7 @@ public abstract class Game extends Scene {
 
 	/**
 	 * Handles key release events.
+	 * @param key - the key which was pressed
 	 */
 	@Override
 	public void keyReleased(int key) {
@@ -663,17 +678,14 @@ public abstract class Game extends Scene {
 		case input.KEY_SPACE :
 			toggleManualControl(player);
 			break;
-
 		case input.KEY_LCRTL :
 			generateFlight(player);
 			break;
-
 		case input.KEY_ESCAPE :
 			player.getAircraft().clear();
 			for (Airport airport : player.getAirports()) airport.clear();
 			Main.closeScene();
 			break;
-
 		case input.KEY_F5 :
 			Aircraft a1 = createAircraft(player);
 			Aircraft a2 = createAircraft(player);
@@ -687,8 +699,7 @@ public abstract class Game extends Scene {
 
 	/**
 	 * Check if any aircraft in the airspace have collided.
-	 * @param timeDifference
-	 * 			the time since the last collision check
+	 * @param timeDifference - the time since the last collision check
 	 */
 	protected void checkCollisions(double timeDifference) {
 		for (Aircraft plane : getAllAircraft()) {
@@ -704,10 +715,8 @@ public abstract class Game extends Scene {
 	/**
 	 * Handle a game over caused by two planes colliding.
 	 * Create a GameOver scene and make it the current scene.
-	 * @param plane1
-	 * 			the first plane involved in the collision
-	 * @param plane2
-	 * 			the second plane in the collision
+	 * @param plane1 - the first plane involved in the collision
+	 * @param plane2 - the second plane in the collision
 	 */
 	public void gameOver(Aircraft plane1, Aircraft plane2) {
 		player.getAircraft().clear();
@@ -737,6 +746,7 @@ public abstract class Game extends Scene {
 
 	/**
 	 * The interval in seconds to generate flights after.
+	 * @param player - the player to get the flight generation time for
 	 */
 	protected int getFlightGenerationInterval(Player player) {
 		switch (difficulty) {
@@ -755,6 +765,7 @@ public abstract class Game extends Scene {
 
 	/**
 	 * Creates a new aircraft object and introduces it to the airspace.
+	 * @param player - generates a new aircraft for the specified player
 	 */
 	protected void generateFlight(Player player) {
 		Aircraft aircraft = createAircraft(player);
