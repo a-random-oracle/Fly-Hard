@@ -84,12 +84,12 @@ public abstract class InstructionHandler {
 		case "SET_ID":
 			handleSetID(parameters);
 			break;
-		case "WAIT":
-			handleWait();
-			break;
-		case "PROCEED":
-			handleProceed();
-			break;
+		//case "WAIT":
+		//	handleWait();
+		//	break;
+		//case "PROCEED":
+		//	handleProceed();
+		//	break;
 		case "SET_SEED":
 			handleSetSeed(parameters);
 			break;
@@ -144,9 +144,9 @@ public abstract class InstructionHandler {
 	 * milliseconds, before sending a CHECK_FOR_OPPONENT instruction.
 	 * </p>
 	 */
-	private static void handleWait() {
+	/*private static void handleWait() {
 		NetworkManager.print("Waiting.");
-		
+	
 		try {
 			// Wait, then poll server to check for an opponent
 			Thread.sleep(100);
@@ -154,7 +154,7 @@ public abstract class InstructionHandler {
 		} catch (InterruptedException e) {
 			NetworkManager.print(e);
 		}
-	}
+	}*/
 	
 	/**
 	 * Handles a PROCEED instruction.
@@ -166,9 +166,9 @@ public abstract class InstructionHandler {
 	 * output (provided that the network manager is in verbose mode).
 	 * </p>
 	 */
-	private static void handleProceed() {
-		NetworkManager.print("Resuming.");
-	}
+	//private static void handleProceed() {
+	//	NetworkManager.print("Resuming.");
+	//}
 	
 	/**
 	 * Handles a SET_SEED instruction.
