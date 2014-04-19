@@ -14,6 +14,7 @@ import cls.Vector;
 import lib.jog.graphics;
 import lib.jog.input;
 import lib.jog.audio.Sound;
+import lib.jog.window;
 import lib.ButtonText;
 
 public class Lobby extends Scene {
@@ -23,12 +24,12 @@ public class Lobby extends Scene {
 
 	private final int CREATE_BUTTON_W = 128;
 	private final int CREATE_BUTTON_H = 32;
-	private final int CREATE_BUTTON_X = 500;
-	private final int CREATE_BUTTON_Y = 200;
+	private final int CREATE_BUTTON_X = window.width() / 3 + Game.X_OFFSET;
+	private final int CREATE_BUTTON_Y = (window.height() - window.height()) + Game.Y_OFFSET;
 	
 	private InputBox inputBox;
 	
-	private ButtonText[] buttons;
+	private ButtonText CreateGameButton;
 	
 	private ButtonText[] playerButtons;
 	
@@ -53,9 +54,9 @@ public class Lobby extends Scene {
 	
 	@Override
 	public void start() {
-		inputBox = new InputBox(Color.white, Color.red, 400, 100, 200, 30);
-		
-		buttons = new ButtonText[1];
+		// Instantiate the input box and position it correctly above the game selection box
+		inputBox = new InputBox(Color.white, Color.red,
+				(int)topLeft.getX() + (Game.X_OFFSET * 2), (int)topLeft.getY(), 200, 30);
 		
 		ButtonText.Action createGame = new ButtonText.Action() {
 			@Override
@@ -64,7 +65,7 @@ public class Lobby extends Scene {
 			}
 		};
 		
-		buttons[0] = new ButtonText("Create Game", createGame, CREATE_BUTTON_X, CREATE_BUTTON_Y,
+		CreateGameButton = new ButtonText("Create Game", createGame, CREATE_BUTTON_X, CREATE_BUTTON_Y,
 				CREATE_BUTTON_W, CREATE_BUTTON_H);
 	}
 
@@ -88,7 +89,16 @@ public class Lobby extends Scene {
 			// Reset the time
 			timeSinceUpdate = 0;
 		}
-				
+			
+		/*
+		 * Activate the create button only when a name has
+		 * been entered into the input box
+		 */
+		if (!inputBox.isEmpty()) {
+			CreateGameButton.setAvailability(true);
+		} else {
+			CreateGameButton.setAvailability(false);
+		}
 		inputBox.update(timeDifference);
 	}
 	
@@ -159,6 +169,8 @@ public class Lobby extends Scene {
 	public void draw() {
 		graphics.setColour(255, 255, 255); // White
 
+		graphics.print("Enter Name: ", topLeft.getX() + Game.X_OFFSET, topLeft.getY(), 2);
+		
 		drawTable();
 		
 		inputBox.draw();
@@ -166,11 +178,7 @@ public class Lobby extends Scene {
 		graphics.rectangle(false, CREATE_BUTTON_X, CREATE_BUTTON_Y,
 				CREATE_BUTTON_W, CREATE_BUTTON_H);
 
-		if (buttons != null) {
-			for (ButtonText b : buttons) {
-				b.draw();
-			}
-		}
+		CreateGameButton.draw();
 		/*
 		if (playerButtons != null) {
 			for (ButtonText b : playerButtons) {
@@ -200,12 +208,8 @@ public class Lobby extends Scene {
 	 */
 	@Override
 	public void mouseReleased(int key, int x, int y) {
-		if (buttons != null) {
-			for (ButtonText b : buttons) {
-				if (b.isMouseOver(x, y)) {
-					b.act();
-				}
-			}
+		if (CreateGameButton.isMouseOver(x, y)); {
+			CreateGameButton.act();
 		}
 		
 		/*if (playerButtons != null) {

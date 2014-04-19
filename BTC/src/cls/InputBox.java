@@ -195,6 +195,20 @@ public class InputBox {
 	}
 	
 	/**
+	 * <code>isEmpty</code> determines if the player
+	 * has actually entered a name into the input box.
+	 * @return - true if the input box contains > 0 characters
+	 * </p>
+	 * 			- false for the "" string
+	 */
+	public boolean isEmpty() {
+		if (text == null || "".equals(text)) {
+			return true;
+		}
+		return false;
+	}
+	
+	/**
 	 * Allows access to the text entered
 	 * @return The text within the input box
 	 */

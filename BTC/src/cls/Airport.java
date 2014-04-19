@@ -116,7 +116,7 @@ public class Airport extends Waypoint implements EventHandler, Serializable {
 		if (aircraftHangar.size() > 0) {
 			// Colour fades from green (fine) to red (danger)
 			// over 5 seconds as plane is waiting
-			int timeWaiting = (int)(Game.getInstance().getTime() - timeEntered.get(0));
+			int timeWaiting = (int)(Game.getInstance().getTime() - timeEntered.get(0));//FIXME <- null pointer
 			
 			for(int i = 0; i < aircraftHangar.size(); i++ ) {
 				int planeTimeWaiting = (int)(Game.getInstance().getTime() - timeEntered.get(0));
