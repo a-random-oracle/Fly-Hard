@@ -19,14 +19,18 @@ import lib.ButtonText;
 public class Lobby extends Scene {
 	
 	/** The time since the list of available players was last updated */
-	private double timeSinceUpdate;
+	private double timeSincePlayerUpdate = 1;
+	
+	/** The time since the list of available players was last updated */
+	private double timeSinceStartGameUpdate = 0.1;
 	
 	private final int CREATE_BUTTON_W = 200;
+	
 	private final int CREATE_BUTTON_H = 32;
 	
 	private InputBox inputBox;
 	
-	private ButtonText CreateGameButton;
+	private ButtonText createGameButton;
 	
 	private LinkedList<ButtonText> availableGames = new LinkedList<ButtonText>();
 	
@@ -71,7 +75,7 @@ public class Lobby extends Scene {
 			}
 		};
 		
-		CreateGameButton = new ButtonText("Create Game", createGame,
+		createGameButton = new ButtonText("Create Game", createGame,
 				(int)createButtonCoords.getX(), (int)createButtonCoords.getY(),
 				CREATE_BUTTON_W, CREATE_BUTTON_H, 0, 0, 2);
 	}
@@ -79,22 +83,29 @@ public class Lobby extends Scene {
 	@Override
 	public void update(double timeDifference) {
 		// Increment the time before the next data send
-		timeSinceUpdate += timeDifference;
+		timeSincePlayerUpdate += timeDifference;
+		timeSinceStartGameUpdate += timeDifference;
 
-		// Update the map of available players approximately every two seconds
-		if (timeSinceUpdate > 2) {
+		// Update the map of available players approximately every second
+		if (timeSincePlayerUpdate > 1) {
 			// Update the list of players
 			updateAvailablePlayers();
-			
+
+			// Reset the time
+			timeSincePlayerUpdate = 0;
+		}
+		
+		// Check for instructions approximately every tenth of a second
+		if (timeSinceStartGameUpdate > 0.1) {
 			// Process queued instructions
 			String waitingInstructions = InstructionHandler.getMessages();
-			
+
 			if (waitingInstructions != null) {
 				InstructionHandler.handleInstruction(waitingInstructions);
 			}
 
 			// Reset the time
-			timeSinceUpdate = 0;
+			timeSinceStartGameUpdate = 0;
 		}
 			
 		/*
@@ -102,9 +113,9 @@ public class Lobby extends Scene {
 		 * been entered into the input box
 		 */
 		if (!inputBox.isEmpty()) {
-			CreateGameButton.setAvailability(true);
+			createGameButton.setAvailability(true);
 		} else {
-			CreateGameButton.setAvailability(false);
+			createGameButton.setAvailability(false);
 		}
 		inputBox.update(timeDifference);
 	}
@@ -152,22 +163,24 @@ public class Lobby extends Scene {
 			availableGames.add(new ButtonText("Join Game",
 							currentAction,
 							(int) (topLeft.getX() + Game.X_OFFSET
-									+ ((topRight.getX() - topLeft.getX()) * (3d/4d))),
+									+ ((topRight.getX() - topLeft.getX()) * (7d/8d))),
 							(int) (topLeft.getY() + Game.Y_OFFSET + ((i + 0.33) * rowHeight)),
-							(int) ((topRight.getX() - topLeft.getX()) * (1d/4d)),
-							(int) (rowHeight * (3d/4d)), 0, 0));
+							(int) ((topRight.getX() - topLeft.getX()) * (7d/8d)),
+							(int) (rowHeight * (7d/8d)), 0, 0));
 		}
 	}
 
 	@Override
 	public void draw() {
-		graphics.print("Enter Name: ", stringCoords.getX() + Game.X_OFFSET, stringCoords.getY(), 2);
-		
+		graphics.print("Enter Name: ",
+				stringCoords.getX() + Game.X_OFFSET,
+				stringCoords.getY(), 2);
+
 		drawTable();
 		
 		inputBox.draw();
 
-		CreateGameButton.draw();
+		createGameButton.draw();
 	}
 	
 	public void drawTable() {
@@ -190,9 +203,10 @@ public class Lobby extends Scene {
 			Integer[] playerIDs = getAvailablePlayerIDs();
 			
 			for (int i = 0; i < availableGames.size(); i++) {
-				graphics.print(availablePlayers.get(playerIDs[i]),
+				graphics.printCentred(availablePlayers.get(playerIDs[i]),
 						(topLeft.getX() + Game.X_OFFSET),
-						(topLeft.getY() + Game.Y_OFFSET + ((i + 0.33) * rowHeight)));
+						(topLeft.getY() + Game.Y_OFFSET + ((i + 0.33) * rowHeight)),
+						1, ((topRight.getX() + Game.X_OFFSET) * (1d/10d)));
 			}
 			
 			for (int i = 0; i < availableGames.size(); i++) {
@@ -209,8 +223,8 @@ public class Lobby extends Scene {
 	 */
 	@Override
 	public void mouseReleased(int key, int x, int y) {
-		if (CreateGameButton.isMouseOver(x, y)); {
-			CreateGameButton.act();
+		if (createGameButton.isMouseOver(x, y)); {
+			createGameButton.act();
 		}
 		
 		if (availableGames != null) {
