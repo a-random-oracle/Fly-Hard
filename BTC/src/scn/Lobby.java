@@ -132,19 +132,18 @@ public class Lobby extends Scene {
 			ButtonText.Action currentAction =
 					createPlayerButtonAction(clientIDs[i]);
 			
-			availableGames.add(new ButtonText(availablePlayers.get(clientIDs[i]),
+			availableGames.add(new ButtonText("Join Game",
 							currentAction,
-							(int) (topLeft.getX() + Game.X_OFFSET),
+							(int) (topLeft.getX() + Game.X_OFFSET
+									+ ((topRight.getX() - topLeft.getX()) * (3d/4d))),
 							(int) (topLeft.getY() + Game.Y_OFFSET + (i * rowHeight)),
-							(int) (topRight.getX() - topLeft.getX()),
+							(int) ((topRight.getX() - topLeft.getX()) * (1d/4d)),
 							(int) (rowHeight * (3d/4d))));
 		}
 	}
 
 	@Override
 	public void draw() {
-		graphics.setColour(255, 255, 255); // White
-
 		drawTable();
 		
 		inputBox.draw();
@@ -161,6 +160,7 @@ public class Lobby extends Scene {
 	
 	public void drawTable() {
 		graphics.setColour(255, 255, 255);
+		
 		graphics.rectangle(false,
 				(topLeft.getX() + Game.X_OFFSET),
 				(topLeft.getY() + Game.Y_OFFSET),
@@ -169,11 +169,16 @@ public class Lobby extends Scene {
 		
 		if (availableGames != null) {
 			for (int i = 0; i < availableGames.size(); i++) {
-				availableGames.get(i).draw();
 				graphics.line((topLeft.getX() + Game.X_OFFSET),
 						(topLeft.getY() + Game.Y_OFFSET + ((i + 1) * rowHeight)),
 						(topRight.getX() + Game.X_OFFSET),
 						(topRight.getY() + Game.Y_OFFSET + ((i + 1) * rowHeight)));
+			}
+		}
+		
+		if (availableGames != null) {
+			for (int i = 0; i < availableGames.size(); i++) {
+				availableGames.get(i).draw();
 			}
 		}
 	}
