@@ -222,7 +222,7 @@ public class Lobby extends Scene {
 				graphics.line((topLeft.getX() + Game.X_OFFSET),
 						(topLeft.getY() + Game.Y_OFFSET + ((i + 1) * rowHeight)),
 						(topRight.getX() + Game.X_OFFSET),
-						(topRight.getY() + Game.Y_OFFSET + ((i + 1) * rowHeight)));
+						(topLeft.getY() + Game.Y_OFFSET + ((i + 1) * rowHeight)));
 			}
 			
 			Integer[] playerIDs = getAvailablePlayerIDs();
