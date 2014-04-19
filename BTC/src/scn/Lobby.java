@@ -79,7 +79,11 @@ public class Lobby extends Scene {
 			updateAvailablePlayers();
 			
 			// Process queued instructions
-			InstructionHandler.handleInstruction(InstructionHandler.getMessages());
+			String waitingInstructions = InstructionHandler.getMessages();
+			
+			if (waitingInstructions != null) {
+				InstructionHandler.handleInstruction(waitingInstructions);
+			}
 
 			// Reset the time
 			timeSinceUpdate = 0;
