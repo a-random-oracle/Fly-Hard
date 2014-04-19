@@ -21,11 +21,9 @@ public class Lobby extends Scene {
 	
 	/** The time since the list of available players was last updated */
 	private double timeSinceUpdate;
-
-	private final int CREATE_BUTTON_W = 128;
+	
+	private final int CREATE_BUTTON_W = 200;
 	private final int CREATE_BUTTON_H = 32;
-	private final int CREATE_BUTTON_X = window.width() / 3 + Game.X_OFFSET;
-	private final int CREATE_BUTTON_Y = (window.height() - window.height()) + Game.Y_OFFSET;
 	
 	private InputBox inputBox;
 	
@@ -43,6 +41,8 @@ public class Lobby extends Scene {
 	private Vector topRight = new Vector(0.95, 0.2, 0, true);
 	
 	private Vector bottomRight = new Vector(0.95, 0.8, 0, true);
+	
+	private Vector createButtonLeft = new Vector(topLeft.getRelativeX() + 0.60, topLeft.getRelativeY(), 0, true);
 	
 	private int rowHeight = (int) (40 * Main.getYScale());
 	
@@ -65,8 +65,8 @@ public class Lobby extends Scene {
 			}
 		};
 		
-		CreateGameButton = new ButtonText("Create Game", createGame, CREATE_BUTTON_X, CREATE_BUTTON_Y,
-				CREATE_BUTTON_W, CREATE_BUTTON_H);
+		CreateGameButton = new ButtonText("Create Game", createGame, (int)createButtonLeft.getX(), (int)createButtonLeft.getY(),
+				CREATE_BUTTON_W, CREATE_BUTTON_H, 0, 0, 2);
 	}
 
 	@Override
@@ -159,9 +159,6 @@ public class Lobby extends Scene {
 		drawTable();
 		
 		inputBox.draw();
-
-		graphics.rectangle(false, CREATE_BUTTON_X, CREATE_BUTTON_Y,
-				CREATE_BUTTON_W, CREATE_BUTTON_H);
 
 		CreateGameButton.draw();
 	}
