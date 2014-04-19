@@ -30,7 +30,7 @@ public class NetworkManager {
 	private static int id;
 
 	/** The thread to send data on */
-	private NetworkThread networkThread;
+	private static NetworkThread networkThread;
 	
 	private static TreeMap<Long, byte[]> transientDataBuffer;
 	
@@ -318,6 +318,10 @@ public class NetworkManager {
 		}
 	}
 	
+	
+	public static long getNetworkThreadID() {
+		return networkThread.getId();
+	}
 	
 	/**
 	 * Gets the ID for the current connection to the server.

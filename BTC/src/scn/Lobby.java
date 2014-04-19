@@ -3,15 +3,14 @@ package scn;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
+import net.InstructionHandler;
 import net.NetworkManager;
 
 import org.newdawn.slick.Color;
 
 import btc.Main;
-
 import cls.InputBox;
 import cls.Vector;
-
 import lib.jog.graphics;
 import lib.jog.input;
 import lib.jog.audio.Sound;
@@ -78,6 +77,9 @@ public class Lobby extends Scene {
 		if (timeSinceUpdate > 2) {
 			// Update the list of players
 			updateAvailablePlayers();
+			
+			// Process queued instructions
+			InstructionHandler.handleInstruction(InstructionHandler.getMessages());
 
 			// Reset the time
 			timeSinceUpdate = 0;

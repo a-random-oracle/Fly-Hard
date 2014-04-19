@@ -1,7 +1,6 @@
 package net;
 
 import btc.Main;
-
 import scn.Game;
 import scn.Game.DifficultySetting;
 import scn.MultiPlayerGame;
@@ -28,6 +27,9 @@ public abstract class InstructionHandler {
 	
 	/** The instruction delimiter */
 	public static final String DELIM = ":";
+	
+	/** The messages to be delivered to the main thread */
+	private static String messages;
 	
 	
 	/**
@@ -205,17 +207,26 @@ public abstract class InstructionHandler {
 	 * @param parameters - the parameters accompanying the instruction
 	 */
 	private static void handleStartGame(String parameters) {
-		// Get the position to set from the response
-		int playerPosition = -1;
-		try {
-			playerPosition = Integer.parseInt(parameters);
-		} catch (Exception e) {
-			NetworkManager.print(e);
-		}
+		if (Thread.currentThread().getId() != NetworkManager.getNetworkThreadID()) {
+			// Get the position to set from the response
+			int playerPosition = -1;
+			try {
+				playerPosition = Integer.parseInt(parameters);
+			} catch (Exception e) {
+				NetworkManager.print(e);
+			}
 
-		// Start a new multiplayer game
-		Main.setScene(MultiPlayerGame
-				.createMultiPlayerGame(DifficultySetting.EASY, playerPosition));
+			// Start a new multiplayer game
+			Main.setScene(MultiPlayerGame
+					.createMultiPlayerGame(DifficultySetting.EASY,
+							playerPosition));
+		} else {
+			// Obtain a lock on the message buffer
+			synchronized (messages) {
+				// Add a START_GAME instruction to the message buffer
+				messages += "START_GAME";
+			}
+		}
 	}
 	
 	/**
@@ -276,6 +287,24 @@ public abstract class InstructionHandler {
 	 */
 	private static void handleInvalidRequest() {
 		// TODO
+	}
+	
+	
+	/**
+	 * Gets any messages which need to be processed by the main thread.
+	 * <p>
+	 * This operation is <b>destructive</b>, i.e. the message buffer will
+	 * be cleared after it has been read.
+	 * </p>
+	 * @return the contents of the message buffer
+	 */
+	public static String getMessages() {
+		// Obtain a lock on the message buffer
+		synchronized (messages) {
+			String messageBuffer = messages;
+			messages = "";
+			return messageBuffer;
+		}
 	}
 	
 }
