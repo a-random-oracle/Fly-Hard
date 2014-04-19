@@ -78,6 +78,7 @@ public class InputBox {
 		
 		InputBox.validKeys = new ArrayList<Integer>();
 		InputBox.validKeys.add(input.KEY_0);
+		InputBox.validKeys.add(input.KEY_1);
 		InputBox.validKeys.add(input.KEY_2);
 		InputBox.validKeys.add(input.KEY_3);
 		InputBox.validKeys.add(input.KEY_4);
