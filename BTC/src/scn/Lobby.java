@@ -210,6 +210,13 @@ public class Lobby extends Scene {
 	public void drawTable() {
 		graphics.setColour(255, 255, 255);
 		
+		graphics.print("Host Name", topLeft.getX() + Game.X_OFFSET + 5,
+				topLeft.getY() + Game.Y_OFFSET - 15, 1);
+		
+		graphics.print("Description", (topLeft.getX() + Game.X_OFFSET)
+				+ ((topRight.getX() - topLeft.getX()) * (2d/5d)),
+				topLeft.getY() + Game.Y_OFFSET - 15, 1);
+		
 		graphics.rectangle(false,
 				(topLeft.getX() + Game.X_OFFSET),
 				(topLeft.getY() + Game.Y_OFFSET),
