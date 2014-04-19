@@ -73,6 +73,22 @@ public class Vector implements Serializable {
 	}
 	
 	/**
+	 * Gets the relative x position of the vector.
+	 * @return the relative x position of the vector
+	 */
+	public double getRelativeX() {
+		return x;
+	}
+
+	/**
+	 * Gets the relative y position of the vector.
+	 * @return the relative y position of the vector
+	 */
+	public double getRelativeY() {
+		return y;
+	}
+	
+	/**
 	 * Gets the z position of the vector.
 	 * @return the z position of the vector
 	 */
