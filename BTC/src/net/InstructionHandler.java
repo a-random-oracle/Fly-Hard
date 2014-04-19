@@ -29,7 +29,7 @@ public abstract class InstructionHandler {
 	public static final String DELIM = ":";
 	
 	/** The messages to be delivered to the main thread */
-	private static String messages;
+	private static String messages = "";
 	
 	
 	/**
