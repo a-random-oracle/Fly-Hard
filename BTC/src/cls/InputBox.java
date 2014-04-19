@@ -1,5 +1,7 @@
 package cls;
 
+import java.util.ArrayList;
+
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.newdawn.slick.Color;
@@ -18,22 +20,7 @@ public class InputBox {
 	 * <code>validKeys</code> are the legal keys
 	 *  permitted for entry into the input box.
 	 */
-	private final static int[] validKeys = {
-		input.KEY_0, input.KEY_1, input.KEY_2,
-		input.KEY_3, input.KEY_4, input.KEY_5,
-		input.KEY_6, input.KEY_7, input.KEY_8,
-		input.KEY_9, input.KEY_A, input.KEY_B,
-		input.KEY_C, input.KEY_D, input.KEY_E,
-		input.KEY_F, input.KEY_G, input.KEY_H,
-		input.KEY_I, input.KEY_J, input.KEY_K,
-		input.KEY_L, input.KEY_M, input.KEY_N,
-		input.KEY_O, input.KEY_P, input.KEY_Q,
-		input.KEY_R, input.KEY_S, input.KEY_T,
-		input.KEY_U, input.KEY_V, input.KEY_W,
-		input.KEY_X, input.KEY_Y, input.KEY_Z,
-		input.KEY_SPACE, input.KEY_RETURN, 
-		input.KEY_BACKSPACE
-	};
+	private static ArrayList<Integer> validKeys;
 
 	/** The foreground colour of the input box */
 	private Color foreColour;
@@ -88,8 +75,113 @@ public class InputBox {
 		this.enabled = true;
 		this.text = "";
 		this.oldText = "";
+		
+		InputBox.validKeys = new ArrayList<Integer>();
+		InputBox.validKeys.add(input.KEY_0);
+		InputBox.validKeys.add(input.KEY_2);
+		InputBox.validKeys.add(input.KEY_3);
+		InputBox.validKeys.add(input.KEY_4);
+		InputBox.validKeys.add(input.KEY_5);
+		InputBox.validKeys.add(input.KEY_6);
+		InputBox.validKeys.add(input.KEY_7);
+		InputBox.validKeys.add(input.KEY_8);
+		InputBox.validKeys.add(input.KEY_9);
+		
+		InputBox.validKeys.add(input.KEY_A);
+		InputBox.validKeys.add(input.KEY_B);
+		InputBox.validKeys.add(input.KEY_C);
+		InputBox.validKeys.add(input.KEY_D);
+		InputBox.validKeys.add(input.KEY_E);
+		InputBox.validKeys.add(input.KEY_F);
+		InputBox.validKeys.add(input.KEY_G);
+		InputBox.validKeys.add(input.KEY_H);
+		InputBox.validKeys.add(input.KEY_I);
+		InputBox.validKeys.add(input.KEY_J);
+		InputBox.validKeys.add(input.KEY_K);
+		InputBox.validKeys.add(input.KEY_L);
+		InputBox.validKeys.add(input.KEY_M);
+		InputBox.validKeys.add(input.KEY_N);
+		InputBox.validKeys.add(input.KEY_O);
+		InputBox.validKeys.add(input.KEY_P);
+		InputBox.validKeys.add(input.KEY_Q);
+		InputBox.validKeys.add(input.KEY_R);
+		InputBox.validKeys.add(input.KEY_S);
+		InputBox.validKeys.add(input.KEY_T);
+		InputBox.validKeys.add(input.KEY_U);
+		InputBox.validKeys.add(input.KEY_V);
+		InputBox.validKeys.add(input.KEY_W);
+		InputBox.validKeys.add(input.KEY_X);
+		InputBox.validKeys.add(input.KEY_Y);
+		InputBox.validKeys.add(input.KEY_Z);
+	
+		InputBox.validKeys.add(input.KEY_SPACE);
+		InputBox.validKeys.add(input.KEY_RETURN);
+		InputBox.validKeys.add(input.KEY_BACKSPACE);
 	}
+	
+	
+	public void update(double dt) {
+		if (Mouse.isButtonDown(input.MOUSE_LEFT)) {
+			if (editing) {
+				if (!input.isMouseInRect(x, y, width, height)) {
+					deactivate();
+				}
+			} else {
+				if (input.isMouseInRect(x, y, width, height)) {
+					activate();
+				}
+			}
+		}
+	}
+	
+	/**
+	 * Render/draw the input box and the text, if any
+	 */
+	public void draw() {
+		graphics.setColour(borderColour);
+		graphics.rectangle(true, x, y, width, height);
+		graphics.setColour(foreColour);
+		graphics.rectangle(true, x + 2, y + 2, width - 4, height - 4);
+		graphics.setColour(0, 0, 0);
+		
+		if (editing && !(text.length() >= 12)) {
+			graphics.printScaled(text + "_", x + 4, y + 4, 2, 1);
+		} else {
+			graphics.printScaled(text, x + 4, y + 4, 2, 1);
+		}
+	}
+	
+	/**
+	 * Handles keyboard inputs.
+	 * @param key - the key which was pressed
+	 */
+	public void keyPressed(int key) {
+		if (validKeys.contains(key)) {		
+			switch (key) {
+			case input.KEY_RETURN:
+				deactivate();
+				break;
+			case input.KEY_BACKSPACE:
+				if (text.length() > 0) {
+					text = text.substring(0, text.length() - 1);
+				}
+				break;
+			case input.KEY_SPACE:
+				if (!(text.length() >= 12)) {
+					text += " ";
+				}
+				break;
+			default:
+				if (!(text.length() >= 12)) {
+					text = oldText + Keyboard.getKeyName(key);
+				}
+				break;
+			}
 
+			oldText = text;
+		}
+	}
+	
 	/**
 	 * Allows text to be entered into the input box.
 	 * <p>Called upon clicking on the input box.</p>
@@ -109,85 +201,6 @@ public class InputBox {
 	 */
 	public void deactivate() {
 		editing = false;
-	}
-	
-	public void update(double dt) {
-		if (Mouse.isButtonDown(input.MOUSE_LEFT)) {
-			if (editing) {
-				if (!input.isMouseInRect(x, y, width, height)) {
-					deactivate();
-				}
-			} else {
-				if (input.isMouseInRect(x, y, width, height)) {
-					activate();
-				}
-			}
-		}
-
-		while (Keyboard.next()) {
-			if (editing && !Keyboard.isRepeatEvent()) {
-				int key = pollKeys();
-				
-				switch (key) {
-				case -1:
-					// Do nothing
-					break;
-				case input.KEY_RETURN:
-					deactivate();
-					break;
-				case input.KEY_BACKSPACE:
-					if (text.length() > 0) {
-						text = text.substring(0, text.length() - 1);
-					}
-					break;
-				case input.KEY_SPACE:
-					if (!(text.length() >= 12)) {
-						text += " ";
-					}
-					break;
-				default:
-					if (!(text.length() >= 12)) {
-						text = oldText + Keyboard.getKeyName(key);
-					}
-					break;
-				}
-				
-				oldText = text;
-			}
-		}
-	}
-
-	/**
-	 * Poll the valid set of input keys.
-	 * @return The valid key pressed
-	 * <p>Will return an integer value of -1
-	 * if no valid key was found during the poll</p>
-	 */
-	private int pollKeys() {
-		for (int i = 0; i < validKeys.length; i++) {
-			if (input.isKeyDown(validKeys[i])) {
-				return validKeys[i];
-			}
-		}
-
-		return -1;
-	}
-	
-	/**
-	 * Render/draw the input box and the text, if any
-	 */
-	public void draw() {
-		graphics.setColour(borderColour);
-		graphics.rectangle(true, x, y, width, height);
-		graphics.setColour(foreColour);
-		graphics.rectangle(true, x + 2, y + 2, width - 4, height - 4);
-		graphics.setColour(0, 0, 0);
-		
-		if (editing && !(text.length() >= 12)) {
-			graphics.printScaled(text + "_", x + 4, y + 4, 2, 1);
-		} else {
-			graphics.printScaled(text, x + 4, y + 4, 2, 1);
-		}
 	}
 	
 	public void setEnabled(boolean enabled) {

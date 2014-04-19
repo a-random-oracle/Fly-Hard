@@ -14,7 +14,6 @@ import cls.Vector;
 import lib.jog.graphics;
 import lib.jog.input;
 import lib.jog.audio.Sound;
-import lib.jog.window;
 import lib.ButtonText;
 
 public class Lobby extends Scene {
@@ -219,7 +218,9 @@ public class Lobby extends Scene {
 	}
 
 	@Override
-	public void keyPressed(int key) {}
+	public void keyPressed(int key) {
+		inputBox.keyPressed(key);
+	}
 
 	/**
 	 * Quits back to title scene on escape button.
