@@ -1,7 +1,7 @@
 package scn;
 
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 
 import net.InstructionHandler;
 import net.NetworkManager;
@@ -29,7 +29,7 @@ public class Lobby extends Scene {
 	
 	private ButtonText CreateGameButton;
 	
-	private ArrayList<ButtonText> availableGames = new ArrayList<ButtonText>();
+	private LinkedList<ButtonText> availableGames = new LinkedList<ButtonText>();
 	
 	/** The map of available players */
 	private LinkedHashMap<Integer, String> availablePlayers;
@@ -146,9 +146,9 @@ public class Lobby extends Scene {
 							currentAction,
 							(int) (topLeft.getX() + Game.X_OFFSET
 									+ ((topRight.getX() - topLeft.getX()) * (3d/4d))),
-							(int) (topLeft.getY() + Game.Y_OFFSET + (i * rowHeight)),
+							(int) (topLeft.getY() + Game.Y_OFFSET + ((i + 0.33) * rowHeight)),
 							(int) ((topRight.getX() - topLeft.getX()) * (1d/4d)),
-							(int) (rowHeight * (3d/4d))));
+							(int) (rowHeight * (3d/4d)), 0, 0));
 		}
 	}
 
@@ -179,9 +179,15 @@ public class Lobby extends Scene {
 						(topRight.getX() + Game.X_OFFSET),
 						(topRight.getY() + Game.Y_OFFSET + ((i + 1) * rowHeight)));
 			}
-		}
-		
-		if (availableGames != null) {
+			
+			Integer[] playerIDs = getAvailablePlayerIDs();
+			
+			for (int i = 0; i < availableGames.size(); i++) {
+				graphics.print(availablePlayers.get(playerIDs[i]),
+						(topLeft.getX() + Game.X_OFFSET),
+						(topLeft.getY() + Game.Y_OFFSET + ((i + 0.33) * rowHeight)));
+			}
+			
 			for (int i = 0; i < availableGames.size(); i++) {
 				availableGames.get(i).draw();
 			}
@@ -259,8 +265,12 @@ public class Lobby extends Scene {
 	 * @return a list of the IDs of all available players
 	 */
 	private Integer[] getAvailablePlayerIDs() {
-		return availablePlayers.keySet()
-				.toArray(new Integer[availablePlayers.size()]);
+		if (availablePlayers != null && availablePlayers.keySet() != null) {
+			return availablePlayers.keySet()
+					.toArray(new Integer[availablePlayers.size()]);
+		} else {
+			return null;
+		}
 	}
 
 }
