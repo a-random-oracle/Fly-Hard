@@ -31,8 +31,6 @@ public class Lobby extends Scene {
 	
 	private ButtonText CreateGameButton;
 	
-	private ButtonText[] playerButtons;
-	
 	private ArrayList<ButtonText> availableGames = new ArrayList<ButtonText>();
 	
 	/** The map of available players */
@@ -45,6 +43,8 @@ public class Lobby extends Scene {
 	private Vector topRight = new Vector(0.95, 0.2, 0, true);
 	
 	private Vector bottomRight = new Vector(0.95, 0.8, 0, true);
+	
+	private int rowHeight = (int) (40 * Main.getYScale());
 	
 	
 	protected Lobby() {
@@ -132,43 +132,28 @@ public class Lobby extends Scene {
 			}
 		}
 		
-		// Create a button for each player
-		playerButtons = new ButtonText[availablePlayers.size()];
-		
-		//ButtonText newPlayer;
-		
+		// Get the available client IDs
 		Integer[] clientIDs = getAvailablePlayerIDs();
 		
-		int curY = 200;
+		// Clear the array of available games
+		availableGames.clear();
+		
 		for (int i = 0; i < availablePlayers.size(); i++) {
-			ButtonText.Action currentAction = createPlayerButtonAction(clientIDs[i]);
+			ButtonText.Action currentAction =
+					createPlayerButtonAction(clientIDs[i]);
 			
-			availableGames.add(new ButtonText(availablePlayers.get(clientIDs[i]),
-					currentAction, 200, curY, 100, 30));
-			
-			curY += 40;
+			availableGames.add(new ButtonText("Join Game",
+							currentAction,
+							(int) (topLeft.getX() + Game.X_OFFSET
+									+ ((topRight.getX() - topLeft.getX()) * (3d/4d))),
+							(int) (topLeft.getY() + Game.Y_OFFSET + (i * rowHeight)),
+							(int) ((topRight.getX() - topLeft.getX()) * (1d/4d)),
+							(int) (rowHeight * (3d/4d))));
 		}
-		
-		//availableGames.add(
-		
-		// Get a list of client IDs
-		/*Integer[] clientIDs = getAvailablePlayerIDs();
-		
-		int curY = 200;
-		for (int i = 0; i < playerButtons.length; i++) {
-			ButtonText.Action currentAction = createPlayerButtonAction(clientIDs[i]);
-			
-			playerButtons[i] = new ButtonText(availablePlayers.get(clientIDs[i]),
-					currentAction, 200, curY, 100, 30);
-			
-			curY += 40;
-		}*/
 	}
 
 	@Override
 	public void draw() {
-		graphics.setColour(255, 255, 255); // White
-
 		graphics.print("Enter Name: ", topLeft.getX() + Game.X_OFFSET, topLeft.getY(), 2);
 		
 		drawTable();
@@ -179,25 +164,31 @@ public class Lobby extends Scene {
 				CREATE_BUTTON_W, CREATE_BUTTON_H);
 
 		CreateGameButton.draw();
-		/*
-		if (playerButtons != null) {
-			for (ButtonText b : playerButtons) {
-				b.draw();
-			}
-		}*/
-		
-		if (availableGames != null) {
-			for (ButtonText b : availableGames) {
-				b.draw();
-			}
-		}
 	}
 	
 	public void drawTable() {
 		graphics.setColour(255, 255, 255);
-		graphics.rectangle(false, topLeft.getX() + Game.X_OFFSET, topLeft.getY() + Game.Y_OFFSET,
+		
+		graphics.rectangle(false,
+				(topLeft.getX() + Game.X_OFFSET),
+				(topLeft.getY() + Game.Y_OFFSET),
 				(topRight.getX() - topLeft.getX()),
 				(bottomRight.getY() - topRight.getY()));
+		
+		if (availableGames != null) {
+			for (int i = 0; i < availableGames.size(); i++) {
+				graphics.line((topLeft.getX() + Game.X_OFFSET),
+						(topLeft.getY() + Game.Y_OFFSET + ((i + 1) * rowHeight)),
+						(topRight.getX() + Game.X_OFFSET),
+						(topRight.getY() + Game.Y_OFFSET + ((i + 1) * rowHeight)));
+			}
+		}
+		
+		if (availableGames != null) {
+			for (int i = 0; i < availableGames.size(); i++) {
+				availableGames.get(i).draw();
+			}
+		}
 	}
 	
 	@Override
@@ -212,15 +203,7 @@ public class Lobby extends Scene {
 			CreateGameButton.act();
 		}
 		
-		/*if (playerButtons != null) {
-			for (ButtonText b : playerButtons) {
-				if (b.isMouseOver(x, y)) {
-					b.act();
-				}
-			}
-		}*/
-		
-		if (playerButtons != null) {
+		if (availableGames != null) {
 			for (ButtonText b : availableGames) {
 				if (b.isMouseOver(x, y)) {
 					b.act();
