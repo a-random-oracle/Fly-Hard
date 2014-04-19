@@ -51,7 +51,7 @@ public class Lobby extends Scene {
 	private Vector inputBoxCoords = new Vector(0.43, 0.2, 0, true);
 	
 	/** The coordinates of the create game button */
-	private Vector createButtonCoords = new Vector(0.65, 0.2, 0, true);
+	private Vector createButtonCoords = new Vector(0.67, 0.2, 0, true);
 	
 	private int rowHeight = (int) (40 * Main.getYScale());
 	
