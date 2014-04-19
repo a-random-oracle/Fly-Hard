@@ -55,8 +55,8 @@ public class Lobby extends Scene {
 	@Override
 	public void start() {
 		// Instantiate the input box and position it correctly above the game selection box
-		inputBox = new InputBox(Color.white, Color.red,
-				(int)topLeft.getX() + (Game.X_OFFSET * 2), (int)topLeft.getY(), 200, 30);
+		inputBox = new InputBox(Color.white, Color.darkGray,
+				(int)topLeft.getX() + (Game.X_OFFSET * 2), (int)topLeft.getY(), 200, 25);
 		
 		ButtonText.Action createGame = new ButtonText.Action() {
 			@Override
