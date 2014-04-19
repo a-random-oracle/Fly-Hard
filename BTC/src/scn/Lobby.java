@@ -38,7 +38,7 @@ public class Lobby extends Scene {
 	private LinkedHashMap<Integer, String> availablePlayers;
 	
 	/** Coordinates for the top left of the game selection box */
-	private Vector topLeft = new Vector(0.05, 0.2, 0, true);
+	private Vector topLeft = new Vector(0.05, 0.3, 0, true);
 	
 	private Vector topRight = new Vector(0.95, 0.2, 0, true);
 	
@@ -54,6 +54,9 @@ public class Lobby extends Scene {
 	private Vector createButtonCoords = new Vector(0.67, 0.2, 0, true);
 	
 	private int rowHeight = (int) (40 * Main.getYScale());
+	
+	/** has the player created a game? If so, they are waiting for an opponent*/
+	private boolean isWaitingForOpponent = false;
 	
 	
 	protected Lobby() {
@@ -71,6 +74,7 @@ public class Lobby extends Scene {
 		ButtonText.Action createGame = new ButtonText.Action() {
 			@Override
 			public void action() {
+				isWaitingForOpponent = true;
 				NetworkManager.postMessage("INIT:" + inputBox.getText());
 			}
 		};
