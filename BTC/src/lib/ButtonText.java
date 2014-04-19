@@ -15,7 +15,6 @@ public class ButtonText {
 	private Action action;
 	private boolean available;
 	
-	//#What is ox/oy
 	public ButtonText(String text, Action action, int x, int y, int w, int h, int ox, int oy) {
 		this.text = text;
 		this.action = action;

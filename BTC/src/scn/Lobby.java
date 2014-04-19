@@ -1,5 +1,6 @@
 package scn;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
 import net.NetworkManager;
@@ -9,6 +10,7 @@ import org.newdawn.slick.Color;
 import btc.Main;
 
 import cls.InputBox;
+import cls.Vector;
 
 import lib.jog.graphics;
 import lib.jog.input;
@@ -31,8 +33,18 @@ public class Lobby extends Scene {
 	
 	private ButtonText[] playerButtons;
 	
+	private ArrayList<ButtonText> availableGames = new ArrayList<ButtonText>();
+	
 	/** The map of available players */
 	private LinkedHashMap<Integer, String> availablePlayers;
+	
+	private Vector topLeft = new Vector(0.05, 0.2, 0, true);
+	
+	private Vector bottomLeft = new Vector(0.05, 0.8, 0, true);
+	
+	private Vector topRight = new Vector(0.95, 0.2, 0, true);
+	
+	private Vector bottomRight = new Vector(0.95, 0.8, 0, true);
 	
 	
 	protected Lobby() {
@@ -42,7 +54,7 @@ public class Lobby extends Scene {
 	
 	@Override
 	public void start() {
-		inputBox = new InputBox(Color.white, Color.red, 400, 500, 200, 30);
+		inputBox = new InputBox(Color.white, Color.red, 400, 100, 200, 30);
 		
 		buttons = new ButtonText[1];
 		
@@ -107,8 +119,23 @@ public class Lobby extends Scene {
 		// Create a button for each player
 		playerButtons = new ButtonText[availablePlayers.size()];
 		
-		// Get a list of client IDs
+		//ButtonText newPlayer;
+		
 		Integer[] clientIDs = getAvailablePlayerIDs();
+		
+		int curY = 200;
+		for (ButtonText b: availableGames) {
+			ButtonText.Action currentAction = createPlayerButtonAction(availableGames.indexOf(b));
+			
+			b = new ButtonText(availablePlayers.get(clientIDs[availableGames.indexOf(b)]), currentAction, 200, curY, 100, 30);
+			
+			curY += 40;
+		}
+		
+		//availableGames.add(
+		
+		// Get a list of client IDs
+		/*Integer[] clientIDs = getAvailablePlayerIDs();
 		
 		int curY = 200;
 		for (int i = 0; i < playerButtons.length; i++) {
@@ -118,13 +145,15 @@ public class Lobby extends Scene {
 					currentAction, 200, curY, 100, 30);
 			
 			curY += 40;
-		}
+		}*/
 	}
 
 	@Override
 	public void draw() {
 		graphics.setColour(255, 255, 255); // White
 
+		drawTable();
+		
 		inputBox.draw();
 
 		graphics.rectangle(false, CREATE_BUTTON_X, CREATE_BUTTON_Y,
@@ -141,6 +170,13 @@ public class Lobby extends Scene {
 				b.draw();
 			}
 		}
+	}
+	
+	public void drawTable() {
+		graphics.setColour(255, 255, 255);
+		graphics.rectangle(false, topLeft.getX() + Game.X_OFFSET, topLeft.getY() + Game.Y_OFFSET,
+				(topRight.getX() - topLeft.getX()),
+				(bottomRight.getY() - topRight.getY()));
 	}
 	
 	@Override
