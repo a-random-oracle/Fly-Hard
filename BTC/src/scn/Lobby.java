@@ -130,10 +130,11 @@ public class Lobby extends Scene {
 		Integer[] clientIDs = getAvailablePlayerIDs();
 		
 		int curY = 200;
-		for (ButtonText b: availableGames) {
-			ButtonText.Action currentAction = createPlayerButtonAction(availableGames.indexOf(b));
+		for (int i = 0; i < availablePlayers.size(); i++) {
+			ButtonText.Action currentAction = createPlayerButtonAction(clientIDs[i]);
 			
-			b = new ButtonText(availablePlayers.get(clientIDs[availableGames.indexOf(b)]), currentAction, 200, curY, 100, 30);
+			availableGames.add(new ButtonText(availablePlayers.get(clientIDs[i]),
+					currentAction, 200, curY, 100, 30));
 			
 			curY += 40;
 		}
@@ -170,9 +171,15 @@ public class Lobby extends Scene {
 				b.draw();
 			}
 		}
-
+		/*
 		if (playerButtons != null) {
 			for (ButtonText b : playerButtons) {
+				b.draw();
+			}
+		}*/
+		
+		if (availableGames != null) {
+			for (ButtonText b : availableGames) {
 				b.draw();
 			}
 		}
@@ -201,8 +208,16 @@ public class Lobby extends Scene {
 			}
 		}
 		
-		if (playerButtons != null) {
+		/*if (playerButtons != null) {
 			for (ButtonText b : playerButtons) {
+				if (b.isMouseOver(x, y)) {
+					b.act();
+				}
+			}
+		}*/
+		
+		if (playerButtons != null) {
+			for (ButtonText b : availableGames) {
 				if (b.isMouseOver(x, y)) {
 					b.act();
 				}
