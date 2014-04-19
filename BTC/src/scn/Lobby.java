@@ -33,15 +33,21 @@ public class Lobby extends Scene {
 	/** The map of available players */
 	private LinkedHashMap<Integer, String> availablePlayers;
 	
+	/** Coordinates for the top left of the game selection box */
 	private Vector topLeft = new Vector(0.05, 0.2, 0, true);
-	
-	private Vector bottomLeft = new Vector(0.05, 0.8, 0, true);
 	
 	private Vector topRight = new Vector(0.95, 0.2, 0, true);
 	
 	private Vector bottomRight = new Vector(0.95, 0.8, 0, true);
 	
-	private Vector createButtonLeft = new Vector(topLeft.getRelativeX() + 0.60, topLeft.getRelativeY(), 0, true);
+	/** The coordinates of the "Enter name here: " string */
+	private Vector stringCoords = new Vector(0.05, 0.2, 0, true);
+	
+	/** The coordinates of the input box */
+	private Vector inputBoxCoords = new Vector(0.43, 0.2, 0, true);
+	
+	/** The coordinates of the create game button */
+	private Vector createButtonCoords = new Vector(0.65, 0.2, 0, true);
 	
 	private int rowHeight = (int) (40 * Main.getYScale());
 	
@@ -55,8 +61,9 @@ public class Lobby extends Scene {
 	public void start() {
 		// Instantiate the input box and position it correctly above the game selection box
 		inputBox = new InputBox(Color.white, Color.darkGray,
-				(int)topLeft.getX() + (Game.X_OFFSET * 2), (int)topLeft.getY(), 200, 25);
+				(int)inputBoxCoords.getX(), (int)inputBoxCoords.getY(), 200, 23);
 		
+		//Implement the action that occurs upon clicking the createGame button
 		ButtonText.Action createGame = new ButtonText.Action() {
 			@Override
 			public void action() {
@@ -64,7 +71,8 @@ public class Lobby extends Scene {
 			}
 		};
 		
-		CreateGameButton = new ButtonText("Create Game", createGame, (int)createButtonLeft.getX(), (int)createButtonLeft.getY(),
+		CreateGameButton = new ButtonText("Create Game", createGame,
+				(int)createButtonCoords.getX(), (int)createButtonCoords.getY(),
 				CREATE_BUTTON_W, CREATE_BUTTON_H, 0, 0, 2);
 	}
 
@@ -153,7 +161,7 @@ public class Lobby extends Scene {
 
 	@Override
 	public void draw() {
-		graphics.print("Enter Name: ", topLeft.getX() + Game.X_OFFSET, topLeft.getY(), 2);
+		graphics.print("Enter Name: ", stringCoords.getX() + Game.X_OFFSET, stringCoords.getY(), 2);
 		
 		drawTable();
 		
