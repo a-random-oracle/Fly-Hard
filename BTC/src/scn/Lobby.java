@@ -18,10 +18,15 @@ import lib.ButtonText;
 
 public class Lobby extends Scene {
 	
+	private static final String WAITING_FOR_OPPONENT_BASE = "Waiting for an opponent ";
+	
 	/** The time since the list of available players was last updated */
 	private double timeSincePlayerUpdate = 1;
 	
-	/** The time since the list of available players was last updated */
+	/** The time since the players waiting string was last updated */
+	private double timeSinceWaitingUpdate = 0.5;
+	
+	/** The time since the list of instructions was last checked */
 	private double timeSinceStartGameUpdate = 0.1;
 	
 	private final int CREATE_BUTTON_W = 200;
@@ -51,12 +56,14 @@ public class Lobby extends Scene {
 	private Vector inputBoxCoords = new Vector(0.43, 0.2, 0, true);
 	
 	/** The coordinates of the create game button */
-	private Vector createButtonCoords = new Vector(0.67, 0.2, 0, true);
+	private Vector createButtonCoords = new Vector(0.71, 0.2, 0, true);
 	
 	private int rowHeight = (int) (40 * Main.getYScale());
 	
 	/** has the player created a game? If so, they are waiting for an opponent*/
 	private boolean isWaitingForOpponent = false;
+
+	private String waitingForOpponentDots = "";
 	
 	
 	protected Lobby() {
@@ -88,6 +95,7 @@ public class Lobby extends Scene {
 	public void update(double timeDifference) {
 		// Increment the time before the next data send
 		timeSincePlayerUpdate += timeDifference;
+		timeSinceWaitingUpdate += timeDifference;
 		timeSinceStartGameUpdate += timeDifference;
 
 		// Update the map of available players approximately every second
@@ -97,6 +105,18 @@ public class Lobby extends Scene {
 
 			// Reset the time
 			timeSincePlayerUpdate = 0;
+		}
+		
+		// Update dots on strings
+		if (timeSinceWaitingUpdate > 0.5) {
+			if (waitingForOpponentDots.length() == 3) {
+				waitingForOpponentDots = "";
+			} else {
+				waitingForOpponentDots += ".";
+			}
+
+			// Reset the time
+			timeSinceWaitingUpdate = 0;
 		}
 		
 		// Check for instructions approximately every tenth of a second
@@ -197,6 +217,7 @@ public class Lobby extends Scene {
 				(bottomRight.getY() - topRight.getY()));
 		
 		if (availableGames != null) {
+			// Draw vertical lines below each player's row
 			for (int i = 0; i < availableGames.size(); i++) {
 				graphics.line((topLeft.getX() + Game.X_OFFSET),
 						(topLeft.getY() + Game.Y_OFFSET + ((i + 1) * rowHeight)),
@@ -206,13 +227,22 @@ public class Lobby extends Scene {
 			
 			Integer[] playerIDs = getAvailablePlayerIDs();
 			
+			// Draw the player's names
 			for (int i = 0; i < availableGames.size(); i++) {
-				graphics.printCentred(availablePlayers.get(playerIDs[i]),
-						(topLeft.getX() + Game.X_OFFSET),
-						(topLeft.getY() + Game.Y_OFFSET + ((i + 0.33) * rowHeight)),
-						1, ((topRight.getX() + Game.X_OFFSET) * (1d/10d)));
+				graphics.print(availablePlayers.get(playerIDs[i]),
+						(topLeft.getX() + Game.X_OFFSET) + 5,
+						(topLeft.getY() + Game.Y_OFFSET + ((i + 0.33) * rowHeight)));
 			}
 			
+			// Draw the player's descriptions
+			for (int i = 0; i < availableGames.size(); i++) {
+				graphics.print(WAITING_FOR_OPPONENT_BASE + waitingForOpponentDots,
+						(topLeft.getX() + Game.X_OFFSET)
+						+ ((topRight.getX() - topLeft.getX()) * (2d/5d)),
+						(topLeft.getY() + Game.Y_OFFSET + ((i + 0.33) * rowHeight)));
+			}
+			
+			// Draw the play game buttons
 			for (int i = 0; i < availableGames.size(); i++) {
 				availableGames.get(i).draw();
 			}
