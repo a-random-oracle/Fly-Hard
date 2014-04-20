@@ -133,7 +133,7 @@ public class NetworkThread extends Thread {
 				responseBuffer.put(receivedData.getKey(), deserialisedData);
 				
 				if (deserialisedData instanceof Player) {
-					System.out.println("Recieved data: " + (Player) deserialisedData);
+					//System.out.println("Recieved data: " + (Player) deserialisedData);
 				} else{
 					System.out.println("Received data: " + deserialisedData
 							.getClass().getSimpleName());
@@ -189,6 +189,8 @@ public class NetworkThread extends Thread {
 			if (priorityResponseBuffer != null
 					&& priorityResponseBuffer.size() > 0) {
 				data = priorityResponseBuffer.removeFirst();
+				
+				System.out.println("Reading priority");
 			}
 		}
 		

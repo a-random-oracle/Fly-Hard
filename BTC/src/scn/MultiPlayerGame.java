@@ -170,7 +170,7 @@ public class MultiPlayerGame extends Game {
 				// Set the opposing player's data
 				opposingPlayer = (Player) data;
 				
-				System.out.println("Modifying: Player");
+				//System.out.println("Modifying: Player");
 			} else if (data instanceof Player[]) {
 				// Set both players' data
 				Player[] playerArray = (Player[]) data;
