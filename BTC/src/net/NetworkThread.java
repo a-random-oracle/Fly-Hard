@@ -173,7 +173,9 @@ public class NetworkThread extends Thread {
 				Serializable response = null;
 				
 				// Check for priority data
-				response = getPriorityResponse().getValue();
+				if (getPriorityResponse() != null) {
+					response = getPriorityResponse().getValue();
+				}
 				
 				if (response == null && responseBuffer.lastEntry() != null) {
 					// Check if the data in the buffer is up-to-date
