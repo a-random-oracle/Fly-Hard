@@ -3,7 +3,6 @@ package cls;
 import java.util.ArrayList;
 
 import org.lwjgl.input.Keyboard;
-import org.lwjgl.input.Mouse;
 import org.newdawn.slick.Color;
 
 import lib.jog.graphics;
@@ -43,14 +42,11 @@ public class InputBox {
 	/** The text typed into the input box */
 	private String text;
 
-	/** Are we editing? */
+	/** Whether the input box is currently being edited */
 	private boolean editing;
 	
-	/** The user may still select/enter text into the input box */
+	/** Whether the user can still select or enter text into the input box */
 	private boolean enabled;
-
-	/** Old text value */
-	private String oldText;
 
 
 	/**
@@ -74,9 +70,10 @@ public class InputBox {
 		this.editing = false;
 		this.enabled = true;
 		this.text = "";
-		this.oldText = "";
 		
 		InputBox.validKeys = new ArrayList<Integer>();
+		
+		// Add the numeric keys to the list of valid entry keys
 		InputBox.validKeys.add(input.KEY_0);
 		InputBox.validKeys.add(input.KEY_1);
 		InputBox.validKeys.add(input.KEY_2);
@@ -88,6 +85,7 @@ public class InputBox {
 		InputBox.validKeys.add(input.KEY_8);
 		InputBox.validKeys.add(input.KEY_9);
 		
+		// Add the alphabet to the list of valid entry keys
 		InputBox.validKeys.add(input.KEY_A);
 		InputBox.validKeys.add(input.KEY_B);
 		InputBox.validKeys.add(input.KEY_C);
@@ -115,61 +113,59 @@ public class InputBox {
 		InputBox.validKeys.add(input.KEY_Y);
 		InputBox.validKeys.add(input.KEY_Z);
 	
+		// Add special keys to the list of valid entry keys
 		InputBox.validKeys.add(input.KEY_SPACE);
 		InputBox.validKeys.add(input.KEY_RETURN);
 		InputBox.validKeys.add(input.KEY_BACKSPACE);
 	}
 	
-	
-	public void update(double dt) {
-		if (Mouse.isButtonDown(input.MOUSE_LEFT)) {
-			if (editing) {
-				if (!input.isMouseInRect(x, y, width, height)) {
-					deactivate();
-				}
-			} else {
-				if (input.isMouseInRect(x, y, width, height)) {
-					activate();
-				}
-			}
-		}
-	}
-	
 	/**
-	 * Render/draw the input box and the text, if any.
+	 * Draw the input box and any text.
 	 */
 	public void draw() {
-		graphics.setColour(borderColour);
-		graphics.rectangle(true, x, y, width, height);
-		graphics.setColour(foreColour);
-		graphics.rectangle(true, x + 2, y + 2, width - 4, height - 4);
-		graphics.setColour(0, 0, 0);
-		
-		if (editing && !(text.length() >= 12)) {
-			graphics.printScaled(text + "_", x + 4, y + 4, 2, 1);
-		} else {
-			graphics.printScaled(text, x + 4, y + 4, 2, 1);
-		}
+		drawCentred(x + (width / 2));
 	}
 	
 	/**
 	 * Render/draw the input box and the text, if any.
 	 * <p>
-	 * This will ensure that the input boxis centred.
+	 * This will ensure that the input box is centred.
 	 * </p>
 	 * @param x - the x co-ordinate to centre around
 	 */
 	public void drawCentred(double xPos) {
 		graphics.setColour(borderColour);
-		graphics.rectangle(true, (xPos - (2 * width)), y, width, height);
+		graphics.rectangle(true, (xPos - (width / 2)), y, width, height);
 		graphics.setColour(foreColour);
-		graphics.rectangle(true, (xPos - (2 * width)) + 2, y + 2, width - 4, height - 4);
+		graphics.rectangle(true, (xPos - (width / 2)) + 2, y + 2,
+				width - 4, height - 4);
+		
 		graphics.setColour(0, 0, 0);
 		
 		if (editing && !(text.length() >= 12)) {
-			graphics.printScaled(text + "_", (xPos - (2 * width)) + 4, y + 4, 2, 1);
+			graphics.printScaled(text + "_",
+					(xPos - (width / 2)) + 4, y + 4, 2, 1);
 		} else {
-			graphics.printScaled(text, (xPos - (2 * width)) + 4, y + 4, 2, 1);
+			graphics.printScaled(text,
+					(xPos - (width / 2)) + 4, y + 4, 2, 1);
+		}
+		
+		if (!enabled) {
+			graphics.setColour(0, 0, 0, 128);
+			graphics.rectangle(true, (xPos - (width / 2)) + 2, y + 2,
+					width - 4, height - 4);
+		}
+	}
+	
+	public void mouseReleased(int button, int x, int y) {
+		if (editing) {
+			if (!input.isMouseInRect(x, y, width, height)) {
+				deactivate();
+			}
+		} else {
+			if (input.isMouseInRect(x, y, width, height)) {
+				activate();
+			}
 		}
 	}
 	
@@ -178,7 +174,7 @@ public class InputBox {
 	 * @param key - the key which was pressed
 	 */
 	public void keyPressed(int key) {
-		if (validKeys.contains(key)) {		
+		if (enabled && validKeys.contains(key)) {
 			switch (key) {
 			case input.KEY_RETURN:
 				deactivate();
@@ -195,12 +191,10 @@ public class InputBox {
 				break;
 			default:
 				if (!(text.length() >= 12)) {
-					text = oldText + Keyboard.getKeyName(key);
+					text = text + Keyboard.getKeyName(key);
 				}
 				break;
 			}
-
-			oldText = text;
 		}
 	}
 	
@@ -209,8 +203,9 @@ public class InputBox {
 	 * <p>Called upon clicking on the input box.</p>
 	 */
 	public void activate() {
-		editing = true;
-		oldText = text;
+		if (enabled) {
+			editing = true;
+		}
 	}
 
 	/**
@@ -227,6 +222,10 @@ public class InputBox {
 	
 	public void setEnabled(boolean enabled) {
 		this.enabled = enabled;
+		
+		if (!enabled) {
+			deactivate();
+		}
 	}
 	
 	/**
@@ -249,6 +248,38 @@ public class InputBox {
 	 */
 	public String getText() {
 		return text;
+	}
+	
+	/**
+	 * Gets the input box's x position.
+	 * @return the input box's x position
+	 */
+	public double getX() {
+		return x;
+	}
+	
+	/**
+	 * Gets the input box's y position.
+	 * @return the input box's y position
+	 */
+	public double getY() {
+		return y;
+	}
+	
+	/**
+	 * Gets the input box's width.
+	 * @return the input box's width
+	 */
+	public double getWidth() {
+		return width;
+	}
+	
+	/**
+	 * Gets the input box's height.
+	 * @return the input box's height
+	 */
+	public double getHeight() {
+		return height;
 	}
 
 }

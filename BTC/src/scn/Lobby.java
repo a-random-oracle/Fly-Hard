@@ -18,6 +18,25 @@ import lib.ButtonText;
 
 public class Lobby extends Scene {
 
+	private static final int CREATE_BUTTON_W = 200;
+
+	private static final int CREATE_BUTTON_H = 32;
+
+	/** Coordinates for the top left of the game selection table */
+	private static final Vector tableTopLeft = new Vector(0.05, 0.3, 0, true);
+
+	/** Coordinates for the top right of the game selection table */
+	private static final Vector tableTopRight = new Vector(0.95, 0.3, 0, true);
+
+	/** Coordinates for the bottom right of the game selection table */
+	private static final Vector tableBottomRight = new Vector(0.95, 0.8, 0, true);
+
+	/** The coordinates of the input box */
+	private static final Vector nameEntryBoxPos = new Vector(0.5, 0.07, 0, true);
+
+	/** The height to draw table rows */
+	private static final int rowHeight = (int) (40 * Main.getYScale());
+	
 	/** The time since the list of available players was last updated */
 	private double timeSincePlayerUpdate = 1;
 
@@ -26,39 +45,18 @@ public class Lobby extends Scene {
 
 	/** The time since the list of instructions was last checked */
 	private double timeSinceStartGameUpdate = 0.1;
-
-	private final int CREATE_BUTTON_W = 200;
-
-	private final int CREATE_BUTTON_H = 32;
-
-	private InputBox inputBox;
-
-	private ButtonText createGameButton;
-
-	private LinkedList<ButtonText> availableGames = new LinkedList<ButtonText>();
-
+	
 	/** The map of available players */
 	private LinkedHashMap<Integer, String> availablePlayers;
 	
-	private Vector centre = new Vector(0.5, 0.5, 0, true);
+	/** The input box used for name entry */
+	private InputBox nameEntryBox;
 
-	/** Coordinates for the top left of the game selection box */
-	private Vector topLeft = new Vector(0.05, 0.3, 0, true);
+	/** The button used to create a new game. The player then becomes a host. */
+	private ButtonText createGameButton;
 
-	private Vector topRight = new Vector(0.95, 0.3, 0, true);
-
-	private Vector bottomRight = new Vector(0.95, 0.8, 0, true);
-
-	/** The coordinates of the "Enter name here: " string */
-	private Vector stringCoords = new Vector(0.05, 0.15, 0, true);
-
-	/** The coordinates of the input box */
-	private Vector inputBoxCoords = new Vector(0.43, 0.15, 0, true);
-
-	/** The coordinates of the create game button */
-	private Vector createButtonCoords = new Vector(0.71, 0.15, 0, true);
-
-	private int rowHeight = (int) (40 * Main.getYScale());
+	/** The array of button which will cause the player to join a multiplayer game */
+	private LinkedList<ButtonText> joinButtons = new LinkedList<ButtonText>();
 
 	/** has the player created a game? If so, they are waiting for an opponent*/
 	private boolean isWaitingForOpponent = false;
@@ -66,6 +64,14 @@ public class Lobby extends Scene {
 	private String waitingForOpponentDots = "";
 
 
+	/**
+	 * Constructs a new lobby.
+	 * <p>
+	 * The lobby is the waiting are in which players who wish to
+	 * play against other players can select who they wish to
+	 * play against, or to become the host for a game.
+	 * </p>
+	 */
 	protected Lobby() {
 		super();
 	}
@@ -73,21 +79,27 @@ public class Lobby extends Scene {
 
 	@Override
 	public void start() {
-		// Instantiate the input box and position it correctly above the game selection box
-		inputBox = new InputBox(Color.white, Color.darkGray,
-				(int)inputBoxCoords.getX(), (int)inputBoxCoords.getY(), 200, 23);
+		// Create an input box for name entry and position it above
+		// the game selection table
+		nameEntryBox = new InputBox(Color.white, Color.darkGray,
+				(int) nameEntryBoxPos.getX() + Game.X_OFFSET,
+				(int) nameEntryBoxPos.getY() + Game.Y_OFFSET,
+				200, 23);
 
-		//Implement the action that occurs upon clicking the createGame button
+		// Implement the action that occurs upon clicking the create game button
 		ButtonText.Action createGame = new ButtonText.Action() {
 			@Override
 			public void action() {
 				isWaitingForOpponent = true;
-				NetworkManager.postMessage("INIT:" + inputBox.getText());
+				nameEntryBox.setEnabled(false);
+				NetworkManager.postMessage("INIT:" + nameEntryBox.getText());
 			}
 		};
 
 		createGameButton = new ButtonText("Create Game", createGame,
-				(int)createButtonCoords.getX(), (int)createButtonCoords.getY(),
+				(int) (nameEntryBoxPos.getX()
+						+ (nameEntryBox.getWidth() / 2) + Game.X_OFFSET + 50),
+				(int) (nameEntryBoxPos.getY() + Game.Y_OFFSET),
 				CREATE_BUTTON_W, CREATE_BUTTON_H, 0, 0, 2);
 	}
 
@@ -132,16 +144,13 @@ public class Lobby extends Scene {
 			timeSinceStartGameUpdate = 0;
 		}
 
-		/*
-		 * Activate the create button only when a name has
-		 * been entered into the input box
-		 */
-		if (!inputBox.isEmpty()) {
+		// Activate the create button only when a name has been entered
+		// into the input box
+		if (!nameEntryBox.isEmpty()) {
 			createGameButton.setAvailability(true);
 		} else {
 			createGameButton.setAvailability(false);
 		}
-		inputBox.update(timeDifference);
 	}
 
 	/**
@@ -178,94 +187,111 @@ public class Lobby extends Scene {
 		Integer[] clientIDs = getAvailablePlayerIDs();
 
 		// Clear the array of available games
-		availableGames.clear();
+		joinButtons.clear();
 
 		for (int i = 0; i < availablePlayers.size(); i++) {
 			ButtonText.Action currentAction =
 					createPlayerButtonAction(clientIDs[i]);
 
-			availableGames.add(new ButtonText("Join Game",
+			joinButtons.add(new ButtonText("Join Game",
 					currentAction,
-					(int) (topLeft.getX() + Game.X_OFFSET
-							+ ((topRight.getX() - topLeft.getX()) * (7d/8d))),
-							(int) (topLeft.getY() + Game.Y_OFFSET + ((i + 0.33) * rowHeight)),
-							(int) ((topRight.getX() - topLeft.getX()) * (7d/8d)),
-							(int) (rowHeight * (7d/8d)), 0, 0));
+					(int) (tableTopLeft.getX() + Game.X_OFFSET
+							+ ((tableTopRight.getX() - tableTopLeft.getX())
+									* (7d/8d))),
+					(int) (tableTopLeft.getY()
+							+ Game.Y_OFFSET + ((i + 0.33) * rowHeight)),
+					(int) ((tableTopRight.getX() - tableTopLeft.getX())
+									* (7d/8d)),
+					(int) (rowHeight * (7d/8d)), 0, 0));
 		}
 	}
 
 	@Override
 	public void draw() {
-		graphics.print("Enter Name: ",
-				stringCoords.getX() + Game.X_OFFSET,
-				stringCoords.getY(), 2);
+		// Draw the name entry label
+		graphics.printRight("Enter Name: ",
+				(nameEntryBoxPos.getX()
+						- (nameEntryBox.getWidth() / 2) + Game.X_OFFSET),
+				(nameEntryBoxPos.getY() + Game.Y_OFFSET),
+				2, 0);
+		
+		// Draw the name entry input box
+		nameEntryBox.drawCentred(nameEntryBoxPos.getX() + Game.X_OFFSET);
+		
+		// Draw the create game button
+		createGameButton.draw();
 
+		// If the player is waiting for an opponent, print the waiting for
+		// opponent string (with cycling dots)
 		if (isWaitingForOpponent) {
-			graphics.printCentred("Waiting for opponent to join ",
-					topLeft.getX() + Game.X_OFFSET,
-					topLeft.getY() + Game.Y_OFFSET - 100,
-					2, (topRight.getX() - topLeft.getX()));
-
-			graphics.print(waitingForOpponentDots,
-					(topLeft.getX() + Game.X_OFFSET)
-					+ ((topRight.getX() - topLeft.getX()) * (3.7d/5d)) ,
-					topLeft.getY() + Game.Y_OFFSET - 100, 2);
+			graphics.setColour(255, 255, 255);
+			
+			graphics.printCentred(waitingForOpponentDots.replace(".", " ")
+					+ " Waiting for opponent to join " + waitingForOpponentDots,
+					tableTopLeft.getX() + Game.X_OFFSET,
+					nameEntryBoxPos.getY()
+					+ ((tableTopLeft.getY() - nameEntryBoxPos.getY()) / 2)
+					+ Game.Y_OFFSET,
+					2, (tableTopRight.getX() - tableTopLeft.getX()));
 		}
 
+		// Draw the available games table
 		drawTable();
-		
-		System.out.println(centre.getX());
-		
-		inputBox.drawCentred(centre.getX());
-
-		createGameButton.draw();
 	}
 
 	public void drawTable() {
+		// Draw the table in white
 		graphics.setColour(255, 255, 255);
 
-		graphics.print("Host Name", topLeft.getX() + Game.X_OFFSET + 5,
-				topLeft.getY() + Game.Y_OFFSET - 15, 1);
+		// Draw the host name column label
+		graphics.print("Host Name", tableTopLeft.getX() + Game.X_OFFSET + 5,
+				tableTopLeft.getY() + Game.Y_OFFSET - 15, 1);
 
-		graphics.printCentred("Description", topLeft.getX() + Game.X_OFFSET,
-				topLeft.getY() + Game.Y_OFFSET - 15,
-				1, (topRight.getX() - topLeft.getX()));
+		// Draw the description column label
+		graphics.printCentred("Description", tableTopLeft.getX() + Game.X_OFFSET,
+				tableTopLeft.getY() + Game.Y_OFFSET - 15,
+				1, (tableTopRight.getX() - tableTopLeft.getX()));
 
+		// Draw the table outside border
 		graphics.rectangle(false,
-				(topLeft.getX() + Game.X_OFFSET),
-				(topLeft.getY() + Game.Y_OFFSET),
-				(topRight.getX() - topLeft.getX()),
-				(bottomRight.getY() - topRight.getY()));
+				(tableTopLeft.getX() + Game.X_OFFSET),
+				(tableTopLeft.getY() + Game.Y_OFFSET),
+				(tableTopRight.getX() - tableTopLeft.getX()),
+				(tableBottomRight.getY() - tableTopRight.getY()));
 
-		if (availableGames != null) {
+		if (joinButtons != null) {
 			// Draw vertical lines below each player's row
-			for (int i = 0; i < availableGames.size(); i++) {
-				graphics.line((topLeft.getX() + Game.X_OFFSET),
-						(topLeft.getY() + Game.Y_OFFSET + ((i + 1) * rowHeight)),
-						(topRight.getX() + Game.X_OFFSET),
-						(topLeft.getY() + Game.Y_OFFSET + ((i + 1) * rowHeight)));
+			for (int i = 0; i < joinButtons.size(); i++) {
+				graphics.line((tableTopLeft.getX() + Game.X_OFFSET),
+						(tableTopLeft.getY() + Game.Y_OFFSET
+								+ ((i + 1) * rowHeight)),
+						(tableTopRight.getX() + Game.X_OFFSET),
+						(tableTopLeft.getY() + Game.Y_OFFSET
+								+ ((i + 1) * rowHeight)));
 			}
 
 			Integer[] playerIDs = getAvailablePlayerIDs();
 
 			// Draw the player's names
-			for (int i = 0; i < availableGames.size(); i++) {
+			for (int i = 0; i < joinButtons.size(); i++) {
 				graphics.print(availablePlayers.get(playerIDs[i]),
-						(topLeft.getX() + Game.X_OFFSET) + 5,
-						(topLeft.getY() + Game.Y_OFFSET + ((i + 0.33) * rowHeight)));
+						(tableTopLeft.getX() + Game.X_OFFSET) + 5,
+						(tableTopLeft.getY() + Game.Y_OFFSET
+								+ ((i + 0.33) * rowHeight)));
 			}
 
 			// Draw the player's descriptions
-			for (int i = 0; i < availableGames.size(); i++) {
+			for (int i = 0; i < joinButtons.size(); i++) {
 				graphics.print("Waiting for opponent " + waitingForOpponentDots,
-						(topLeft.getX() + Game.X_OFFSET)
-						+ ((topRight.getX() - topLeft.getX()) * (2d/5d)),
-						(topLeft.getY() + Game.Y_OFFSET + ((i + 0.33) * rowHeight)));
+						(tableTopLeft.getX() + Game.X_OFFSET)
+						+ ((tableTopRight.getX() - tableTopLeft.getX()) * (2d/5d)),
+						(tableTopLeft.getY() + Game.Y_OFFSET
+								+ ((i + 0.33) * rowHeight)));
 			}
 
 			// Draw the play game buttons
-			for (int i = 0; i < availableGames.size(); i++) {
-				availableGames.get(i).draw();
+			for (int i = 0; i < joinButtons.size(); i++) {
+				joinButtons.get(i).draw();
 			}
 		}
 	}
@@ -278,12 +304,17 @@ public class Lobby extends Scene {
 	 */
 	@Override
 	public void mouseReleased(int key, int x, int y) {
+		// Allow the name entry box to access mouse events
+		nameEntryBox.mouseReleased(key, x, y);
+		
+		// Cause the create game button to fire when clicked
 		if (createGameButton.isMouseOver(x, y)); {
 			createGameButton.act();
 		}
 
-		if (availableGames != null) {
-			for (ButtonText b : availableGames) {
+		// Cause the join game buttons to fire when clicked
+		if (joinButtons != null) {
+			for (ButtonText b : joinButtons) {
 				if (b.isMouseOver(x, y)) {
 					b.act();
 				}
@@ -293,7 +324,8 @@ public class Lobby extends Scene {
 
 	@Override
 	public void keyPressed(int key) {
-		inputBox.keyPressed(key);
+		// Pass key input to the name entry box
+		nameEntryBox.keyPressed(key);
 	}
 
 	/**
@@ -317,6 +349,8 @@ public class Lobby extends Scene {
 	 * @param clientID - the ID of the client to connect to
 	 */
 	private void selectGame(int clientID) {
+		// Send a JOIN instruction to the server, passing the ID
+		// of the game to connect to as a parameter
 		NetworkManager.postMessage("JOIN:" + clientID);
 	}
 
