@@ -177,7 +177,7 @@ public class MultiPlayerGame extends Game {
 				
 				// Check if any aircraft under transfer are in the list
 				if (aircraftUnderTransfer.size() > 0) {
-					for (int i = aircraftUnderTransfer.size(); i >= 0; i--) {
+					for (int i = aircraftUnderTransfer.size() - 1; i > 0; i--) {
 						if (opposingPlayer.getAircraft()
 								.contains(aircraftUnderTransfer.get(i))) {
 							aircraftUnderTransfer.remove(i);
