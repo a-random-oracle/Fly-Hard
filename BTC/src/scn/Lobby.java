@@ -42,6 +42,8 @@ public class Lobby extends Scene {
 	/** The map of available players */
 	private LinkedHashMap<Integer, String> availablePlayers;
 	
+	private Vector centre = new Vector(0.5, 0.5, 0, true);
+	
 	/** Coordinates for the top left of the game selection box */
 	private Vector topLeft = new Vector(0.05, 0.3, 0, true);
 	
@@ -202,7 +204,9 @@ public class Lobby extends Scene {
 
 		drawTable();
 		
-		inputBox.draw();
+		System.out.println(centre.getX());
+		
+		inputBox.drawCentred(centre.getX());
 
 		createGameButton.draw();
 	}

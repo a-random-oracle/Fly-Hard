@@ -136,7 +136,7 @@ public class InputBox {
 	}
 	
 	/**
-	 * Render/draw the input box and the text, if any
+	 * Render/draw the input box and the text, if any.
 	 */
 	public void draw() {
 		graphics.setColour(borderColour);
@@ -149,6 +149,27 @@ public class InputBox {
 			graphics.printScaled(text + "_", x + 4, y + 4, 2, 1);
 		} else {
 			graphics.printScaled(text, x + 4, y + 4, 2, 1);
+		}
+	}
+	
+	/**
+	 * Render/draw the input box and the text, if any.
+	 * <p>
+	 * This will ensure that the input boxis centred.
+	 * </p>
+	 * @param x - the x co-ordinate to centre around
+	 */
+	public void drawCentred(double xPos) {
+		graphics.setColour(borderColour);
+		graphics.rectangle(true, (xPos - (2 * width)), y, width, height);
+		graphics.setColour(foreColour);
+		graphics.rectangle(true, (xPos - (2 * width)) + 2, y + 2, width - 4, height - 4);
+		graphics.setColour(0, 0, 0);
+		
+		if (editing && !(text.length() >= 12)) {
+			graphics.printScaled(text + "_", (xPos - (2 * width)) + 4, y + 4, 2, 1);
+		} else {
+			graphics.printScaled(text, (xPos - (2 * width)) + 4, y + 4, 2, 1);
 		}
 	}
 	
