@@ -81,10 +81,19 @@ public class NetworkThread extends Thread {
 			if ((dataBuffer.size() == 0) || (dataBuffer.lastEntry() == null)) {
 				// Send null
 			} else {
-				// Get the next data element, and remove it from the
-				// data buffer
-				dataEntry = dataBuffer.lastEntry();
-				dataBuffer.clear();
+				// Check if there is priority data to send
+				dataEntry = getPriorityData();
+				
+				// If there was no priority data, get the next data element
+				if (dataEntry == null) {
+					dataEntry = dataBuffer.lastEntry();
+				}
+				
+				// If there are no further priority data elements, clear
+				// the data buffer
+				if (getPriorityData() == null) {
+					dataBuffer.clear();
+				}
 			}
 		}
 		
@@ -121,6 +130,31 @@ public class NetworkThread extends Thread {
 	}
 	
 	/**
+	 * Writes priority data to the data buffer.
+	 * <p>
+	 * Unlike standard data, priority data is guaranteed to be sent.
+	 * </p>
+	 * @param data - the data to write to the data buffer
+	 */
+	public void writePriorityData(Serializable data) {
+		// Obtain a lock on the data buffer
+		synchronized(dataBuffer) {
+			long minKey = 0;
+			
+			// Find the next lowest negative integer not already in use
+			if (dataBuffer != null
+					&& dataBuffer.firstEntry() != null) {
+				minKey = dataBuffer.firstEntry().getKey();
+			}
+			
+			if (data != null) {
+				// Write the data to the data buffer
+				dataBuffer.put(minKey - 1, data);
+			}
+		}
+	}
+	
+	/**
 	 * Reads the next response from the received buffer.
 	 * <p>
 	 * NOTE: this method is <b>destructive</b>, i.e. the response buffer
@@ -138,7 +172,10 @@ public class NetworkThread extends Thread {
 			} else {
 				Serializable response = null;
 				
-				if (responseBuffer.lastEntry() != null) {
+				// Check for priority data
+				response = getPriorityResponse().getValue();
+				
+				if (response == null && responseBuffer.lastEntry() != null) {
 					// Check if the data in the buffer is up-to-date
 					if (responseBuffer.lastEntry().getKey() > mostRecent) {
 						// Update the most recent value
@@ -150,7 +187,12 @@ public class NetworkThread extends Thread {
 					}
 				}
 				
-				responseBuffer.clear();
+				// If there are no further priority responses, clear the
+				// response buffer
+				if (getPriorityResponse() == null) {
+					responseBuffer.clear();
+				}
+				
 				return response;
 			}
 		}
@@ -188,6 +230,42 @@ public class NetworkThread extends Thread {
 				// Write the message to the message string
 				messages += message;
 			}
+		}
+	}
+	
+	/**
+	 * Gets the first data element in the data buffer which has priority.
+	 * <p>
+	 * Data has priority if it has a negative valid time.
+	 * </p>
+	 * @return the first element of data with priority
+	 */
+	private Entry<Long, Serializable> getPriorityData() {
+		// Check if the first key is less than zero
+		if (dataBuffer != null
+				&& dataBuffer.firstEntry() != null
+				&& dataBuffer.firstEntry().getKey() < 0) {
+			return dataBuffer.firstEntry();
+		} else {
+			return null;
+		}
+	}
+	
+	/**
+	 * Gets the first data element in the response buffer which has priority.
+	 * <p>
+	 * Data has priority if it has a negative valid time.
+	 * </p>
+	 * @return the first response with priority
+	 */
+	private Entry<Long, Serializable> getPriorityResponse() {
+		// Check if the first key is less than zero
+		if (responseBuffer != null
+				&& responseBuffer.firstEntry() != null
+				&& responseBuffer.firstEntry().getKey() < 0) {
+			return responseBuffer.firstEntry();
+		} else {
+			return null;
 		}
 	}
 	

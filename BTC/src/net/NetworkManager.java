@@ -72,6 +72,18 @@ public class NetworkManager {
 	}
 	
 	/**
+	 * Adds priority data to the network thread.
+	 * <p>
+	 * The data will then be sent to the server after an arbitrary length
+	 * of time.
+	 * </p>
+	 * @param data - the data to send
+	 */
+	public void sendPriorityData(Serializable data) {
+		networkThread.writePriorityData(data);
+	}
+	
+	/**
 	 * Retrieve the next response from the network thread.
 	 */
 	public Serializable receiveData() {

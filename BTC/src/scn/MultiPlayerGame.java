@@ -165,9 +165,19 @@ public class MultiPlayerGame extends Game {
 		// Get data from the server
 		Object data = Main.getNetworkManager().receiveData();
 
-		if (data != null && data instanceof Player) {
-			// Set the opposing player's data
-			opposingPlayer = (Player) data;
+		if (data != null) {
+			if (data instanceof Player) {
+				// Set the opposing player's data
+				opposingPlayer = (Player) data;
+			} else if (data instanceof Player[]) {
+				// Set both players' data
+				Player[] playerArray = (Player[]) data;
+				
+				if (playerArray.length == 2) {
+					player = playerArray[1];
+					opposingPlayer = playerArray[0];
+				}
+			}
 		}
 
 		// Send current player's data to the server
@@ -176,16 +186,6 @@ public class MultiPlayerGame extends Game {
 		super.update(timeDifference);
 		
 		if (paused) return;
-		
-		if (player.getSelectedAircraft() != null) {
-			if (input.isKeyDown(input.KEY_M)) {
-				// Send the transfer instruction to the opponent
-				Main.getNetworkManager().sendMessage("SEND:TRANSFER:"
-						+ player.getSelectedAircraft().getName());
-				
-				deselectAircraft(player);
-			}
-		}
 		
 		// Update the opposing player
 		updatePlayer(timeDifference, opposingPlayer);
@@ -248,7 +248,28 @@ public class MultiPlayerGame extends Game {
 	protected void drawPowerups() {
 		//Powerup.draw(0, 0, null);
 	}
+	
+	public void keyReleased(int key) {
+		super.keyReleased(key);
+		
+		switch (key) {
+		case input.KEY_M:
+			if (player.getSelectedAircraft() != null) {
+				// Send the transfer instruction to the opponent
+				/*Main.getNetworkManager().sendMessage("SEND:TRANSFER:"
+					+ player.getSelectedAircraft().getName());*/
 
+				opposingPlayer.getAircraft().add(player.getSelectedAircraft());
+				player.getAircraft().remove(player.getSelectedAircraft());
+
+				Main.getNetworkManager()
+				.sendPriorityData(new Player[] {player, opposingPlayer});
+
+				deselectAircraft(player);
+			}
+		}
+	}
+	
 	/**
 	 * Removes control of an aircraft from the player when 
 	 * their aircraft goes into the other player's airspace.
