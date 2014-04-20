@@ -178,6 +178,8 @@ public class MultiPlayerGame extends Game {
 					opposingPlayer = playerArray[0];
 				}
 			}
+			
+			System.out.println("Modifying: " + data.getClass().getSimpleName());
 		}
 
 		// Send current player's data to the server
