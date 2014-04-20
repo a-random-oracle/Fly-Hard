@@ -29,7 +29,7 @@ public class Main implements input.EventHandler {
 	 */
 	public static void main(String[] args) {
 		Main.testing = false;
-		new Main();
+		new Main(false);
 	}
 	
 	/** The title to display in the game window */
@@ -80,11 +80,11 @@ public class Main implements input.EventHandler {
 	 * Constructor for Main. Initialises the jog library classes, and then
 	 * begins the game loop, calculating time between frames, and then when
 	 * the window is closed it releases resources and closes the program
+	 * @param fullscreen - should the game run fullscreen
 	 */
-	private Main() {
+	private Main(boolean fullscreen) {
 		double xOffset = 0;
 		double yOffset = 0;
-		boolean fullscreen = false;
 		
 		// Set up the random instance
 		random = new Random();
@@ -152,8 +152,7 @@ public class Main implements input.EventHandler {
 	
 	/**
 	 * Updates audio, input handling, the window, the current scene and FPS.
-	 * @param timeDifference
-	 * 			the time elapsed since the last frame.
+	 * @param timeDifference - the time elapsed since the last frame.
 	 */
 	private void update(double timeDifference) {
 		audio.update();
@@ -198,8 +197,7 @@ public class Main implements input.EventHandler {
 	
 	/**
 	 * Closes the current scene, adds new scene to scene stack and starts it
-	 * @param newScene
-	 * 			The scene to set as current scene
+	 * @param newScene - the scene to set as current scene
 	 */
 	public static void setScene(Scene newScene) {
 		if (currentScene != null) currentScene.close();

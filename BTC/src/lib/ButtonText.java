@@ -148,7 +148,6 @@ public class ButtonText {
 			graphics.setColour(colourDefault);
 		}
 		
-		System.out.println("HERE");
 		graphics.printRight(text, x + ox, y + oy, size, 0);
 	}
 

@@ -9,37 +9,50 @@ import lib.jog.graphics;
 import lib.jog.input;
 
 /**
- * <code>InputBox</code> represents a blank field in the window.
- * It acts as a blank box in which text can be input.
- *
+ * Represents an input field in the window.
+ * <p>
+ * To use the input box, the following methods must be
+ * linked to the environment the input box is displayed in:
+ * <ul>
+ * <li>{@link #update(double)}</li>
+ * <li>{@link #draw()}</li>
+ * <li>{@link #mouseReleased(int, int, int)}</li>
+ * <li>{@link #keyPressed(int)}</li>
+ * </ul>
+ * </p>
  */
 public class InputBox {
 	
 	/**
-	 * <code>validKeys</code> are the legal keys
-	 *  permitted for entry into the input box.
+	 * The keys permitted for entry into the input box.
 	 */
 	private static ArrayList<Integer> validKeys;
 
 	/** The foreground colour of the input box */
-	private Color foreColour;
+	private Color foregroundColour;
+	
+	/** The background colour of the input box */
+	private Color backgroundColour;
 
 	/** The border colour of the input box */
 	private Color borderColour;
 
-	/** The x-origin of the input box */
+	/** The x position of the input box */
 	private int x;
 
-	/** The y-origin of the input box */
+	/** The y position of the input box */
 	private int y;
 
-	/** The width in pixels of the input box */
+	/** The width of the input box */
 	private int width;
 
-	/** The height in pixels of the input box */
+	/** The height of the input box */
 	private int height;
+	
+	/** Whether the input box should be centred */
+	private boolean centred;
 
-	/** The text typed into the input box */
+	/** The text in the input box */
 	private String text;
 
 	/** Whether the input box is currently being edited */
@@ -47,30 +60,96 @@ public class InputBox {
 	
 	/** Whether the user can still select or enter text into the input box */
 	private boolean enabled;
+	
+	/** Whether the input box is displaying an alert */
+	private boolean alerting;
+	
+	/** The length of time in milliseconds that the input box should be alerting for */
+	private double alertDuration;
+	
+	/** The length of time in milliseconds that the input box has been alerting for */
+	private double alertTime;
 
 
 	/**
-	 * The default constructor.
-	 * @param foreColour - the colour of the foreground
+	 * Constructs an input box.
+	 * <p>
+	 * The foreground (text) colour will be set to black.
+	 * </p>
+	 * @param foregroundColour - the colour of the text
+	 * @param backgroundColour - the colour of the text
 	 * @param borderColour - the colour of the background
-	 * @param x - the x-origin of the input box
-	 * @param y - the y-origin of the input box
-	 * @param width - the width in pixels of the input box
-	 * @param height - the height in pixels of the input box
+	 * @param x - the x position of the input box
+	 * @param y - the y position of the input box
+	 * @param width - the width of the input box
+	 * @param height - the height of the input box
+	 * @param centred - should the input box be centred
 	 */
-	public InputBox(Color foreColour, Color borderColour,
-			int x, int y, int width, int height) {
-		this.foreColour = foreColour;
+	public InputBox(Color backgroundColour, Color borderColour,
+			int x, int y, int width, int height, boolean centred) {
+		this.foregroundColour = Color.black;
+		this.backgroundColour = backgroundColour;
 		this.borderColour = borderColour;
 		this.x = x;
 		this.y = y;
 		this.width = width;
 		this.height = height;
+		this.centred = centred;
 
 		this.editing = false;
 		this.enabled = true;
 		this.text = "";
 		
+		setValidKeys();
+	}
+	
+	/**
+	 * Constructs an input box.
+	 * <p>
+	 * The foreground (text) colour can be specified</p>
+	 * @param foregroundColour - the colour of the text
+	 * @param backgroundColour - the colour of the text
+	 * @param borderColour - the colour of the background
+	 * @param x - the x position of the input box
+	 * @param y - the y position of the input box
+	 * @param width - the width of the input box
+	 * @param height - the height of the input box
+	 * @param centred - should the input box be centred
+	 */
+	public InputBox(Color foregroundColour, Color backgroundColour,
+			Color borderColour, int x, int y, int width, int height,
+			boolean centred) {
+		this.foregroundColour = foregroundColour;
+		this.backgroundColour = backgroundColour;
+		this.borderColour = borderColour;
+		this.x = x;
+		this.y = y;
+		this.width = width;
+		this.height = height;
+		this.centred = centred;
+
+		this.editing = false;
+		this.enabled = true;
+		this.text = "";
+		
+		setValidKeys();
+	}
+	
+	
+	/**
+	 * Sets the list of valid keys.
+	 * <p>
+	 * Adds the following to the list of valid keys:
+	 * <ul>
+	 * <li>The numeric keys</li>
+	 * <li>The alphabet keys</li>
+	 * <li>The space key</li>
+	 * <li>The enter key</li>
+	 * <li>The backspace key</li>
+	 * </ul>
+	 * </p>
+	 */
+	private void setValidKeys() {
 		InputBox.validKeys = new ArrayList<Integer>();
 		
 		// Add the numeric keys to the list of valid entry keys
@@ -120,28 +199,56 @@ public class InputBox {
 	}
 	
 	/**
-	 * Draw the input box and any text.
+	 * Updates the input box.
 	 */
-	public void draw() {
-		drawCentred(x + (width / 2));
+	public void update(double timeDelta) {
+		if (alerting) {
+			// Update the time the alert has been showing for
+			alertTime += timeDelta;
+			
+			// If the alert duration is up, stop the input box from alerting
+			// Also reset the alert duration andthe alert time
+			if (alertTime >= alertDuration) {
+				alerting = false;
+				alertDuration = 0;
+				alertTime = 0;
+			}
+		}
 	}
 	
 	/**
-	 * Render/draw the input box and the text, if any.
+	 * Draws the input box and any text.
+	 */
+	public void draw() {
+		if (centred) {
+			drawCentred(x);
+		} else {
+			drawCentred(x + (width / 2));
+		}
+	}
+	
+	/**
+	 * Draws the input box and any text.
 	 * <p>
 	 * This will ensure that the input box is centred.
 	 * </p>
-	 * @param x - the x co-ordinate to centre around
+	 * @param x - the x position to centre around
 	 */
-	public void drawCentred(double xPos) {
+	private void drawCentred(double xPos) {
+		// Draw the outside border
 		graphics.setColour(borderColour);
 		graphics.rectangle(true, (xPos - (width / 2)), y, width, height);
-		graphics.setColour(foreColour);
+		
+		// Draw the background
+		graphics.setColour(backgroundColour);
 		graphics.rectangle(true, (xPos - (width / 2)) + 2, y + 2,
 				width - 4, height - 4);
 		
-		graphics.setColour(0, 0, 0);
+		// Draw the text
+		graphics.setColour(foregroundColour);
 		
+		// Add an underscore to the end of the text if further text can still
+		// be added
 		if (editing && !(text.length() >= 12)) {
 			graphics.printScaled(text + "_",
 					(xPos - (width / 2)) + 4, y + 4, 2, 1);
@@ -151,21 +258,42 @@ public class InputBox {
 		}
 		
 		if (!enabled) {
+			// Grey out the input box if it is disabled
 			graphics.setColour(0, 0, 0, 128);
+			graphics.rectangle(true, (xPos - (width / 2)) + 2, y + 2,
+					width - 4, height - 4);
+		} else if (alerting) {
+			// Colour the input box red to alert the user
+			graphics.setColour(255, 0, 0, 255);
 			graphics.rectangle(true, (xPos - (width / 2)) + 2, y + 2,
 					width - 4, height - 4);
 		}
 	}
 	
+	/**
+	 * Handles mouse events.
+	 * @param button - the mouse button
+	 * @param x - the x position of the event
+	 * @param y - the y position of the event
+	 */
 	public void mouseReleased(int button, int x, int y) {
-		if (editing) {
-			if (!input.isMouseInRect(x, y, width, height)) {
-				deactivate();
+		if (button == input.MOUSE_LEFT) {
+			if (centred) {
+				if (input.isMouseInRect(this.x - (width / 2), this.y,
+						width, height)) {
+					activate();
+				} else {
+					deactivate();
+				}
+			} else {
+				if (input.isMouseInRect(this.x, this.y, width, height)) {
+					activate();
+				} else {
+					deactivate();
+				}
 			}
-		} else {
-			if (input.isMouseInRect(x, y, width, height)) {
-				activate();
-			}
+		} else if (button == input.MOUSE_RIGHT) {
+			deactivate();
 		}
 	}
 	
@@ -200,7 +328,9 @@ public class InputBox {
 	
 	/**
 	 * Allows text to be entered into the input box.
-	 * <p>Called upon clicking on the input box.</p>
+	 * <p>
+	 * Called upon clicking on the input box.
+	 * </p>
 	 */
 	public void activate() {
 		if (enabled) {
@@ -209,17 +339,24 @@ public class InputBox {
 	}
 
 	/**
-	 * Removes control from the input box.
-	 * Text may not be entered.
-	 * <p>Called upon the following conditions:</p>
-	 * <p> - The mouse has been clicked at 
-	 * 			a position outside of the input box</p>
-	 * <p> - The return key was pressed while entering text</p>
+	 * Removes control from the input box. Text may not be entered.
+	 * <p>
+	 * Called upon the following conditions:
+	 * <ul>
+	 * <li>The mouse has been clicked at 
+	 * 			a position outside of the input box</li>
+	 * <li>The return key was pressed while entering text</li>
+	 * </ul>
+	 * </p>
 	 */
 	public void deactivate() {
 		editing = false;
 	}
 	
+	/**
+	 * Sets whether the input box can be used.
+	 * @param enabled - should the input box be enabled
+	 */
 	public void setEnabled(boolean enabled) {
 		this.enabled = enabled;
 		
@@ -229,43 +366,35 @@ public class InputBox {
 	}
 	
 	/**
-	 * <code>isEmpty</code> determines if the player
-	 * has actually entered a name into the input box.
-	 * @return - true if the input box contains > 0 characters
-	 * </p>
-	 * 			- false for the "" string
+	 * Causes the input box to flash red.
+	 * @param alertDuration - the length of time in milliseconds to flash for
+	 */
+	public void alert(double alertDuration) {
+		this.alerting = true;
+		this.alertDuration = alertDuration / 1000;
+	}
+	
+	/**
+	 * Determines if the input box contains any text.
+	 * @return <code>true</code> if the input box contains text,
+	 * 			otherwise <code>false</code>
 	 */
 	public boolean isEmpty() {
 		if (text == null || "".equals(text)) {
 			return true;
 		}
+		
 		return false;
 	}
 	
 	/**
-	 * Allows access to the text entered
-	 * @return The text within the input box
+	 * Allows access to the text entered.
+	 * @return the text held by the input box
 	 */
 	public String getText() {
 		return text;
 	}
-	
-	/**
-	 * Gets the input box's x position.
-	 * @return the input box's x position
-	 */
-	public double getX() {
-		return x;
-	}
-	
-	/**
-	 * Gets the input box's y position.
-	 * @return the input box's y position
-	 */
-	public double getY() {
-		return y;
-	}
-	
+
 	/**
 	 * Gets the input box's width.
 	 * @return the input box's width
