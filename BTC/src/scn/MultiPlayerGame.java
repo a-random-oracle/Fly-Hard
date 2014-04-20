@@ -206,11 +206,6 @@ public class MultiPlayerGame extends Game {
 		
 		if (paused) return;
 		
-		// Update the aircraft under transfer
-		for (Aircraft a : aircraftUnderTransfer) {
-			a.update(timeDifference);
-		}
-		
 		// Update the opposing player
 		updatePlayer(timeDifference, opposingPlayer);
 		
@@ -280,6 +275,7 @@ public class MultiPlayerGame extends Game {
 		case input.KEY_T:
 			if (player.getSelectedAircraft() != null) {
 				aircraftUnderTransfer.add(player.getSelectedAircraft());
+				opposingPlayer.getAircraft().add(player.getSelectedAircraft());
 				player.getAircraft().remove(player.getSelectedAircraft());
 
 				Main.getNetworkManager().sendData(-1,
