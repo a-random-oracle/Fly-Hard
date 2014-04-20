@@ -119,7 +119,8 @@ public class NetworkThread extends Thread {
 		if (receivedData != null && receivedData.getKey() == -1) {
 			// Obtain a lock on the priority response buffer
 			synchronized(priorityResponseBuffer) {
-				priorityResponseBuffer.add(receivedData.getValue());
+				priorityResponseBuffer.add(NetworkManager
+						.deserialiseData(receivedData.getValue()));
 			}
 		}
 

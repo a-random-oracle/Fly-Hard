@@ -167,16 +167,12 @@ public class MultiPlayerGame extends Game {
 		
 		if (data != null) {
 			System.out.println("Data = ...");
-			for (int i = 0; i < data.getClass().getClasses().length; i++) {
-				System.out.println("Data = " + data.getClass().getClasses()[i]);
-			}
+			System.out.println("Data = " + data.getClass().isArray());
 			
 			if (data instanceof Player) {
 				// Set the opposing player's data
 				opposingPlayer = (Player) data;
-				
-				//System.out.println("Modifying: Player");
-			} else if (data instanceof Player[]) {
+			} else if (data.getClass().isArray()) {
 				// Set both players' data
 				Player[] playerArray = (Player[]) data;
 				
