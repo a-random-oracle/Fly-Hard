@@ -36,6 +36,9 @@ public class MultiPlayerGame extends Game {
 
 	/** The x-coordinate at which the right middle zone border is located */
 	public static int rightEntryX = window.width() - leftEntryX;
+	
+	/** The list of aircraft which are currently being transferred */
+	private ArrayList<Aircraft> aircraftUnderTransfer;
 
 
 	/**
@@ -99,6 +102,8 @@ public class MultiPlayerGame extends Game {
 		manualControlButton = new ButtonText(" Take Control", manual,
 						(window.width() - 128 - (2 * X_OFFSET)) / 2,
 						32, 128, 32, 8, 4);
+		
+		aircraftUnderTransfer = new ArrayList<Aircraft>();
 	}
 
 	/**
@@ -166,12 +171,21 @@ public class MultiPlayerGame extends Game {
 		Object data = Main.getNetworkManager().receiveData();
 		
 		if (data != null) {
-			System.out.println("Data = ...");
-			System.out.println("Data = " + data.getClass().isArray());
-			
 			if (data instanceof Player) {
 				// Set the opposing player's data
 				opposingPlayer = (Player) data;
+				
+				// Check if any aircraft under transfer are in the list
+				for (int i = aircraftUnderTransfer.size(); i >= 0; i--) {
+					if (opposingPlayer.getAircraft()
+							.contains(aircraftUnderTransfer.get(i))) {
+						aircraftUnderTransfer.remove(i);
+					} else {
+						// If not, add them in
+						opposingPlayer.getAircraft().add(
+								aircraftUnderTransfer.get(i));
+					}
+				}
 			} else if (data.getClass().isArray()) {
 				// Set both players' data
 				Player[] playerArray = (Player[]) data;
@@ -180,8 +194,6 @@ public class MultiPlayerGame extends Game {
 					player = playerArray[1];
 					opposingPlayer = playerArray[0];
 				}
-				
-				System.out.println("Modifying: Player[]");
 			}
 		}
 
@@ -191,6 +203,11 @@ public class MultiPlayerGame extends Game {
 		super.update(timeDifference);
 		
 		if (paused) return;
+		
+		// Update the aircraft under transfer
+		for (Aircraft a : aircraftUnderTransfer) {
+			a.update(timeDifference);
+		}
 		
 		// Update the opposing player
 		updatePlayer(timeDifference, opposingPlayer);
@@ -260,11 +277,7 @@ public class MultiPlayerGame extends Game {
 		switch (key) {
 		case input.KEY_M:
 			if (player.getSelectedAircraft() != null) {
-				// Send the transfer instruction to the opponent
-				/*Main.getNetworkManager().sendMessage("SEND:TRANSFER:"
-					+ player.getSelectedAircraft().getName());*/
-
-				opposingPlayer.getAircraft().add(player.getSelectedAircraft());
+				aircraftUnderTransfer.add(player.getSelectedAircraft());
 				player.getAircraft().remove(player.getSelectedAircraft());
 
 				Main.getNetworkManager().sendData(-1,

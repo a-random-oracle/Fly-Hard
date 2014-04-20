@@ -5,8 +5,6 @@ import java.util.LinkedList;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 
-import cls.Player;
-
 /**
  * Thread used to transfer data in parallel with the game.
  * <p>
@@ -132,13 +130,6 @@ public class NetworkThread extends Thread {
 						.deserialiseData(receivedData.getValue());
 				
 				responseBuffer.put(receivedData.getKey(), deserialisedData);
-				
-				if (deserialisedData instanceof Player) {
-					//System.out.println("Recieved data: " + (Player) deserialisedData);
-				} else{
-					System.out.println("Received data: " + deserialisedData
-							.getClass().getSimpleName());
-				}
 			}
 		}
 	}
@@ -190,8 +181,6 @@ public class NetworkThread extends Thread {
 			if (priorityResponseBuffer != null
 					&& priorityResponseBuffer.size() > 0) {
 				data = priorityResponseBuffer.removeFirst();
-				
-				System.out.println("Reading priority");
 			}
 		}
 		
