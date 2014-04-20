@@ -91,7 +91,7 @@ public class NetworkThread extends Thread {
 		synchronized (priorityDataBuffer) {
 			if (priorityDataBuffer != null
 					&& priorityDataBuffer.size() > 0) {
-				transientMap.put(-1L, priorityDataBuffer.getFirst());
+				transientMap.put(-1L, priorityDataBuffer.removeFirst());
 				dataEntry = (transientMap.firstEntry());
 			}
 		}
@@ -188,7 +188,7 @@ public class NetworkThread extends Thread {
 			// Read data from the buffer
 			if (priorityResponseBuffer != null
 					&& priorityResponseBuffer.size() > 0) {
-				data = priorityResponseBuffer.getFirst();
+				data = priorityResponseBuffer.removeFirst();
 			}
 		}
 		
