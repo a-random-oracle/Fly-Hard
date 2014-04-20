@@ -132,7 +132,12 @@ public class NetworkThread extends Thread {
 				
 				responseBuffer.put(receivedData.getKey(), deserialisedData);
 				
-				System.out.println("Recieved data: " + (Player) deserialisedData);
+				if (deserialisedData instanceof Player) {
+					System.out.println("Recieved data: " + (Player) deserialisedData);
+				} else{
+					System.out.println("Received data: " + deserialisedData
+							.getClass().getSimpleName());
+				}
 			}
 		}
 	}

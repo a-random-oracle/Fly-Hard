@@ -207,6 +207,10 @@ public class NetworkManager {
 						serialiseData(dataEntry.getValue()));
 			}
 			
+			if (dataEntry != null && dataEntry.getKey() == -1) {
+				System.out.println("<SENDING PRIORITY DATA>");
+			}
+			
 			// Write the data to the output stream
 			outputStream.writeObject(transientDataBuffer.lastEntry());
 			
@@ -221,6 +225,10 @@ public class NetworkManager {
 			
 			// Get the received data
 			receivedData = (Entry<Long, byte[]>) inputStream.readObject();
+			
+			if (receivedData != null && dataEntry.getKey() == -1) {
+				System.out.println("<RECEIVED PRIORITY DATA>");
+			}
 			
 			// Flush the output stream
 			outputStream.flush();
