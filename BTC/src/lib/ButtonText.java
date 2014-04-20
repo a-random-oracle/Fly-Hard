@@ -9,11 +9,13 @@ public class ButtonText {
 		public void action();
 	}
 
+	private enum Alignment {LEFT, CENTRE, RIGHT};
 	private int x, y, width, height, ox, oy, size;
 	private String text;
 	private org.newdawn.slick.Color colourDefault, colourHover, colourUnavailable;
 	private Action action;
 	private boolean available;
+	private Alignment alignment;
 
 	public ButtonText(String text, Action action, int x, int y, int w, int h, int ox, int oy) {
 		this.text = text;
@@ -34,6 +36,23 @@ public class ButtonText {
 	public ButtonText(String text, Action action, int x, int y, int w, int h) {
 		this.text = text;
 		this.action = action;
+		this.x = x;
+		this.y = y;
+		width = w;
+		height = h;
+		this.ox = (w - (text.length() * 8)) / 2;
+		this.oy = (h - 8) / 2;
+		this.size = 1;
+		colourDefault = new org.newdawn.slick.Color(0, 128, 0);
+		colourHover = new org.newdawn.slick.Color(128, 128, 128);
+		colourUnavailable = new org.newdawn.slick.Color(64, 64, 64);
+		available = true;
+	}
+	
+	public ButtonText(String text, Action action, Alignment alignment, int x, int y, int w, int h) {
+		this.text = text;
+		this.action = action;
+		this.alignment = alignment;
 		this.x = x;
 		this.y = y;
 		width = w;
@@ -118,7 +137,12 @@ public class ButtonText {
 		} else {
 			graphics.setColour(colourDefault);
 		}
-		graphics.print(text, x + ox, y + oy, size);
+		
+		if (alignment == Alignment.RIGHT) {
+			graphics.printRight(text, x + ox, y + oy, size, 0);
+		} else {
+			graphics.print(text, x + ox, y + oy, size);
+		}
 	}
 
 }
