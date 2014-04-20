@@ -199,7 +199,7 @@ public class Lobby extends Scene {
 					(int) (tableTopLeft.getY()
 							+ Game.Y_OFFSET + ((i + 0.33) * rowHeight)),
 					(int) ((tableTopRight.getX() - tableTopLeft.getX())
-									* (7d/8d)),
+									* (1d/8d)),
 					(int) (rowHeight * (3d/4d)), 0, 0));
 		}
 	}
@@ -314,7 +314,7 @@ public class Lobby extends Scene {
 		// Cause the join game buttons to fire when clicked
 		if (joinButtons != null) {
 			for (ButtonText b : joinButtons) {
-				if (b.isMouseOver(x, y)) {
+				if (b.isMouseOverRight(x, y)) {
 					b.act();
 				}
 			}

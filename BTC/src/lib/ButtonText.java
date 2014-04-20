@@ -86,6 +86,15 @@ public class ButtonText {
 	public boolean isMouseOver() { 
 		return isMouseOver(input.mouseX(), input.mouseY()); 
 	}
+	
+	public boolean isMouseOverRight(int mx, int my) { 
+		return (mx >= (x - width) && mx <= x && my >= y && my <= y + height);
+	}
+	
+	public boolean isMouseOverRight() { 
+		return isMouseOverRight(input.mouseX(), input.mouseY()); 
+	}
+	
 	/**
 	 * Sets the string of text used
 	 * @param newText - The string to be used
@@ -133,7 +142,7 @@ public class ButtonText {
 		if (!available) {
 			graphics.setColour(colourUnavailable);
 		}
-		else if (isMouseOver()) {
+		else if (isMouseOverRight()) {
 			graphics.setColour(colourHover);
 		} else {
 			graphics.setColour(colourDefault);
