@@ -166,6 +166,11 @@ public class MultiPlayerGame extends Game {
 		Object data = Main.getNetworkManager().receiveData();
 		
 		if (data != null) {
+			System.out.println("Data = ...");
+			for (int i = 0; i < data.getClass().getClasses().length; i++) {
+				System.out.println("Data = " + data.getClass().getClasses()[i]);
+			}
+			
 			if (data instanceof Player) {
 				// Set the opposing player's data
 				opposingPlayer = (Player) data;
