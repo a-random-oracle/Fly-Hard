@@ -379,7 +379,8 @@ public class Lobby extends Scene {
 	private void selectGame(int clientID) {
 		// Send a JOIN instruction to the server, passing the ID
 		// of the game to connect to as a parameter
-		NetworkManager.postMessage("JOIN:" + clientID);
+		NetworkManager.postMessage("INIT:" + nameEntryBox.getText()
+				+ "JOIN:" + clientID);
 	}
 
 	/**
