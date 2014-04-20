@@ -176,14 +176,16 @@ public class MultiPlayerGame extends Game {
 				opposingPlayer = (Player) data;
 				
 				// Check if any aircraft under transfer are in the list
-				for (int i = aircraftUnderTransfer.size(); i >= 0; i--) {
-					if (opposingPlayer.getAircraft()
-							.contains(aircraftUnderTransfer.get(i))) {
-						aircraftUnderTransfer.remove(i);
-					} else {
-						// If not, add them in
-						opposingPlayer.getAircraft().add(
-								aircraftUnderTransfer.get(i));
+				if (aircraftUnderTransfer.size() > 0) {
+					for (int i = aircraftUnderTransfer.size(); i >= 0; i--) {
+						if (opposingPlayer.getAircraft()
+								.contains(aircraftUnderTransfer.get(i))) {
+							aircraftUnderTransfer.remove(i);
+						} else {
+							// If not, add them in
+							opposingPlayer.getAircraft().add(
+									aircraftUnderTransfer.get(i));
+						}
 					}
 				}
 			} else if (data.getClass().isArray()) {
@@ -275,7 +277,7 @@ public class MultiPlayerGame extends Game {
 		super.keyReleased(key);
 		
 		switch (key) {
-		case input.KEY_M:
+		case input.KEY_T:
 			if (player.getSelectedAircraft() != null) {
 				aircraftUnderTransfer.add(player.getSelectedAircraft());
 				player.getAircraft().remove(player.getSelectedAircraft());
