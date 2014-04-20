@@ -164,7 +164,7 @@ public class MultiPlayerGame extends Game {
 		
 		// Get data from the server
 		Object data = Main.getNetworkManager().receiveData();
-
+		
 		if (data != null) {
 			if (data instanceof Player) {
 				// Set the opposing player's data
@@ -262,8 +262,8 @@ public class MultiPlayerGame extends Game {
 				opposingPlayer.getAircraft().add(player.getSelectedAircraft());
 				player.getAircraft().remove(player.getSelectedAircraft());
 
-				Main.getNetworkManager()
-				.sendPriorityData(new Player[] {player, opposingPlayer});
+				Main.getNetworkManager().sendData(-1,
+						new Player[] {player, opposingPlayer});
 
 				deselectAircraft(player);
 			}

@@ -1,6 +1,7 @@
 package net;
 
 import java.io.Serializable;
+import java.util.LinkedList;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 
@@ -22,11 +23,17 @@ public class NetworkThread extends Thread {
 	/** The data still to be sent */
 	private TreeMap<Long, Serializable> dataBuffer;
 	
+	/** The priority data still to be sent */
+	private LinkedList<Serializable> priorityDataBuffer;
+	
 	/** The messages still to be sent */
 	private String messages;
 	
 	/** The data still to be read */
 	private TreeMap<Long, Serializable> responseBuffer;
+	
+	/** The priority data still to be read */
+	private LinkedList<Serializable> priorityResponseBuffer;
 	
 	/** The most recent data received so far */
 	private long mostRecent;
@@ -43,8 +50,10 @@ public class NetworkThread extends Thread {
 	 */
 	public NetworkThread() {
 		this.dataBuffer = new TreeMap<Long, Serializable>();
+		this.priorityDataBuffer = new LinkedList<Serializable>();
 		this.messages = "";
 		this.responseBuffer = new TreeMap<Long, Serializable>();
+		this.priorityResponseBuffer = new LinkedList<Serializable>();
 		this.mostRecent = 0;
 		this.status = true;
 		this.statusMutex = new Object();
@@ -74,24 +83,29 @@ public class NetworkThread extends Thread {
 	 * </p>
 	 */
 	private void sendNextData() {
+		TreeMap<Long, Serializable> transientMap =
+				new TreeMap<Long, Serializable>();
 		Entry<Long, Serializable> dataEntry = null;
 		
-		// Obtain a lock on the data buffer
-		synchronized(dataBuffer) {
-			if ((dataBuffer.size() == 0) || (dataBuffer.lastEntry() == null)) {
-				// Send null
-			} else {
-				// Check if there is priority data to send
-				dataEntry = getPriorityData();
-				
-				// If there was no priority data, get the next data element
-				if (dataEntry == null) {
+		// Obtain a lock on the priority data buffer
+		synchronized (priorityDataBuffer) {
+			if (priorityDataBuffer != null
+					&& priorityDataBuffer.size() > 0) {
+				transientMap.put(-1L, priorityDataBuffer.getFirst());
+				dataEntry = (transientMap.firstEntry());
+			}
+		}
+		
+		// If there was no priority data
+		if (dataEntry == null) {
+			// Obtain a lock on the data buffer
+			synchronized (dataBuffer) {
+				if ((dataBuffer.size() != 0)
+						&& (dataBuffer.lastEntry() != null)) {
+					// Get the next data element
 					dataEntry = dataBuffer.lastEntry();
-				}
-				
-				// If there are no further priority data elements, clear
-				// the data buffer
-				if (getPriorityData() == null) {
+
+					// Clear the data buffer
 					dataBuffer.clear();
 				}
 			}
@@ -100,9 +114,18 @@ public class NetworkThread extends Thread {
 		// Send the post request to the server, and read the response
 		Entry<Long, byte[]> receivedData =
 				NetworkManager.postObject(dataEntry);
+		
+		// If the entry's key equals -1, add it to the priority response buffer
+		if (receivedData != null && receivedData.getKey() == -1) {
+			// Obtain a lock on the priority response buffer
+			synchronized(priorityResponseBuffer) {
+				priorityResponseBuffer.add(receivedData.getValue());
+			}
+		}
 
 		// Write the response to the response buffer
 		if (receivedData != null) {
+			// Obtain a lock on the response buffer
 			synchronized(responseBuffer) {
 				Serializable deserialisedData = NetworkManager
 						.deserialiseData(receivedData.getValue());
@@ -116,40 +139,30 @@ public class NetworkThread extends Thread {
 	
 	/**
 	 * Writes data to the data buffer.
+	 * <p>
+	 * A {@link #timeValid} value of -1 will cause the data to be treated
+	 * as priority data.
+	 * </p>
 	 * @param timeValid - the time at which the data was valid
 	 * @param data - the data to write to the data buffer
 	 */
 	public void writeData(long timeValid, Serializable data) {
-		// Obtain a lock on the data buffer
-		synchronized(dataBuffer) {
-			if (data != null) {
-				// Write the data to the data buffer
-				dataBuffer.put(timeValid, data);
+		// Check if data is priority data
+		if (timeValid == -1) {
+			// Obtain a lock on the priority data buffer
+			synchronized(priorityDataBuffer) {
+				if (data != null) {
+					// Write the data to the priority data buffer
+					priorityDataBuffer.add(data);
+				}
 			}
-		}
-	}
-	
-	/**
-	 * Writes priority data to the data buffer.
-	 * <p>
-	 * Unlike standard data, priority data is guaranteed to be sent.
-	 * </p>
-	 * @param data - the data to write to the data buffer
-	 */
-	public void writePriorityData(Serializable data) {
-		// Obtain a lock on the data buffer
-		synchronized(dataBuffer) {
-			long minKey = 0;
-			
-			// Find the next lowest negative integer not already in use
-			if (dataBuffer != null
-					&& dataBuffer.firstEntry() != null) {
-				minKey = dataBuffer.firstEntry().getKey();
-			}
-			
-			if (data != null) {
-				// Write the data to the data buffer
-				dataBuffer.put(minKey - 1, data);
+		} else {
+			// Obtain a lock on the data buffer
+			synchronized(dataBuffer) {
+				if (data != null) {
+					// Write the data to the data buffer
+					dataBuffer.put(timeValid, data);
+				}
 			}
 		}
 	}
@@ -163,41 +176,43 @@ public class NetworkThread extends Thread {
 	 * @return the next object in the response buffer
 	 */
 	public Serializable readResponse() {
-		// Obtain a lock on the response buffer
-		synchronized(responseBuffer) {
+		Serializable data = null;
+		
+		// Obtain a lock on the priority response buffer
+		synchronized(priorityResponseBuffer) {
 			// Read data from the buffer
-			if (responseBuffer.size() == 0) {
-				// No data in the buffer
-				return null;
-			} else {
-				Serializable response = null;
-				
-				// Check for priority data
-				if (getPriorityResponse() != null) {
-					response = getPriorityResponse().getValue();
-				}
-				
-				if (response == null && responseBuffer.lastEntry() != null) {
-					// Check if the data in the buffer is up-to-date
-					if (responseBuffer.lastEntry().getKey() > mostRecent) {
-						// Update the most recent value
-						mostRecent = responseBuffer.lastEntry().getKey();
-
-						// Data is more up-to-date than any seen so far,
-						// so return it
-						response = responseBuffer.lastEntry().getValue();
-					}
-				}
-				
-				// If there are no further priority responses, clear the
-				// response buffer
-				if (getPriorityResponse() == null) {
-					responseBuffer.clear();
-				}
-				
-				return response;
+			if (priorityResponseBuffer != null
+					&& priorityResponseBuffer.size() > 0) {
+				data = priorityResponseBuffer.getFirst();
 			}
 		}
+		
+		// If there was no priority data
+		if (data == null) {
+			// Obtain a lock on the response buffer
+			synchronized(responseBuffer) {
+				// Read data from the buffer
+				if (responseBuffer != null
+						&& responseBuffer.size() > 0) {
+					if (responseBuffer.lastEntry() != null) {
+						// Check if the data in the buffer is up-to-date
+						if (responseBuffer.lastEntry().getKey() > mostRecent) {
+							// Update the most recent value
+							mostRecent = responseBuffer.lastEntry().getKey();
+
+							// Data is more up-to-date than any seen so far,
+							// so return it
+							data = responseBuffer.lastEntry().getValue();
+						}
+					}
+
+					// Clear the response buffer
+					responseBuffer.clear();
+				}
+			}
+		}
+		
+		return data;
 	}
 	
 	/**
@@ -232,42 +247,6 @@ public class NetworkThread extends Thread {
 				// Write the message to the message string
 				messages += message;
 			}
-		}
-	}
-	
-	/**
-	 * Gets the first data element in the data buffer which has priority.
-	 * <p>
-	 * Data has priority if it has a negative valid time.
-	 * </p>
-	 * @return the first element of data with priority
-	 */
-	private Entry<Long, Serializable> getPriorityData() {
-		// Check if the first key is less than zero
-		if (dataBuffer != null
-				&& dataBuffer.firstEntry() != null
-				&& dataBuffer.firstEntry().getKey() < 0) {
-			return dataBuffer.firstEntry();
-		} else {
-			return null;
-		}
-	}
-	
-	/**
-	 * Gets the first data element in the response buffer which has priority.
-	 * <p>
-	 * Data has priority if it has a negative valid time.
-	 * </p>
-	 * @return the first response with priority
-	 */
-	private Entry<Long, Serializable> getPriorityResponse() {
-		// Check if the first key is less than zero
-		if (responseBuffer != null
-				&& responseBuffer.firstEntry() != null
-				&& responseBuffer.firstEntry().getKey() < 0) {
-			return responseBuffer.firstEntry();
-		} else {
-			return null;
 		}
 	}
 	

@@ -32,6 +32,7 @@ public class NetworkManager {
 	/** The thread to send data on */
 	private static NetworkThread networkThread;
 	
+	/** A map for temporarily storing data in order to make use of entries */
 	private static TreeMap<Long, byte[]> transientDataBuffer;
 	
 	/** Whether to output data to the standard output */
@@ -69,18 +70,6 @@ public class NetworkManager {
 	 */
 	public void sendData(long timeValid, Serializable data) {
 		networkThread.writeData(timeValid, data);
-	}
-	
-	/**
-	 * Adds priority data to the network thread.
-	 * <p>
-	 * The data will then be sent to the server after an arbitrary length
-	 * of time.
-	 * </p>
-	 * @param data - the data to send
-	 */
-	public void sendPriorityData(Serializable data) {
-		networkThread.writePriorityData(data);
 	}
 	
 	/**
