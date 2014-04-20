@@ -195,14 +195,12 @@ public class Lobby extends Scene {
 
 			joinButtons.add(new ButtonText("Join Game",
 					currentAction,
-					(int) (tableTopLeft.getX() + Game.X_OFFSET
-							+ ((tableTopRight.getX() - tableTopLeft.getX())
-									* (7d/8d))),
+					(int) (tableTopRight.getX() - 5 + Game.X_OFFSET),
 					(int) (tableTopLeft.getY()
 							+ Game.Y_OFFSET + ((i + 0.33) * rowHeight)),
 					(int) ((tableTopRight.getX() - tableTopLeft.getX())
 									* (7d/8d)),
-					(int) (rowHeight * (7d/8d)), 0, 0));
+					(int) (rowHeight * (3d/4d)), 0, 0));
 		}
 	}
 
@@ -282,16 +280,17 @@ public class Lobby extends Scene {
 
 			// Draw the player's descriptions
 			for (int i = 0; i < joinButtons.size(); i++) {
-				graphics.print("Waiting for opponent " + waitingForOpponentDots,
-						(tableTopLeft.getX() + Game.X_OFFSET)
-						+ ((tableTopRight.getX() - tableTopLeft.getX()) * (2d/5d)),
+				graphics.printCentred(waitingForOpponentDots.replace(".",  " ")
+						+ " Waiting for opponent " + waitingForOpponentDots,
+						tableTopLeft.getX() + Game.X_OFFSET,
 						(tableTopLeft.getY() + Game.Y_OFFSET
-								+ ((i + 0.33) * rowHeight)));
+								+ ((i + 0.33) * rowHeight)),
+						1, (tableTopRight.getX() - tableTopLeft.getX()));
 			}
 
 			// Draw the play game buttons
 			for (int i = 0; i < joinButtons.size(); i++) {
-				joinButtons.get(i).draw();
+				joinButtons.get(i).drawRight();
 			}
 		}
 	}
