@@ -1073,6 +1073,7 @@ public abstract class Game extends Scene {
 	protected Aircraft findClickedAircraft(int x, int y, Player player) {
 		for (Aircraft a : player.getAircraft()) {
 			if (a.isMouseOver(x - X_OFFSET, y - Y_OFFSET)) {
+				System.out.println(a.getName());
 				return a;
 			}
 		}
