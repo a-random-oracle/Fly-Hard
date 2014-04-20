@@ -17,66 +17,64 @@ import lib.jog.audio.Sound;
 import lib.ButtonText;
 
 public class Lobby extends Scene {
-	
-	private static final String WAITING_FOR_OPPONENT_BASE = "Waiting for an opponent ";
-	
+
 	/** The time since the list of available players was last updated */
 	private double timeSincePlayerUpdate = 1;
-	
+
 	/** The time since the players waiting string was last updated */
 	private double timeSinceWaitingUpdate = 0.5;
-	
+
 	/** The time since the list of instructions was last checked */
 	private double timeSinceStartGameUpdate = 0.1;
-	
+
 	private final int CREATE_BUTTON_W = 200;
-	
+
 	private final int CREATE_BUTTON_H = 32;
-	
+
 	private InputBox inputBox;
-	
+
 	private ButtonText createGameButton;
-	
+
 	private LinkedList<ButtonText> availableGames = new LinkedList<ButtonText>();
-	
+
 	/** The map of available players */
 	private LinkedHashMap<Integer, String> availablePlayers;
-	
+
 	/** Coordinates for the top left of the game selection box */
 	private Vector topLeft = new Vector(0.05, 0.3, 0, true);
-	
-	private Vector topRight = new Vector(0.95, 0.2, 0, true);
-	
+
+	private Vector topRight = new Vector(0.95, 0.3, 0, true);
+
 	private Vector bottomRight = new Vector(0.95, 0.8, 0, true);
-	
+
 	/** The coordinates of the "Enter name here: " string */
-	private Vector stringCoords = new Vector(0.05, 0.2, 0, true);
-	
+	private Vector stringCoords = new Vector(0.05, 0.15, 0, true);
+
 	/** The coordinates of the input box */
-	private Vector inputBoxCoords = new Vector(0.43, 0.2, 0, true);
-	
+	private Vector inputBoxCoords = new Vector(0.43, 0.15, 0, true);
+
 	/** The coordinates of the create game button */
-	private Vector createButtonCoords = new Vector(0.71, 0.2, 0, true);
-	
+	private Vector createButtonCoords = new Vector(0.71, 0.15, 0, true);
+
 	private int rowHeight = (int) (40 * Main.getYScale());
-	
+
 	/** has the player created a game? If so, they are waiting for an opponent*/
 	private boolean isWaitingForOpponent = false;
 
 	private String waitingForOpponentDots = "";
-	
-	
+
+
 	protected Lobby() {
 		super();
 	}
-	
-	
+
+
 	@Override
 	public void start() {
 		// Instantiate the input box and position it correctly above the game selection box
 		inputBox = new InputBox(Color.white, Color.darkGray,
 				(int)inputBoxCoords.getX(), (int)inputBoxCoords.getY(), 200, 23);
-		
+
 		//Implement the action that occurs upon clicking the createGame button
 		ButtonText.Action createGame = new ButtonText.Action() {
 			@Override
@@ -85,7 +83,7 @@ public class Lobby extends Scene {
 				NetworkManager.postMessage("INIT:" + inputBox.getText());
 			}
 		};
-		
+
 		createGameButton = new ButtonText("Create Game", createGame,
 				(int)createButtonCoords.getX(), (int)createButtonCoords.getY(),
 				CREATE_BUTTON_W, CREATE_BUTTON_H, 0, 0, 2);
@@ -106,7 +104,7 @@ public class Lobby extends Scene {
 			// Reset the time
 			timeSincePlayerUpdate = 0;
 		}
-		
+
 		// Update dots on strings
 		if (timeSinceWaitingUpdate > 0.5) {
 			if (waitingForOpponentDots.length() == 3) {
@@ -118,7 +116,7 @@ public class Lobby extends Scene {
 			// Reset the time
 			timeSinceWaitingUpdate = 0;
 		}
-		
+
 		// Check for instructions approximately every tenth of a second
 		if (timeSinceStartGameUpdate > 0.1) {
 			// Process queued instructions
@@ -131,7 +129,7 @@ public class Lobby extends Scene {
 			// Reset the time
 			timeSinceStartGameUpdate = 0;
 		}
-			
+
 		/*
 		 * Activate the create button only when a name has
 		 * been entered into the input box
@@ -143,7 +141,7 @@ public class Lobby extends Scene {
 		}
 		inputBox.update(timeDifference);
 	}
-	
+
 	/**
 	 * Checks the server to get any updates to the map of available players.
 	 */
@@ -151,10 +149,10 @@ public class Lobby extends Scene {
 		// Get the available opponents from the server
 		String[] openConnections = NetworkManager
 				.postMessage("GET_OPEN_CONNECTIONS").split(";");
-		
+
 		// Clear the map of available players
 		availablePlayers = new LinkedHashMap<Integer, String>();
-		
+
 		// Format the open connections into a hashmap
 		String[] currentEntry;
 		for (int i = 0; i < openConnections.length; i++) {
@@ -173,21 +171,21 @@ public class Lobby extends Scene {
 				}
 			}
 		}
-		
+
 		// Get the available client IDs
 		Integer[] clientIDs = getAvailablePlayerIDs();
-		
+
 		// Clear the array of available games
 		availableGames.clear();
-		
+
 		for (int i = 0; i < availablePlayers.size(); i++) {
 			ButtonText.Action currentAction =
 					createPlayerButtonAction(clientIDs[i]);
-			
+
 			availableGames.add(new ButtonText("Join Game",
-							currentAction,
-							(int) (topLeft.getX() + Game.X_OFFSET
-									+ ((topRight.getX() - topLeft.getX()) * (7d/8d))),
+					currentAction,
+					(int) (topLeft.getX() + Game.X_OFFSET
+							+ ((topRight.getX() - topLeft.getX()) * (7d/8d))),
 							(int) (topLeft.getY() + Game.Y_OFFSET + ((i + 0.33) * rowHeight)),
 							(int) ((topRight.getX() - topLeft.getX()) * (7d/8d)),
 							(int) (rowHeight * (7d/8d)), 0, 0));
@@ -200,29 +198,41 @@ public class Lobby extends Scene {
 				stringCoords.getX() + Game.X_OFFSET,
 				stringCoords.getY(), 2);
 
+		if (isWaitingForOpponent) {
+			graphics.printCentred("Waiting for opponent to join ",
+					topLeft.getX() + Game.X_OFFSET,
+					topLeft.getY() + Game.Y_OFFSET - 100,
+					2, (topRight.getX() - topLeft.getX()));
+
+			graphics.print(waitingForOpponentDots,
+					(topLeft.getX() + Game.X_OFFSET)
+					+ ((topRight.getX() - topLeft.getX()) * (3.7d/5d)) ,
+					topLeft.getY() + Game.Y_OFFSET - 100, 2);
+		}
+
 		drawTable();
-		
+
 		inputBox.draw();
 
 		createGameButton.draw();
 	}
-	
+
 	public void drawTable() {
 		graphics.setColour(255, 255, 255);
-		
+
 		graphics.print("Host Name", topLeft.getX() + Game.X_OFFSET + 5,
 				topLeft.getY() + Game.Y_OFFSET - 15, 1);
-		
-		graphics.print("Description", (topLeft.getX() + Game.X_OFFSET)
-				+ ((topRight.getX() - topLeft.getX()) * (2d/5d)),
-				topLeft.getY() + Game.Y_OFFSET - 15, 1);
-		
+
+		graphics.printCentred("Description", topLeft.getX() + Game.X_OFFSET,
+				topLeft.getY() + Game.Y_OFFSET - 15,
+				1, (topRight.getX() - topLeft.getX()));
+
 		graphics.rectangle(false,
 				(topLeft.getX() + Game.X_OFFSET),
 				(topLeft.getY() + Game.Y_OFFSET),
 				(topRight.getX() - topLeft.getX()),
 				(bottomRight.getY() - topRight.getY()));
-		
+
 		if (availableGames != null) {
 			// Draw vertical lines below each player's row
 			for (int i = 0; i < availableGames.size(); i++) {
@@ -231,31 +241,31 @@ public class Lobby extends Scene {
 						(topRight.getX() + Game.X_OFFSET),
 						(topLeft.getY() + Game.Y_OFFSET + ((i + 1) * rowHeight)));
 			}
-			
+
 			Integer[] playerIDs = getAvailablePlayerIDs();
-			
+
 			// Draw the player's names
 			for (int i = 0; i < availableGames.size(); i++) {
 				graphics.print(availablePlayers.get(playerIDs[i]),
 						(topLeft.getX() + Game.X_OFFSET) + 5,
 						(topLeft.getY() + Game.Y_OFFSET + ((i + 0.33) * rowHeight)));
 			}
-			
+
 			// Draw the player's descriptions
 			for (int i = 0; i < availableGames.size(); i++) {
-				graphics.print(WAITING_FOR_OPPONENT_BASE + waitingForOpponentDots,
+				graphics.print("Waiting for opponent " + waitingForOpponentDots,
 						(topLeft.getX() + Game.X_OFFSET)
 						+ ((topRight.getX() - topLeft.getX()) * (2d/5d)),
 						(topLeft.getY() + Game.Y_OFFSET + ((i + 0.33) * rowHeight)));
 			}
-			
+
 			// Draw the play game buttons
 			for (int i = 0; i < availableGames.size(); i++) {
 				availableGames.get(i).draw();
 			}
 		}
 	}
-	
+
 	@Override
 	public void mousePressed(int key, int x, int y) {}
 
@@ -267,7 +277,7 @@ public class Lobby extends Scene {
 		if (createGameButton.isMouseOver(x, y)); {
 			createGameButton.act();
 		}
-		
+
 		if (availableGames != null) {
 			for (ButtonText b : availableGames) {
 				if (b.isMouseOver(x, y)) {
@@ -297,7 +307,7 @@ public class Lobby extends Scene {
 
 	@Override
 	public void playSound(Sound sound) {}
-	
+
 	/**
 	 * Selects a game to play.
 	 * @param clientID - the ID of the client to connect to
@@ -305,7 +315,7 @@ public class Lobby extends Scene {
 	private void selectGame(int clientID) {
 		NetworkManager.postMessage("JOIN:" + clientID);
 	}
-	
+
 	/**
 	 * Creates a new button action to connect to a player.
 	 * @param id - the ID of the player which this button
@@ -322,7 +332,7 @@ public class Lobby extends Scene {
 			}
 		};
 	}
-	
+
 	/**
 	 * Gets a list of all available player IDs from the
 	 * available players map.
