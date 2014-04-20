@@ -536,19 +536,19 @@ public class Aircraft implements Serializable {
 		}
 
 		// Draw altitude label
-//		graphics.setColour(128, 128, 128, alpha / 2.5);
-//
-//		if (offset != null) {
-//			graphics.print(String.format("%.0f", position.getZ()) + "+",
-//					position.getX() + (RADIUS / 2) + offset.getX(),
-//					position.getY() - (RADIUS / 2) + offset.getY());
-//		} else {
-//			graphics.print(String.format("%.0f", position.getZ()) + "+",
-//					position.getX() + (RADIUS / 2), position.getY()
-//					- (RADIUS / 2));
-//		}
-//
-//
+		graphics.setColour(128, 128, 128, alpha / 2.5);
+
+		if (offset != null) {
+			graphics.print(String.format("%.0f", position.getZ()) + "+",
+					position.getX() + (RADIUS / 2) + offset.getX(),
+					position.getY() - (RADIUS / 2) + offset.getY());
+		} else {
+			graphics.print(String.format("%.0f", position.getZ()) + "+",
+					position.getX() + (RADIUS / 2), position.getY()
+					- (RADIUS / 2));
+		}
+
+
 		
 		drawWarningCircles(offset);
 		
@@ -556,7 +556,7 @@ public class Aircraft implements Serializable {
 		
 		graphics.setColour(128, 128, 128, alpha / 2.5);
 
-		if (offset != null) {
+		/*if (offset != null) {
 			graphics.print(String.format("%d", score) + "+",
 					position.getX() + (RADIUS / 2) + offset.getX(),
 					position.getY() - (RADIUS / 2) + offset.getY());
@@ -564,7 +564,7 @@ public class Aircraft implements Serializable {
 			graphics.print(String.format("%d", score) + "+",
 					position.getX() + (RADIUS / 2), position.getY()
 					- (RADIUS / 2));
-		}
+		}*/
 	}
 
 	/**
