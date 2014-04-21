@@ -3,7 +3,6 @@ package scn;
 import java.util.ArrayList;
 
 import btc.Main;
-
 import net.NetworkManager;
 import lib.ButtonText;
 import lib.jog.graphics;
@@ -12,6 +11,7 @@ import lib.jog.window;
 import cls.Aircraft;
 import cls.Airport;
 import cls.Player;
+import cls.Powerup;
 import cls.Waypoint;
 
 public class MultiPlayerGame extends Game {
@@ -24,6 +24,12 @@ public class MultiPlayerGame extends Game {
 	
 	/** The time frame to send data across the network */
 	private double timeUntilUpdate;
+	
+	/** Time since new powerup generated */ 
+	protected double powerUpGenerationTimeElapsed;
+	
+	/** Interval between powerup spawn */ 
+	protected double powerUpInterval;
 
 	/** The y-coordinate at which the middle zone borders begin */
 	public static int yStart = window.height() - Y_OFFSET;
@@ -39,6 +45,9 @@ public class MultiPlayerGame extends Game {
 	
 	/** The list of aircraft which are currently being transferred */
 	private ArrayList<Aircraft> aircraftUnderTransfer;
+	
+	/** List of all the powerups */ 
+	protected ArrayList<Powerup> allPowerups;
 
 
 	/**
@@ -104,6 +113,9 @@ public class MultiPlayerGame extends Game {
 						32, 128, 32, 8, 4);
 		
 		aircraftUnderTransfer = new ArrayList<Aircraft>();
+		powerUpGenerationTimeElapsed = 0;
+		powerUpInterval = 5;
+		allPowerups = new ArrayList<Powerup>();
 	}
 
 	/**
@@ -165,6 +177,15 @@ public class MultiPlayerGame extends Game {
 
 			// Reset the time before the next data send
 			timeUntilUpdate = 0;
+		}
+		
+		// Update powerups
+		powerUpGenerationTimeElapsed += timeDifference;
+
+		if(this.powerUpGenerationTimeElapsed > this.powerUpInterval){
+			powerUpGenerationTimeElapsed = 0;
+			powerUpInterval = 30;
+			//addPowerup(allPowerups, middleWaypoints); TODO
 		}
 		
 		// Get data from the server
