@@ -94,7 +94,8 @@ public class Lobby extends Scene {
 				isWaitingForOpponent = true;
 				nameEntryBox.setEnabled(false);
 				createGameButton.setAvailability(false);
-				NetworkManager.postMessage("INIT:" + nameEntryBox.getText());
+				NetworkManager.postMessage("SET_NAME:" + nameEntryBox.getText()
+						+ ";SET_HOST");
 			}
 		};
 
@@ -170,7 +171,7 @@ public class Lobby extends Scene {
 				.postMessage("GET_OPEN_CONNECTIONS");
 		
 		if (openConnectionsString != null) {
-			String[] openConnections = openConnectionsString.split(";");
+			String[] openConnections = openConnectionsString.split("#");
 
 			// Format the open connections into a hashmap
 			String[] currentEntry;
@@ -379,7 +380,7 @@ public class Lobby extends Scene {
 	private void selectGame(int clientID) {
 		// Send a JOIN instruction to the server, passing the ID
 		// of the game to connect to as a parameter
-		NetworkManager.postMessage("INIT:" + nameEntryBox.getText()
+		NetworkManager.postMessage("SET_NAME:" + nameEntryBox.getText()
 				+ ";JOIN:" + clientID);
 	}
 

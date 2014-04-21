@@ -86,23 +86,11 @@ public abstract class InstructionHandler {
 		case "SET_ID":
 			handleSetID(parameters);
 			break;
-		//case "WAIT":
-		//	handleWait();
-		//	break;
-		//case "PROCEED":
-		//	handleProceed();
-		//	break;
 		case "SET_SEED":
 			handleSetSeed(parameters);
 			break;
 		case "START_GAME":
 			handleStartGame(parameters);
-			break;
-		case "TRANSFER":
-			handleTransfer(parameters);
-			break;
-		case "REMOVE":
-			handleRemove(parameters);
 			break;
 		case "END_GAME":
 			handleEndGame();
@@ -138,39 +126,6 @@ public abstract class InstructionHandler {
 
 		NetworkManager.print("Player has ID: " + NetworkManager.getID());
 	}
-	
-	/**
-	 * Handles a WAIT instruction.
-	 * <p>
-	 * WAIT instructions cause execution to pause for several
-	 * milliseconds, before sending a CHECK_FOR_OPPONENT instruction.
-	 * </p>
-	 */
-	/*private static void handleWait() {
-		NetworkManager.print("Waiting.");
-	
-		try {
-			// Wait, then poll server to check for an opponent
-			Thread.sleep(100);
-			NetworkManager.postMessage("CHECK_FOR_OPPONENT");
-		} catch (InterruptedException e) {
-			NetworkManager.print(e);
-		}
-	}*/
-	
-	/**
-	 * Handles a PROCEED instruction.
-	 * <p>
-	 * PROCEED instructions don't cause any actions to be performed.
-	 * </p>
-	 * <p>
-	 * They do, however, cause 'Resuming.' to be printed to the standard
-	 * output (provided that the network manager is in verbose mode).
-	 * </p>
-	 */
-	//private static void handleProceed() {
-	//	NetworkManager.print("Resuming.");
-	//}
 	
 	/**
 	 * Handles a SET_SEED instruction.
@@ -226,41 +181,6 @@ public abstract class InstructionHandler {
 				// Add a START_GAME instruction to the message buffer
 				messages = "START_GAME:" + parameters;
 			}
-		}
-	}
-	
-	/**
-	 * Handles a TRANSFER instruction.
-	 * <p>
-	 * TRANSFER instructions cause an aircraft (specified in the parameters)
-	 * to be added to the current player's list of aircraft.
-	 * </p>
-	 * <p>
-	 * A REMOVE instruction is then sent to the opposing player to remove
-	 * their copy of the aircraft.
-	 * </p>
-	 * @param parameters - the parameters accompanying the instruction
-	 */
-	private static void handleTransfer(String parameters) {
-		Game.getInstance().getCurrentPlayer().getAircraft().add(
-				Game.getInstance().getAircraftFromName(parameters));
-		
-		NetworkManager.postMessage("SEND:REMOVE:" + parameters);
-	}
-	
-	/**
-	 * Handles a REMOVE instruction.
-	 * <p>
-	 * REMOVE instructions cause an aircraft to be removed from the current
-	 * player's list of aircraft.
-	 * </p>
-	 * @param parameters - the parameters accompanying the instruction
-	 */
-	private static void handleRemove(String parameters) {
-		// Obtain a lock on the aircraft array
-		synchronized (Game.getInstance().getCurrentPlayer().getAircraft()) {
-			Game.getInstance().getCurrentPlayer().getAircraft().remove(
-					Game.getInstance().getAircraftFromName(parameters));
 		}
 	}
 	
