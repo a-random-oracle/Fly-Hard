@@ -18,6 +18,7 @@ import lib.jog.window;
 import cls.Aircraft;
 import cls.Airport;
 import cls.Player;
+import cls.Powerup;
 import cls.Waypoint;
 
 public class MultiPlayerGame extends Game {
@@ -59,6 +60,15 @@ public class MultiPlayerGame extends Game {
 
 	/** The x-coordinate at which the right middle zone border is located */
 	public static int rightEntryX = window.width() - leftEntryX;
+	
+	/** Time since new powerup generated */
+	protected double powerUpGenerationTimeElapsed = 0;
+	
+	/** Interval between powerup spawn */
+	protected double powerUpInterval = 5;
+	
+	/** List of all the powerups */
+	protected ArrayList<Powerup> allPowerups;
 
 
 	/**
@@ -241,6 +251,15 @@ public class MultiPlayerGame extends Game {
 		} else {
 			receivePlayerData();
 			sendPlayerData();
+		}
+		
+		//Powerup update
+		
+		this.powerUpGenerationTimeElapsed = this.powerUpGenerationTimeElapsed + timeDifference;
+		if(this.powerUpGenerationTimeElapsed > this.powerUpInterval){
+			this.powerUpGenerationTimeElapsed = 0;
+			this.powerUpInterval = 30;
+			addPowerup(this.allPowerups, this.middleWaypoints);
 		}
 	}
 
@@ -454,4 +473,25 @@ public class MultiPlayerGame extends Game {
 		player2.setAircraft(new ArrayList<Aircraft>());
 	}
 
+	// Multiplayer -----------------------------------------------------------------------
+	
+	public Powerup chooseRandomPowerup(ArrayList<Powerup> powerUps) {
+        int length = powerUps.size();
+        int number = 0 + (int)(Math.random()* (length-1));
+        return powerUps.get(number);
+}
+
+	public Waypoint chooseRandomWaypoint(Waypoint[] waypoints) {
+        int length = waypoints.length;
+        int number = 0 + (int)(Math.random()* (length));
+        return waypoints[number];
+}
+
+	public void addPowerup(ArrayList<Powerup> powerUps, Waypoint[] waypoints){
+        Waypoint waypoint = chooseRandomWaypoint(waypoints);
+        Powerup powerup = chooseRandomPowerup(powerUps);
+        waypoint.setHasPowerup(true);
+        waypoint.setPowerup(powerup);
+}
+	
 }

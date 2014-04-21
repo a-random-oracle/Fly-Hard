@@ -24,6 +24,15 @@ public class Waypoint implements Serializable {
 	/** Marks whether the waypoint is an entry point, exit point or airport */
 	private boolean entryOrExit;
 	
+	/** Marks whether the waypoint is a middle waypoint used for powerups */
+	private boolean middlewaypoint;
+
+	/** If a waypoint has a powerup */
+	private boolean hasPowerup = false;
+	
+	/** The powerup of this waypoint */
+	private Powerup powerup = null;
+	
 	/**
 	 * Constructor for waypoints.
 	 * @param x
@@ -162,6 +171,21 @@ public class Waypoint implements Serializable {
 	 */
 	public static double getCostBetween(Waypoint source, Waypoint target) {
 		return target.getCost(source);
+	}
+
+	public Powerup getPowerup() {
+		return powerup;
+	}
+	
+	public void setPowerup(Powerup powerup) {
+		this.powerup = powerup;
+	}
+	
+	public boolean getHasPowerup() {
+		return hasPowerup;	
+	}
+	public void setHasPowerup(boolean hasPowerup) {
+		this.hasPowerup = hasPowerup;
 	}
 	
 }
