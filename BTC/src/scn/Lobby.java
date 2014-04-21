@@ -178,16 +178,20 @@ public class Lobby extends Scene {
 			for (int i = 0; i < openConnections.length; i++) {
 				if (!openConnections[i].equals("NO_CONNECTIONS")) {
 					currentEntry = openConnections[i].split(":");
-
-					switch (currentEntry.length) {
-					case 1:
-						availablePlayers.put(Integer.valueOf(currentEntry[0]),
-								"ANON");
-						break;
-					case 2:
-						availablePlayers.put(Integer.valueOf(currentEntry[0]),
-								currentEntry[1]);
-						break;
+					
+					try {
+						int id = Integer.valueOf(currentEntry[0]);
+						
+						switch (currentEntry.length) {
+						case 1:
+							availablePlayers.put(id, "ANON");
+							break;
+						case 2:
+							availablePlayers.put(id, currentEntry[1]);
+							break;
+						}
+					} catch (NumberFormatException e) {
+						e.printStackTrace();
 					}
 				}
 			}
