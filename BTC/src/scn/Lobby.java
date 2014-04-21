@@ -53,7 +53,10 @@ public class Lobby extends Scene {
 	private LinkedHashMap<Integer, String> availablePlayers;
 	
 	/** The input box used for name entry */
-	private InputBox nameEntryBox;
+	private static InputBox nameEntryBox = new InputBox(Color.white, Color.darkGray,
+			(int) nameEntryBoxPos.getX() + Game.X_OFFSET,
+			(int) nameEntryBoxPos.getY() + Game.Y_OFFSET,
+			200, 23, true);;
 
 	/** The button used to create a new game. The player then becomes a host. */
 	private ButtonText createGameButton;
@@ -83,13 +86,6 @@ public class Lobby extends Scene {
 
 	@Override
 	public void start() {
-		// Create an input box for name entry and position it above
-		// the game selection table
-		nameEntryBox = new InputBox(Color.white, Color.darkGray,
-				(int) nameEntryBoxPos.getX() + Game.X_OFFSET,
-				(int) nameEntryBoxPos.getY() + Game.Y_OFFSET,
-				200, 23, true);
-
 		// Implement the action that occurs upon clicking the create game button
 		ButtonText.Action createGame = new ButtonText.Action() {
 			@Override
@@ -255,6 +251,9 @@ public class Lobby extends Scene {
 		drawTable();
 	}
 
+	/**
+	 * Draws the table of available games.
+	 */
 	public void drawTable() {
 		// Draw the table in white
 		graphics.setColour(255, 255, 255);
@@ -321,7 +320,7 @@ public class Lobby extends Scene {
 	public void mousePressed(int key, int x, int y) {}
 
 	/**
-	 * Causes a button to act if mouse released over it.
+	 * Causes a button to act if the mouse is released over it.
 	 */
 	@Override
 	public void mouseReleased(int key, int x, int y) {
@@ -370,7 +369,10 @@ public class Lobby extends Scene {
 	}
 
 	@Override
-	public void close() {}
+	public void close() {
+		setWaitingForOpponent(false);
+		Main.getNetworkManager().sendMessage("CLEAR_HOST");
+	}
 
 	@Override
 	public void playSound(Sound sound) {}
