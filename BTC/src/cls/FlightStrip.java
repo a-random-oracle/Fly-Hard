@@ -2,7 +2,7 @@
 //   / | / | / | /   In use by mwuk **BEWARE CHANGES**
 //  /  |/  |/  |/
 //
-// V 0.1.1
+// V 0.1.2
 
 package cls;
 
@@ -57,6 +57,7 @@ public class FlightStrip implements EventHandler {
         if(isVisible){
             drawFlightNumber();
             drawAirline();
+            drawAltitude();
         }
     }
 
@@ -71,6 +72,11 @@ public class FlightStrip implements EventHandler {
 
     private void drawAirline(){
         graphics.print(currentAircraft.getAirline(), (positionX + 2), (positionY + 2));
+    }
+
+    private void drawAltitude(){
+        String stringitude = new Integer(currentAircraft.getAltitude()).toString();
+        graphics.print(stringitude, (positionX + (width/2)), ((positionY + height) - 12));
     }
 
     @Override

@@ -856,6 +856,10 @@ public class Aircraft implements Serializable {
 		return position;
 	}
 
+    public int getAltitude() {
+        return (int)(position.getZ());
+    }
+
 	/**
 	 * Gets the aircraft's name.
 	 * @return the aircraft's name
