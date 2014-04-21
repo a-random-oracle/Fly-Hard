@@ -176,7 +176,7 @@ public class Lobby extends Scene {
 			// Format the open connections into a hashmap
 			String[] currentEntry;
 			for (int i = 0; i < openConnections.length; i++) {
-				if (!openConnections[i].equals("NO CONNECTIONS")) {
+				if (!openConnections[i].equals("NO_CONNECTIONS")) {
 					currentEntry = openConnections[i].split(":");
 
 					switch (currentEntry.length) {
