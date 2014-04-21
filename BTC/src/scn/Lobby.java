@@ -18,8 +18,10 @@ import lib.ButtonText;
 
 public class Lobby extends Scene {
 
+	/** The width of the create game button */
 	private static final int CREATE_BUTTON_W = 200;
 
+	/** The height of the create game button */
 	private static final int CREATE_BUTTON_H = 32;
 
 	/** Coordinates for the top left of the game selection table */
@@ -60,8 +62,9 @@ public class Lobby extends Scene {
 	private LinkedList<ButtonText> joinButtons = new LinkedList<ButtonText>();
 
 	/** has the player created a game? If so, they are waiting for an opponent*/
-	private boolean isWaitingForOpponent = false;
+	private boolean waitingForOpponent = false;
 
+	/** The dynamic string of dots to display after text */
 	private String waitingForOpponentDots = "";
 
 
@@ -91,9 +94,7 @@ public class Lobby extends Scene {
 		ButtonText.Action createGame = new ButtonText.Action() {
 			@Override
 			public void action() {
-				isWaitingForOpponent = true;
-				nameEntryBox.setEnabled(false);
-				createGameButton.setAvailability(false);
+				setWaitingForOpponent(true);
 				NetworkManager.postMessage("SET_NAME:" + nameEntryBox.getText()
 						+ ";SET_HOST");
 			}
@@ -142,7 +143,7 @@ public class Lobby extends Scene {
 			if (waitingInstructions != null) {
 				if (waitingInstructions.contains("START_GAME")) {
 					InstructionHandler.handleInstruction(waitingInstructions);
-					isWaitingForOpponent = false;
+					setWaitingForOpponent(false);
 				}
 			}
 
@@ -220,14 +221,6 @@ public class Lobby extends Scene {
 								* (1d/8d)),
 						(int) (rowHeight * (3d/4d)), 0, 0));
 			}
-
-			// If the player is waiting for an opponent, disable the join game
-			// buttons
-			if (isWaitingForOpponent) {
-				for (ButtonText joinButton : joinButtons) {
-					joinButton.setAvailability(false);
-				}
-			}
 		}
 	}
 
@@ -246,7 +239,7 @@ public class Lobby extends Scene {
 
 		// If the player is waiting for an opponent, print the waiting for
 		// opponent string (with cycling dots)
-		if (isWaitingForOpponent) {
+		if (waitingForOpponent) {
 			graphics.setColour(255, 255, 255);
 			
 			graphics.printCentred(waitingForOpponentDots.replace(".", " ")
@@ -382,6 +375,52 @@ public class Lobby extends Scene {
 	@Override
 	public void playSound(Sound sound) {}
 
+	/**
+	 * Toggles whether the player is waiting for an opponent.
+	 * <p>
+	 * This toggles:
+	 * <ul>
+	 * <li>The waiting for opponent attribute</li>
+	 * <li>The availability of the name entry box</li>
+	 * <li>The availability of the create game button</li>
+	 * </ul>
+	 * </p>
+	 * @param isWaiting - <code>true</code> if the player is
+	 * 						waiting for an opponent, otherwise
+	 * 						<code>false</code>
+	 */
+	private void setWaitingForOpponent(boolean isWaiting) {
+		if (isWaiting) {
+			// Set waiting for opponent
+			waitingForOpponent = true;
+
+			// Disable the name entry box
+			nameEntryBox.setEnabled(false);
+
+			// Disable the create game button
+			createGameButton.setAvailability(false);
+			
+			// Disable the join game buttons
+			for (ButtonText joinButton : joinButtons) {
+				joinButton.setAvailability(false);
+			}
+		} else {
+			// Clear waiting for opponent
+			waitingForOpponent = false;
+
+			// Enable the name entry box
+			nameEntryBox.setEnabled(true);
+
+			// Enable the create game button
+			createGameButton.setAvailability(true);
+			
+			// Enable the join game buttons
+			for (ButtonText joinButton : joinButtons) {
+				joinButton.setAvailability(true);
+			}
+		}
+	}
+	
 	/**
 	 * Selects a game to play.
 	 * @param clientID - the ID of the client to connect to
