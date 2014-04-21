@@ -2,7 +2,7 @@
 //   / | / | / | /   In use by mwuk **BEWARE CHANGES**
 //  /  |/  |/  |/
 //
-// V 0.1
+// V 0.1.1
 
 package cls;
 
@@ -55,8 +55,8 @@ public class FlightStrip implements EventHandler {
     public void draw() {
         drawOutline();
         if(isVisible){
-        drawFlightNumber();
-//      drawAirline();
+            drawFlightNumber();
+            drawAirline();
         }
     }
 
@@ -67,6 +67,10 @@ public class FlightStrip implements EventHandler {
 
     private void drawFlightNumber(){
         graphics.print(currentAircraft.getName(), (positionX + (width/2)), (positionY + (height/2)));
+    }
+
+    private void drawAirline(){
+        graphics.print(currentAircraft.getAirline(), (positionX + 2), (positionY + 2));
     }
 
     @Override

@@ -54,7 +54,9 @@ public class Aircraft implements Serializable {
 	 * number between 100 and 900. */
 	private String flightName;
 
-  private String airline;
+    /** The airline an aircraft is a 'member' of. Purely aesthetic
+     * used for the flight strip output. */
+    private String airline;
 
 	/** The aircraft's current position */
 	private Vector position;
@@ -658,7 +660,6 @@ public class Aircraft implements Serializable {
 	 * @param modified
 	 *            the index of the waypoint being modified
 	 * @param mouseX
-
 	 *            the current x position of the mouse
 	 * @param mouseY
 	 *            the current y position of the mouse
@@ -862,6 +863,14 @@ public class Aircraft implements Serializable {
 	public String getName() {
 		return flightName;
 	}
+
+    /**
+     * Gets the aircraft's carrier/airline.
+     * @return the aircraft's carier/airline.
+     */
+    public String getAirline() {
+        return airline;
+    }
 
 	/**
 	 * Gets whether or not the aircraft has completed its route.
