@@ -140,7 +140,10 @@ public class Lobby extends Scene {
 			String waitingInstructions = InstructionHandler.getMessages();
 
 			if (waitingInstructions != null) {
-				InstructionHandler.handleInstruction(waitingInstructions);
+				if (waitingInstructions.contains("START_GAME")) {
+					InstructionHandler.handleInstruction(waitingInstructions);
+					isWaitingForOpponent = false;
+				}
 			}
 
 			// Reset the time
