@@ -70,16 +70,6 @@ public class Powerup {
 		graphics.draw(this.image, powerupLocation.getX(), powerupLocation.getY());
 	}
 
-	public void makePowerup() {
-		// choose randompowerup & randomwaypoint
-		// 
-		// tells draw what to draw
-	}
-
-	public void chooseRandomPowerup() {
-
-	}
-
 	public void chooseRandomWaypoint() {
 
 	}
