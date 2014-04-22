@@ -253,6 +253,7 @@ public class MultiPlayerGame extends Game {
 	public void draw() {
 		// Draw the middle zone
 		drawMiddleZone();
+		drawPowerUpPoints();
 
 		super.draw();
 
