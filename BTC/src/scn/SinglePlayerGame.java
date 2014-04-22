@@ -1,6 +1,6 @@
 package scn;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 
 import lib.ButtonText;
 import lib.jog.window;
@@ -106,7 +106,7 @@ public class SinglePlayerGame extends Game {
 	public void initializeAircraftArray() {
 		super.start();
 		player = new Player(0, null, null);
-		player.setAircraft(new ArrayList<Aircraft>());
+		player.setAircraft(new HashMap<String, Aircraft>());
 	}
 
 }

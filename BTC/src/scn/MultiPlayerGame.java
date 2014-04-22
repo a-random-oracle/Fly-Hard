@@ -1,6 +1,7 @@
 package scn;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.newdawn.slick.Color;
 
@@ -204,17 +205,18 @@ public class MultiPlayerGame extends Game {
 		if (data != null) {
 			if (data instanceof Player) {
 				// Update the opposing player's data
-				opposingPlayer.update((Player) data);
+				opposingPlayer.overwrite((Player) data);
 
 				// Check if any aircraft under transfer are in the list
 				if (aircraftUnderTransfer.size() > 0) {
 					for (int i = aircraftUnderTransfer.size() - 1; i == 0; i--) {
-						if (opposingPlayer.getAircraft()
+						if (opposingPlayer.getAircraft().values()
 								.contains(aircraftUnderTransfer.get(i))) {
 							aircraftUnderTransfer.remove(i);
 						} else {
 							// If not, add them in
-							opposingPlayer.getAircraft().add(
+							opposingPlayer.getAircraft().put(
+									aircraftUnderTransfer.get(i).getName(),
 									aircraftUnderTransfer.get(i));
 						}
 					}
@@ -324,7 +326,9 @@ public class MultiPlayerGame extends Game {
 		case input.KEY_T:
 			if (player.getSelectedAircraft() != null) {
 				aircraftUnderTransfer.add(player.getSelectedAircraft());
-				opposingPlayer.getAircraft().add(player.getSelectedAircraft());
+				opposingPlayer.getAircraft().put(
+						player.getSelectedAircraft().getName(),
+						player.getSelectedAircraft());
 				player.getAircraft().remove(player.getSelectedAircraft());
 
 				NetworkManager.sendData(-1, new Player[] {player, opposingPlayer});
@@ -339,7 +343,7 @@ public class MultiPlayerGame extends Game {
 	 * their aircraft goes into the other player's airspace.
 	 */
 	public void returnToAirspace() {
-		for (Aircraft airc : player.getAircraft()) {
+		for (Aircraft airc : player.getAircraft().values()) {
 			if (!airc.isAtDestination()) {
 				if (airc.isOutOfPlayersAirspace()) {
 					deselectAircraft(airc, player);
@@ -358,7 +362,7 @@ public class MultiPlayerGame extends Game {
 
 	@Override
 	public void checkCollisions(double timeDifference) {
-		for (Aircraft plane : player.getAircraft()) {
+		for (Aircraft plane : player.getAircraft().values()) {
 			int collisionState = plane.updateCollisions(timeDifference,
 					getAllAircraft());
 			if (collisionState >= 0) {
@@ -394,13 +398,13 @@ public class MultiPlayerGame extends Game {
 	 */
 	@Override
 	public Player getPlayerFromAircraft(Aircraft aircraft) {
-		for (Aircraft a : player.getAircraft()) {
+		for (Aircraft a : player.getAircraft().values()) {
 			if (a.equals(aircraft)) {
 				return player;
 			}
 		}
 
-		for (Aircraft a : opposingPlayer.getAircraft()) {
+		for (Aircraft a : opposingPlayer.getAircraft().values()) {
 			if (a.equals(aircraft)) {
 				return opposingPlayer;
 			}
@@ -484,11 +488,11 @@ public class MultiPlayerGame extends Game {
 	 * @return a list of all the aircraft in the airspace
 	 */
 	@Override
-	public ArrayList<Aircraft> getAllAircraft() {
-		ArrayList<Aircraft> allAircraft = new ArrayList<Aircraft>();
+	public HashMap<String, Aircraft> getAllAircraft() {
+		HashMap<String, Aircraft> allAircraft = new HashMap<String, Aircraft>();
 
-		allAircraft.addAll(player.getAircraft());
-		allAircraft.addAll(opposingPlayer.getAircraft());
+		allAircraft.putAll(player.getAircraft());
+		allAircraft.putAll(opposingPlayer.getAircraft());
 
 		return allAircraft;
 	}
@@ -517,8 +521,8 @@ public class MultiPlayerGame extends Game {
 
 		opposingPlayer = new Player(1, null, null);
 
-		player.setAircraft(new ArrayList<Aircraft>());
-		opposingPlayer.setAircraft(new ArrayList<Aircraft>());
+		player.setAircraft(new HashMap<String, Aircraft>());
+		opposingPlayer.setAircraft(new HashMap<String, Aircraft>());
 	}
 
 }

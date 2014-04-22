@@ -2,6 +2,7 @@ package cls;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Player implements Serializable {
 	
@@ -30,7 +31,7 @@ public class Player implements Serializable {
 	private Airport[] airports;
 	
 	/** The aircraft under the player's control */
-	private ArrayList<Aircraft> aircraft;
+	private HashMap<String, Aircraft> aircraft;
 	
 	/** The waypoints under the player's control */
 	private Waypoint[] waypoints;
@@ -103,7 +104,7 @@ public class Player implements Serializable {
 		this.controlAltitude = 30000;
 		this.lives = 3;
 		this.score = new Score();
-		this.aircraft = new ArrayList<Aircraft>();
+		this.aircraft = new HashMap<String, Aircraft>();
 		this.powerups = new ArrayList<Powerup>();
 		
 		// Set aircraft colour
@@ -143,7 +144,7 @@ public class Player implements Serializable {
 	 * Gets a list of the player's aircraft.
 	 * @return a list of the player's aircraft
 	 */
-	public ArrayList<Aircraft> getAircraft() {
+	public HashMap<String, Aircraft> getAircraft() {
 		return aircraft;
 	}
 	
@@ -268,7 +269,7 @@ public class Player implements Serializable {
 	 * Sets the list of aircraft under the player's control.
 	 * @param aircraft - the new list of aircraft
 	 */
-	public void setAircraft(ArrayList<Aircraft> aircraft) {
+	public void setAircraft(HashMap<String, Aircraft> aircraft) {
 		this.aircraft = aircraft;
 	}
 	
@@ -390,7 +391,7 @@ public class Player implements Serializable {
 	
 	// Other ----------------------------------------------------------------------------
 	
-	public void update(Player updatedPlayer) {
+	public void overwrite(Player updatedPlayer) {
 		// Check that the update insn't null
 		if (updatedPlayer == null) return;
 		
@@ -411,15 +412,74 @@ public class Player implements Serializable {
 		score = updatedPlayer.score;
 		lives = updatedPlayer.lives;
 		powerups = updatedPlayer.powerups;
+		airports = updatedPlayer.airports;
+		//aircraft = updatedPlayer.aircraft;
+		waypoints = updatedPlayer.waypoints;
 		
-		/** The list of airports which this player is controlling */
-		//private Airport[] airports;
+		ArrayList<Aircraft> aircraftToRemove = new ArrayList<Aircraft>();
 		
-		/** The aircraft under the player's control */
-		//private ArrayList<Aircraft> aircraft;
+		if (aircraft != null && updatedPlayer.aircraft != null) {
+			for (String key : aircraft.keySet()) {
+				if (updatedPlayer.aircraft.get(key) != null) {
+					// Update
+					aircraft.get(key).overwrite(updatedPlayer.aircraft.get(key));
+				} else {
+					// Remove
+					aircraftToRemove.add(aircraft.get(key));
+				}
+			}
+			
+			for (String key : updatedPlayer.aircraft.keySet()) {
+				if (aircraft.get(key) == null) {
+					// Add
+					aircraft.put(key, updatedPlayer.aircraft.get(key));
+				}
+			}
+		}
 		
-		/** The waypoints under the player's control */
-		//private Waypoint[] waypoints;
+		for (Aircraft a : aircraftToRemove) {
+			aircraft.remove(a);
+		}
+		
+		// Update existing aircraft
+		/*ArrayList<Aircraft> aircraftToRemove = new ArrayList<Aircraft>();
+		
+		if (aircraft != null) {
+			for (Aircraft currentAircraft : aircraft) {
+				if (currentAircraft != null) {
+					boolean found = false;
+					for (Aircraft updatedAircraft : updatedPlayer.aircraft) {
+						if (updatedAircraft != null) {
+							if (currentAircraft.getName()
+									== updatedAircraft.getName()) {
+								found = true;
+								currentAircraft.overwrite(updatedAircraft);
+								break;
+							}
+						}
+					}
+
+					if (!found) {
+						aircraftToRemove.add(currentAircraft);
+					}
+				}
+			}
+		}
+		
+		// Remove old aircraft
+		for (Aircraft a : aircraftToRemove) {
+			aircraft.remove(a);
+		}
+		
+		// Add new aircraft
+		if (updatedPlayer.aircraft != null) {
+			for (Aircraft updatedAircraft : updatedPlayer.aircraft) {
+				if (updatedAircraft != null
+						&& !aircraft.contains(updatedAircraft)) {
+					aircraft.add(updatedAircraft);
+				}
+			}
+		}*/
 	}
 	
 	@Override

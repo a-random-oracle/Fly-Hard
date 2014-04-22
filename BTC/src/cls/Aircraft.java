@@ -3,9 +3,9 @@ package cls;
 import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import btc.Main;
-
 import scn.Game;
 import scn.Game.DifficultySetting;
 import scn.MultiPlayerGame;
@@ -694,15 +694,15 @@ public class Aircraft implements Serializable {
 	 * Updates the number of planes that are violating the separation rule. Also
 	 * checks for crashes.
 	 * @param timeDifference - the time elapsed since the last frame.
-	 * @param aircraftList - all aircraft in the airspace
+	 * @param aircraft - all aircraft in the airspace
 	 * @return index of plane breaching separation distance with this plane, or
 	 *         -1 if no planes are in violation.
 	 */
 	public int updateCollisions(double timeDifference,
-			ArrayList<Aircraft> aircraftList) {
+			HashMap<String, Aircraft> aircraft) {
 		planesTooNear.clear();
-		for (int i = 0; i < aircraftList.size(); i++) {
-			Aircraft plane = aircraftList.get(i);
+		for (int i = 0; i < aircraft.size(); i++) {
+			Aircraft plane = aircraft.get(i);
 			if (plane != this && isWithin(plane, RADIUS)) { // Planes crash
 				hasFinished = true;
 				return i;
@@ -714,7 +714,7 @@ public class Aircraft implements Serializable {
 					collisionWarningSoundFlag = true;
 					WARNING_SOUND.play();
 				}
-				//decriment score for getting within separation distance
+				// Decrement score for getting within separation distance
 				decrementScoreSmall();
 			}
 		}
@@ -819,7 +819,7 @@ public class Aircraft implements Serializable {
 			for (Airport airport : Game.getInstance().getAllAirports()) {
 				if (airport.equals(flightPlan.getOriginAirport())) {
 					Game.getInstance().getPlayerFromAirport(
-							airport).getAircraft().add(this);
+							airport).getAircraft().put(flightName, this);
 					return;
 				}
 			}
@@ -944,6 +944,36 @@ public class Aircraft implements Serializable {
 		this.altitudeState = state;
 	}
 
+	public void overwrite(Aircraft updatedAircraft) {
+		// Check that the update insn't null
+		if (updatedAircraft == null) return;
+
+		// Check that the IDs match
+		if (updatedAircraft.getName() != flightName) return;
+
+		turnSpeed = updatedAircraft.turnSpeed;
+	    airline = updatedAircraft.airline;
+		velocity = updatedAircraft.velocity;
+		score = updatedAircraft.score;
+		isManuallyControlled = updatedAircraft.isManuallyControlled;
+		hasFinished = updatedAircraft.hasFinished;
+		isWaitingToLand = updatedAircraft.isWaitingToLand;
+		verticalVelocity = updatedAircraft.verticalVelocity;
+		flightPlan = updatedAircraft.flightPlan;
+		isLanding = updatedAircraft.isLanding;
+		currentTarget = updatedAircraft.currentTarget;
+		manualBearingTarget = updatedAircraft.manualBearingTarget;
+		currentRouteStage = updatedAircraft.currentRouteStage;
+		altitudeState = updatedAircraft.altitudeState;
+		collisionWarningSoundFlag = updatedAircraft.collisionWarningSoundFlag;
+		planesTooNear = updatedAircraft.planesTooNear;
+		timeWaiting = updatedAircraft.timeWaiting;
+		airportPenaltyApplied = updatedAircraft.airportPenaltyApplied;
+		
+		/** The aircraft's current position */
+		//private Vector position;
+	}
+	
 	/**
 	 * Generates the hash code for this aircraft.
 	 * @return the hash code for this aircraft

@@ -2,6 +2,7 @@ package cls;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import btc.Main;
 import scn.Game;
@@ -85,9 +86,9 @@ public class Airport extends Waypoint implements EventHandler, Serializable {
 	 * @param aircraft
 	 * 			the list of aircraft to check
 	 */
-	public void update(ArrayList<Aircraft> aircraft) {
+	public void update(HashMap<String, Aircraft> aircraft) {
 		aircraftWaitingToLand.clear();
-		for (Aircraft a : aircraft) {
+		for (Aircraft a : aircraft.values()) {
 			if (a.currentTarget.equals(getLocation())) {
 				aircraftWaitingToLand.add(a);
 			}

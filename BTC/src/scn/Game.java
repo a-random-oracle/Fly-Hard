@@ -3,6 +3,7 @@ package scn;
 import java.io.File;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Hashtable;
 
 import lib.ButtonText;
@@ -250,7 +251,7 @@ public abstract class Game extends Scene {
 	 */
 	protected void updatePlayer(double timeDifference, Player player) {
 		// Update aircraft
-		for (Aircraft aircraft : player.getAircraft()) {
+		for (Aircraft aircraft : player.getAircraft().values()) {
 			aircraft.update(timeDifference);
 		}
 
@@ -275,7 +276,7 @@ public abstract class Game extends Scene {
 		// Deselect any aircraft which are outside the airspace
 		// This ensures that players can't keep controlling aircraft
 		// after they've left the airspace
-		for (Aircraft airc : player.getAircraft()) {
+		for (Aircraft airc : player.getAircraft().values()) {
 			if (!(airc.isAtDestination())) {
 				if (airc.isOutOfAirspaceBounds()) {
 					deselectAircraft(airc, player);
@@ -374,7 +375,7 @@ public abstract class Game extends Scene {
 
 		// Draw all aircraft, and show their routes if the mouse is hovering
 		// above them
-		for (Aircraft aircraft : player.getAircraft()) {
+		for (Aircraft aircraft : player.getAircraft().values()) {
 			aircraft.draw(player.getAircraftColour(), player.getControlAltitude());
 
 			if (aircraft.isMouseOver()) {
@@ -716,7 +717,7 @@ public abstract class Game extends Scene {
 	 * @param timeDifference - the time since the last collision check
 	 */
 	protected void checkCollisions(double timeDifference) {
-		for (Aircraft plane : getAllAircraft()) {
+		for (Aircraft plane : getAllAircraft().values()) {
 			int collisionState = plane.updateCollisions(timeDifference,
 					getAllAircraft());
 			if (collisionState >= 0) {
@@ -794,7 +795,7 @@ public abstract class Game extends Scene {
 			}
 
 			// Otherwise, add the aircraft to the airspace
-			player.getAircraft().add(aircraft);
+			player.getAircraft().put(aircraft.getName(), aircraft);
 		}
 	}
 
@@ -915,12 +916,12 @@ public abstract class Game extends Scene {
 		String name = "";
 		boolean nameTaken = true;
 		while (nameTaken) {
-			name = carrierTag + String.format("%03d", (int)(1 + Main.getRandom().nextInt(999)));
-			nameTaken = false;
+			name = carrierTag + String.format("%03d",
+					(int)(1 + Main.getRandom().nextInt(999)));
 
 			// Check the generated name against every other flight name
-			for (Aircraft a : getAllAircraft()) {
-				if (a.getName() == name) nameTaken = true;
+			if (!getAllAircraft().containsKey(name)) {
+				nameTaken = false;
 			}
 		}
 
@@ -999,7 +1000,7 @@ public abstract class Game extends Scene {
 			//   - any plane is currently going towards it
 			//   - or any plane is less than 250 from it
 
-			for (Aircraft aircraft : getAllAircraft()) {
+			for (Aircraft aircraft : getAllAircraft().values()) {
 				// Check if any plane is currently going towards the
 				// exit point/chosen originPoint
 				// Check if any plane is less than what is defined as too close
@@ -1085,7 +1086,7 @@ public abstract class Game extends Scene {
 	 * 			otherwise returns null
 	 */
 	protected Aircraft findClickedAircraft(int x, int y, Player player) {
-		for (Aircraft a : player.getAircraft()) {
+		for (Aircraft a : player.getAircraft().values()) {
 			if (a.isMouseOver(x - X_OFFSET, y - Y_OFFSET)) {
 				return a;
 			}
@@ -1169,7 +1170,7 @@ public abstract class Game extends Scene {
 	 * Gets a list of all aircraft in the airspace.
 	 * @return a list of all the aircraft in the airspace
 	 */
-	public ArrayList<Aircraft> getAllAircraft() {
+	public HashMap<String, Aircraft> getAllAircraft() {
 		return player.getAircraft();
 	}
 
@@ -1217,24 +1218,22 @@ public abstract class Game extends Scene {
 
 	/**
 	 * Gets a player from an aircraft.
-	 * @param aircraft
-	 * 			the aircraft to get the controlling player of
+	 * @param aircraft - the aircraft to get the controlling player of
 	 * @return the player controlling the specified aircraft
 	 */
 	public Player getPlayerFromAircraft(Aircraft aircraft) {
-		for (Aircraft a : player.getAircraft()) {
-			if (a.equals(aircraft)) {
-				return player;
-			}
+		if (player != null && player.getAircraft() != null
+				&& aircraft != null && player.getAircraft()
+				.containsKey(aircraft.getName())) {
+			return player;
+		} else {
+			return null;
 		}
-		
-		return null;
 	}
 
 	/**
 	 * Gets a player from an airport.
-	 * @param airport
-	 * 			the airport to get the controlling player of
+	 * @param airport - the airport to get the controlling player of
 	 * @return the player controlling the specified airport
 	 */
 	public Player getPlayerFromAirport(Airport airport) {
@@ -1257,18 +1256,15 @@ public abstract class Game extends Scene {
 	
 	/**
 	 * Gets an aircraft from its name.
-	 * @param name
-	 * 			the aircraft's name
+	 * @param name - the aircraft's name
 	 * @return the aircraft with the specified name
 	 */
 	public Aircraft getAircraftFromName(String name) {
-		for (Aircraft aircraft : getAllAircraft()) {
-			if (aircraft.getName().equals(name)) {
-				return aircraft;
-			}
+		if (player != null && player.getAircraft() != null) {
+			return player.getAircraft().get(name);
+		} else {
+			return null;
 		}
-		
-		return null;
 	}
 
 	/**
@@ -1284,8 +1280,7 @@ public abstract class Game extends Scene {
 
 	/**
 	 * Sets the current player.
-	 * @param player
-	 * 			the player to set as the current player
+	 * @param player - the player to set as the current player
 	 */
 	public void setCurrentPlayer(Player player) {
 		this.player = player;
