@@ -2,6 +2,8 @@ package scn;
 
 import java.util.ArrayList;
 
+import org.newdawn.slick.Color;
+
 import btc.Main;
 import net.NetworkManager;
 import lib.ButtonText;
@@ -15,39 +17,41 @@ import cls.Powerup;
 import cls.Waypoint;
 
 public class MultiPlayerGame extends Game {
-	
+
 	/** The player's position: 0 = left-hand side, 1 = right-hand side */
 	private int playerPosition;
-	
+
 	/** The opposing player */
-	protected Player opposingPlayer;
-	
+	private Player opposingPlayer;
+
 	/** The time frame to send data across the network */
 	private double timeUntilUpdate;
-	
+
 	/** Time since new powerup generated */ 
-	protected double powerUpGenerationTimeElapsed;
-	
+	private double powerUpGenerationTimeElapsed;
+
 	/** Interval between powerup spawn */ 
-	protected double powerUpInterval;
+	private double powerUpInterval;
 
 	/** The y-coordinate at which the middle zone borders begin */
-	public static int yStart = window.height() - Y_OFFSET;
+	private static int yStart = window.height() - Y_OFFSET;
 
 	/** The y-coordinate at which the middle zone borders end */
-	public static int yEnd = Y_OFFSET;
+	private static int yEnd = Y_OFFSET;
 
 	/** The x-coordinate at which the left middle zone border is located */
 	public static int leftEntryX = (int) (window.width() * (3d/7d));
 
 	/** The x-coordinate at which the right middle zone border is located */
 	public static int rightEntryX = window.width() - leftEntryX;
-	
+
 	/** The list of aircraft which are currently being transferred */
 	private ArrayList<Aircraft> aircraftUnderTransfer;
-	
+
 	/** List of all the powerups */ 
-	protected ArrayList<Powerup> allPowerups;
+	private ArrayList<Powerup> allPowerups;
+
+	private static Waypoint[] powerUpPoints;
 
 
 	/**
@@ -80,11 +84,18 @@ public class MultiPlayerGame extends Game {
 	private MultiPlayerGame(DifficultySetting difficulty, int playerPosition) {
 		super(difficulty);
 		instance = this;
-		
+
 		this.playerPosition = playerPosition;
+
+		// Define other waypoints
+		powerUpPoints = new Waypoint[] {
+				new Waypoint(0.44062, 0.20833, false, true),
+				new Waypoint(0.44062, 0.41667, false, true),
+				new Waypoint(0.44062, 0.66146, false, true)
+		};
 	}
-	
-	
+
+
 	@Override
 	public void start() {
 		super.start();
@@ -96,7 +107,7 @@ public class MultiPlayerGame extends Game {
 		locationWaypointMap.put(3, 1);
 		locationWaypointMap.put(4, 0);
 		locationWaypointMap.put(5, 1);
-		
+
 		// Set up the game
 		setUpGame(playerPosition);
 
@@ -109,9 +120,9 @@ public class MultiPlayerGame extends Game {
 		};
 
 		manualControlButton = new ButtonText(" Take Control", manual,
-						(window.width() - 128 - (2 * X_OFFSET)) / 2,
-						32, 128, 32, 8, 4);
-		
+				(window.width() - 128 - (2 * X_OFFSET)) / 2,
+				32, 128, 32, 8, 4);
+
 		aircraftUnderTransfer = new ArrayList<Aircraft>();
 		powerUpGenerationTimeElapsed = 0;
 		powerUpInterval = 5;
@@ -178,7 +189,7 @@ public class MultiPlayerGame extends Game {
 			// Reset the time before the next data send
 			timeUntilUpdate = 0;
 		}
-		
+
 		// Update powerups
 		powerUpGenerationTimeElapsed += timeDifference;
 
@@ -187,15 +198,15 @@ public class MultiPlayerGame extends Game {
 			powerUpInterval = 30;
 			//addPowerup(allPowerups, middleWaypoints); TODO
 		}
-		
+
 		// Get data from the server
 		Object data = Main.getNetworkManager().receiveData();
-		
+
 		if (data != null) {
 			if (data instanceof Player) {
 				// Set the opposing player's data
 				opposingPlayer = (Player) data;
-				
+
 				// Check if any aircraft under transfer are in the list
 				if (aircraftUnderTransfer.size() > 0) {
 					for (int i = aircraftUnderTransfer.size() - 1; i == 0; i--) {
@@ -212,7 +223,7 @@ public class MultiPlayerGame extends Game {
 			} else if (data.getClass().isArray()) {
 				// Set both players' data
 				Player[] playerArray = (Player[]) data;
-				
+
 				if (playerArray.length == 2) {
 					player = playerArray[1];
 					opposingPlayer = playerArray[0];
@@ -222,14 +233,14 @@ public class MultiPlayerGame extends Game {
 
 		// Send current player's data to the server
 		Main.getNetworkManager().sendData(System.currentTimeMillis(), player);
-		
+
 		super.update(timeDifference);
-		
+
 		if (paused) return;
-		
+
 		// Update the opposing player
 		updatePlayer(timeDifference, opposingPlayer);
-		
+
 		// Deselect any aircraft which are inside the airspace of the other player
 		// This ensures that players can't keep controlling aircraft
 		// after they've entered another player's airspace
@@ -242,26 +253,26 @@ public class MultiPlayerGame extends Game {
 	public void draw() {
 		// Draw the middle zone
 		drawMiddleZone();
-		
+
 		super.draw();
 
 		// Draw the power-ups
 		//drawPowerups();
 	}
-	
+
 	@Override
 	protected void drawMapFeatures() {
 		drawAirports(player);
 		drawAirports(opposingPlayer);
-		
+
 		drawWaypoints(player);
 		drawWaypoints(opposingPlayer);
-		
+
 		drawAircraft(player);
 		drawAircraft(opposingPlayer);
-		
+
 		drawSelectedAircraft();
-		
+
 		drawManualControlButton(player);
 		drawManualControlButton(opposingPlayer);
 	}
@@ -285,13 +296,23 @@ public class MultiPlayerGame extends Game {
 		graphics.line(rightEntryX, yStart, rightEntryX, yEnd);
 	}
 	
+	protected void drawPowerUpPoints() {
+		graphics.setColour(Color.orange);
+		//draw the power-up points
+		for (Waypoint waypoint : powerUpPoints) {
+			if (!(waypoint instanceof Airport)) {
+				waypoint.draw();
+			}
+		}
+	}
+
 	protected void drawPowerups() {
 		//Powerup.draw(0, 0, null);
 	}
-	
+
 	public void keyReleased(int key) {
 		super.keyReleased(key);
-		
+
 		switch (key) {
 		case input.KEY_T:
 			if (player.getSelectedAircraft() != null) {
@@ -306,7 +327,7 @@ public class MultiPlayerGame extends Game {
 			}
 		}
 	}
-	
+
 	/**
 	 * Removes control of an aircraft from the player when 
 	 * their aircraft goes into the other player's airspace.
@@ -325,7 +346,7 @@ public class MultiPlayerGame extends Game {
 		if (player.getLives() == 0 || opposingPlayer.getLives() == 0) {
 			return true;
 		}
-		
+
 		return false;
 	}
 
@@ -351,15 +372,15 @@ public class MultiPlayerGame extends Game {
 			for (Airport airport : player.getAirports()) {
 				airport.clear();
 			}
-			
+
 			for (Airport airport : opposingPlayer.getAirports()) {
 				airport.clear();
 			}
-			
+
 			super.gameOver(plane1, plane2);
 		}
 	}
-	
+
 	/**
 	 * Gets a player from an aircraft.
 	 * @param aircraft - the aircraft to get the controlling player of
@@ -372,16 +393,16 @@ public class MultiPlayerGame extends Game {
 				return player;
 			}
 		}
-		
+
 		for (Aircraft a : opposingPlayer.getAircraft()) {
 			if (a.equals(aircraft)) {
 				return opposingPlayer;
 			}
 		}
-		
+
 		return null;
 	}
-	
+
 	/**
 	 * Gets a player from an airport.
 	 * @param airport - the airport to get the controlling player of
@@ -394,16 +415,16 @@ public class MultiPlayerGame extends Game {
 				return player;
 			}
 		}
-		
+
 		for (int i = 0; i < opposingPlayer.getAirports().length; i++) {
 			if (opposingPlayer.getAirports()[i].equals(airport)) {
 				return opposingPlayer;
 			}
 		}
-		
+
 		return null;
 	}
-	
+
 	/**
 	 * Returns whether a given name is an airport or not.
 	 * @param name - the name to test
@@ -420,7 +441,7 @@ public class MultiPlayerGame extends Game {
 		// Otherwise
 		return null;
 	}
-	
+
 	/**
 	 * Gets a list of all airports in the airspace.
 	 * @return a list of all the airports in the airspace
@@ -438,12 +459,12 @@ public class MultiPlayerGame extends Game {
 
 		// Loop through each player, adding their airports to the list
 		int index = 0;
-		
+
 		for (Airport airport : player.getAirports()) {
 			allAirports[index] = airport;
 			index++;
 		}
-		
+
 		for (Airport airport : opposingPlayer.getAirports()) {
 			allAirports[index] = airport;
 			index++;
@@ -451,7 +472,7 @@ public class MultiPlayerGame extends Game {
 
 		return allAirports;
 	}
-	
+
 	/**
 	 * Gets a list of all aircraft in the airspace.
 	 * @return a list of all the aircraft in the airspace
@@ -465,19 +486,19 @@ public class MultiPlayerGame extends Game {
 
 		return allAircraft;
 	}
-	
+
 
 	// Close ----------------------------------------------------------------------------
 
 	@Override
 	public void close() {
 		super.close();
-		
+
 		// Send a message to the opponent to let
 		// them know we're closing
 		NetworkManager.postMessage("END_GAME");
 	}
-	
+
 
 	// Deprecated -----------------------------------------------------------------------
 
@@ -485,11 +506,11 @@ public class MultiPlayerGame extends Game {
 	@Override
 	public void initializeAircraftArray() {
 		super.start();
-		
+
 		player = new Player(0, null, null);
-		
+
 		opposingPlayer = new Player(1, null, null);
-		
+
 		player.setAircraft(new ArrayList<Aircraft>());
 		opposingPlayer.setAircraft(new ArrayList<Aircraft>());
 	}
