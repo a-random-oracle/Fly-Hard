@@ -10,20 +10,20 @@ import lib.jog.graphics;
 import lib.jog.input.EventHandler;          // <= May not be required
 
 public class FlightStrip implements EventHandler {
-	
+
     private boolean isVisible;
-    
+
     private cls.Aircraft currentAircraft;
-    
+
     private double positionX;
-    
+
     private double positionY;
-    
+
     private double width;
-    
+
     private double height;
 
-    
+
     /**
      * Constructor for flight strips.
      * @param x - the x coord to draw at
@@ -38,7 +38,7 @@ public class FlightStrip implements EventHandler {
         height = h;
         hide();
     }
-    
+
 
     /**
      * Shows strip for selected aircraft (prototyping only).
@@ -62,7 +62,7 @@ public class FlightStrip implements EventHandler {
 
     public void draw() {
         drawOutline();
-        
+
         if (isVisible) {
             drawFlightNumber();
             drawAirline();
