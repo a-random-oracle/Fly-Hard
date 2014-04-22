@@ -390,6 +390,38 @@ public class Player implements Serializable {
 	
 	// Other ----------------------------------------------------------------------------
 	
+	public void update(Player updatedPlayer) {
+		// Check that the update insn't null
+		if (updatedPlayer == null) return;
+		
+		// Check that the IDs match
+		if (updatedPlayer.getID() != id) return;
+		
+		// Update attributes
+		maxAircraft = updatedPlayer.maxAircraft;
+		aircraftColour = updatedPlayer.aircraftColour;
+		selectedAircraft = updatedPlayer.selectedAircraft;
+		selectedWaypoint = updatedPlayer.selectedWaypoint;
+		selectedPathpoint = updatedPlayer.selectedPathpoint;
+		compassClicked = updatedPlayer.compassClicked;
+		waypointClicked = updatedPlayer.waypointClicked;
+		turningState = updatedPlayer.turningState;
+		flightGenerationTimeElapsed = updatedPlayer.flightGenerationTimeElapsed;
+		controlAltitude = updatedPlayer.controlAltitude;
+		score = updatedPlayer.score;
+		lives = updatedPlayer.lives;
+		powerups = updatedPlayer.powerups;
+		
+		/** The list of airports which this player is controlling */
+		//private Airport[] airports;
+		
+		/** The aircraft under the player's control */
+		//private ArrayList<Aircraft> aircraft;
+		
+		/** The waypoints under the player's control */
+		//private Waypoint[] waypoints;
+	}
+	
 	@Override
 	public String toString() {
 		return "Player [id=" + id

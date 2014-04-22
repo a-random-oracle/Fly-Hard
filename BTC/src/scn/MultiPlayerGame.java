@@ -203,8 +203,8 @@ public class MultiPlayerGame extends Game {
 
 		if (data != null) {
 			if (data instanceof Player) {
-				// Set the opposing player's data
-				opposingPlayer = (Player) data;
+				// Update the opposing player's data
+				opposingPlayer.update((Player) data);
 
 				// Check if any aircraft under transfer are in the list
 				if (aircraftUnderTransfer.size() > 0) {
