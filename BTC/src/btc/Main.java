@@ -56,6 +56,9 @@ public class Main implements input.EventHandler {
 	/** The random instance to use to synchronise across the network */
 	private static Random random;
 	
+	/** Whether the game isbeing exited */
+	private static boolean exiting;
+	
 	/** The locations of the icon files */
 	final private String[] ICON_FILENAMES = {
 		"gfx" + File.separator + "icon16.png",
@@ -118,7 +121,7 @@ public class Main implements input.EventHandler {
 
 		start(width, height, xOffset, yOffset, fullscreen);
 		
-		while(!window.isClosed()) {
+		while(!window.isClosed() && !exiting) {
 			timeDifference = getTimeSinceLastFrame();
 			update(timeDifference);
 			draw();
@@ -243,6 +246,10 @@ public class Main implements input.EventHandler {
 	
 	public static void setRandomSeed(int seed) {
 		random.setSeed(seed);
+	}
+	
+	public static void setExiting() {
+		exiting = true;
 	}
 
 	@Override

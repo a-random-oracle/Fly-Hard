@@ -241,6 +241,7 @@ public abstract class InstructionHandler {
 	 */
 	private static void handleClosedConnection() {
 		NetworkManager.setState(State.CLOSED);
+		Main.setExiting();
 	}
 
 	/**
