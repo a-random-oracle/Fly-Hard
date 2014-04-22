@@ -298,6 +298,10 @@ public class MultiPlayerGame extends Game {
 	}
 	
 	protected void drawPowerUpPoints() {
+		// Set the viewport - this is the boundary used when drawing objects
+		graphics.setViewport(X_OFFSET, Y_OFFSET, window.width() - (2 * X_OFFSET),
+				window.height() - (2 * Y_OFFSET));
+
 		graphics.setColour(Color.orange);
 		//draw the power-up points
 		for (Waypoint waypoint : powerUpPoints) {
@@ -305,6 +309,9 @@ public class MultiPlayerGame extends Game {
 				waypoint.draw();
 			}
 		}
+		
+		// Reset the viewport
+		graphics.setViewport();
 	}
 
 	protected void drawPowerups() {
