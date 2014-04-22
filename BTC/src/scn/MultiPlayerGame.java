@@ -89,9 +89,9 @@ public class MultiPlayerGame extends Game {
 
 		// Define other waypoints
 		powerUpPoints = new Waypoint[] {
-				new Waypoint(0.44062, 0.20833, false, true),
-				new Waypoint(0.44062, 0.41667, false, true),
-				new Waypoint(0.44062, 0.66146, false, true)
+				new Waypoint(0.5, 0.30833, false, true),
+				new Waypoint(0.5, 0.56667, false, true),
+				new Waypoint(0.5, 0.86146, false, true)
 		};
 	}
 
@@ -302,7 +302,7 @@ public class MultiPlayerGame extends Game {
 		graphics.setViewport(X_OFFSET, Y_OFFSET, window.width() - (2 * X_OFFSET),
 				window.height() - (2 * Y_OFFSET));
 
-		graphics.setColour(Color.orange);
+		graphics.setColour(Color.blue);
 		//draw the power-up points
 		for (Waypoint waypoint : powerUpPoints) {
 			if (!(waypoint instanceof Airport)) {
