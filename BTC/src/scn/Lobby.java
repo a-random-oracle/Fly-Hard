@@ -90,10 +90,12 @@ public class Lobby extends Scene {
 		ButtonText.Action createGame = new ButtonText.Action() {
 			@Override
 			public void action() {
-				setWaitingForOpponent(true);
-				System.out.println("HERE-CREATE");
-				NetworkManager.postMessage("SET_NAME:" + nameEntryBox.getText()
-						+ ";SET_HOST");
+				String response = NetworkManager.postMessage(
+						"SET_NAME:" + nameEntryBox.getText() + ";SET_HOST");
+				
+				if (response != null && response.contains("HOST_SET")) {
+					setWaitingForOpponent(true);
+				}
 			}
 		};
 
@@ -141,7 +143,6 @@ public class Lobby extends Scene {
 				if (waitingInstructions.contains("START_GAME")) {
 					InstructionHandler.handleInstruction(waitingInstructions);
 					setWaitingForOpponent(false);
-					System.out.println("HERE-UPDATE");
 				}
 			}
 
@@ -382,8 +383,7 @@ public class Lobby extends Scene {
 	@Override
 	public void close() {
 		setWaitingForOpponent(false);
-		System.out.println("HERE-CLOSE");
-		Main.getNetworkManager().sendMessage("CLEAR_HOST");
+		NetworkManager.sendMessage("CLEAR_HOST");
 	}
 
 	@Override

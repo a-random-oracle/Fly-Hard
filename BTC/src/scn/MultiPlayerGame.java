@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 import org.newdawn.slick.Color;
 
-import btc.Main;
 import net.NetworkManager;
 import lib.ButtonText;
 import lib.jog.graphics;
@@ -200,7 +199,7 @@ public class MultiPlayerGame extends Game {
 		}
 
 		// Get data from the server
-		Object data = Main.getNetworkManager().receiveData();
+		Object data = NetworkManager.receiveData();
 
 		if (data != null) {
 			if (data instanceof Player) {
@@ -232,7 +231,7 @@ public class MultiPlayerGame extends Game {
 		}
 
 		// Send current player's data to the server
-		Main.getNetworkManager().sendData(System.currentTimeMillis(), player);
+		NetworkManager.sendData(System.currentTimeMillis(), player);
 
 		super.update(timeDifference);
 
@@ -328,8 +327,7 @@ public class MultiPlayerGame extends Game {
 				opposingPlayer.getAircraft().add(player.getSelectedAircraft());
 				player.getAircraft().remove(player.getSelectedAircraft());
 
-				Main.getNetworkManager().sendData(-1,
-						new Player[] {player, opposingPlayer});
+				NetworkManager.sendData(-1, new Player[] {player, opposingPlayer});
 
 				deselectAircraft(player);
 			}

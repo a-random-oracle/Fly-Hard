@@ -47,9 +47,6 @@ public class Main implements input.EventHandler {
 	/** The default size of the gap between the window edge and the top edge of the screen */
 	public final static int HEIGHT_GAP = 50;
 	
-	/** The network manager responsible for managing network requests */
-	private static NetworkManager networkManager;
-	
 	/** The scale the game has been resized to in the horizontal plane */
 	private static double xScale = 1;
 	
@@ -89,8 +86,8 @@ public class Main implements input.EventHandler {
 		// Set up the random instance
 		random = new Random();
 		
-		// Instantiate the network manager
-		networkManager = new NetworkManager(true);
+		// Set up the network manager
+		NetworkManager.initialise();
 		
 		// Get screen dimensions
 		Rectangle windowBounds = GraphicsEnvironment
@@ -189,7 +186,7 @@ public class Main implements input.EventHandler {
 	 */
 	public static void quit() {
 		currentScene.close();
-		networkManager.close();
+		NetworkManager.close();
 		window.dispose();
 		audio.dispose();
 		System.exit(0);
@@ -242,10 +239,6 @@ public class Main implements input.EventHandler {
 	
 	public static Random getRandom() {
 		return random;
-	}
-	
-	public static NetworkManager getNetworkManager() {
-		return networkManager;
 	}
 	
 	public static void setRandomSeed(int seed) {
