@@ -13,28 +13,30 @@ import lib.jog.window;
 import lib.jog.audio.Music;
 import lib.jog.audio.Sound;
 import lib.jog.graphics.Image;
-
 import cls.Aircraft;
 import cls.Airport;
+import cls.FlightStrip;
 import cls.OrdersBox;
 import cls.Player;
 import cls.Player.TurningState;
 import cls.Waypoint;
-
 import btc.Main;
 
 public abstract class Game extends Scene {
-
-	// Due to the way the airspace elements are drawn (graphics.setviewport)
-	// these variables are needed to manually adjust mouse listeners and elements
-	// drawn outside the airspace so that they align with the airspace elements.
-	// These variables can be used to adjust the size of the airspace view.
 	
 	/** The distance between the left edge of the screen and the map area */
 	public final static int X_OFFSET = 196;
 
 	/** The distance between the top edge of the screen and the map area */
 	public final static int Y_OFFSET = 48;
+
+	private final int FLIGHTSTRIP_X = 16;
+
+	private final int FLIGHTSTRIP_Y = window.height()/3;
+	
+	private final int FLIGHTSTRIP_W = 120;
+	
+	private final int FLIGHTSTRIP_H = 60;
 	
 	/** The image to use for aircraft */
 	public static Image aircraftImage;
@@ -50,6 +52,9 @@ public abstract class Game extends Scene {
 
 	// PLEASE DO NOT REMOVE - this is very useful for debugging
 	public static OrdersBox out;
+
+	// Testing FlightStrip output
+	private FlightStrip flightStrip;
 
 	/** Difficulty settings: easy, medium and hard */
 	public enum DifficultySetting {EASY, MEDIUM, HARD}
@@ -163,6 +168,10 @@ public abstract class Game extends Scene {
 			// Start the music
 			//music.play(); TODO <- add this back in for release
 		}
+
+	if (!Main.testing) {
+		flightStrip = new FlightStrip(FLIGHTSTRIP_X, FLIGHTSTRIP_Y, FLIGHTSTRIP_W, FLIGHTSTRIP_H);
+	}
 
 		// Reset game attributes
 		timeElapsed = 0;
@@ -331,6 +340,9 @@ public abstract class Game extends Scene {
 		// area
 		graphics.setViewport();
 		drawAdditional(getAllAircraft().size());
+
+		// Temp flightstrip draw call.
+		flightStrip.draw();
 
 		// Draw debug box
 		// PLEASE DO NOT REMOVE - this is very useful for debugging
@@ -538,6 +550,7 @@ public abstract class Game extends Scene {
 				Aircraft clickedAircraft = findClickedAircraft(x, y, player);
 				deselectAircraft(player);
 				player.setSelectedAircraft(clickedAircraft);
+				flightStrip.show(clickedAircraft);
 			} else if (waypointInFlightplanClicked(x, y,
 					player.getSelectedAircraft(), player)
 					&& !player.getSelectedAircraft().isManuallyControlled()) {
@@ -557,6 +570,7 @@ public abstract class Game extends Scene {
 						player.setSelectedWaypoint(null);
 					}
 				}
+
 			}
 
 			for (Airport airport : player.getAirports()) {

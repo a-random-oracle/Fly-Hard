@@ -51,11 +51,13 @@ public class Aircraft implements Serializable {
 	/** How much the plane can turn per second - in radians */
 	private double turnSpeed;
 
-	/** The unique name of the aircraft. Format is 'Flight' followed by a random
-	 * number between 100 and 900. */
+	/** The unique name of the aircraft. Format is the flight's airline followed
+	 * by a random number between 100 and 900. */
 	private String flightName;
 
-	private String airline;
+    /** The airline an aircraft is a 'member' of. Purely aesthetic used for the
+     * flight strip output. */
+    private String airline;
 
 	/** The aircraft's current position */
 	private Vector position;
@@ -110,28 +112,17 @@ public class Aircraft implements Serializable {
 
 	/**
 	 * Constructor for an aircraft.
-	 * @param name
-	 * 			the name of the flight
-	 * @param nameOrigin
-	 * 			the name of the location from which the plane hails
-	 * @param nameDestination
-	 * 			the name of the location to which the plane is going
-	 * @param originPoint
-	 * 			the point to initialise the plane
-	 * @param destinationPoint
-	 *  		the end point of the plane's route
-	 * @param image
-	 * 			the image to represent the plane
-	 * @param speed
-	 * 			the speed the plane will travel at
-	 * @param sceneWaypoints
-	 * 			the waypoints on the map
-	 * @param difficulty
-	 * 			the difficulty the game is set to
-	 * @param originAirport
-	 * 			the airport this flight originated at
-	 * @param destinationAirport
-	 * 			the airport this flight is heading towards at
+	 * @param name - the name of the flight
+	 * @param nameOrigin - the name of the location from which the plane hails
+	 * @param nameDestination - the name of the location to which the plane is going
+	 * @param originPoint - the point to initialise the plane
+	 * @param destinationPoint - the end point of the plane's route
+	 * @param image - the image to represent the plane
+	 * @param speed - the speed the plane will travel at
+	 * @param sceneWaypoints - the waypoints on the map
+	 * @param difficulty - the difficulty the game is set to
+	 * @param originAirport - the airport this flight originated at
+	 * @param destinationAirport - the airport this flight is heading towards at
 	 */
 	public Aircraft(String name, String carrier, String nameDestination, String nameOrigin,
 			Waypoint destinationPoint, Waypoint originPoint,
@@ -140,7 +131,7 @@ public class Aircraft implements Serializable {
 			Airport destinationAirport) {
 
 		this.flightName = name;
-    this.airline = carrier;
+		this.airline = carrier;
 		this.flightPlan = new FlightPlan(sceneWaypoints, nameOrigin,
 				nameDestination, originPoint, destinationPoint, originAirport,
 				destinationAirport);
@@ -182,14 +173,12 @@ public class Aircraft implements Serializable {
 			turnSpeed = Math.PI / 4;
 			verticalVelocity = 500;
 			break;
-
 		case MEDIUM:
 			minimumSeparation = 96;
 			velocity = velocity.scaleBy(2);
 			turnSpeed = Math.PI / 3;
 			verticalVelocity = 300;
 			break;
-
 		case HARD:
 			minimumSeparation = 128;
 			velocity = velocity.scaleBy(3);
@@ -198,7 +187,6 @@ public class Aircraft implements Serializable {
 			turnSpeed = Math.PI / 2;
 			verticalVelocity = 200;
 			break;
-
 		default:
 			Exception e = new Exception("Invalid Difficulty: " + difficulty
 					+ ".");
@@ -209,12 +197,10 @@ public class Aircraft implements Serializable {
 	/**
 	 * Updates the plane's position and bearing, the stage of its route, and
 	 * whether it has finished its flight.
-	 * @param timeDifference
-	 * 			the time since the last update
+	 * @param timeDifference - the time since the last update
 	 */
 	public void update(double timeDifference) {
-		if (hasFinished)
-			return;
+		if (hasFinished) return;
 
 		// Update altitude
 		if (isLanding) {
@@ -271,7 +257,7 @@ public class Aircraft implements Serializable {
 
 	/**
 	 * Calculates the angle from the plane's position, to its current target.
-	 * @return the angle in radians to the plane's current target.
+	 * @return the angle in radians to the plane's current target
 	 */
 	private double angleToTarget() {
 		if (isManuallyControlled) {
@@ -315,7 +301,7 @@ public class Aircraft implements Serializable {
 	/**
 	 * Checks whether the aircraft of a player is outside its own airspace.
 	 * @return <code>true</code> if the player's aircraft goes into
-	 * the other player's airspace
+	 * 			the other player's airspace
 	 */
 	public boolean isOutOfPlayersAirspace() {
 		double x = position.getX() + Game.X_OFFSET;
@@ -337,8 +323,7 @@ public class Aircraft implements Serializable {
 
 	/**
 	 * Checks if the aircraft is at (or near to) a specified point.
-	 * @param point
-	 * 			the point to check
+	 * @param point - the point to check
 	 * @return <code>true</code> if the aircraft is at the specified point
 	 */
 	public boolean isAt(Vector point) {
@@ -350,10 +335,8 @@ public class Aircraft implements Serializable {
 	/**
 	 * Edits the plane's path by changing the waypoint it will go to at a
 	 * certain stage in its route.
-	 * @param routeStage
-	 *            the stage at which the new waypoint will replace the old
-	 * @param newWaypoint
-	 *            the new waypoint to travel to
+	 * @param routeStage - the stage at which the new waypoint will replace the old
+	 * @param newWaypoint - the new waypoint to travel to
 	 */
 	public void alterPath(int routeStage, Waypoint newWaypoint) {
 		if ((!newWaypoint.isEntryOrExit()) && (routeStage > -1)) {
@@ -371,10 +354,8 @@ public class Aircraft implements Serializable {
 
 	/**
 	 * Checks whether the mouse cursor is over this aircraft.
-	 * @param mx
-	 * 			the x coordinate of the mouse cursor
-	 * @param my
-	 * 			the y coordinate of the mouse cursor
+	 * @param mx - the x coordinate of the mouse cursor
+	 * @param my - the y coordinate of the mouse cursor
 	 * @return <code>true</code>, if the mouse is close enough to this aircraft;
 	 * 			<code>false</code> otherwise
 	 */
@@ -411,8 +392,7 @@ public class Aircraft implements Serializable {
 
 	/**
 	 * Causes the aircraft to turn left.
-	 * @param timeDifference
-	 * 			the time since the last update
+	 * @param timeDifference - the time since the last update
 	 */
 	public void turnLeft(double timeDifference) {
 		turnBy(timeDifference * -turnSpeed);
@@ -421,8 +401,7 @@ public class Aircraft implements Serializable {
 
 	/**
 	 * Causes the aircraft to turn right.
-	 * @param timeDifference
-	 * 			the time since the last update
+	 * @param timeDifference - the time since the last update
 	 */
 	public void turnRight(double timeDifference) {
 		turnBy(timeDifference * turnSpeed);
@@ -434,8 +413,7 @@ public class Aircraft implements Serializable {
 	 * <p>
 	 * Positive angles turn the plane clockwise.
 	 * </p>
-	 * @param angle
-	 *            the angle by which to turn
+	 * @param angle - the angle by which to turn
 	 */
 	private void turnBy(double angle) {
 		double cosA = Math.cos(angle);
@@ -449,8 +427,7 @@ public class Aircraft implements Serializable {
 
 	/**
 	 * Causes the aircraft to turn towards its target.
-	 * @param timeDifference
-	 * 			the time since the last update
+	 * @param timeDifference - the time since the last update
 	 */
 	private void turnTowardsTarget(double timeDifference) {
 		// Get difference in angle
@@ -482,10 +459,8 @@ public class Aircraft implements Serializable {
 
 	/**
 	 * Draws the plane and any warning circles if necessary.
-	 * @param colour
-	 * 			the colour to draw the aircraft
-	 * @param highlightedAltitude
-	 * 			the altitude to highlight aircraft at
+	 * @param colour - the colour to draw the aircraft
+	 * @param highlightedAltitude - the altitude to highlight aircraft at
 	 */
 	public void draw(Integer[] colour, int highlightedAltitude) {
 		draw(colour, highlightedAltitude, null);
@@ -680,13 +655,9 @@ public class Aircraft implements Serializable {
 
 	/**
 	 * Visually represents the waypoint being moved.
-	 * @param modified
-	 *            the index of the waypoint being modified
-	 * @param mouseX
-
-	 *            the current x position of the mouse
-	 * @param mouseY
-	 *            the current y position of the mouse
+	 * @param modified - the index of the waypoint being modified
+	 * @param mouseX - the current x position of the mouse
+	 * @param mouseY - the current y position of the mouse
 	 */
 	public void drawModifiedPath(int modified, double mouseX, double mouseY) {
 		graphics.setColour(0, 128, 128, 128);
@@ -722,10 +693,8 @@ public class Aircraft implements Serializable {
 	/**
 	 * Updates the number of planes that are violating the separation rule. Also
 	 * checks for crashes.
-	 * @param timeDifference
-	 *            the time elapsed since the last frame.
-	 * @param aircraftList
-	 *            all aircraft in the airspace
+	 * @param timeDifference - the time elapsed since the last frame.
+	 * @param aircraftList - all aircraft in the airspace
 	 * @return index of plane breaching separation distance with this plane, or
 	 *         -1 if no planes are in violation.
 	 */
@@ -757,10 +726,8 @@ public class Aircraft implements Serializable {
 
 	/**
 	 * Checks whether an aircraft is within a certain distance from this one.
-	 * @param aircraft
-	 *            the aircraft to check.
-	 * @param distance
-	 *            the distance within which to care about.
+	 * @param aircraft - the aircraft to check.
+	 * @param distance - the distance within which to care about.
 	 * @return true, if the aircraft is within the distance. False, otherwise.
 	 */
 	private boolean isWithin(Aircraft aircraft, int distance) {
@@ -861,8 +828,7 @@ public class Aircraft implements Serializable {
 
 	/**
 	 * Checks if an aircraft is close to an its parameter (entry point).
-	 * @param position
-	 *            the position of the waypoint to test
+	 * @param position - the position of the waypoint to test
 	 * @return <code>true</code> if it is close
 	 */
 	public boolean isCloseToEntry(Vector position) {
@@ -879,6 +845,10 @@ public class Aircraft implements Serializable {
 		return position;
 	}
 
+    public int getAltitude() {
+        return (int)(position.getZ());
+    }
+
 	/**
 	 * Gets the aircraft's name.
 	 * @return the aircraft's name
@@ -886,6 +856,14 @@ public class Aircraft implements Serializable {
 	public String getName() {
 		return flightName;
 	}
+
+    /**
+     * Gets the aircraft's carrier/airline.
+     * @return the aircraft's carrier/airline.
+     */
+    public String getAirline() {
+        return airline;
+    }
 
 	/**
 	 * Gets whether or not the aircraft has completed its route.
@@ -943,8 +921,7 @@ public class Aircraft implements Serializable {
 	 * NOTE: the aircraft will only follow this heading if it is under manual
 	 * control.
 	 * </p>
-	 * @param newHeading
-	 *            the new bearing to follow
+	 * @param newHeading - the new bearing to follow
 	 */
 	public void setBearing(double newHeading) {
 		this.manualBearingTarget = newHeading;
@@ -952,8 +929,7 @@ public class Aircraft implements Serializable {
 
 	/**
 	 * Sets the aircraft's altitude.
-	 * @param height
-	 *            the altitude to move the aircraft to
+	 * @param height - the altitude to move the aircraft to
 	 */
 	private void setAltitude(int height) {
 		this.velocity.setZ(height);
@@ -961,9 +937,8 @@ public class Aircraft implements Serializable {
 
 	/**
 	 * Sets the aircraft's altitude state to climbing, falling or level.
-	 * @param state
-	 *            the new altitude state: 0 = level, 1 = climbing and
-	 *            -1 = falling
+	 * @param state - the new altitude state: 0 = level, 1 = climbing and
+	 *            		-1 = falling
 	 */
 	public void setAltitudeState(int state) {
 		this.altitudeState = state;
@@ -987,8 +962,7 @@ public class Aircraft implements Serializable {
 	 * <p>
 	 * Only the flight name is checked.
 	 * </p>
-	 * @param obj
-	 * 			the object to compare with
+	 * @param obj - the object to compare with
 	 * @return <code>true</code> if and only if obj is equivalent
 	 */
 	@Override
@@ -1021,7 +995,7 @@ public class Aircraft implements Serializable {
 		score = newScore;
 	}
 	
-	public void decrementScoreSmall(){
+	public void decrementScoreSmall() {
 		if(this.score > 0){
 			this.score = this.score - 1;
 		}
