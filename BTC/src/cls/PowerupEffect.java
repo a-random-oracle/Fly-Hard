@@ -34,10 +34,10 @@ public class PowerupEffect {
 			//handleFog();
 			break;
 		case SLOW_DOWN:
-			//handleSlowDown();
+			handleSlowDown(aircraft);
 			break;
 		case SPEED_UP:
-			//handleSpeedUp();
+			handleSpeedUp(aircraft);
 			break;
 		case TRANSFER:
 			handleTransfer(aircraft);
@@ -77,7 +77,8 @@ public class PowerupEffect {
 			Game.getInstance().deselectAircraft(((MultiPlayerGame) Game.getInstance()).getPlayer());
 		}
 	}
-
+	
+	//Subject to change on which player it affects/percentages
 	/** Speeds up other players planes, 2x speed */
 	public static void handleSpeedUp(Aircraft aircraft){
 		for (Aircraft a : ((MultiPlayerGame) Game.getInstance()).getOpposingPlayer().getAircraft()){
@@ -89,8 +90,20 @@ public class PowerupEffect {
 			});
 
 		}
+	}
+	
+	//Subject to change on which player it affects/percentages
+	/** Slows down other players planes, 0.5x speed */
+	public static void handleSlowDown(Aircraft aircraft){
+		for (Aircraft a : ((MultiPlayerGame) Game.getInstance()).getOpposingPlayer().getAircraft()){
+			a.getVelocity().scaleBy(0.5);
 
+			NetworkManager.sendData(-1, new Player[] {
+					((MultiPlayerGame) Game.getInstance()).getPlayer(),
+					((MultiPlayerGame) Game.getInstance()).getOpposingPlayer()
+			});
 
+		}
 	}
 
 }
