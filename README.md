@@ -1,22 +1,40 @@
-Mission Control - Server Branch
-===============================
+Mission Control - __Stripping__
+========
 
 ## Notices
-* People will need to get themselves set up with Openshift accounts if they want access to the server ([Openshift Sign Up](https://www.openshift.com/app/account/new)). Once you have an account, text/message me and I'll add you to the list of collaborators on the server.
 
-## To Do
-| Item | Remarks | Affects | Due |
-|:-----|:--------|:--------|----:|
-| Get startup times synchronised ✔ | Currently when one player starts multiplayer before the other, they will just enter the game early. It would be better to have them wait until all players are ready (and then start all players at once). | Server | __Complete__ |
-| Get game exits synchronised ✔ | The game should stop for both players when either one exits early. | Server and clients | __Complete__ |
-| Get different screen sizes working ✔  | At present, waypoints etc. appear in a subsection of the screen when viewed from a larger monitor. | Clients | __Complete__ |
-| Add a game lobby ✔  | It would be nice if players could select which opponent they wish to play. | Server and clients | __Complete__ |
+* `Aircraft.java` now has an extra attribute, `carrier`.
+ * This will now alter the `flightNumber` and instantiation in `Game.java`.
+* Due to the fact I hadn't pulled in 10 days, the `iOS7` branch was making me cry, so I gave up and started afresh.
+* I will be changing `aircraft.java` in order to better accomodate a flightstrip system.
+* Things will get funky.
 
-### Individual Tasks, Roles, Responsibilities, and other information of note.
+## mwuk's To Do
 
-All links given below are with respect to the [__server branch__](https://github.com/mwuk/Fly-Hard/tree/server)
 
-| Member | Tasks | File/Source |
-|:-------|:------|:------------|
-| [Richard A](http://github.com/a-random-oracle) | The server. Some client-side networking. | [`srv.*`](http://tomcat-teamgoa.rhcloud.com) (sever-side) and [`net.*`](https://github.com/mwuk/Fly-Hard/tree/server/BTC/src/net) (client-side). Also some [`Lobby.java`](https://github.com/mwuk/Fly-Hard/tree/server/BTC/src/scn/Lobby.java) stuff. |
-| [Richard K](http://github.com/RMCKirby) | The Lobby | [`Lobby.java`](https://github.com/mwuk/Fly-Hard/tree/server/BTC/src/scn/Lobby.java) |
+| Item | Remarks | ETA |
+|:-----|:--------|----:|
+| Flightstrips | [Saab](http://www.saabgroup.com/Global/Documents%20and%20Images/Civil%20Security/Air%20Transportation%20and%20Airport%20Security/e-Strip/E-Strip-WEB.pdf). | Summer/1 |
+| Make the game look less terrible | Less green. | _Eventually_ |
+| Merge `stripping` into `master` | I dread this. | _Even more eventually_ |
+
+
+## Notes
+
+* Features/elements may come and go in this branch.
+ * Have a nose, but please don't touch (too much/without asking)
+ * Feel free to correct/ridicule my decisions (but try to warn me before any attempts to merge, I'll warn you all however).
+ * __Don't panic!__
+
+
+## Scratchpad
+
+* I'm going to try different themes/styles.
+ * In particular, I'm curious to try multiple colours per player (although on a theme per player to avoid confusion.)
+* Flightstrips are first priority.
+* I'll update what's being remoulded when I arrive at it (or am closer to it).
+
+
+## Archive
+
+_Nothing to see here…_
