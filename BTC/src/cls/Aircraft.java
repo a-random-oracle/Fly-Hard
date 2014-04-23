@@ -329,7 +329,7 @@ public class Aircraft implements Serializable {
 	public boolean isAt(Vector point) {
 		double dy = point.getY() - position.getY();
 		double dx = point.getX() - position.getX();
-		return (dy * dy) + (dx * dx) < (6 * 6);
+		return (dy * dy) + (dx * dx) < (10 * 10);
 	}
 
 	/**
@@ -471,12 +471,9 @@ public class Aircraft implements Serializable {
 	 * <p>
 	 * Also allows an offset to be applied.
 	 * </p>
-	 * @param colour
-	 * 			the colour to draw the aircraft
-	 * @param highlightedAltitude
-	 * 			the altitude to highlight aircraft at
-	 * @param offset
-	 * 			a manual offset to apply
+	 * @param colour - the colour to draw the aircraft
+	 * @param highlightedAltitude - the altitude to highlight aircraft at
+	 * @param offset - a manual offset to apply
 	 */
 	public void draw(Integer[] colour, int highlightedAltitude, Vector offset) {
 		double alpha;
