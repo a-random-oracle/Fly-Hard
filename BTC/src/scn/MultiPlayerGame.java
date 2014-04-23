@@ -432,19 +432,28 @@ public class MultiPlayerGame extends Game {
 	 * </p>
 	 * */
 	private void checkPowerups() {
-		// Loop through each aircraft
-		for (Aircraft aircraft : player.getAircraft()) {
-			// Loop through each middle waypoint
-			for (Waypoint waypoint : powerupPoints) {
+		// Loop through each middle waypoint
+		for (Waypoint waypoint : powerupPoints) {
+			for (Aircraft aircraft : player.getAircraft()) {
 				// If the aircraft is at the waypoint, and if that waypoint has
 				// a powerup
 				if (aircraft.isAt(waypoint.getLocation())
 						&& waypoint.getPowerup() != null) {
-					
 					// Add the waypoint to the appropriate player
 					waypoint.getPowerup().addToPlayer();
-					
+
 					// And remove the powerup from the waypoint
+					waypoint.setPowerup(null);
+				}
+			}
+
+			// Loop through each opposing aircraft
+			for (Aircraft aircraft : opposingPlayer.getAircraft()) {
+				// If the aircraft is at the waypoint, and if that waypoint has
+				// a powerup
+				if (aircraft.isAt(waypoint.getLocation())
+						&& waypoint.getPowerup() != null) {
+					// Just remove the powerup from the waypoint
 					waypoint.setPowerup(null);
 				}
 			}

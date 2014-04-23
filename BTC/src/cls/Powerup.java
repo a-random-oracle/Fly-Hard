@@ -18,11 +18,11 @@ public class Powerup implements Serializable {
 	private static final long serialVersionUID = -6039580715789835236L;
 	
 	/** The mapping between powerup effects and they player which they affect */
-	private static final HashMap<PowerupEffect, Integer> PLAYER_AFFECTED_MAP =
+	private static HashMap<PowerupEffect, Integer> PLAYER_AFFECTED_MAP =
 			new HashMap<PowerupEffect, Integer>();
 	
 	/** The mapping between powerup effects and their durations */
-	private static final HashMap<PowerupEffect, Integer> EFFECT_DURATIONS_MAP =
+	private static HashMap<PowerupEffect, Integer> EFFECT_DURATIONS_MAP =
 			new HashMap<PowerupEffect, Integer>();
 	
 	/**
