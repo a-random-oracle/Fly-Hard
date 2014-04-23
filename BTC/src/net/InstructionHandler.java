@@ -1,5 +1,6 @@
 package net;
 
+import net.NetworkManager.State;
 import btc.Main;
 import scn.Game;
 import scn.Game.DifficultySetting;
@@ -81,28 +82,58 @@ public abstract class InstructionHandler {
 			parameters = instruction.substring(instruction.indexOf(DELIM) + 1);
 		}
 		
-		// Otherwise, switch to the appropriate method
-		switch (instr) {
-		case "SET_ID":
-			handleSetID(parameters);
-			break;
-		case "SET_SEED":
-			handleSetSeed(parameters);
-			break;
-		case "START_GAME":
-			handleStartGame(parameters);
-			break;
-		case "END_GAME":
-			handleEndGame();
-			break;
-		case "NULL":
-			break;
-		case "INVALID_REQUEST":
-			handleInvalidRequest();
-			break;
+		// Switch to the appropriate method
+		// If a connection to the server has not yet been established
+		if (NetworkManager.getState() == State.CONNECTING) {
+			switch (instr) {
+			case "SERVER_FULL":
+				handleServerFull();
+				break;
+			case "SET_ID":
+				handleSetID(parameters);
+				break;
+			}
+		}
+		
+		// Switch to the appropriate method
+		// Provided that a connection to the server has been established
+		if (NetworkManager.getState() == State.CONNECTED) {
+			switch (instr) {
+			case "SET_SEED":
+				handleSetSeed(parameters);
+				break;
+			case "START_GAME":
+				handleStartGame(parameters);
+				break;
+			case "END_GAME":
+				handleEndGame();
+				break;
+			case "CLOSED_CONNECTION":
+				handleClosedConnection();
+				break;
+			case "NULL":
+				break;
+			case "INVALID_REQUEST":
+				handleInvalidRequest();
+				break;
+			}
 		}
 	}
 	
+	
+	/**
+	 * Handles a SERVER_FULL instruction.
+	 * <p>
+	 * SERVER_FULL instructions inform the client that they couldn't establish
+	 * a connection to the server.
+	 * </p>
+	 * <p>
+	 * The client will then make another attempt to connect to the server.
+	 * </p>
+	 */
+	private static void handleServerFull() {
+		NetworkManager.sendMessage("START");
+	}
 	
 	/**
 	 * Handles a SET_ID instruction.
@@ -113,18 +144,20 @@ public abstract class InstructionHandler {
 	 * @param parameters - the parameters accompanying the instruction
 	 */
 	private static void handleSetID(String parameters) {
-		// Get the player ID to set from the response
-		int IDToSet = -1;
 		try {
-			IDToSet = Integer.parseInt(parameters);
+			// Get the player ID to set from the response
+			int idToSet = Integer.parseInt(parameters);
+			
+			// Set the current player's server-generated ID
+			NetworkManager.setID(idToSet);
+
+			NetworkManager.print("Player has ID: " + idToSet);
+			
+			// Set the network manager's state to CONNECTED
+			NetworkManager.setState(State.CONNECTED);
 		} catch (Exception e) {
 			NetworkManager.print(e);
 		}
-
-		// Set the current player's server-generated ID
-		NetworkManager.setID(IDToSet);
-
-		NetworkManager.print("Player has ID: " + NetworkManager.getID());
 	}
 	
 	/**
@@ -197,6 +230,18 @@ public abstract class InstructionHandler {
 				Game.getInstance().setEnding(true);
 			}
 		}
+	}
+	
+	/**
+	 * Handles a CLOSED_CONNECTION instruction.
+	 * <p>
+	 * CLOSED_CONNECTION instructions cause the network manager's state
+	 * to become CLOSED.
+	 * </p>
+	 */
+	private static void handleClosedConnection() {
+		NetworkManager.setState(State.CLOSED);
+		Main.setExiting();
 	}
 
 	/**

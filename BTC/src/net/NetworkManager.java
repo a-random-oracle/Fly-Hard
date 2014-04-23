@@ -7,14 +7,16 @@ import java.io.ByteArrayInputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
+
 import java.util.Map.Entry;
 import java.util.TreeMap;
 
-public class NetworkManager {
+public abstract class NetworkManager {
 
 	/** The server's URL */
 	public static final String SERVER_URL =
@@ -26,38 +28,42 @@ public class NetworkManager {
 	/** The data transfer extension */
 	public static final String DATA_EXT = "/data";
 	
+	public enum State {CONNECTING, CONNECTED, CLOSED}
+	
+	/** The state the network manager isin */
+	private static State state;
+	
 	/** The connection ID to the server */
-	private static int id;
+	private static int id = -1;
 
 	/** The thread to send data on */
-	private static NetworkThread networkThread;
+	private static NetworkThread networkThread = new NetworkThread();
 	
 	/** A map for temporarily storing data in order to make use of entries */
-	private static TreeMap<Long, byte[]> transientDataBuffer;
+	private static TreeMap<Long, byte[]> transientDataBuffer =
+			new TreeMap<Long, byte[]>();
 	
 	/** Whether to output data to the standard output */
-	private static boolean verbose;
+	private static boolean verbose = true;
 
 	
 	/**
-	 * Constructs a new network manager.
-	 * @param verbose - <code>true</code> indicates that the network manager
-	 * 					should output status and connection information to
-	 * 					the standard output
+	 * Initialises the new network manager.
+	 * <p>
+	 * This starts the network thread, and sends an initial "START" instruction.
+	 * </p>
 	 */
-	public NetworkManager(boolean verbose) {
-		NetworkManager.id = -1;
-		NetworkManager.verbose = verbose;
-		NetworkManager.transientDataBuffer = new TreeMap<Long, byte[]>();
+	public static void initialise() {
+		// Set the network manager's state to CONNECTING
+		state = State.CONNECTING;
 		
-		// Create a network thread for handling asynchronous data passing
-		networkThread = new NetworkThread();
+		// Start the network thread
 		networkThread.start();
 		
-		// Start by sending an initial request
+		// Send an initial START instruction
 		sendMessage("START");
 	}
-
+	
 	
 	/**
 	 * Adds data to the network thread.
@@ -68,17 +74,23 @@ public class NetworkManager {
 	 * @param timeValid - the time at which the data was valid
 	 * @param data - the data to send
 	 */
-	public void sendData(long timeValid, Serializable data) {
-		networkThread.writeData(timeValid, data);
+	public static void sendData(long timeValid, Serializable data) {
+		// Obtain a lock on the network thread
+		synchronized (networkThread) {
+			networkThread.writeData(timeValid, data);
+		}
 	}
 	
 	/**
 	 * Retrieve the next response from the network thread.
 	 */
-	public Serializable receiveData() {
-		return networkThread.readResponse();
+	public static Serializable receiveData() {
+		// Obtain a lock on the network thread
+		synchronized (networkThread) {
+			return networkThread.readResponse();
+		}
 	}
-	
+
 	/**
 	 * Adds a message to the network thread.
 	 * <p>
@@ -87,8 +99,11 @@ public class NetworkManager {
 	 * </p>
 	 * @param message - the message to send
 	 */
-	public void sendMessage(String message) {
-		networkThread.writeMessage(message);
+	public static void sendMessage(String message) {
+		// Obtain a lock on the network thread
+		synchronized (networkThread) {
+			networkThread.writeMessage(message);
+		}
 	}
 	
 	
@@ -134,50 +149,54 @@ public class NetworkManager {
 	 * @return the data the server responded with
 	 */
 	public static String postMessage(String message) {
-		ObjectOutputStream outputStream = null;
-		ObjectInputStream inputStream = null;
 		String receivedMessages = null;
 		
-		if (message != null && !message.equals("")) {
-			print("Sending message: " + message);
-		}
-		
-		// Open the connection
-		HttpURLConnection connection = openPostConnection(SERVER_URL + MSG_EXT);
-		
-		try {
-			// Set up the output stream
-			outputStream = new ObjectOutputStream(connection.getOutputStream());
-			
-			// Write the data
-			outputStream.writeObject(message);
-			
-			// Connect to the server
-			connection.connect();
+		if (state == State.CONNECTED
+				|| ("START".equals(message) && state == State.CONNECTING)) {
+			ObjectOutputStream outputStream = null;
+			ObjectInputStream inputStream = null;
 
-			// Set up the input stream
-			inputStream = new ObjectInputStream(connection.getInputStream());
-
-			// Get the received data
-			receivedMessages = (String) inputStream.readObject();
-			
 			if (message != null && !message.equals("")) {
-				print("Received response: " + receivedMessages);
+				print("Sending message: " + message);
 			}
 
-			// Flush the output stream
-			outputStream.flush();
-			
-			// Close the connection
-			connection.disconnect();
-		} catch (EOFException e) {
-			// Do not print the error message
-		} catch (Exception e) {
-			print(e);
+			// Open the connection
+			HttpURLConnection connection = openPostConnection(SERVER_URL + MSG_EXT);
+
+			try {
+				// Set up the output stream
+				outputStream = new ObjectOutputStream(connection.getOutputStream());
+
+				// Write the data
+				outputStream.writeObject(message);
+
+				// Connect to the server
+				connection.connect();
+
+				// Set up the input stream
+				inputStream = new ObjectInputStream(connection.getInputStream());
+
+				// Get the received data
+				receivedMessages = (String) inputStream.readObject();
+
+				if (message != null && !message.equals("")) {
+					print("Received response: " + receivedMessages);
+				}
+
+				// Flush the output stream
+				outputStream.flush();
+
+				// Close the connection
+				connection.disconnect();
+			} catch (EOFException e) {
+				// Do not print the error message
+			} catch (Exception e) {
+				print(e);
+			}
+
+			// Handle the received message(s)
+			InstructionHandler.handleInstruction(receivedMessages);
 		}
-		
-		// Handle the received message(s)
-		InstructionHandler.handleInstruction(receivedMessages);
 		
 		return receivedMessages;
 	}
@@ -320,31 +339,46 @@ public class NetworkManager {
 	}
 	
 	
-	public static long getNetworkThreadID() {
-		return networkThread.getId();
+	/**
+	 * Gets the state that the network manager is in.
+	 * @return the network manager's state
+	 */
+	public static State getState() {
+		return state;
 	}
 	
 	/**
-	 * Gets the ID for the current connection to the server.
-	 * @return the current sever ID
+	 * Sets the state that the network manager is in.
+	 * @param state - the state to set
 	 */
-	public static int getID() {
-		return id;
+	public static void setState(State state) {
+		NetworkManager.state = state;
 	}
 	
 	/**
 	 * Sets the ID for the current connection to the server.
-	 * @param id - the server ID to set
+	 * @param id - the ID to set
 	 */
 	public static void setID(int id) {
 		NetworkManager.id = id;
+	}
+	
+	/**
+	 * Gets the network thread's ID.
+	 * @return the network thread's ID
+	 */
+	public static long getNetworkThreadID() {
+		// Obtain a lock on the network thread
+		synchronized (networkThread) {
+			return networkThread.getId();
+		}
 	}
 	
 
 	/**
 	 * Closes any open connections.
 	 */
-	public void close() {
+	public static void close() {
 		// Send a message to the opponent to let
 		// them know we're closing
 		NetworkManager.postMessage("END");

@@ -64,7 +64,7 @@ public class Lobby extends Scene {
 	/** The array of button which will cause the player to join a multiplayer game */
 	private LinkedList<ButtonText> joinButtons = new LinkedList<ButtonText>();
 
-	/** has the player created a game? If so, they are waiting for an opponent*/
+	/** Whether the player has created a game */
 	private boolean waitingForOpponent = false;
 
 	/** The dynamic string of dots to display after text */
@@ -90,9 +90,12 @@ public class Lobby extends Scene {
 		ButtonText.Action createGame = new ButtonText.Action() {
 			@Override
 			public void action() {
-				setWaitingForOpponent(true);
-				NetworkManager.postMessage("SET_NAME:" + nameEntryBox.getText()
-						+ ";SET_HOST");
+				String response = NetworkManager.postMessage(
+						"SET_NAME:" + nameEntryBox.getText() + ";SET_HOST");
+				
+				if (response != null && response.contains("HOST_SET")) {
+					setWaitingForOpponent(true);
+				}
 			}
 		};
 
@@ -207,15 +210,24 @@ public class Lobby extends Scene {
 			for (int i = 0; i < availablePlayers.size(); i++) {
 				ButtonText.Action currentAction =
 						createPlayerButtonAction(clientIDs[i]);
-
-				joinButtons.add(new ButtonText("Join Game",
+				
+				// Create a new join button for the available connection
+				ButtonText joinButton = new ButtonText("Join Game",
 						currentAction,
 						(int) (tableTopRight.getX() - 5 + Game.X_OFFSET),
 						(int) (tableTopLeft.getY()
 								+ Game.Y_OFFSET + ((i + 0.33) * rowHeight)),
 						(int) ((tableTopRight.getX() - tableTopLeft.getX())
 								* (1d/8d)),
-						(int) (rowHeight * (3d/4d)), 0, 0));
+						(int) (rowHeight * (3d/4d)), 0, 0);
+				
+				// Set the join button's availability
+				// The buttons should be disabled if the player is waiting
+				// for an opponent
+				joinButton.setAvailability(!waitingForOpponent);
+				
+				// Add the join button to the list of join buttons
+				joinButtons.add(joinButton);
 			}
 		}
 	}
@@ -371,7 +383,7 @@ public class Lobby extends Scene {
 	@Override
 	public void close() {
 		setWaitingForOpponent(false);
-		Main.getNetworkManager().sendMessage("CLEAR_HOST");
+		NetworkManager.sendMessage("CLEAR_HOST");
 	}
 
 	@Override

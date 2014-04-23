@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 import org.newdawn.slick.Color;
 
-import btc.Main;
 import net.NetworkManager;
 import lib.ButtonText;
 import lib.jog.graphics;
@@ -127,6 +126,9 @@ public class MultiPlayerGame extends Game {
 		powerUpGenerationTimeElapsed = 0;
 		powerUpInterval = 5;
 		allPowerups = new ArrayList<Powerup>();
+		
+		Powerup speedPlanes = new Powerup("SPEED_UP", 10);
+		allPowerups.add(speedPlanes);
 	}
 
 	/**
@@ -196,12 +198,12 @@ public class MultiPlayerGame extends Game {
 		if(this.powerUpGenerationTimeElapsed > this.powerUpInterval){
 			powerUpGenerationTimeElapsed = 0;
 			powerUpInterval = 30;
-			//addPowerup(allPowerups, middleWaypoints); TODO
+			addPowerup(allPowerups, powerUpPoints); 
 		}
 
 		// Get data from the server
-		Object data = Main.getNetworkManager().receiveData();
-
+		Object data = NetworkManager.receiveData();
+		
 		if (data != null) {
 			if (data instanceof Player) {
 				// Set the opposing player's data
@@ -232,7 +234,7 @@ public class MultiPlayerGame extends Game {
 		}
 
 		// Send current player's data to the server
-		Main.getNetworkManager().sendData(System.currentTimeMillis(), player);
+		NetworkManager.sendData(System.currentTimeMillis(), player);
 
 		super.update(timeDifference);
 
@@ -258,7 +260,7 @@ public class MultiPlayerGame extends Game {
 		super.draw();
 
 		// Draw the power-ups
-		//drawPowerups();
+		drawPowerups(powerUpPoints);
 	}
 
 	@Override
@@ -303,6 +305,7 @@ public class MultiPlayerGame extends Game {
 				window.height() - (2 * Y_OFFSET));
 
 		graphics.setColour(Color.blue);
+		
 		//draw the power-up points
 		for (Waypoint waypoint : powerUpPoints) {
 			if (!(waypoint instanceof Airport)) {
@@ -314,8 +317,22 @@ public class MultiPlayerGame extends Game {
 		graphics.setViewport();
 	}
 
-	protected void drawPowerups() {
-		//Powerup.draw(0, 0, null);
+	protected void drawPowerups(Waypoint[] powerUpPoints) {
+		// Set the viewport - this is the boundary used when drawing objects
+				graphics.setViewport(X_OFFSET, Y_OFFSET, window.width() - (2 * X_OFFSET),
+						window.height() - (2 * Y_OFFSET));
+
+		for(int i = 0;  i < powerUpPoints.length; i++){
+			if(powerUpPoints[i].hasPowerup()) {
+				Powerup powerUp = powerUpPoints[i].getPowerup();
+				
+				graphics.print(powerUp.name,
+						powerUpPoints[i].getLocation().getX() - 20,
+						powerUpPoints[i].getLocation().getY()+ 25);
+			}
+		}
+		// Reset the viewport
+				graphics.setViewport();
 	}
 
 	public void keyReleased(int key) {
@@ -328,8 +345,7 @@ public class MultiPlayerGame extends Game {
 				opposingPlayer.getAircraft().add(player.getSelectedAircraft());
 				player.getAircraft().remove(player.getSelectedAircraft());
 
-				Main.getNetworkManager().sendData(-1,
-						new Player[] {player, opposingPlayer});
+				NetworkManager.sendData(-1, new Player[] {player, opposingPlayer});
 
 				deselectAircraft(player);
 			}
@@ -356,6 +372,27 @@ public class MultiPlayerGame extends Game {
 		}
 
 		return false;
+	}
+	
+	//Powerups stuff
+	
+	public Powerup chooseRandomPowerup(ArrayList<Powerup> powerUps) {
+		int length = powerUps.size();
+		int number = 0 + (int)(Math.random()* (length-1)); 
+		return powerUps.get(number);
+	}
+	
+	public Waypoint chooseRandomWaypoint(Waypoint[] waypoints) {
+		int length = waypoints.length;
+		int number = 0 + (int)(Math.random()* (length));
+		return waypoints[number];
+	}
+	
+	public void addPowerup(ArrayList<Powerup> powerUps, Waypoint[] waypoints){
+		Waypoint waypoint = chooseRandomWaypoint(waypoints);
+		Powerup powerup = chooseRandomPowerup(powerUps);
+		waypoint.setHasPowerup(true);
+		waypoint.setPowerup(powerup);
 	}
 
 	@Override
