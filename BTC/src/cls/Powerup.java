@@ -1,29 +1,15 @@
 package cls;
 
 import java.io.File;
+import java.util.HashMap;
 
 import org.newdawn.slick.Color;
 
 import btc.Main;
-
 import lib.jog.graphics;
 import lib.jog.graphics.Image;
 
 public class Powerup {
-
-	/** The vector position of the powerup */
-	private Vector powerupLocation;
-
-	/** The name of the powerup */
-	public String name;
-
-	/** The duration of the powerup */
-	private int duration;
-
-	/** Image used for powerup */
-	private Image image;
-
-	private Waypoint waypoint;
 	
 	/** <p>The <code>PowerUp</code> enum contains all power-ups featured in the game.
 	 * </p>This enum gives access to a random power-up value; to be used in spawning
@@ -48,41 +34,48 @@ public class Powerup {
 		 }
 	}
 	
+	private static final HashMap<PowerUp, Integer> DURATIONS = new HashMap<PowerUp, Integer>();
+
+	/** The name of the powerup */
+	private String name;
+	
+	/** The powerup's type */
+	private PowerUp type;
+
+	/** Image used for powerup */
+	private Image image;
+	
 	
 	/**
 	 * Constructor for powerup.
-	 * @param x - the x coordinate of the powerup
-	 * @param y - the y coordinate of the powerup
 	 * @param name - the name of the powerup
-	 * @param duration - the length the powerup is active for
 	 */
-	public Powerup(String name, int duration){
+	public Powerup(String name) {
 		this.name = name;
-		this.duration = duration;
+		this.type = PowerUp.randomPowerUp();
 		this.setPowerUpImage();
+		
+		// Set up the durations map
+		DURATIONS.put(PowerUp.FOG,  5000);
+		DURATIONS.put(PowerUp.SLOW_DOWN,  5000);
+		DURATIONS.put(PowerUp.SPEED_UP,  5000);
+		DURATIONS.put(PowerUp.TRANSFER,  5000);
 	}
 
 	
 	/**
-	 * Draws the powerup icon.
+	 * Draws the powerup.
 	 */
-	public void draw() {
+	public void draw(Vector location) {
 		graphics.setColour(Color.white);
-		graphics.draw(this.image, powerupLocation.getX(), powerupLocation.getY());
-	}
-
-	public void chooseRandomWaypoint() {
-
+		graphics.draw(this.image, location.getX(), location.getY());
 	}
 
 	/**
-	 * Initialises the power-up's image to the appropriate image based on the value
-	 * randomly chosen by the {@link Powerup.PowerUp} enum.
+	 * Initialises the power-up's image to the appropriate image.
 	 */
 	private void setPowerUpImage() {
-		PowerUp powerUp = PowerUp.randomPowerUp();
-
-		switch (powerUp) {
+		switch (type) {
 		case FOG: 
 			image = graphics.newImage("gfx/pUp" + File.separator + "fog9a.png");
 			break;
@@ -97,13 +90,17 @@ public class Powerup {
 			break;
 		}
 	}
-
-	/**
-	 * Gives access to the powerup's vector coordinates.
-	 * @return the powerup's location vector
-	 */
-	public void setLocation(Vector location) {
-		this.powerupLocation = location;
+	
+	public String getName() {
+		return name;
+	}
+	
+	public PowerUp getType() {
+		return type;
+	}
+	
+	public int getDuration() {
+		return DURATIONS.get(type);
 	}
 	
 }
