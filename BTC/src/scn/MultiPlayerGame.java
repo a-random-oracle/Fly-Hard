@@ -316,8 +316,20 @@ public class MultiPlayerGame extends Game {
 		graphics.setViewport();
 	}
 
-	protected void drawPowerups() {
-		//Powerup.draw(0, 0, null);
+	protected void drawPowerups(Waypoint[] middleWaypoints) {
+		for(int i = 0;  i < middleWaypoints.length; i++){
+			if(middleWaypoints[i].hasPowerup()) {
+				Powerup powerUp = middleWaypoints[i].getPowerup();
+				
+				
+				
+				
+				graphics.print(powerUp.name,
+						middleWaypoints[i].getLocation().getX() - 20,
+						middleWaypoints[i].getLocation().getY()+ 25);
+				
+			}
+		}
 	}
 
 	public void keyReleased(int key) {
