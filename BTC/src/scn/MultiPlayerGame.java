@@ -4,6 +4,8 @@ import java.util.ArrayList;
 
 import org.newdawn.slick.Color;
 
+import btc.Main;
+
 import net.NetworkManager;
 import lib.ButtonText;
 import lib.jog.graphics;
@@ -378,13 +380,13 @@ public class MultiPlayerGame extends Game {
 	
 	public Powerup chooseRandomPowerup(ArrayList<Powerup> powerUps) {
 		int length = powerUps.size();
-		int number = 0 + (int)(Math.random()* (length-1)); 
+		int number = Main.getRandom().nextInt(length); 
 		return powerUps.get(number);
 	}
 	
 	public Waypoint chooseRandomWaypoint(Waypoint[] waypoints) {
 		int length = waypoints.length;
-		int number = 0 + (int)(Math.random()* (length));
+		int number = Main.getRandom().nextInt(length); 
 		return waypoints[number];
 	}
 	
@@ -393,6 +395,31 @@ public class MultiPlayerGame extends Game {
 		Powerup powerup = chooseRandomPowerup(powerUps);
 		waypoint.setHasPowerup(true);
 		waypoint.setPowerup(powerup);
+	}
+	
+	/**Checks if plane has flown over waypoint with powerup, if so adds powerup to player and removes powerup from waypoint */
+	public void checkPowerups(Waypoint[] powerupPoints) {
+		
+
+		for(int x = 0; x < player.getAircraft().size(); x++) {
+			
+			Aircraft aircraft = player.getAircraft().get(x);
+			for(int i = 0; i < powerUpPoints.length; i++) {
+				if(aircraft.isAt(powerUpPoints[i].getLocation()) && powerUpPoints[i].hasPowerup()){
+					
+					player.addPowerup(powerUpPoints[i].getPowerup());
+					removePowerup(powerUpPoints[i]);
+					
+				}
+			}
+			
+		}
+	}
+
+	public void removePowerup(Waypoint waypoint) {
+		waypoint.setHasPowerup(false);
+		waypoint.setPowerup(null);
+		
 	}
 
 	@Override
