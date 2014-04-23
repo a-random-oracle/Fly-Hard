@@ -19,11 +19,11 @@ public class Powerup implements Serializable {
 	
 	/** The mapping between powerup effects and they player which they affect */
 	private static HashMap<PowerupEffect, Integer> PLAYER_AFFECTED_MAP =
-			new HashMap<PowerupEffect, Integer>();
+			setUpPlayerAffectedMap();
 	
 	/** The mapping between powerup effects and their durations */
 	private static HashMap<PowerupEffect, Integer> EFFECT_DURATIONS_MAP =
-			new HashMap<PowerupEffect, Integer>();
+			setUpEffectDurationsMap();
 	
 	/**
 	 * The powerup effects featured in the game.
@@ -68,6 +68,9 @@ public class Powerup implements Serializable {
 	/** The aircraft which retrieved the powerup */
 	private Aircraft aircraft;
 	
+	/** The time at which the powerup was activated */
+	private long timeActivated;
+	
 	
 	/**
 	 * Constructor for powerups.
@@ -77,31 +80,54 @@ public class Powerup implements Serializable {
 	 */
 	public Powerup() {
 		this.effect = PowerupEffect.randomEffect();
-		
-		// Set up the two maps
-		setUpMaps();
+		this.timeActivated = -1;
 	}
 	
 	
 	/**
-	 * Sets up the player affected and effect duration maps.
+	 * Sets up the player affected map.
 	 * <p>
 	 * When setting up the player affected map, use '0' to indicate
 	 * the current player, and '1' to indicate the opposing player.
 	 * </p>
 	 */
-	private void setUpMaps() {
-		// Set up the player affected map
-		PLAYER_AFFECTED_MAP.put(PowerupEffect.FOG, 0);
-		PLAYER_AFFECTED_MAP.put(PowerupEffect.SPEED_UP, 1);
-		PLAYER_AFFECTED_MAP.put(PowerupEffect.SLOW_DOWN, 1);
-		PLAYER_AFFECTED_MAP.put(PowerupEffect.TRANSFER, 0);
-		
-		// Set up the effect duration map
-		EFFECT_DURATIONS_MAP.put(PowerupEffect.FOG, 5000);
-		EFFECT_DURATIONS_MAP.put(PowerupEffect.SPEED_UP, 5000);
-		EFFECT_DURATIONS_MAP.put(PowerupEffect.SLOW_DOWN, 5000);
-		EFFECT_DURATIONS_MAP.put(PowerupEffect.TRANSFER, 5000);
+	private static HashMap<PowerupEffect, Integer> setUpPlayerAffectedMap() {
+		HashMap<PowerupEffect, Integer> playerAffectedMap =
+				new HashMap<PowerupEffect, Integer>();
+		playerAffectedMap.put(PowerupEffect.FOG, 0);
+		playerAffectedMap.put(PowerupEffect.SPEED_UP, 1);
+		playerAffectedMap.put(PowerupEffect.SLOW_DOWN, 1);
+		playerAffectedMap.put(PowerupEffect.TRANSFER, 0);
+		return playerAffectedMap;
+	}
+	
+	/**
+	 * Sets up the effect duration map.
+	 */
+	private static HashMap<PowerupEffect, Integer> setUpEffectDurationsMap() {
+		HashMap<PowerupEffect, Integer> effectDurationsMap =
+				new HashMap<PowerupEffect, Integer>();
+		effectDurationsMap.put(PowerupEffect.FOG, 5000);
+		effectDurationsMap.put(PowerupEffect.SPEED_UP, 5000);
+		effectDurationsMap.put(PowerupEffect.SLOW_DOWN, 5000);
+		effectDurationsMap.put(PowerupEffect.TRANSFER, 5000);
+		return effectDurationsMap;
+	}
+	
+	/**
+	 * Gets the time the powerup as activated at.
+	 * @return the time the powerup as activated at
+	 */
+	public long getTimeActivated() {
+		return timeActivated;
+	}
+	
+	/**
+	 * Gets the duration of this powerup's effect.
+	 * @return the duration of this powerup's effect
+	 */
+	public long getDuration() {
+		return EFFECT_DURATIONS_MAP.get(effect);
 	}
 	
 	/**
@@ -144,6 +170,15 @@ public class Powerup implements Serializable {
 		// Get the running game instance
 		MultiPlayerGame gameInstance = ((MultiPlayerGame) Game.getInstance());
 		
+		System.out.println("DEBUG: " + PLAYER_AFFECTED_MAP.get(effect));
+		
+		if (PLAYER_AFFECTED_MAP.get(effect) == null) {
+			for (PowerupEffect key : PLAYER_AFFECTED_MAP.keySet()) {
+				System.out.println("Key: " + key
+						+ " = " + PLAYER_AFFECTED_MAP.get(key));
+			}
+		}
+		
 		if (PLAYER_AFFECTED_MAP.get(effect) == 0) {
 			gameInstance.getPlayer().addPowerup(this);
 		} else if (PLAYER_AFFECTED_MAP.get(effect) == 1) {
@@ -163,18 +198,24 @@ public class Powerup implements Serializable {
 	 * Performs the powerup's effect.
 	 */
 	public void activateEffect() {
+		timeActivated = System.currentTimeMillis();
+		
 		switch (effect) {
 		case FOG:
 			handleFog();
+			System.out.println("FOG");
 			break;
 		case SPEED_UP:
 			handleSpeedUp();
+			System.out.println("SPEED+");
 			break;
 		case SLOW_DOWN:
 			handleSlowDown();
+			System.out.println("SPEED-");
 			break;
 		case TRANSFER:
 			handleTransfer();
+			System.out.println("TRANSFER");
 			break;	
 		}
 	}

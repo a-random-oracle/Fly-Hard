@@ -2,6 +2,7 @@ package scn;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.ListIterator;
 
 import btc.Main;
 import net.NetworkManager;
@@ -236,9 +237,13 @@ public class MultiPlayerGame extends Game {
 		updatePlayer(timeDifference, opposingPlayer);
 		
 		// Fire any powerups attached to the player
-		for (Powerup powerup : player.getPowerups()) {
-			powerup.activateEffect();
-		}
+	    ListIterator<Powerup> iterator = player.getPowerups().listIterator();
+	    
+	    while(iterator.hasNext()) {
+	        Powerup powerup = iterator.next();
+	        powerup.activateEffect();
+	        iterator.remove();
+	    }
 
 		// Deselect any aircraft which are inside the airspace of the other player
 		// This ensures that players can't keep controlling aircraft
@@ -441,7 +446,7 @@ public class MultiPlayerGame extends Game {
 						&& waypoint.getPowerup() != null) {
 					// Add the waypoint to the appropriate player
 					waypoint.getPowerup().addToPlayer();
-
+					
 					// And remove the powerup from the waypoint
 					waypoint.setPowerup(null);
 				}
