@@ -207,6 +207,8 @@ public class MultiPlayerGame extends Game {
 			newPowerup.setLocation(randomWaypoint.getLocation());
 			allPowerups.add(newPowerup);
 		}
+		
+		checkPowerups(powerUpPoints);
 
 		// Get data from the server
 		Object data = NetworkManager.receiveData();
@@ -405,7 +407,7 @@ public class MultiPlayerGame extends Game {
 	}*/
 	
 	/**Checks if plane has flown over waypoint with powerup, if so adds powerup to player and removes powerup from waypoint */
-	public void checkPowerups(Waypoint[] powerupPoints) {
+	private void checkPowerups(Waypoint[] powerupPoints) {
 		
 
 		for(int x = 0; x < player.getAircraft().size(); x++) {
