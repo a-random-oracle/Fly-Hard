@@ -20,7 +20,7 @@ public class Powerup {
 	 * <code>PowerUp.SPEED_UP - "description here"<p>
 	 * <code>PowerUp.TRANSFER - "description here"<p>
 	 *  */
-	private enum PowerUp {
+	public enum PowerUp {
 		FOG,
 		SLOW_DOWN,
 		SPEED_UP,

@@ -13,6 +13,7 @@ import cls.Aircraft;
 import cls.Airport;
 import cls.Player;
 import cls.Powerup;
+import cls.Powerup.PowerUp;
 import cls.Waypoint;
 
 public class MultiPlayerGame extends Game {
@@ -194,7 +195,7 @@ public class MultiPlayerGame extends Game {
 
 		if(this.powerUpGenerationTimeElapsed > this.powerUpInterval){
 			powerUpGenerationTimeElapsed = 0;
-			powerUpInterval = 30;
+			powerUpInterval = 5;
 			
 			Powerup newPowerup = new Powerup("RandomPowerup");
 			allPowerups.add(newPowerup);
@@ -368,6 +369,8 @@ public class MultiPlayerGame extends Game {
 						&& powerUpPoints[i].getPowerup() != null) {
 					
 					player.addPowerup(powerUpPoints[i].getPowerup());
+					doPowerup(powerUpPoints[i].getPowerup(), aircraft);
+					
 					
 					for (Powerup p : player.getPowerups()) {
 						System.out.println(p.getName());
@@ -520,6 +523,40 @@ public class MultiPlayerGame extends Game {
 
 		return allAircraft;
 	}
+	
+	// Powerup Handler
+	
+	public void doPowerup(Powerup powerup, Aircraft aircraft){
+		switch (powerup.getType()) {
+		case FOG:
+			//handleFog();
+			break;
+		case SLOW_DOWN:
+			//handleSlowDown();
+			break;
+		case SPEED_UP:
+			//handleSpeedUp();
+			break;
+		case TRANSFER:
+			handleTransfer(aircraft);
+			break;	
+		}
+	}
+	
+	public void handleTransfer(Aircraft aircraft){
+		
+		if (aircraft != null) {
+			aircraftUnderTransfer.add(aircraft);
+			opposingPlayer.getAircraft().add(aircraft);
+			player.getAircraft().remove(aircraft);
+
+			NetworkManager.sendData(-1, new Player[] {player, opposingPlayer});
+
+			deselectAircraft(player);
+		}
+	}
+	
+	
 
 
 	// Close ----------------------------------------------------------------------------
