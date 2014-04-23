@@ -197,9 +197,18 @@ public class MultiPlayerGame extends Game {
 			powerUpGenerationTimeElapsed = 0;
 			powerUpInterval = 5;
 			
-			Powerup newPowerup = new Powerup("RandomPowerup");
-			allPowerups.add(newPowerup);
-			chooseRandomWaypoint().setPowerup(newPowerup);
+			boolean powerupExists = false;
+			for (Waypoint powerupPoint : powerUpPoints) {
+				if (powerupPoint.getPowerup() != null) {
+					powerupExists = true;
+				}
+			}
+
+			if (!powerupExists) {
+				Powerup newPowerup = new Powerup("RandomPowerup");
+				allPowerups.add(newPowerup);
+				chooseRandomWaypoint().setPowerup(newPowerup);
+			}
 		}
 		
 		checkPowerups(powerUpPoints);
