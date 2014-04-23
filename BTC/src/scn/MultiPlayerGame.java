@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import org.newdawn.slick.Color;
 
+import scn.Game;
 import net.NetworkManager;
 import lib.ButtonText;
 import lib.jog.graphics;
@@ -195,8 +196,10 @@ public class MultiPlayerGame extends Game {
 		if(this.powerUpGenerationTimeElapsed > this.powerUpInterval){
 			powerUpGenerationTimeElapsed = 0;
 			powerUpInterval = 30;
-			//addPowerup(allPowerups, middleWaypoints); TODO
+			addPowerup(allPowerups, this.powerUpPoints); 
 		}
+		
+		
 
 		// Get data from the server
 		Object data = NetworkManager.receiveData();
@@ -354,6 +357,27 @@ public class MultiPlayerGame extends Game {
 		}
 
 		return false;
+	}
+	
+	//Powerups stuff
+	
+	public Powerup chooseRandomPowerup(ArrayList<Powerup> powerUps) {
+		int length = powerUps.size();
+		int number = 0 + (int)(Math.random()* (length-1)); 
+		return powerUps.get(number);
+	}
+	
+	public Waypoint chooseRandomWaypoint(Waypoint[] waypoints) {
+		int length = waypoints.length;
+		int number = 0 + (int)(Math.random()* (length));
+		return waypoints[number];
+	}
+	
+	public void addPowerup(ArrayList<Powerup> powerUps, Waypoint[] waypoints){
+		Waypoint waypoint = chooseRandomWaypoint(waypoints);
+		Powerup powerup = chooseRandomPowerup(powerUps);
+		waypoint.setHasPowerup(true);
+		waypoint.setPowerup(powerup);
 	}
 
 	@Override
