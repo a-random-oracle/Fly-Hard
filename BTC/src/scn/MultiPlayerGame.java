@@ -405,8 +405,8 @@ public class MultiPlayerGame extends Game {
 			
 			Aircraft aircraft = player.getAircraft().get(x);
 			for(int i = 0; i < powerUpPoints.length; i++) {
-				if(aircraft.isAt(powerUpPoints[i].getLocation()) && powerUpPoints[i].hasPowerup()){
-					
+				if(aircraft.isAt(powerUpPoints[i].getLocation()) && powerUpPoints[i].getPowerup()!= null){
+		
 					player.addPowerup(powerUpPoints[i].getPowerup());
 					removePowerup(powerUpPoints[i]);
 					
@@ -417,7 +417,6 @@ public class MultiPlayerGame extends Game {
 	}
 
 	public void removePowerup(Waypoint waypoint) {
-		waypoint.setHasPowerup(false);
 		waypoint.setPowerup(null);
 		
 	}
