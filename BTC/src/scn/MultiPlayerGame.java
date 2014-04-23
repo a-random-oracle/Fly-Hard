@@ -13,6 +13,7 @@ import cls.Aircraft;
 import cls.Airport;
 import cls.Player;
 import cls.Powerup;
+import cls.PowerupEffect;
 import cls.Waypoint;
 
 public class MultiPlayerGame extends Game {
@@ -203,44 +204,13 @@ public class MultiPlayerGame extends Game {
 		
 		checkPowerups(powerUpPoints);
 
-		updatePlayerData();
-
-		// Send current player's data to the server
-		NetworkManager.sendData(System.currentTimeMillis(), player);
-
-		super.update(timeDifference);
-
-		if (paused) return;
-
-		// Update the opposing player
-		updatePlayer(timeDifference, opposingPlayer);
-
-		// Deselect any aircraft which are inside the airspace of the other player
-		// This ensures that players can't keep controlling aircraft
-		// after they've entered another player's airspace
-		returnToAirspace();
-
-		checkLives();
-	}
-	
-	private void updatePlayerData() {
 		// Get data from the server
 		Object data = NetworkManager.receiveData();
-
+		
 		if (data != null) {
 			if (data instanceof Player) {
 				// Set the opposing player's data
 				opposingPlayer = (Player) data;
-				
-				// Check if any powerups have been claimed
-				for (int i = 0; i > powerUpPoints.length; i++) {
-					if (powerUpPoints[i] != null
-							&& powerUpPoints[i].getPowerup() != null
-							&& opposingPlayer.getPowerups().contains(
-									powerUpPoints[i].getPowerup())) {
-						powerUpPoints[i].setPowerup(null);
-					}
-				}
 
 				// Check if any aircraft under transfer are in the list
 				if (aircraftUnderTransfer.size() > 0) {
@@ -263,18 +233,25 @@ public class MultiPlayerGame extends Game {
 					player = playerArray[1];
 					opposingPlayer = playerArray[0];
 				}
-				
-				// Check if any powerups have been claimed
-				for (int i = 0; i > powerUpPoints.length; i++) {
-					if (powerUpPoints[i] != null
-							&& powerUpPoints[i].getPowerup() != null
-							&& opposingPlayer.getPowerups().contains(
-									powerUpPoints[i].getPowerup())) {
-						powerUpPoints[i].setPowerup(null);
-					}
-				}
 			}
 		}
+
+		// Send current player's data to the server
+		NetworkManager.sendData(System.currentTimeMillis(), player);
+
+		super.update(timeDifference);
+
+		if (paused) return;
+
+		// Update the opposing player
+		updatePlayer(timeDifference, opposingPlayer);
+
+		// Deselect any aircraft which are inside the airspace of the other player
+		// This ensures that players can't keep controlling aircraft
+		// after they've entered another player's airspace
+		returnToAirspace();
+
+		checkLives();
 	}
 	
 	@Override
@@ -392,7 +369,7 @@ public class MultiPlayerGame extends Game {
 						&& powerUpPoints[i].getPowerup() != null) {
 					
 					player.addPowerup(powerUpPoints[i].getPowerup());
-					doPowerup(powerUpPoints[i].getPowerup(), aircraft);
+					PowerupEffect.doPowerup(powerUpPoints[i].getPowerup(), aircraft);
 					
 					
 					for (Powerup p : player.getPowerups()) {
@@ -547,39 +524,17 @@ public class MultiPlayerGame extends Game {
 		return allAircraft;
 	}
 	
-	// Powerup Handler
-	
-	public void doPowerup(Powerup powerup, Aircraft aircraft){
-		switch (powerup.getType()) {
-		case FOG:
-			//handleFog();
-			break;
-		case SLOW_DOWN:
-			//handleSlowDown();
-			break;
-		case SPEED_UP:
-			//handleSpeedUp();
-			break;
-		case TRANSFER:
-			handleTransfer(aircraft);
-			break;	
-		}
+	public ArrayList<Aircraft> getAircraftUnderTransfer() {
+		return aircraftUnderTransfer;
 	}
 	
-	public void handleTransfer(Aircraft aircraft){
-		
-		if (aircraft != null) {
-			aircraftUnderTransfer.add(aircraft);
-			opposingPlayer.getAircraft().add(aircraft);
-			player.getAircraft().remove(aircraft);
-
-			NetworkManager.sendData(-1, new Player[] {player, opposingPlayer});
-
-			deselectAircraft(player);
-		}
+	public Player getOpposingPlayer() {
+		return opposingPlayer;
 	}
 	
-	
+	public Player getPlayer() {
+		return player;
+	}
 
 
 	// Close ----------------------------------------------------------------------------
