@@ -903,6 +903,14 @@ public class Aircraft implements Serializable {
 	public double getSpeed() {
 		return velocity.magnitude();
 	}
+	
+	/** 
+	 * Gets the aircrafts velocity
+	 * @return the aircraft's velocity
+	 */
+	public Vector getVelocity() {
+		return velocity;
+	}
 
 	/**
 	 * Gets the aircraft's flight plan.

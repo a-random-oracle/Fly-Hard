@@ -938,7 +938,7 @@ public abstract class Game extends Scene {
 	 * @param player
 	 * 			the player to reset the selected plane attribute for
 	 */
-	protected void deselectAircraft(Player player) {
+	public void deselectAircraft(Player player) {
 		deselectAircraft(player.getSelectedAircraft(), player);
 	}
 
