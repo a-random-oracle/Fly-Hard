@@ -1,6 +1,5 @@
 package cls;
 
-import java.io.File;
 import java.io.Serializable;
 import java.util.HashMap;
 
@@ -12,7 +11,6 @@ import scn.Game;
 import scn.MultiPlayerGame;
 import btc.Main;
 import lib.jog.graphics;
-import lib.jog.graphics.Image;
 
 public class Powerup implements Serializable {
 	
@@ -115,26 +113,29 @@ public class Powerup implements Serializable {
 		graphics.setColour(Color.white);
 		
 		// Get the image to draw
-		graphics.draw(getPowerUpImage(),
-				x - (getPowerUpImage().width() / 2),
-				y - (getPowerUpImage().height() / 2));
-	}
-
-	/**
-	 * Gets the powerup image based on the powerup's effect.
-	 */
-	private Image getPowerUpImage() {
+		
+		
 		switch (effect) {
 		case FOG: 
-			return MultiPlayerGame.FOG_IMAGE;
+			graphics.draw(MultiPlayerGame.FOG_IMAGE,
+					x - (MultiPlayerGame.FOG_IMAGE.width() / 2),
+					y - (MultiPlayerGame.FOG_IMAGE.height() / 2));
+			break;
 		case SPEED_UP:
-			return MultiPlayerGame.SPEED_UP_IMAGE;
+			graphics.draw(MultiPlayerGame.SPEED_UP_IMAGE,
+					x - (MultiPlayerGame.SPEED_UP_IMAGE.width() / 2),
+					y - (MultiPlayerGame.SPEED_UP_IMAGE.height() / 2));
+			break;
 		case SLOW_DOWN:
-			return MultiPlayerGame.SLOW_DOWN_IMAGE;
+			graphics.draw(MultiPlayerGame.SLOW_DOWN_IMAGE,
+					x - (MultiPlayerGame.SLOW_DOWN_IMAGE.width() / 2),
+					y - (MultiPlayerGame.SLOW_DOWN_IMAGE.height() / 2));
+			break;
 		case TRANSFER:
-			return MultiPlayerGame.TRANSFER_IMAGE;
-		default:
-			return null;
+			graphics.draw(MultiPlayerGame.TRANSFER_IMAGE,
+					x - (MultiPlayerGame.TRANSFER_IMAGE.width() / 2),
+					y - (MultiPlayerGame.TRANSFER_IMAGE.height() / 2));
+			break;
 		}
 	}
 	

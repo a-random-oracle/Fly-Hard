@@ -34,8 +34,19 @@ public class MultiPlayerGame extends Game {
 	public static final Image TRANSFER_IMAGE =
 			graphics.newImage("gfx/pUp" + File.separator + "transfer1a.png");
 	
+	/** The y-coordinate at which the middle zone borders begin */
+	private static int yStart = window.height() - Y_OFFSET;
+
+	/** The y-coordinate at which the middle zone borders end */
+	private static int yEnd = Y_OFFSET;
+
+	/** The x-coordinate at which the left middle zone border is located */
+	public static int leftEntryX = (int) (window.width() * (3d/7d));
+
+	/** The x-coordinate at which the right middle zone border is located */
+	public static int rightEntryX = window.width() - leftEntryX;
 	
-	
+	private static Waypoint[] powerupPoints;
 
 	/** The player's position: 0 = left-hand side, 1 = right-hand side */
 	private int playerPosition;
@@ -49,25 +60,8 @@ public class MultiPlayerGame extends Game {
 	/** Interval between powerup spawn */ 
 	private double powerUpInterval;
 
-	/** The y-coordinate at which the middle zone borders begin */
-	private static int yStart = window.height() - Y_OFFSET;
-
-	/** The y-coordinate at which the middle zone borders end */
-	private static int yEnd = Y_OFFSET;
-
-	/** The x-coordinate at which the left middle zone border is located */
-	public static int leftEntryX = (int) (window.width() * (3d/7d));
-
-	/** The x-coordinate at which the right middle zone border is located */
-	public static int rightEntryX = window.width() - leftEntryX;
-
 	/** The list of aircraft which are currently being transferred */
 	private ArrayList<Aircraft> aircraftUnderTransfer;
-
-	/** List of all the powerups */ 
-	//private ArrayList<Powerup> allPowerups;
-
-	private static Waypoint[] powerupPoints;
 
 
 	/**
