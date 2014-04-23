@@ -56,10 +56,10 @@ public class Powerup implements Serializable {
 		this.type = PowerUp.randomPowerUp();
 		
 		// Set up the durations map
-		DURATIONS.put(PowerUp.FOG,  5000);
-		DURATIONS.put(PowerUp.SLOW_DOWN,  5000);
-		DURATIONS.put(PowerUp.SPEED_UP,  5000);
-		DURATIONS.put(PowerUp.TRANSFER,  5000);
+		DURATIONS.put(PowerUp.FOG, 5000);
+		DURATIONS.put(PowerUp.SLOW_DOWN, 5000);
+		DURATIONS.put(PowerUp.SPEED_UP, 5000);
+		DURATIONS.put(PowerUp.TRANSFER, 5000);
 	}
 
 	
