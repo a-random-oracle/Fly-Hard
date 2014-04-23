@@ -185,11 +185,15 @@ public class Waypoint implements Serializable {
 	}
 	
 	/**
-	 * Sets the powerup attached to the waypoint.
+	 * Sets the powerup attached to the waypoint. If powerup is null, allow it to be set. If specified powerup is null, clear powerup
 	 * @param powerup -  the powerup to attach to the waypoint
 	 */
 	public void setPowerup(Powerup powerup) {
-		this.powerup = powerup;
+		if (powerup == null){
+			this.powerup = null;
+		} else if (this.powerup == null) {
+			this.powerup = powerup;
+		}
 	}
 	
 }
