@@ -1,6 +1,7 @@
 package cls;
 
 import java.io.File;
+import java.io.Serializable;
 import java.util.HashMap;
 
 import org.newdawn.slick.Color;
@@ -9,8 +10,11 @@ import btc.Main;
 import lib.jog.graphics;
 import lib.jog.graphics.Image;
 
-public class Powerup {
+public class Powerup implements Serializable {
 	
+	/** Serialisation ID */
+	private static final long serialVersionUID = -6039580715789835236L;
+
 	/** <p>The <code>PowerUp</code> enum contains all power-ups featured in the game.
 	 * </p>This enum gives access to a random power-up value; to be used in spawning
 	 * a random powerup during run time.</p>

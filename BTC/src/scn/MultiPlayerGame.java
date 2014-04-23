@@ -13,7 +13,6 @@ import cls.Aircraft;
 import cls.Airport;
 import cls.Player;
 import cls.Powerup;
-import cls.Powerup.PowerUp;
 import cls.Waypoint;
 
 public class MultiPlayerGame extends Game {
