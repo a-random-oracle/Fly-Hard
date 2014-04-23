@@ -1,14 +1,15 @@
 package scn;
 
+import java.io.File;
 import java.util.ArrayList;
 
 import btc.Main;
-
 import net.NetworkManager;
 import lib.ButtonText;
 import lib.jog.graphics;
 import lib.jog.input;
 import lib.jog.window;
+import lib.jog.graphics.Image;
 import cls.Aircraft;
 import cls.Airport;
 import cls.Player;
@@ -16,6 +17,25 @@ import cls.Powerup;
 import cls.Waypoint;
 
 public class MultiPlayerGame extends Game {
+	
+	/** The image used for the fog powerup effect */
+	public static final Image FOG_IMAGE =
+			graphics.newImage("gfx/pUp" + File.separator + "fog9a.png");
+	
+	/** The image used for the speed up powerup effect */
+	public static final Image SPEED_UP_IMAGE =
+			graphics.newImage("gfx/pUp" + File.separator + "speed3a.png");
+	
+	/** The image used for the slow down powerup effect */
+	public static final Image SLOW_DOWN_IMAGE =
+			graphics.newImage("gfx/pUp" + File.separator + "slow2a.png");
+	
+	/** The image used for the transfer powerup effect */
+	public static final Image TRANSFER_IMAGE =
+			graphics.newImage("gfx/pUp" + File.separator + "transfer1a.png");
+	
+	
+	
 
 	/** The player's position: 0 = left-hand side, 1 = right-hand side */
 	private int playerPosition;

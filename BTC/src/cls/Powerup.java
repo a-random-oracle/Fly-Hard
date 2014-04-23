@@ -19,21 +19,7 @@ public class Powerup implements Serializable {
 	/** Serialisation ID */
 	private static final long serialVersionUID = -6039580715789835236L;
 
-	/** The image used for the fog powerup effect */
-	private static final Image FOG_IMAGE =
-			graphics.newImage("gfx/pUp" + File.separator + "fog9a.png");
-	
-	/** The image used for the speed up powerup effect */
-	private static final Image SPEED_UP_IMAGE =
-			graphics.newImage("gfx/pUp" + File.separator + "speed3a.png");
-	
-	/** The image used for the slow down powerup effect */
-	private static final Image SLOW_DOWN_IMAGE =
-			graphics.newImage("gfx/pUp" + File.separator + "slow2a.png");
-	
-	/** The image used for the transfer powerup effect */
-	private static final Image TRANSFER_IMAGE =
-			graphics.newImage("gfx/pUp" + File.separator + "transfer1a.png");
+
 	
 	/** The mapping between powerup effects and they player which they affect */
 	private static final HashMap<PowerupEffect, Integer> PLAYER_AFFECTED_MAP =
@@ -129,10 +115,9 @@ public class Powerup implements Serializable {
 		graphics.setColour(Color.white);
 		
 		// Get the image to draw
-		Image image = getPowerUpImage();
 		graphics.draw(getPowerUpImage(),
-				x - (image.width() / 2),
-				y - (image.height() / 2));
+				x - (getPowerUpImage().width() / 2),
+				y - (getPowerUpImage().height() / 2));
 	}
 
 	/**
@@ -141,13 +126,13 @@ public class Powerup implements Serializable {
 	private Image getPowerUpImage() {
 		switch (effect) {
 		case FOG: 
-			return FOG_IMAGE;
+			return MultiPlayerGame.FOG_IMAGE;
 		case SPEED_UP:
-			return SPEED_UP_IMAGE;
+			return MultiPlayerGame.SPEED_UP_IMAGE;
 		case SLOW_DOWN:
-			return SLOW_DOWN_IMAGE;
+			return MultiPlayerGame.SLOW_DOWN_IMAGE;
 		case TRANSFER:
-			return TRANSFER_IMAGE;
+			return MultiPlayerGame.TRANSFER_IMAGE;
 		default:
 			return null;
 		}
