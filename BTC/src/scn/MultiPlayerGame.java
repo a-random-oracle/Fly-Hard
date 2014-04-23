@@ -234,6 +234,11 @@ public class MultiPlayerGame extends Game {
 
 		// Update the opposing player
 		updatePlayer(timeDifference, opposingPlayer);
+		
+		// Fire any powerups attached to the player
+		for (Powerup powerup : player.getPowerups()) {
+			powerup.activateEffect();
+		}
 
 		// Deselect any aircraft which are inside the airspace of the other player
 		// This ensures that players can't keep controlling aircraft

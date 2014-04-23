@@ -16,8 +16,6 @@ public class Powerup implements Serializable {
 	
 	/** Serialisation ID */
 	private static final long serialVersionUID = -6039580715789835236L;
-
-
 	
 	/** The mapping between powerup effects and they player which they affect */
 	private static final HashMap<PowerupEffect, Integer> PLAYER_AFFECTED_MAP =
@@ -67,6 +65,9 @@ public class Powerup implements Serializable {
 	/** The powerup's effect */
 	private PowerupEffect effect;
 	
+	/** The aircraft which retrieved the powerup */
+	private Aircraft aircraft;
+	
 	
 	/**
 	 * Constructor for powerups.
@@ -112,9 +113,6 @@ public class Powerup implements Serializable {
 	public void draw(double x, double y) {
 		graphics.setColour(Color.white);
 		
-		// Get the image to draw
-		
-		
 		switch (effect) {
 		case FOG: 
 			graphics.draw(MultiPlayerGame.FOG_IMAGE,
@@ -149,23 +147,22 @@ public class Powerup implements Serializable {
 		if (PLAYER_AFFECTED_MAP.get(effect) == 0) {
 			gameInstance.getPlayer().addPowerup(this);
 		} else if (PLAYER_AFFECTED_MAP.get(effect) == 1) {
-			NetworkManager.sendData(-1, this);
+			//NetworkManager.sendData(-1, this);
 		}
 	}
 	
 	/**
-	 * Gets the powerup's effect.
-	 * @return the powerup's effect
+	 * Registers an aircraft as the aircraft which claimed the powerup.
+	 * @param aircraft - the aircraft which claimed the aircraft
 	 */
-	public PowerupEffect getEffect() {
-		return effect;
+	public void registerAircraft(Aircraft aircraft) {
+		this.aircraft = aircraft;
 	}
 	
 	/**
 	 * Performs the powerup's effect.
-	 * @param aircraft - the aircraft gaining the powerup
 	 */
-	public void activateEffect(Aircraft aircraft) {
+	public void activateEffect() {
 		switch (effect) {
 		case FOG:
 			handleFog();
@@ -177,7 +174,7 @@ public class Powerup implements Serializable {
 			handleSlowDown();
 			break;
 		case TRANSFER:
-			handleTransfer(aircraft);
+			handleTransfer();
 			break;	
 		}
 	}
@@ -215,7 +212,7 @@ public class Powerup implements Serializable {
 	/**
 	 * Transfers control of a players plane to the other player
 	 */
-	private void handleTransfer(Aircraft aircraft) {
+	private void handleTransfer() {
 		if (aircraft != null) {
 			// Get the running game instance
 			MultiPlayerGame gameInstance = ((MultiPlayerGame) Game.getInstance());
