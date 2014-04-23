@@ -319,11 +319,11 @@ public class MultiPlayerGame extends Game {
 
 	protected void drawPowerups(Waypoint[] powerUpPoints) {
 		// Set the viewport - this is the boundary used when drawing objects
-				graphics.setViewport(X_OFFSET, Y_OFFSET, window.width() - (2 * X_OFFSET),
-						window.height() - (2 * Y_OFFSET));
+		graphics.setViewport(X_OFFSET, Y_OFFSET, window.width() - (2 * X_OFFSET),
+				window.height() - (2 * Y_OFFSET));
 
-		for(int i = 0;  i < powerUpPoints.length; i++){
-			if(powerUpPoints[i].hasPowerup()) {
+		for (int i = 0; i < powerUpPoints.length; i++){
+			if (powerUpPoints[i].getPowerup() != null) {
 				Powerup powerUp = powerUpPoints[i].getPowerup();
 				
 				graphics.print(powerUp.name,
@@ -331,8 +331,9 @@ public class MultiPlayerGame extends Game {
 						powerUpPoints[i].getLocation().getY()+ 25);
 			}
 		}
+		
 		// Reset the viewport
-				graphics.setViewport();
+		graphics.setViewport();
 	}
 
 	public void keyReleased(int key) {
@@ -388,10 +389,9 @@ public class MultiPlayerGame extends Game {
 		return waypoints[number];
 	}
 	
-	public void addPowerup(ArrayList<Powerup> powerUps, Waypoint[] waypoints){
+	public void addPowerup(ArrayList<Powerup> powerUps, Waypoint[] waypoints) {
 		Waypoint waypoint = chooseRandomWaypoint(waypoints);
 		Powerup powerup = chooseRandomPowerup(powerUps);
-		waypoint.setHasPowerup(true);
 		waypoint.setPowerup(powerup);
 	}
 

@@ -6,7 +6,7 @@ import lib.jog.graphics;
 
 public class Waypoint implements Serializable {
 	
-	// TODO last updated: 2014.03.19 23:45
+	/** Serialisation ID */
 	private static final long serialVersionUID = 1413476488063120300L;
 
 	/** Leniency to allow mouse input to be accepted in a small area around the waypoint  */
@@ -24,14 +24,9 @@ public class Waypoint implements Serializable {
 	/** Marks whether the waypoint is an entry point, exit point or airport */
 	private boolean entryOrExit;
 	
-	/** Marks whether the waypoint is a middle waypoint used for powerups */
-	private boolean middlewaypoint; //XXX < - this is awful
-
-	/** If a waypoint has a powerup */
-	private boolean hasPowerup = false; // XXX <- this is awful
-	
 	/** The powerup of this waypoint */
 	private Powerup powerup = null;
+	
 	
 	/**
 	 * Constructor for waypoints.
@@ -117,10 +112,13 @@ public class Waypoint implements Serializable {
 	 * @param y - the y location to draw the waypoint at
 	 */
 	public void draw(double x, double y) {
-		if (this.isEntryOrExit()) 
+		if (this.isEntryOrExit()) {
 			graphics.setColour(64, 128, 0, 192);
-		else
+		} else if (powerup != null) {
+			graphics.setColour(graphics.blue_transp);
+		} else {
 			graphics.setColour(graphics.red_transp);
+		}
 		
 		graphics.circle(false, x-WAYPOINT_ICON_RADIUS/2 + 2,
 				y-WAYPOINT_ICON_RADIUS/2 + 2, WAYPOINT_ICON_RADIUS);
@@ -176,24 +174,6 @@ public class Waypoint implements Serializable {
 	 */
 	public void setPowerup(Powerup powerup) {
 		this.powerup = powerup;
-	}
-	
-	/**
-	 * Gets whether the waypoint has a powerup attached.
-	 * @return <code>true</code> if the waypoint has a powerup attached,
-	 * 			otherwise <code>false</code>
-	 */
-	public boolean hasPowerup() {
-		return hasPowerup;	
-	}
-	
-	/**
-	 * Sets whether the waypoint has a powerup attached.
-	 * @param hasPowerup - <code>true</code> if the waypoint has a powerup
-	 * 						attached, otherwise <code>false</code>
-	 */
-	public void setHasPowerup(boolean hasPowerup) {
-		this.hasPowerup = hasPowerup;
 	}
 	
 }
