@@ -2,6 +2,8 @@ package cls;
 
 import java.io.Serializable;
 
+import org.newdawn.slick.Color;
+
 import lib.jog.graphics;
 
 public class Waypoint implements Serializable {
@@ -103,7 +105,21 @@ public class Waypoint implements Serializable {
 	 * Draws the waypoint.
 	 */
 	public void draw() {
-		draw(waypointLocation.getX(), waypointLocation.getY());
+		draw(waypointLocation.getX(),
+				waypointLocation.getY(),
+				graphics.red_transp);
+	}
+	
+	/**
+	 * Draws the waypoint.
+	 * <p>
+	 * Allows a colour to be specified.
+	 * </p>
+	 */
+	public void draw(Color colour) {
+		draw(waypointLocation.getX(),
+				waypointLocation.getY(),
+				colour);
 	}
 	
 	/**
@@ -111,13 +127,13 @@ public class Waypoint implements Serializable {
 	 * @param x - the x location to draw the waypoint at
 	 * @param y - the y location to draw the waypoint at
 	 */
-	public void draw(double x, double y) {
+	public void draw(double x, double y, Color colour) {
 		if (this.isEntryOrExit()) {
 			graphics.setColour(64, 128, 0, 192);
 		} else if (powerup != null) {
 			graphics.setColour(graphics.blue_transp);
 		} else {
-			graphics.setColour(graphics.red_transp);
+			graphics.setColour(colour);
 		}
 		
 		graphics.circle(false, x-WAYPOINT_ICON_RADIUS/2 + 2,
