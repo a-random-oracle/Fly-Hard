@@ -13,7 +13,6 @@ import cls.Aircraft;
 import cls.Airport;
 import cls.Player;
 import cls.Powerup;
-import cls.PowerupEffect;
 import cls.Waypoint;
 
 public class MultiPlayerGame extends Game {
@@ -24,11 +23,8 @@ public class MultiPlayerGame extends Game {
 	/** The opposing player */
 	private Player opposingPlayer;
 
-	/** The time frame to send data across the network */
-	private double timeUntilUpdate;
-
 	/** Time since new powerup generated */ 
-	private double powerUpGenerationTimeElapsed;
+	private double powerupGenerationTimeElapsed;
 
 	/** Interval between powerup spawn */ 
 	private double powerUpInterval;
@@ -49,9 +45,9 @@ public class MultiPlayerGame extends Game {
 	private ArrayList<Aircraft> aircraftUnderTransfer;
 
 	/** List of all the powerups */ 
-	private ArrayList<Powerup> allPowerups;
+	//private ArrayList<Powerup> allPowerups;
 
-	private static Waypoint[] powerUpPoints;
+	private static Waypoint[] powerupPoints;
 
 
 	/**
@@ -88,7 +84,7 @@ public class MultiPlayerGame extends Game {
 		this.playerPosition = playerPosition;
 
 		// Define other waypoints
-		powerUpPoints = new Waypoint[] {
+		powerupPoints = new Waypoint[] {
 				new Waypoint(0.5, 0.30833, false, true),
 				new Waypoint(0.5, 0.56667, false, true),
 				new Waypoint(0.5, 0.86146, false, true)
@@ -124,9 +120,8 @@ public class MultiPlayerGame extends Game {
 				32, 128, 32, 8, 4);
 
 		aircraftUnderTransfer = new ArrayList<Aircraft>();
-		powerUpGenerationTimeElapsed = 0;
+		powerupGenerationTimeElapsed = 0;
 		powerUpInterval = 5;
-		allPowerups = new ArrayList<Powerup>();
 	}
 
 	/**
@@ -181,39 +176,40 @@ public class MultiPlayerGame extends Game {
 
 	@Override
 	public void update(double timeDifference) {
-		// Increment the time before the next data send
-		timeUntilUpdate += timeDifference;
-
-		if (timeUntilUpdate > 0.1) {
-
-			// Reset the time before the next data send
-			timeUntilUpdate = 0;
-		}
-
 		// Update powerups
-		powerUpGenerationTimeElapsed += timeDifference;
+		powerupGenerationTimeElapsed += timeDifference;
 
-		if(this.powerUpGenerationTimeElapsed > this.powerUpInterval){
-			powerUpGenerationTimeElapsed = 0;
-			powerUpInterval = 5;
-			
-			boolean powerupExists = false;
-			for (Waypoint powerupPoint : powerUpPoints) {
-				if (powerupPoint.getPowerup() != null) {
-					powerupExists = true;
+		if (this.powerupGenerationTimeElapsed > this.powerUpInterval) {
+			powerupGenerationTimeElapsed = 0;
+
+			// Only one player is responsible for generating powerups
+			if (playerPosition == 1) {
+				// Check if there are any powerups on the map
+				boolean powerupExists = false;
+				for (Waypoint powerupPoint : powerupPoints) {
+					if (powerupPoint.getPowerup() != null) {
+						powerupExists = true;
+					}
 				}
-			}
 
-			if (!powerupExists) {
-				Powerup newPowerup = new Powerup("RandomPowerup");
-				allPowerups.add(newPowerup);
-				chooseRandomWaypoint().setPowerup(newPowerup);
+				// If there are currently no powerups, generate one
+				if (!powerupExists) {
+					Waypoint randomWaypoint = powerupPoints[Main.getRandom().nextInt(powerupPoints.length)];
+					
+					// Generate a new powerup on the selected waypoint
+					randomWaypoint.setPowerup(new Powerup());
+
+					// Send the waypoint to the other player
+					NetworkManager.sendData(-1, randomWaypoint);
+				}
 			}
 		}
 		
-		checkPowerups(powerUpPoints);
+		// Check if any powerups have been taken
+		checkPowerups(); //TODO
 
-		updatePlayerData();
+		// Send and receive data
+		updateData();
 
 		// Send current player's data to the server
 		NetworkManager.sendData(System.currentTimeMillis(), player);
@@ -229,11 +225,12 @@ public class MultiPlayerGame extends Game {
 		// This ensures that players can't keep controlling aircraft
 		// after they've entered another player's airspace
 		returnToAirspace();
-
-		checkLives();
 	}
 	
-	private void updatePlayerData() {
+	/**
+	 * Sends and receives player and powerup data.
+	 */
+	private void updateData() {
 		// Get data from the server
 		Object data = NetworkManager.receiveData();
 
@@ -243,12 +240,12 @@ public class MultiPlayerGame extends Game {
 				opposingPlayer = (Player) data;
 				
 				// Check if any powerups have been claimed
-				for (int i = 0; i > powerUpPoints.length; i++) {
-					if (powerUpPoints[i] != null
-							&& powerUpPoints[i].getPowerup() != null
+				for (int i = 0; i > powerupPoints.length; i++) {
+					if (powerupPoints[i] != null
+							&& powerupPoints[i].getPowerup() != null
 							&& opposingPlayer.getPowerups().contains(
-									powerUpPoints[i].getPowerup())) {
-						powerUpPoints[i].setPowerup(null);
+									powerupPoints[i].getPowerup())) {
+						powerupPoints[i].setPowerup(null);
 					}
 				}
 
@@ -265,6 +262,19 @@ public class MultiPlayerGame extends Game {
 						}
 					}
 				}
+			} else if (data instanceof Powerup) {
+				// Add the powerup to the player
+				player.addPowerup((Powerup) data);
+			} else if (data instanceof Waypoint) {
+				// Update the waypoint
+				Waypoint updatedWaypoint = (Waypoint) data;
+				
+				// Loop through the middle waypoints to find the one to update
+				for (Waypoint waypoint : powerupPoints) {
+					if (waypoint.equals(updatedWaypoint)) {
+						waypoint.setPowerup(updatedWaypoint.getPowerup());
+					}
+				}
 			} else if (data.getClass().isArray()) {
 				// Set both players' data
 				Player[] playerArray = (Player[]) data;
@@ -275,12 +285,12 @@ public class MultiPlayerGame extends Game {
 				}
 				
 				// Check if any powerups have been claimed
-				for (int i = 0; i > powerUpPoints.length; i++) {
-					if (powerUpPoints[i] != null
-							&& powerUpPoints[i].getPowerup() != null
+				for (int i = 0; i > powerupPoints.length; i++) {
+					if (powerupPoints[i] != null
+							&& powerupPoints[i].getPowerup() != null
 							&& opposingPlayer.getPowerups().contains(
-									powerUpPoints[i].getPowerup())) {
-						powerUpPoints[i].setPowerup(null);
+									powerupPoints[i].getPowerup())) {
+						powerupPoints[i].setPowerup(null);
 					}
 				}
 			}
@@ -310,13 +320,15 @@ public class MultiPlayerGame extends Game {
 
 		drawManualControlButton(player);
 		
-		drawPowerUpPoints();
+		drawPowerupPoints();
 	}
 
 	/**
-	 * Draws the middle zone in the game.
+	 * Draws the middle zone.
 	 * <p>
 	 * The middle zone is shared by both players.
+	 * </p>
+	 * <p>
 	 * Players are forced to take manual control when in this zone
 	 * and are not permitted to fly into the other player's flight area.
 	 * </p>
@@ -332,14 +344,19 @@ public class MultiPlayerGame extends Game {
 		graphics.line(rightEntryX, yStart, rightEntryX, yEnd);
 	}
 	
-	protected void drawPowerUpPoints() {
-		//draw the power-up points
-		for (Waypoint waypoint : powerUpPoints) {
+	/**
+	 * Draws the middle waypoints.
+	 */
+	private void drawPowerupPoints() {
+		// Draw the power-up points
+		for (Waypoint waypoint : powerupPoints) {
+			// Draw the waypoint
 			waypoint.draw(graphics.blue_transp);
 			
 			// If the waypoint has a powerup attached, draw the powerup
 			if (waypoint.getPowerup() != null) {
-				waypoint.getPowerup().draw(waypoint.getLocation());
+				waypoint.getPowerup().draw(waypoint.getLocation().getX(),
+						waypoint.getLocation().getY());
 			}
 		}
 	}
@@ -375,49 +392,44 @@ public class MultiPlayerGame extends Game {
 		}
 	}
 
+	/**
+	 * Checks if either player has run out of lives.
+	 * @return <code>true</code> if either player has run out of lives,
+	 * 			otherwise <code>false</code>
+	 */
 	public boolean checkLives() {
 		if (player.getLives() == 0 || opposingPlayer.getLives() == 0) {
 			return true;
+		} else {
+			return false;
 		}
-
-		return false;
-	}
-	
-	public Waypoint chooseRandomWaypoint() {
-		int length = powerUpPoints.length;
-		int number = Main.getRandom().nextInt(length); 
-		return powerUpPoints[number];
 	}
 	
 	/**
-	 * Checks if plane has flown over waypoint with powerup,
-	 * if so adds powerup to player and removes powerup from waypoint
+	 * Checks if an aircraft has flown over a waypoint which is holding a powerup.
+	 * <p>
+	 * If so, the powerup is added to the appropriate player and removed from
+	 * its waypoint.
+	 * </p>
 	 * */
-	private void checkPowerups(Waypoint[] powerupPoints) {
-		for (int x = 0; x < player.getAircraft().size(); x++) {
-			
-			Aircraft aircraft = player.getAircraft().get(x);
-			for (int i = 0; i < powerUpPoints.length; i++) {
-				if (aircraft.isAt(powerUpPoints[i].getLocation())
-						&& powerUpPoints[i].getPowerup() != null) {
+	private void checkPowerups() {
+		// Loop through each aircraft
+		for (Aircraft aircraft : player.getAircraft()) {
+			// Loop through each middle waypoint
+			for (Waypoint waypoint : powerupPoints) {
+				// If the aircraft is at the waypoint, and if that waypoint has
+				// a powerup
+				if (aircraft.isAt(waypoint.getLocation())
+						&& waypoint.getPowerup() != null) {
 					
-					player.addPowerup(powerUpPoints[i].getPowerup());
-					PowerupEffect.doPowerup(powerUpPoints[i].getPowerup(), aircraft);
+					// Add the waypoint to the appropriate player
+					waypoint.getPowerup().addToPlayer();
 					
-					
-					for (Powerup p : player.getPowerups()) {
-						System.out.println(p.getName());
-					}
-					
-					removePowerup(powerUpPoints[i]);
+					// And remove the powerup from the waypoint
+					waypoint.setPowerup(null);
 				}
 			}
 		}
-	}
-
-	public void removePowerup(Waypoint waypoint) {
-		waypoint.setPowerup(null);
-		
 	}
 
 	@Override
@@ -563,10 +575,6 @@ public class MultiPlayerGame extends Game {
 	
 	public Player getOpposingPlayer() {
 		return opposingPlayer;
-	}
-	
-	public Player getPlayer() {
-		return player;
 	}
 
 

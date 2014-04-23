@@ -1161,7 +1161,7 @@ public abstract class Game extends Scene {
 	 * Gets the current player.
 	 * @return the current player
 	 */
-	public Player getCurrentPlayer() {
+	public Player getPlayer() {
 		return player;
 	}
 
