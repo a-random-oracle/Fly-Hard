@@ -200,7 +200,12 @@ public class MultiPlayerGame extends Game {
 		if(this.powerUpGenerationTimeElapsed > this.powerUpInterval){
 			powerUpGenerationTimeElapsed = 0;
 			powerUpInterval = 30;
-			addPowerup(allPowerups, powerUpPoints); 
+			
+			Powerup newPowerup = new Powerup("RandomPowerup", 10);
+			Waypoint randomWaypoint = chooseRandomWaypoint(powerUpPoints);
+			randomWaypoint.setPowerup(newPowerup);
+			newPowerup.setLocation(randomWaypoint.getLocation());
+			allPowerups.add(newPowerup);
 		}
 
 		// Get data from the server
@@ -328,9 +333,10 @@ public class MultiPlayerGame extends Game {
 			if (powerUpPoints[i].getPowerup() != null) {
 				Powerup powerUp = powerUpPoints[i].getPowerup();
 				
-				graphics.print(powerUp.name,
+				/*graphics.print(powerUp.name,
 						powerUpPoints[i].getLocation().getX() - 20,
-						powerUpPoints[i].getLocation().getY()+ 25);
+						powerUpPoints[i].getLocation().getY()+ 25);*/
+				powerUp.draw();
 			}
 		}
 		
@@ -379,11 +385,11 @@ public class MultiPlayerGame extends Game {
 	
 	//Powerups stuff
 	
-	public Powerup chooseRandomPowerup(ArrayList<Powerup> powerUps) {
+	/*public Powerup chooseRandomPowerup(ArrayList<Powerup> powerUps) {
 		int length = powerUps.size();
 		int number = Main.getRandom().nextInt(length); 
 		return powerUps.get(number);
-	}
+	}*/
 	
 	public Waypoint chooseRandomWaypoint(Waypoint[] waypoints) {
 		int length = waypoints.length;
@@ -391,11 +397,12 @@ public class MultiPlayerGame extends Game {
 		return waypoints[number];
 	}
 	
-	public void addPowerup(ArrayList<Powerup> powerUps, Waypoint[] waypoints) {
+	/*public void addPowerup(ArrayList<Powerup> powerUps, Waypoint[] waypoints) {
 		Waypoint waypoint = chooseRandomWaypoint(waypoints);
 		Powerup powerup = chooseRandomPowerup(powerUps);
 		waypoint.setPowerup(powerup);
-	}
+		powerup.setLocation(waypoint.getLocation());
+	}*/
 	
 	/**Checks if plane has flown over waypoint with powerup, if so adds powerup to player and removes powerup from waypoint */
 	public void checkPowerups(Waypoint[] powerupPoints) {

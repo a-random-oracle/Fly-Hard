@@ -102,8 +102,8 @@ public class Powerup {
 	 * Gives access to the powerup's vector coordinates.
 	 * @return the powerup's location vector
 	 */
-	public Vector location() {
-		return powerupLocation;
+	public void setLocation(Vector location) {
+		this.powerupLocation = location;
 	}
 	
 }
