@@ -127,6 +127,8 @@ public class MultiPlayerGame extends Game {
 		powerUpGenerationTimeElapsed = 0;
 		powerUpInterval = 5;
 		allPowerups = new ArrayList<Powerup>();
+		Powerup speedPlanes = new Powerup("SPEED_UP", 10);
+		allPowerups.add(speedPlanes);
 	}
 
 	/**
@@ -260,7 +262,7 @@ public class MultiPlayerGame extends Game {
 		super.draw();
 
 		// Draw the power-ups
-		//drawPowerups();
+		drawPowerups(powerUpPoints);
 	}
 
 	@Override
@@ -316,20 +318,22 @@ public class MultiPlayerGame extends Game {
 		graphics.setViewport();
 	}
 
-	protected void drawPowerups(Waypoint[] middleWaypoints) {
-		for(int i = 0;  i < middleWaypoints.length; i++){
-			if(middleWaypoints[i].hasPowerup()) {
-				Powerup powerUp = middleWaypoints[i].getPowerup();
-				
-				
-				
+	protected void drawPowerups(Waypoint[] powerUpPoints) {
+		// Set the viewport - this is the boundary used when drawing objects
+				graphics.setViewport(X_OFFSET, Y_OFFSET, window.width() - (2 * X_OFFSET),
+						window.height() - (2 * Y_OFFSET));
+
+		for(int i = 0;  i < powerUpPoints.length; i++){
+			if(powerUpPoints[i].hasPowerup()) {
+				Powerup powerUp = powerUpPoints[i].getPowerup();
 				
 				graphics.print(powerUp.name,
-						middleWaypoints[i].getLocation().getX() - 20,
-						middleWaypoints[i].getLocation().getY()+ 25);
-				
+						powerUpPoints[i].getLocation().getX() - 20,
+						powerUpPoints[i].getLocation().getY()+ 25);
 			}
 		}
+		// Reset the viewport
+				graphics.setViewport();
 	}
 
 	public void keyReleased(int key) {

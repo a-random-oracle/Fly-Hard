@@ -22,6 +22,8 @@ public class Powerup {
 
 	/** Image used for powerup */
 	private Image image;
+
+	private Waypoint waypoint;
 	
 	/** <p>The <code>PowerUp</code> enum contains all power-ups featured in the game.
 	 * </p>This enum gives access to a random power-up value; to be used in spawning
@@ -54,8 +56,7 @@ public class Powerup {
 	 * @param name - the name of the powerup
 	 * @param duration - the length the powerup is active for
 	 */
-	public Powerup(double x, double y, String name, int duration){
-		this.powerupLocation = new Vector(x, y, 0);
+	public Powerup(String name, int duration){
 		this.name = name;
 		this.duration = duration;
 		this.setPowerUpImage();
