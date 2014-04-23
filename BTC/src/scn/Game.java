@@ -46,30 +46,15 @@ public abstract class Game extends Scene {
 
 	/** The unique instance of this class */
 	protected static Game instance = null;
-
-	/** The current player */
-	protected Player player;
-
-	// PLEASE DO NOT REMOVE - this is very useful for debugging
-	public static OrdersBox out;
-
-	// Testing FlightStrip output
-	private FlightStrip flightStrip;
-
-	/** Difficulty settings: easy, medium and hard */
-	public enum DifficultySetting {EASY, MEDIUM, HARD}
 	
-	/** The current difficulty setting */
-	protected DifficultySetting difficulty;
-
 	/** The time since the scene began */
 	protected static double timeElapsed;
-
+	
 	/** The music to play during the game scene */
-	protected Music music;
+	protected static Music music;
 
 	/** The background to draw in the airspace */
-	protected Image background;
+	protected static Image background;
 
 	/** The airports in the airspace */
 	protected static Airport[] airports;
@@ -81,16 +66,31 @@ public abstract class Game extends Scene {
 	protected static Waypoint[] airspaceWaypoints;
 
 	/** The location waypoints under each players' control */
-	protected Hashtable<Integer, Integer> locationWaypointMap;
-
-	/** The manual control buttons */
-	protected ButtonText manualControlButton;
+	protected static Hashtable<Integer, Integer> locationWaypointMap;
 
 	/** Is the game paused */
-	protected boolean paused;
+	protected static boolean paused;
 	
 	/** The the game about to end */
-	protected boolean ending;
+	protected static boolean ending;
+	
+	/** The manual control buttons */
+	protected static ButtonText manualControlButton;
+
+	// PLEASE DO NOT REMOVE - this is very useful for debugging
+	public static OrdersBox out;
+	
+	/** Difficulty settings: easy, medium and hard */
+	public enum DifficultySetting {EASY, MEDIUM, HARD}
+	
+	/** The current player */
+	protected Player player;
+
+	// Testing FlightStrip output
+	private static FlightStrip flightStrip;
+	
+	/** The current difficulty setting */
+	protected DifficultySetting difficulty;
 
 
 	// Constructors ---------------------------------------------------------------------
@@ -1292,7 +1292,7 @@ public abstract class Game extends Scene {
 	}
 	
 	public void setEnding(boolean end) {
-		this.ending = end;
+		ending = end;
 	}
 
 
