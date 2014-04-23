@@ -5,6 +5,7 @@ import java.util.HashMap;
 
 import org.newdawn.slick.Color;
 
+import scn.Game;
 import net.NetworkManager;
 import lib.ButtonText;
 import lib.jog.graphics;
@@ -196,8 +197,10 @@ public class MultiPlayerGame extends Game {
 		if(this.powerUpGenerationTimeElapsed > this.powerUpInterval){
 			powerUpGenerationTimeElapsed = 0;
 			powerUpInterval = 30;
-			//addPowerup(allPowerups, middleWaypoints); TODO
+			addPowerup(allPowerups, this.powerUpPoints); 
 		}
+		
+		
 
 		// Get data from the server
 		Object data = NetworkManager.receiveData();
@@ -315,8 +318,20 @@ public class MultiPlayerGame extends Game {
 		graphics.setViewport();
 	}
 
-	protected void drawPowerups() {
-		//Powerup.draw(0, 0, null);
+	protected void drawPowerups(Waypoint[] middleWaypoints) {
+		for(int i = 0;  i < middleWaypoints.length; i++){
+			if(middleWaypoints[i].hasPowerup()) {
+				Powerup powerUp = middleWaypoints[i].getPowerup();
+				
+				
+				
+				
+				graphics.print(powerUp.name,
+						middleWaypoints[i].getLocation().getX() - 20,
+						middleWaypoints[i].getLocation().getY()+ 25);
+				
+			}
+		}
 	}
 
 	public void keyReleased(int key) {
@@ -358,6 +373,27 @@ public class MultiPlayerGame extends Game {
 		}
 
 		return false;
+	}
+	
+	//Powerups stuff
+	
+	public Powerup chooseRandomPowerup(ArrayList<Powerup> powerUps) {
+		int length = powerUps.size();
+		int number = 0 + (int)(Math.random()* (length-1)); 
+		return powerUps.get(number);
+	}
+	
+	public Waypoint chooseRandomWaypoint(Waypoint[] waypoints) {
+		int length = waypoints.length;
+		int number = 0 + (int)(Math.random()* (length));
+		return waypoints[number];
+	}
+	
+	public void addPowerup(ArrayList<Powerup> powerUps, Waypoint[] waypoints){
+		Waypoint waypoint = chooseRandomWaypoint(waypoints);
+		Powerup powerup = chooseRandomPowerup(powerUps);
+		waypoint.setHasPowerup(true);
+		waypoint.setPowerup(powerup);
 	}
 
 	@Override
