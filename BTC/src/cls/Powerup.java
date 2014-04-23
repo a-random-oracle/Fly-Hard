@@ -45,9 +45,6 @@ public class Powerup implements Serializable {
 	
 	/** The powerup's type */
 	private PowerUp type;
-
-	/** Image used for powerup */
-	private Image image;
 	
 	
 	/**
@@ -57,7 +54,6 @@ public class Powerup implements Serializable {
 	public Powerup(String name) {
 		this.name = name;
 		this.type = PowerUp.randomPowerUp();
-		this.setPowerUpImage();
 		
 		// Set up the durations map
 		DURATIONS.put(PowerUp.FOG,  5000);
@@ -72,26 +68,24 @@ public class Powerup implements Serializable {
 	 */
 	public void draw(Vector location) {
 		graphics.setColour(Color.white);
-		graphics.draw(this.image, location.getX(), location.getY());
+		graphics.draw(getPowerUpImage(), location.getX(), location.getY());
 	}
 
 	/**
 	 * Initialises the power-up's image to the appropriate image.
 	 */
-	private void setPowerUpImage() {
+	private Image getPowerUpImage() {
 		switch (type) {
 		case FOG: 
-			image = graphics.newImage("gfx/pUp" + File.separator + "fog9a.png");
-			break;
+			return graphics.newImage("gfx/pUp" + File.separator + "fog9a.png");
 		case SLOW_DOWN:
-			image = graphics.newImage("gfx/pUp" + File.separator + "slow2a.png");
-			break;
+			return graphics.newImage("gfx/pUp" + File.separator + "slow2a.png");
 		case SPEED_UP:
-			image = graphics.newImage("gfx/pUp" + File.separator + "speed3a.png");
-			break;
+			return graphics.newImage("gfx/pUp" + File.separator + "speed3a.png");
 		case TRANSFER:
-			image = graphics.newImage("gfx/pUp" + File.separator + "transfer1a.png");
-			break;
+			return graphics.newImage("gfx/pUp" + File.separator + "transfer1a.png");
+		default:
+			return null;
 		}
 	}
 	
