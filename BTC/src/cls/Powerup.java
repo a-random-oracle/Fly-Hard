@@ -272,6 +272,9 @@ public class Powerup implements Serializable {
 					gameInstance.getPlayer(),
 					gameInstance.getOpposingPlayer()
 			});
+			
+			// Reset the selected aircraft
+			gameInstance.deselectAircraft(gameInstance.getPlayer());
 		}
 	}
 	

@@ -209,7 +209,9 @@ public class MultiPlayerGame extends Game {
 
 				// If there are currently no powerups, generate one
 				if (!powerupExists) {
-					Waypoint randomWaypoint = powerupPoints[Main.getRandom().nextInt(powerupPoints.length)];
+					Waypoint randomWaypoint =
+							powerupPoints[Main.getRandom()
+							              .nextInt(powerupPoints.length)];
 					
 					// Generate a new powerup on the selected waypoint
 					randomWaypoint.setPowerup(new Powerup());
@@ -221,9 +223,9 @@ public class MultiPlayerGame extends Game {
 		}
 		
 		// Check if any powerups have been taken
-		checkPowerups(); //TODO
+		checkPowerups();
 
-		// Send and receive data
+		// Receive data
 		updateData();
 
 		// Send current player's data to the server
@@ -446,6 +448,9 @@ public class MultiPlayerGame extends Game {
 						&& waypoint.getPowerup() != null) {
 					// Add the waypoint to the appropriate player
 					waypoint.getPowerup().addToPlayer();
+					
+					// Register the aircraft as that which obtained the powerup
+					waypoint.getPowerup().registerAircraft(aircraft);
 					
 					// And remove the powerup from the waypoint
 					waypoint.setPowerup(null);
