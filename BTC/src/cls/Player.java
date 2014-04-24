@@ -2,7 +2,6 @@ package cls;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 public class Player implements Serializable {
 	
@@ -31,7 +30,7 @@ public class Player implements Serializable {
 	private Airport[] airports;
 	
 	/** The aircraft under the player's control */
-	private HashMap<String, Aircraft> aircraft;
+	private ArrayList<Aircraft> aircraft;
 	
 	/** The waypoints under the player's control */
 	private Waypoint[] waypoints;
@@ -104,7 +103,7 @@ public class Player implements Serializable {
 		this.controlAltitude = 30000;
 		this.lives = 3;
 		this.score = new Score();
-		this.aircraft = new HashMap<String, Aircraft>();
+		this.aircraft = new ArrayList<Aircraft>();
 		this.powerups = new ArrayList<Powerup>();
 		
 		// Set aircraft colour
@@ -113,8 +112,6 @@ public class Player implements Serializable {
 				? AIRCRAFT_COLOURS[id] : new Integer[] {255, 255, 255};
 	}
 	
-	
-	// Accessors: -----------------------------------------------------------------------
 	
 	/**
 	 * Gets the player's unique ID.
@@ -144,7 +141,7 @@ public class Player implements Serializable {
 	 * Gets a list of the player's aircraft.
 	 * @return a list of the player's aircraft
 	 */
-	public HashMap<String, Aircraft> getAircraft() {
+	public ArrayList<Aircraft> getAircraft() {
 		return aircraft;
 	}
 	
@@ -263,13 +260,11 @@ public class Player implements Serializable {
 	}
 	
 	
-	// Mutators: ------------------------------------------------------------------------
-	
 	/**
 	 * Sets the list of aircraft under the player's control.
 	 * @param aircraft - the new list of aircraft
 	 */
-	public void setAircraft(HashMap<String, Aircraft> aircraft) {
+	public void setAircraft(ArrayList<Aircraft> aircraft) {
 		this.aircraft = aircraft;
 	}
 	
@@ -388,99 +383,6 @@ public class Player implements Serializable {
 		this.lives = lives;
 	}
 	
-	
-	// Other ----------------------------------------------------------------------------
-	
-	public void overwrite(Player updatedPlayer) {
-		// Check that the update insn't null
-		if (updatedPlayer == null) return;
-		
-		// Check that the IDs match
-		if (updatedPlayer.getID() != id) return;
-		
-		// Update attributes
-		maxAircraft = updatedPlayer.maxAircraft;
-		aircraftColour = updatedPlayer.aircraftColour;
-		selectedAircraft = updatedPlayer.selectedAircraft;
-		selectedWaypoint = updatedPlayer.selectedWaypoint;
-		selectedPathpoint = updatedPlayer.selectedPathpoint;
-		compassClicked = updatedPlayer.compassClicked;
-		waypointClicked = updatedPlayer.waypointClicked;
-		turningState = updatedPlayer.turningState;
-		flightGenerationTimeElapsed = updatedPlayer.flightGenerationTimeElapsed;
-		controlAltitude = updatedPlayer.controlAltitude;
-		score = updatedPlayer.score;
-		lives = updatedPlayer.lives;
-		powerups = updatedPlayer.powerups;
-		airports = updatedPlayer.airports;
-		//aircraft = updatedPlayer.aircraft;
-		waypoints = updatedPlayer.waypoints;
-		
-		ArrayList<Aircraft> aircraftToRemove = new ArrayList<Aircraft>();
-		
-		if (aircraft != null && updatedPlayer.aircraft != null) {
-			for (String key : aircraft.keySet()) {
-				if (updatedPlayer.aircraft.get(key) != null) {
-					// Update
-					aircraft.get(key).overwrite(updatedPlayer.aircraft.get(key));
-				} else {
-					// Remove
-					aircraftToRemove.add(aircraft.get(key));
-				}
-			}
-			
-			for (String key : updatedPlayer.aircraft.keySet()) {
-				if (aircraft.get(key) == null) {
-					// Add
-					aircraft.put(key, updatedPlayer.aircraft.get(key));
-				}
-			}
-		}
-		
-		for (Aircraft a : aircraftToRemove) {
-			aircraft.remove(a);
-		}
-		
-		// Update existing aircraft
-		/*ArrayList<Aircraft> aircraftToRemove = new ArrayList<Aircraft>();
-		
-		if (aircraft != null) {
-			for (Aircraft currentAircraft : aircraft) {
-				if (currentAircraft != null) {
-					boolean found = false;
-					for (Aircraft updatedAircraft : updatedPlayer.aircraft) {
-						if (updatedAircraft != null) {
-							if (currentAircraft.getName()
-									== updatedAircraft.getName()) {
-								found = true;
-								currentAircraft.overwrite(updatedAircraft);
-								break;
-							}
-						}
-					}
-
-					if (!found) {
-						aircraftToRemove.add(currentAircraft);
-					}
-				}
-			}
-		}
-		
-		// Remove old aircraft
-		for (Aircraft a : aircraftToRemove) {
-			aircraft.remove(a);
-		}
-		
-		// Add new aircraft
-		if (updatedPlayer.aircraft != null) {
-			for (Aircraft updatedAircraft : updatedPlayer.aircraft) {
-				if (updatedAircraft != null
-						&& !aircraft.contains(updatedAircraft)) {
-					aircraft.add(updatedAircraft);
-				}
-			}
-		}*/
-	}
 	
 	@Override
 	public String toString() {

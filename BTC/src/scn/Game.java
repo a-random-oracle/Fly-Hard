@@ -3,7 +3,6 @@ package scn;
 import java.io.File;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Hashtable;
 
 import lib.ButtonText;
@@ -47,30 +46,15 @@ public abstract class Game extends Scene {
 
 	/** The unique instance of this class */
 	protected static Game instance = null;
-
-	/** The current player */
-	protected Player player;
-
-	// PLEASE DO NOT REMOVE - this is very useful for debugging
-	public static OrdersBox out;
-
-	// Testing FlightStrip output
-	private FlightStrip flightStrip;
-
-	/** Difficulty settings: easy, medium and hard */
-	public enum DifficultySetting {EASY, MEDIUM, HARD}
 	
-	/** The current difficulty setting */
-	protected DifficultySetting difficulty;
-
 	/** The time since the scene began */
 	protected static double timeElapsed;
-
+	
 	/** The music to play during the game scene */
-	protected Music music;
+	protected static Music music;
 
 	/** The background to draw in the airspace */
-	protected Image background;
+	protected static Image background;
 
 	/** The airports in the airspace */
 	protected static Airport[] airports;
@@ -82,16 +66,31 @@ public abstract class Game extends Scene {
 	protected static Waypoint[] airspaceWaypoints;
 
 	/** The location waypoints under each players' control */
-	protected Hashtable<Integer, Integer> locationWaypointMap;
-
-	/** The manual control buttons */
-	protected ButtonText manualControlButton;
+	protected static Hashtable<Integer, Integer> locationWaypointMap;
 
 	/** Is the game paused */
-	protected boolean paused;
+	protected static boolean paused;
 	
 	/** The the game about to end */
-	protected boolean ending;
+	protected static boolean ending;
+	
+	/** The manual control buttons */
+	protected static ButtonText manualControlButton;
+
+	// PLEASE DO NOT REMOVE - this is very useful for debugging
+	public static OrdersBox out;
+	
+	/** Difficulty settings: easy, medium and hard */
+	public enum DifficultySetting {EASY, MEDIUM, HARD}
+	
+	/** The current player */
+	protected Player player;
+
+	// Testing FlightStrip output
+	private static FlightStrip flightStrip;
+	
+	/** The current difficulty setting */
+	protected DifficultySetting difficulty;
 
 
 	// Constructors ---------------------------------------------------------------------
@@ -251,7 +250,7 @@ public abstract class Game extends Scene {
 	 */
 	protected void updatePlayer(double timeDifference, Player player) {
 		// Update aircraft
-		for (Aircraft aircraft : player.getAircraft().values()) {
+		for (Aircraft aircraft : player.getAircraft()) {
 			aircraft.update(timeDifference);
 		}
 
@@ -276,7 +275,7 @@ public abstract class Game extends Scene {
 		// Deselect any aircraft which are outside the airspace
 		// This ensures that players can't keep controlling aircraft
 		// after they've left the airspace
-		for (Aircraft airc : player.getAircraft().values()) {
+		for (Aircraft airc : player.getAircraft()) {
 			if (!(airc.isAtDestination())) {
 				if (airc.isOutOfAirspaceBounds()) {
 					deselectAircraft(airc, player);
@@ -375,7 +374,7 @@ public abstract class Game extends Scene {
 
 		// Draw all aircraft, and show their routes if the mouse is hovering
 		// above them
-		for (Aircraft aircraft : player.getAircraft().values()) {
+		for (Aircraft aircraft : player.getAircraft()) {
 			aircraft.draw(player.getAircraftColour(), player.getControlAltitude());
 
 			if (aircraft.isMouseOver()) {
@@ -717,7 +716,7 @@ public abstract class Game extends Scene {
 	 * @param timeDifference - the time since the last collision check
 	 */
 	protected void checkCollisions(double timeDifference) {
-		for (Aircraft plane : getAllAircraft().values()) {
+		for (Aircraft plane : getAllAircraft()) {
 			int collisionState = plane.updateCollisions(timeDifference,
 					getAllAircraft());
 			if (collisionState >= 0) {
@@ -795,7 +794,7 @@ public abstract class Game extends Scene {
 			}
 
 			// Otherwise, add the aircraft to the airspace
-			player.getAircraft().put(aircraft.getName(), aircraft);
+			player.getAircraft().add(aircraft);
 		}
 	}
 
@@ -915,12 +914,20 @@ public abstract class Game extends Scene {
 		// Generate a unique, random flight name, using carrierTag as prefix
 		String name = "";
 		boolean nameTaken = true;
+
 		while (nameTaken) {
-			name = carrierTag + String.format("%03d",
-					(int)(1 + Main.getRandom().nextInt(999)));
+			name = carrierTag + String.format("%03d", (int)(1 + Main.getRandom().nextInt(999)));
 
 			// Check the generated name against every other flight name
-			if (!getAllAircraft().containsKey(name)) {
+			boolean foundName = false;
+			for (Aircraft a : getAllAircraft()) {
+				if (a.getName().equals(name)) {
+					foundName = true;
+					break;
+				}
+			}
+			
+			if (!foundName) {
 				nameTaken = false;
 			}
 		}
@@ -939,7 +946,7 @@ public abstract class Game extends Scene {
 	 * @param player
 	 * 			the player to reset the selected plane attribute for
 	 */
-	protected void deselectAircraft(Player player) {
+	public void deselectAircraft(Player player) {
 		deselectAircraft(player.getSelectedAircraft(), player);
 	}
 
@@ -1000,7 +1007,7 @@ public abstract class Game extends Scene {
 			//   - any plane is currently going towards it
 			//   - or any plane is less than 250 from it
 
-			for (Aircraft aircraft : getAllAircraft().values()) {
+			for (Aircraft aircraft : getAllAircraft()) {
 				// Check if any plane is currently going towards the
 				// exit point/chosen originPoint
 				// Check if any plane is less than what is defined as too close
@@ -1086,7 +1093,7 @@ public abstract class Game extends Scene {
 	 * 			otherwise returns null
 	 */
 	protected Aircraft findClickedAircraft(int x, int y, Player player) {
-		for (Aircraft a : player.getAircraft().values()) {
+		for (Aircraft a : player.getAircraft()) {
 			if (a.isMouseOver(x - X_OFFSET, y - Y_OFFSET)) {
 				return a;
 			}
@@ -1162,7 +1169,7 @@ public abstract class Game extends Scene {
 	 * Gets the current player.
 	 * @return the current player
 	 */
-	public Player getCurrentPlayer() {
+	public Player getPlayer() {
 		return player;
 	}
 
@@ -1170,7 +1177,7 @@ public abstract class Game extends Scene {
 	 * Gets a list of all aircraft in the airspace.
 	 * @return a list of all the aircraft in the airspace
 	 */
-	public HashMap<String, Aircraft> getAllAircraft() {
+	public ArrayList<Aircraft> getAllAircraft() {
 		return player.getAircraft();
 	}
 
@@ -1222,13 +1229,13 @@ public abstract class Game extends Scene {
 	 * @return the player controlling the specified aircraft
 	 */
 	public Player getPlayerFromAircraft(Aircraft aircraft) {
-		if (player != null && player.getAircraft() != null
-				&& aircraft != null && player.getAircraft()
-				.containsKey(aircraft.getName())) {
-			return player;
-		} else {
-			return null;
+		for (Aircraft a : player.getAircraft()) {
+			if (a.equals(aircraft)) {
+				return player;
+			}
 		}
+		
+		return null;
 	}
 
 	/**
@@ -1260,11 +1267,13 @@ public abstract class Game extends Scene {
 	 * @return the aircraft with the specified name
 	 */
 	public Aircraft getAircraftFromName(String name) {
-		if (player != null && player.getAircraft() != null) {
-			return player.getAircraft().get(name);
-		} else {
-			return null;
+		for (Aircraft a : getAllAircraft()) {
+			if (a.getName().equals(name)) {
+				return a;
+			}
 		}
+	
+		return null;
 	}
 
 	/**
@@ -1287,7 +1296,7 @@ public abstract class Game extends Scene {
 	}
 	
 	public void setEnding(boolean end) {
-		this.ending = end;
+		ending = end;
 	}
 
 

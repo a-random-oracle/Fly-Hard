@@ -3,7 +3,6 @@ package cls;
 import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import btc.Main;
 import scn.Game;
@@ -329,7 +328,7 @@ public class Aircraft implements Serializable {
 	public boolean isAt(Vector point) {
 		double dy = point.getY() - position.getY();
 		double dx = point.getX() - position.getX();
-		return (dy * dy) + (dx * dx) < (6 * 6);
+		return (dy * dy) + (dx * dx) < (10 * 10);
 	}
 
 	/**
@@ -471,12 +470,9 @@ public class Aircraft implements Serializable {
 	 * <p>
 	 * Also allows an offset to be applied.
 	 * </p>
-	 * @param colour
-	 * 			the colour to draw the aircraft
-	 * @param highlightedAltitude
-	 * 			the altitude to highlight aircraft at
-	 * @param offset
-	 * 			a manual offset to apply
+	 * @param colour - the colour to draw the aircraft
+	 * @param highlightedAltitude - the altitude to highlight aircraft at
+	 * @param offset - a manual offset to apply
 	 */
 	public void draw(Integer[] colour, int highlightedAltitude, Vector offset) {
 		double alpha;
@@ -698,17 +694,15 @@ public class Aircraft implements Serializable {
 	 * @return index of plane breaching separation distance with this plane, or
 	 *         -1 if no planes are in violation.
 	 */
-	public int updateCollisions(double timeDifference,
-			HashMap<String, Aircraft> aircraft) {
+	public int updateCollisions(double timeDifference, ArrayList<Aircraft> aircraft) {
 		planesTooNear.clear();
 		for (int i = 0; i < aircraft.size(); i++) {
 			Aircraft plane = aircraft.get(i);
 			if (plane != this && isWithin(plane, RADIUS)) { // Planes crash
 				hasFinished = true;
 				return i;
-			} else if (plane != this && isWithin(plane, minimumSeparation)) { // Breaching
-				// separation
-				// distance
+			} else if (plane != this && isWithin(plane, minimumSeparation)) {
+				// Breaching separation distance
 				planesTooNear.add(plane);
 				if (!collisionWarningSoundFlag) {
 					collisionWarningSoundFlag = true;
@@ -819,7 +813,7 @@ public class Aircraft implements Serializable {
 			for (Airport airport : Game.getInstance().getAllAirports()) {
 				if (airport.equals(flightPlan.getOriginAirport())) {
 					Game.getInstance().getPlayerFromAirport(
-							airport).getAircraft().put(flightName, this);
+							airport).getAircraft().add(this);
 					return;
 				}
 			}
@@ -905,6 +899,14 @@ public class Aircraft implements Serializable {
 	 */
 	public double getSpeed() {
 		return velocity.magnitude();
+	}
+	
+	/** 
+	 * Gets the aircrafts velocity
+	 * @return the aircraft's velocity
+	 */
+	public Vector getVelocity() {
+		return velocity;
 	}
 
 	/**

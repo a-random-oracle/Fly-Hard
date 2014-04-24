@@ -126,8 +126,8 @@ public class AircraftTest {
 	public void totalDistanceInFlightPlan() {
 		SinglePlayerGame testDemo = SinglePlayerGame.createSinglePlayerGame(DifficultySetting.MEDIUM);
 		testDemo.initializeAircraftArray();
-		Game.getInstance().getCurrentPlayer().getAircraft().put(testAircraft.getName(), testAircraft);
-		Aircraft plane = Game.getInstance().getCurrentPlayer().getAircraft().get(0);
+		Game.getInstance().getPlayer().getAircraft().add(testAircraft);
+		Aircraft plane = Game.getInstance().getPlayer().getAircraft().get(0);
 		int distance = 0;
 		
 		for (int i = 0; i < plane.getFlightPlan().getRoute().length - 1; i++) {

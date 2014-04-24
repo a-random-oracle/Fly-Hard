@@ -25,12 +25,9 @@ public class Vector implements Serializable {
 	
 	/**
 	 * Constructor for a vector.
-	 * @param x
-	 * 			the vector's x position
-	 * @param y
-	 * 			the vector's y position
-	 * @param z
-	 * 			the vector's z position
+	 * @param x - the vector's x position
+	 * @param y - the vector's y position
+	 * @param z - the vector's z position
 	 */
 	public Vector(double x, double y, double z) {
 		this.x = x / (window.width() - (2 * Game.X_OFFSET));
@@ -40,14 +37,10 @@ public class Vector implements Serializable {
 	
 	/**
 	 * Constructor for a relative vector.
-	 * @param x
-	 * 			the vector's x position
-	 * @param y
-	 * 			the vector's y position
-	 * @param z
-	 * 			the vector's z position
-	 * @param relative
-	 * 			this value is ignored
+	 * @param x - the vector's x position
+	 * @param y - the vector's y position
+	 * @param z - the vector's z position
+	 * @param relative - this value is ignored
 	 */
 	public Vector(double x, double y, double z, boolean valueIgnored) {
 		this.x = x;
@@ -98,8 +91,7 @@ public class Vector implements Serializable {
 	
 	/**
 	 * Sets the z value of the vector.
-	 * @param z
-	 * 		the z value to be set
+	 * @param z - the z value to be set
 	 */
 	public void setZ(double z) {
 		this.z = z;
@@ -131,8 +123,7 @@ public class Vector implements Serializable {
 	
 	/**
 	 * Scales the vector by a given scalar.
-	 * @param n
-	 * 			the scalar to scale by
+	 * @param n - the scalar to scale by
 	 * @return the scaled vector
 	 */
 	public Vector scaleBy(double n) {
@@ -140,9 +131,17 @@ public class Vector implements Serializable {
 	}
 	
 	/**
+	 * Scales the vector by a given scalar, and sets those value to the vector.
+	 * @param n - the scalar to scale by
+	 */
+	public void scaleByAndSet(double n) {
+		x *= n;
+		y *= n;
+	}
+	
+	/**
 	 * Adds two vectors together.
-	 * @param v
-	 * 			a vector to be added
+	 * @param v - a vector to be added
 	 * @return the sum of the vectors
 	 */
 	public Vector add(Vector v) {
@@ -153,8 +152,7 @@ public class Vector implements Serializable {
 	
 	/**
 	 * Subtracts two vectors
-	 * @param v
-	 * 			a vector to be subtracted
+	 * @param v - a vector to be subtracted
 	 * @return the result of the subtractions
 	 */
 	public Vector sub(Vector v) {
@@ -165,8 +163,7 @@ public class Vector implements Serializable {
 	
 	/**
 	 * Gets the angle between this vector and a specified vector.
-	 * @param v
-	 * 			the vector to find the angle to
+	 * @param v - the vector to find the angle to
 	 * @return the angle between this vector and another
 	 */
 	public double angleBetween(Vector v) {
@@ -176,10 +173,23 @@ public class Vector implements Serializable {
 		return (v.getY() < getY()) ? a * -1 : a;
 	}
 	
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		long temp;
+		temp = Double.doubleToLongBits(x);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
+		temp = Double.doubleToLongBits(y);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
+		temp = Double.doubleToLongBits(z);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
+		return result;
+	}
+
 	/**
 	 * Checks a vector for equality with this vector.
-	 * @param o
-	 * 			the object to be tested for equality
+	 * @param o - the object to be tested for equality
 	 * @return a boolean result of the equality test
 	 */
 	@Override
@@ -193,7 +203,7 @@ public class Vector implements Serializable {
 			return false;
 		}
 	}
-	
+
 	/**
 	 * Returns a textual representation of the vector.
 	 * @return a textual representation of the vector

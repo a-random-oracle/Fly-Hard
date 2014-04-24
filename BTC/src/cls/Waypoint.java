@@ -2,11 +2,13 @@ package cls;
 
 import java.io.Serializable;
 
+import org.newdawn.slick.Color;
+
 import lib.jog.graphics;
 
 public class Waypoint implements Serializable {
 	
-	// TODO last updated: 2014.03.19 23:45
+	/** Serialisation ID */
 	private static final long serialVersionUID = 1413476488063120300L;
 
 	/** Leniency to allow mouse input to be accepted in a small area around the waypoint  */
@@ -24,14 +26,9 @@ public class Waypoint implements Serializable {
 	/** Marks whether the waypoint is an entry point, exit point or airport */
 	private boolean entryOrExit;
 	
-	/** Marks whether the waypoint is a middle waypoint used for powerups */
-	private boolean middlewaypoint; //XXX < - this is awful
-
-	/** If a waypoint has a powerup */
-	private boolean hasPowerup = false; // XXX <- this is awful
-	
 	/** The powerup of this waypoint */
 	private Powerup powerup = null;
+	
 	
 	/**
 	 * Constructor for waypoints.
@@ -108,7 +105,21 @@ public class Waypoint implements Serializable {
 	 * Draws the waypoint.
 	 */
 	public void draw() {
-		draw(waypointLocation.getX(), waypointLocation.getY());
+		draw(waypointLocation.getX(),
+				waypointLocation.getY(),
+				graphics.red_transp);
+	}
+	
+	/**
+	 * Draws the waypoint.
+	 * <p>
+	 * Allows a colour to be specified.
+	 * </p>
+	 */
+	public void draw(Color colour) {
+		draw(waypointLocation.getX(),
+				waypointLocation.getY(),
+				colour);
 	}
 	
 	/**
@@ -116,11 +127,14 @@ public class Waypoint implements Serializable {
 	 * @param x - the x location to draw the waypoint at
 	 * @param y - the y location to draw the waypoint at
 	 */
-	public void draw(double x, double y) {
-		if (this.isEntryOrExit()) 
+	public void draw(double x, double y, Color colour) {
+		if (this.isEntryOrExit()) {
 			graphics.setColour(64, 128, 0, 192);
-		else
-			graphics.setColour(graphics.red_transp);
+		} else if (powerup != null) {
+			graphics.setColour(graphics.blue_transp);
+		} else {
+			graphics.setColour(colour);
+		}
 		
 		graphics.circle(false, x-WAYPOINT_ICON_RADIUS/2 + 2,
 				y-WAYPOINT_ICON_RADIUS/2 + 2, WAYPOINT_ICON_RADIUS);
@@ -171,29 +185,42 @@ public class Waypoint implements Serializable {
 	}
 	
 	/**
-	 * Sets the powerup attached to the waypoint.
+	 * Sets the powerup attached to the waypoint. If powerup is null, allow it to be set. If specified powerup is null, clear powerup
 	 * @param powerup -  the powerup to attach to the waypoint
 	 */
 	public void setPowerup(Powerup powerup) {
-		this.powerup = powerup;
+		if (powerup == null){
+			this.powerup = null;
+		} else if (this.powerup == null) {
+			this.powerup = powerup;
+		}
 	}
-	
-	/**
-	 * Gets whether the waypoint has a powerup attached.
-	 * @return <code>true</code> if the waypoint has a powerup attached,
-	 * 			otherwise <code>false</code>
-	 */
-	public boolean hasPowerup() {
-		return hasPowerup;	
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime
+				* result
+				+ ((waypointLocation == null) ? 0 : waypointLocation.hashCode());
+		return result;
 	}
-	
-	/**
-	 * Sets whether the waypoint has a powerup attached.
-	 * @param hasPowerup - <code>true</code> if the waypoint has a powerup
-	 * 						attached, otherwise <code>false</code>
-	 */
-	public void setHasPowerup(boolean hasPowerup) {
-		this.hasPowerup = hasPowerup;
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Waypoint other = (Waypoint) obj;
+		if (waypointLocation == null) {
+			if (other.waypointLocation != null)
+				return false;
+		} else if (!waypointLocation.equals(other.waypointLocation))
+			return false;
+		return true;
 	}
 	
 }
