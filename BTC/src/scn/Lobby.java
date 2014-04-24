@@ -90,12 +90,8 @@ public class Lobby extends Scene {
 		ButtonText.Action createGame = new ButtonText.Action() {
 			@Override
 			public void action() {
-				String response = NetworkManager.postMessage(
-						"SET_NAME:" + nameEntryBox.getText() + ";SET_HOST");
-				
-				if (response != null && response.contains("HOST_SET")) {
-					setWaitingForOpponent(true);
-				}
+				// Set the player as a host
+				NetworkManager.setHost(true);
 			}
 		};
 
@@ -141,8 +137,9 @@ public class Lobby extends Scene {
 
 			if (waitingInstructions != null) {
 				if (waitingInstructions.contains("START_GAME")) {
-					InstructionHandler.handleInstruction(waitingInstructions);
 					setWaitingForOpponent(false);
+					NetworkManager.setHost(false);
+					InstructionHandler.handleInstruction(waitingInstructions);
 				}
 			}
 
@@ -442,8 +439,9 @@ public class Lobby extends Scene {
 	private void selectGame(int clientID) {
 		// Send a JOIN instruction to the server, passing the ID
 		// of the game to connect to as a parameter
-		NetworkManager.postMessage("SET_NAME:" + nameEntryBox.getText()
-				+ ";JOIN:" + clientID);
+		NetworkManager.setName(nameEntryBox.getText());
+		NetworkManager.setHost(false);
+		NetworkManager.postMessage("JOIN:" + clientID);
 	}
 
 	/**

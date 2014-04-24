@@ -7,12 +7,10 @@ import java.io.ByteArrayInputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
-
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
-
 import java.util.Map.Entry;
 import java.util.TreeMap;
 
@@ -28,13 +26,14 @@ public abstract class NetworkManager {
 	/** The data transfer extension */
 	public static final String DATA_EXT = "/data";
 	
-	public enum State {CONNECTING, CONNECTED, CLOSED}
-	
-	/** The state the network manager isin */
-	private static State state;
-	
 	/** The connection ID to the server */
 	private static int id = -1;
+	
+	/** The connection name */
+	private static String name = "";
+	
+	/** The connection host status */
+	private static boolean isHost = false;
 
 	/** The thread to send data on */
 	private static NetworkThread networkThread = new NetworkThread();
@@ -50,18 +49,12 @@ public abstract class NetworkManager {
 	/**
 	 * Initialises the new network manager.
 	 * <p>
-	 * This starts the network thread, and sends an initial "START" instruction.
+	 * This starts the network thread.
 	 * </p>
 	 */
 	public static void initialise() {
-		// Set the network manager's state to CONNECTING
-		state = State.CONNECTING;
-		
 		// Start the network thread
 		networkThread.start();
-		
-		// Send an initial START instruction
-		sendMessage("START");
 	}
 	
 	
@@ -131,7 +124,9 @@ public abstract class NetworkManager {
 			
 			// Set request properties and headers
 			connection.addRequestProperty("user-agent", "Fly-Hard");
-			connection.addRequestProperty("client-id", String.valueOf(id));
+			connection.addRequestProperty("fh-client-id", String.valueOf(id));
+			connection.addRequestProperty("fh-client-name", name);
+			connection.addRequestProperty("fh-client-host", String.valueOf(isHost));
 		} catch (ProtocolException e) {
 			print(e);
 		} catch (MalformedURLException e) {
@@ -150,54 +145,58 @@ public abstract class NetworkManager {
 	 */
 	public static String postMessage(String message) {
 		String receivedMessages = null;
-		
-		if (state == State.CONNECTED
-				|| ("START".equals(message) && state == State.CONNECTING)) {
-			ObjectOutputStream outputStream = null;
-			ObjectInputStream inputStream = null;
+
+		ObjectOutputStream outputStream = null;
+		ObjectInputStream inputStream = null;
+
+		if (message != null && !message.equals("")) {
+			print("Sending message: " + message);
+		}
+
+		// Open the connection
+		HttpURLConnection connection = openPostConnection(SERVER_URL + MSG_EXT);
+
+		try {
+			// Set up the output stream
+			outputStream = new ObjectOutputStream(connection.getOutputStream());
+
+			// Write the data
+			outputStream.writeObject(message);
+
+			// Connect to the server
+			connection.connect();
+
+			// Set up the input stream
+			inputStream = new ObjectInputStream(connection.getInputStream());
+
+			// Get the received data
+			receivedMessages = (String) inputStream.readObject();
 
 			if (message != null && !message.equals("")) {
-				print("Sending message: " + message);
+				print("Received response: " + receivedMessages);
 			}
 
-			// Open the connection
-			HttpURLConnection connection = openPostConnection(SERVER_URL + MSG_EXT);
+			// Get the response headers
+			setID(Integer.parseInt(connection
+					.getHeaderField("fh-client-id")));
+			setName(connection.getHeaderField("fh-client-name"));
+			setHost(Boolean.parseBoolean(connection
+					.getHeaderField("fh-client-host")));
 
-			try {
-				// Set up the output stream
-				outputStream = new ObjectOutputStream(connection.getOutputStream());
+			// Flush the output stream
+			outputStream.flush();
 
-				// Write the data
-				outputStream.writeObject(message);
-
-				// Connect to the server
-				connection.connect();
-
-				// Set up the input stream
-				inputStream = new ObjectInputStream(connection.getInputStream());
-
-				// Get the received data
-				receivedMessages = (String) inputStream.readObject();
-
-				if (message != null && !message.equals("")) {
-					print("Received response: " + receivedMessages);
-				}
-
-				// Flush the output stream
-				outputStream.flush();
-
-				// Close the connection
-				connection.disconnect();
-			} catch (EOFException e) {
-				// Do not print the error message
-			} catch (Exception e) {
-				print(e);
-			}
-
-			// Handle the received message(s)
-			InstructionHandler.handleInstruction(receivedMessages);
+			// Close the connection
+			connection.disconnect();
+		} catch (EOFException e) {
+			// Do not print the error message
+		} catch (Exception e) {
+			print(e);
 		}
-		
+
+		// Handle the received message(s)
+		InstructionHandler.handleInstruction(receivedMessages);
+
 		return receivedMessages;
 	}
 	
@@ -240,6 +239,13 @@ public abstract class NetworkManager {
 			
 			// Get the received data
 			receivedData = (Entry<Long, byte[]>) inputStream.readObject();
+			
+			// Get the response headers
+			setID(Integer.parseInt(connection
+					.getHeaderField("fh-client-id")));
+			setName(connection.getHeaderField("fh-client-name"));
+			setHost(Boolean.parseBoolean(connection
+					.getHeaderField("fh-client-host")));
 			
 			// Flush the output stream
 			outputStream.flush();
@@ -309,6 +315,43 @@ public abstract class NetworkManager {
 	
 	
 	/**
+	 * Gets the network thread's ID.
+	 * @return the network thread's ID
+	 */
+	public static long getNetworkThreadID() {
+		// Obtain a lock on the network thread
+		synchronized (networkThread) {
+			return networkThread.getId();
+		}
+	}
+	
+	/**
+	 * Sets the player's ID.
+	 * @param name - the player's ID
+	 */
+	public static synchronized void setID(int id) {
+		NetworkManager.id = id;
+	}
+	
+	/**
+	 * Sets the player's name.
+	 * @param name - the player's name
+	 */
+	public static synchronized void setName(String name) {
+		NetworkManager.name = name;
+	}
+	
+	/**
+	 * Sets whether the player is a host.
+	 * @param isHost - <code>true</code> if a player should be a host,
+	 * 			otherwise <code>false</code>
+	 */
+	public static synchronized void setHost(boolean isHost) {
+		NetworkManager.isHost = isHost;
+	}
+	
+	
+	/**
 	 * Prints strings to the standard output.
 	 * <p>
 	 * If {@link #verbose} is set to <code>true</code>, this will
@@ -331,46 +374,12 @@ public abstract class NetworkManager {
 	 * @param e - the exception to output
 	 */
 	public static void print(Exception e) {
-		print(e.toString());
+		if (verbose) System.err.println(e.toString());
 		
 		for (int i = 0; i < e.getStackTrace().length; i++) {
-			print("at " + e.getStackTrace()[i].toString());
-		}
-	}
-	
-	
-	/**
-	 * Gets the state that the network manager is in.
-	 * @return the network manager's state
-	 */
-	public static State getState() {
-		return state;
-	}
-	
-	/**
-	 * Sets the state that the network manager is in.
-	 * @param state - the state to set
-	 */
-	public static void setState(State state) {
-		NetworkManager.state = state;
-	}
-	
-	/**
-	 * Sets the ID for the current connection to the server.
-	 * @param id - the ID to set
-	 */
-	public static void setID(int id) {
-		NetworkManager.id = id;
-	}
-	
-	/**
-	 * Gets the network thread's ID.
-	 * @return the network thread's ID
-	 */
-	public static long getNetworkThreadID() {
-		// Obtain a lock on the network thread
-		synchronized (networkThread) {
-			return networkThread.getId();
+			if (verbose) {
+				System.err.println("at " + e.getStackTrace()[i].toString());
+			}
 		}
 	}
 	

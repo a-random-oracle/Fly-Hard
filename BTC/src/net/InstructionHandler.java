@@ -1,6 +1,5 @@
 package net;
 
-import net.NetworkManager.State;
 import btc.Main;
 import scn.Game;
 import scn.Game.DifficultySetting;
@@ -83,82 +82,22 @@ public abstract class InstructionHandler {
 		}
 		
 		// Switch to the appropriate method
-		// If a connection to the server has not yet been established
-		if (NetworkManager.getState() == State.CONNECTING) {
-			switch (instr) {
-			case "SERVER_FULL":
-				handleServerFull();
-				break;
-			case "SET_ID":
-				handleSetID(parameters);
-				break;
-			}
-		}
-		
-		// Switch to the appropriate method
-		// Provided that a connection to the server has been established
-		if (NetworkManager.getState() == State.CONNECTED) {
-			switch (instr) {
-			case "SET_SEED":
-				handleSetSeed(parameters);
-				break;
-			case "START_GAME":
-				handleStartGame(parameters);
-				break;
-			case "END_GAME":
-				handleEndGame();
-				break;
-			case "CLOSED_CONNECTION":
-				handleClosedConnection();
-				break;
-			case "NULL":
-				break;
-			case "INVALID_REQUEST":
-				handleInvalidRequest();
-				break;
-			}
+		switch (instr) {
+		case "SET_SEED":
+			handleSetSeed(parameters);
+			break;
+		case "START_GAME":
+			handleStartGame(parameters);
+			break;
+		case "END_GAME":
+			handleEndGame();
+			break;
+		case "CLOSED_CONNECTION":
+			handleClosedConnection();
+			break;
 		}
 	}
 	
-	
-	/**
-	 * Handles a SERVER_FULL instruction.
-	 * <p>
-	 * SERVER_FULL instructions inform the client that they couldn't establish
-	 * a connection to the server.
-	 * </p>
-	 * <p>
-	 * The client will then make another attempt to connect to the server.
-	 * </p>
-	 */
-	private static void handleServerFull() {
-		NetworkManager.sendMessage("START");
-	}
-	
-	/**
-	 * Handles a SET_ID instruction.
-	 * <p>
-	 * SET_ID instructions set the ID which the NetworkManager passes
-	 * to the server with each request.
-	 * </p>
-	 * @param parameters - the parameters accompanying the instruction
-	 */
-	private static void handleSetID(String parameters) {
-		try {
-			// Get the player ID to set from the response
-			int idToSet = Integer.parseInt(parameters);
-			
-			// Set the current player's server-generated ID
-			NetworkManager.setID(idToSet);
-
-			NetworkManager.print("Player has ID: " + idToSet);
-			
-			// Set the network manager's state to CONNECTED
-			NetworkManager.setState(State.CONNECTED);
-		} catch (Exception e) {
-			NetworkManager.print(e);
-		}
-	}
 	
 	/**
 	 * Handles a SET_SEED instruction.
@@ -240,18 +179,7 @@ public abstract class InstructionHandler {
 	 * </p>
 	 */
 	private static void handleClosedConnection() {
-		NetworkManager.setState(State.CLOSED);
 		Main.setExiting();
-	}
-
-	/**
-	 * Handles an INVALID_REQUEST instruction.
-	 * <p>
-	 * INVALID_REQUEST instructions presently do nothing.
-	 * </p>
-	 */
-	private static void handleInvalidRequest() {
-		// TODO
 	}
 	
 	
