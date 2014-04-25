@@ -3,7 +3,6 @@ package scn;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.ListIterator;
 
 import btc.Main;
 import net.NetworkManager;
@@ -242,7 +241,7 @@ public class MultiPlayerGame extends Game {
 		// Update the opposing player
 		updatePlayer(timeDifference, opposingPlayer);
 		
-		synchronized (player.getPowerups()) {
+		synchronized (player) {
 			// Fire any powerups attached to the player
 			Iterator<Powerup> iterator = player.getPowerups().listIterator();
 

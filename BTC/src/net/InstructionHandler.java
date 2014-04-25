@@ -92,9 +92,6 @@ public abstract class InstructionHandler {
 		case "END_GAME":
 			handleEndGame();
 			break;
-		case "CLOSED_CONNECTION":
-			handleClosedConnection();
-			break;
 		}
 	}
 	
@@ -169,17 +166,6 @@ public abstract class InstructionHandler {
 				Game.getInstance().setEnding(true);
 			}
 		}
-	}
-	
-	/**
-	 * Handles a CLOSED_CONNECTION instruction.
-	 * <p>
-	 * CLOSED_CONNECTION instructions cause the network manager's state
-	 * to become CLOSED.
-	 * </p>
-	 */
-	private static void handleClosedConnection() {
-		Main.setExiting();
 	}
 	
 	
