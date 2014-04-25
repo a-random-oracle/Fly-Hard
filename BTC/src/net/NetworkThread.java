@@ -13,7 +13,8 @@ import java.util.TreeMap;
  * </p>
  * <p>
  * There is also no guarantee that data written to the thread
- * will ever get sent.
+ * will ever get sent. This is due to an effort to only send the
+ * most up-to-date data.
  * </p>
  */
 public class NetworkThread extends Thread {
@@ -39,6 +40,9 @@ public class NetworkThread extends Thread {
 	/** The thread's status */
 	private boolean status;
 	
+	/** Whether the thread has been paused */
+	private boolean paused;
+	
 	/** The status mutex */
 	private Object statusMutex;
 	
@@ -54,6 +58,7 @@ public class NetworkThread extends Thread {
 		this.priorityResponseBuffer = new LinkedList<Serializable>();
 		this.mostRecent = 0;
 		this.status = true;
+		this.paused = false;
 		this.statusMutex = new Object();
 	}
 	
@@ -63,12 +68,17 @@ public class NetworkThread extends Thread {
 	 */
 	@Override
 	public void run() {
-		while (true) {
-			sendNextData();
-			sendMessages();
-			
-			synchronized (statusMutex) {
-				if (!status) break;
+		// Repeat while the thread is running
+		while (getStatus()) {
+			if (!isPaused()) {
+				sendNextData();
+				sendMessages();
+			} else {
+				try {
+					Thread.sleep(200);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
 			}
 		}
 	}
@@ -248,11 +258,33 @@ public class NetworkThread extends Thread {
 		}
 	}
 	
+	private boolean isPaused() {
+		synchronized (statusMutex) {
+			return paused;
+		}
+	}
+	
+	private boolean getStatus() {
+		synchronized (statusMutex) {
+			return status;
+		}
+	}
+	
+	/**
+	 * Pauses (temporarily stops) the thread.
+	 */
+	public void pause() {
+		synchronized (statusMutex) {
+			paused = true;
+		}
+	}
+	
 	/**
 	 * Stops the thread.
 	 */
 	public void end() {
 		synchronized (statusMutex) {
+			paused = true;
 			status = false;
 		}
 	}
