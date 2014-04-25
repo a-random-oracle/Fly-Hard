@@ -128,10 +128,16 @@ public abstract class Game extends Scene {
 				new Waypoint(0.09766, 0.18229, false, true),
 				new Waypoint(0.15625, 0.66146, false, true),
 				new Waypoint(0.19531, 0.41667, false, true),
+				new Waypoint(0.23, 0.9, false, true),
+				new Waypoint(0.25, 0.3, false, true),
+				new Waypoint(0.27, 0.7, false, true),
 				new Waypoint(0.39062, 0.20833, false, true), //middle waypoints
 				new Waypoint(0.39063, 0.68229, false, true), //middle waypoints
 				new Waypoint(0.54688, 0.10417, false, true),
 				new Waypoint(0.62500, 0.78125, false, true),
+				new Waypoint(0.67, 0.2, false, true),
+				new Waypoint(0.7, 0.5, false, true),
+				new Waypoint(0.85, 0.8, false, true),
 				new Waypoint(0.78125, 0.78125, false, true),
 				new Waypoint(0.81250, 0.15625, false, true),
 				new Waypoint(0.82031, 0.41667, false, true)
