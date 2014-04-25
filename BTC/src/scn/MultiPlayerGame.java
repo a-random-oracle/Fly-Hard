@@ -2,6 +2,7 @@ package scn;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.ListIterator;
 
 import btc.Main;
@@ -243,7 +244,7 @@ public class MultiPlayerGame extends Game {
 		
 		synchronized (player.getPowerups()) {
 			// Fire any powerups attached to the player
-			ListIterator<Powerup> iterator = player.getPowerups().listIterator();
+			Iterator<Powerup> iterator = player.getPowerups().listIterator();
 
 			while(iterator.hasNext()) {
 				Powerup powerup = iterator.next();
