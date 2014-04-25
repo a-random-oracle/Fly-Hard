@@ -2,7 +2,6 @@ package scn;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Iterator;
 
 import btc.Main;
 import net.NetworkManager;
@@ -241,27 +240,28 @@ public class MultiPlayerGame extends Game {
 		// Update the opposing player
 		updatePlayer(timeDifference, opposingPlayer);
 		
-		synchronized (player) {
-			// Fire any powerups attached to the player
-			Iterator<Powerup> iterator = player.getPowerups().listIterator();
-
-			while(iterator.hasNext()) {
-				Powerup powerup = iterator.next();
-
-				// If the powerup hasn't yet been activated
-				if (!powerup.isActive()) {
-					// Activate it
-					powerup.activateEffect();
-				} else {
-					// If the powerup has finished
-					if (powerup.getEndTime() <= System.currentTimeMillis()) {
-						// Deactivate it
-						powerup.deactivateEffect();
-						iterator.remove();
-					}
+		ArrayList<Powerup> powerupsToRemove = new ArrayList<Powerup>();
+		
+		for (Powerup powerup : player.getPowerups()) {
+			// If the powerup hasn't yet been activated
+			if (!powerup.isActive()) {
+				// Activate it
+				powerup.activateEffect();
+			} else {
+				// If the powerup has finished
+				if (powerup.getEndTime() <= System.currentTimeMillis()) {
+					// Deactivate it
+					powerup.deactivateEffect();
+					powerupsToRemove.add(powerup);
 				}
 			}
-	    }
+		}
+		
+		for (Powerup powerup : powerupsToRemove) {
+			while (player.getPowerups().contains(powerup)) {
+				player.getPowerups().remove(powerup);
+			}
+		}
 
 		// Deselect any aircraft which are inside the airspace of the other player
 		// This ensures that players can't keep controlling aircraft
