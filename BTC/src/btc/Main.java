@@ -89,9 +89,6 @@ public class Main implements input.EventHandler {
 		// Set up the random instance
 		random = new Random();
 		
-		// Set up the network manager
-		NetworkManager.initialise();
-		
 		// Get screen dimensions
 		Rectangle windowBounds = GraphicsEnvironment
 				.getLocalGraphicsEnvironment()

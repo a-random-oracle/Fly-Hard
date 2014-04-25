@@ -97,19 +97,15 @@ public class MultiPlayerGame extends Game {
 		instance = this;
 
 		this.playerPosition = playerPosition;
-
-		// Define other waypoints
-		powerupPoints = new Waypoint[] {
-				new Waypoint(0.5, 0.30833, false, true),
-				new Waypoint(0.5, 0.56667, false, true),
-				new Waypoint(0.5, 0.86146, false, true)
-		};
 	}
 
 
 	@Override
 	public void start() {
 		super.start();
+		
+		// Set up the network manager
+		NetworkManager.initialise();
 
 		// Assign location waypoints to the player
 		locationWaypointMap.put(0, 0);
@@ -118,6 +114,13 @@ public class MultiPlayerGame extends Game {
 		locationWaypointMap.put(3, 1);
 		locationWaypointMap.put(4, 0);
 		locationWaypointMap.put(5, 1);
+		
+		// Define other waypoints
+		powerupPoints = new Waypoint[] {
+				new Waypoint(0.5, 0.30833, false, true),
+				new Waypoint(0.5, 0.56667, false, true),
+				new Waypoint(0.5, 0.86146, false, true)
+		};
 
 		// Set up the game
 		setUpGame(playerPosition);

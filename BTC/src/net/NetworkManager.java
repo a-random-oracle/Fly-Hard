@@ -123,10 +123,15 @@ public abstract class NetworkManager {
 			connection.setDoOutput(true);
 			
 			// Set request properties and headers
-			connection.addRequestProperty("user-agent", "Fly-Hard");
-			connection.addRequestProperty("fh-client-id", String.valueOf(id));
-			connection.addRequestProperty("fh-client-name", name);
-			connection.addRequestProperty("fh-client-host", String.valueOf(isHost));
+			connection.setRequestProperty("user-agent",
+					"Fly-Hard");
+			connection.setRequestProperty("fh-client-id",
+					String.valueOf(id));
+			connection.setRequestProperty("fh-client-name",
+					name);
+			connection.setRequestProperty("fh-client-host",
+					String.valueOf(isHost));
+			
 		} catch (ProtocolException e) {
 			print(e);
 		} catch (MalformedURLException e) {
@@ -152,6 +157,10 @@ public abstract class NetworkManager {
 		if (message != null && !message.equals("")) {
 			print("Sending message: " + message);
 		}
+		
+		if (message == null || "".equals(message)) {
+			message = "NULL";
+		}
 
 		// Open the connection
 		HttpURLConnection connection = openPostConnection(SERVER_URL + MSG_EXT);
@@ -159,7 +168,7 @@ public abstract class NetworkManager {
 		try {
 			// Set up the output stream
 			outputStream = new ObjectOutputStream(connection.getOutputStream());
-
+			
 			// Write the data
 			outputStream.writeObject(message);
 

@@ -91,6 +91,7 @@ public class Lobby extends Scene {
 			@Override
 			public void action() {
 				// Set the player as a host
+				NetworkManager.setName(nameEntryBox.getText());
 				NetworkManager.setHost(true);
 				setWaitingForOpponent(true);
 			}
@@ -169,7 +170,8 @@ public class Lobby extends Scene {
 			// Format the open connections into a hashmap
 			String[] currentEntry;
 			for (int i = 0; i < openConnections.length; i++) {
-				if (!openConnections[i].equals("NO_CONNECTIONS")) {
+				if (!openConnections[i].equals("INVALID_REQUEST")
+						&& !openConnections[i].equals("NO_CONNECTIONS")) {
 					currentEntry = openConnections[i].split(":");
 
 					if (currentEntry != null && currentEntry[0] != null) {
@@ -373,7 +375,7 @@ public class Lobby extends Scene {
 	@Override
 	public void close() {
 		setWaitingForOpponent(false);
-		NetworkManager.sendMessage("CLEAR_HOST");
+		NetworkManager.setHost(false);
 	}
 
 	@Override

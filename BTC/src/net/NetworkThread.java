@@ -108,12 +108,13 @@ public class NetworkThread extends Thread {
 				}
 			}
 		}
-		
-		// Send the post request to the server, and read the response
+
+		// Send the post request to the server and read the response
 		Entry<Long, byte[]> receivedData =
 				NetworkManager.postObject(dataEntry);
-		
-		// If the entry's key equals -1, add it to the priority response buffer
+
+		// If the entry's key equals -1, add it to the priority response
+		// buffer
 		if (receivedData != null && receivedData.getKey() == -1) {
 			// Obtain a lock on the priority response buffer
 			synchronized(priorityResponseBuffer) {
@@ -128,7 +129,7 @@ public class NetworkThread extends Thread {
 			synchronized(responseBuffer) {
 				Serializable deserialisedData = NetworkManager
 						.deserialiseData(receivedData.getValue());
-				
+
 				responseBuffer.put(receivedData.getKey(), deserialisedData);
 			}
 		}
