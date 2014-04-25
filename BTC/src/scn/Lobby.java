@@ -171,7 +171,7 @@ public class Lobby extends Scene {
 			String[] currentEntry;
 			for (int i = 0; i < openConnections.length; i++) {
 				if (!openConnections[i].equals("INVALID_REQUEST")
-						&& !openConnections[i].equals("NO_CONNECTIONS")) {
+						&& !openConnections[i].contains("NO_CONNECTIONS")) {
 					currentEntry = openConnections[i].split(":");
 
 					if (currentEntry != null && currentEntry[0] != null) {
