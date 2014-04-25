@@ -281,6 +281,7 @@ public class MultiPlayerGame extends Game {
 						if (opposingPlayer.getAircraft()
 								.contains(aircraftUnderTransfer.get(i))) {
 							aircraftUnderTransfer.remove(i);
+							//REGENERATION HERE TODO
 						} else {
 							// If not, add them in
 							opposingPlayer.getAircraft().add(
