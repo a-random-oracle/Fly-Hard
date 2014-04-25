@@ -224,7 +224,8 @@ public class MultiPlayerGame extends Game {
 		
 		// Check if any powerups have been taken
 		checkPowerups();
-
+		//Check if player's powerups have expired
+		removePowerups();
 		// Receive data
 		updateData();
 
@@ -466,6 +467,14 @@ public class MultiPlayerGame extends Game {
 					// Just remove the powerup from the waypoint
 					waypoint.setPowerup(null);
 				}
+			}
+		}
+	}
+	
+	public void removePowerups() {
+		for (Powerup p : player.getPowerups()) {
+			if (p.getStopTime() <= System.currentTimeMillis()) {
+				p.deactivateEffect();
 			}
 		}
 	}

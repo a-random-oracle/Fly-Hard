@@ -130,6 +130,10 @@ public class Powerup implements Serializable {
 		return EFFECT_DURATIONS_MAP.get(effect);
 	}
 	
+	public long getStopTime() {
+		return getTimeActivated() + getDuration();
+	}
+	
 	/**
 	 * Draws the powerup.
 	 * <p>
@@ -220,6 +224,24 @@ public class Powerup implements Serializable {
 		}
 	}
 	
+	public void deactivateEffect() {
+		
+		switch (effect) {
+		case FOG:
+			removeFog();
+			System.out.println("FOG");
+			break;
+		case SPEED_UP:
+			removeSpeedUp();
+			System.out.println("SPEED+");
+			break;
+		case SLOW_DOWN:
+			removeSlowDown();
+			System.out.println("SPEED-");
+			break;
+		}
+	}
+	
 	/**
 	 * Stops planes from taking off/landing due to 'fog'
 	 */
@@ -231,6 +253,17 @@ public class Powerup implements Serializable {
 		}
 	}
 	
+	/** 
+	 * Removes powerup fog from player
+	 */
+	private void removeFog() {
+		MultiPlayerGame gameInstance = ((MultiPlayerGame) Game.getInstance());
+		gameInstance.getPlayer().removePowerup(this);
+		for (Aircraft a : gameInstance.getPlayer().getAircraft()) {
+			a.setIsFog(false);
+			}
+		
+	}
 	//Subject to change on which player it affects/percentages
 	/**
 	 * Speeds up the other player's aircraft by 2x.
@@ -244,6 +277,17 @@ public class Powerup implements Serializable {
 		}
 	}
 	
+	/**
+	 * Remove powerup speed up
+	 */
+	private void removeSpeedUp() {
+		MultiPlayerGame gameInstance = ((MultiPlayerGame) Game.getInstance());
+		gameInstance.getPlayer().removePowerup(this);
+		
+		for (Aircraft a : gameInstance.getPlayer().getAircraft()) {
+			a.getVelocity().scaleByAndSet(0.5);
+		}
+	}
 	//Subject to change on which player it affects/percentages
 	/**
 	 * Slows down your aircraft to half their current speed.
@@ -254,6 +298,19 @@ public class Powerup implements Serializable {
 		// Set each aircraft's velocity to be half as large
 		for (Aircraft a : gameInstance.getPlayer().getAircraft()) {
 			a.getVelocity().scaleByAndSet(0.5);
+		}
+	}
+	
+	/**
+	 * Remove powerup slow down
+	 */
+	private void removeSlowDown() {
+		MultiPlayerGame gameInstance = ((MultiPlayerGame) Game.getInstance());
+		gameInstance.getPlayer().removePowerup(this);
+		
+		// Set each aircraft's velocity to be half as large
+		for (Aircraft a : gameInstance.getPlayer().getAircraft()) {
+			a.getVelocity().scaleByAndSet(2);
 		}
 	}
 	
