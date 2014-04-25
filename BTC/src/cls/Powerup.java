@@ -283,7 +283,6 @@ public class Powerup implements Serializable {
 	 */
 	private void removeSpeedUp() {
 		MultiPlayerGame gameInstance = ((MultiPlayerGame) Game.getInstance());
-		gameInstance.getPlayer().removePowerup(this);
 		
 		for (Aircraft a : gameInstance.getPlayer().getAircraft()) {
 			a.getVelocity().scaleByAndSet(0.5);
@@ -308,7 +307,6 @@ public class Powerup implements Serializable {
 	 */
 	private void removeSlowDown() {
 		MultiPlayerGame gameInstance = ((MultiPlayerGame) Game.getInstance());
-		gameInstance.getPlayer().removePowerup(this);
 		
 		// Set each aircraft's velocity to be half as large
 		for (Aircraft a : gameInstance.getPlayer().getAircraft()) {
