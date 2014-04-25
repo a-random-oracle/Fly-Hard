@@ -15,7 +15,7 @@ public class Player implements Serializable {
 	};
 	
 	/** The default maximum number of aircraft */
-	private static final int DEFAULT_MAX_AIRCRAFT = 3;
+	private static final int DEFAULT_MAX_AIRCRAFT = 4;
 	
 	/** The possible turning states - not turning, turning left and turning right */
 	public enum TurningState {NOT_TURNING, TURNING_LEFT, TURNING_RIGHT};
@@ -106,6 +106,7 @@ public class Player implements Serializable {
 		this.aircraft = new ArrayList<Aircraft>();
 		this.powerups = new ArrayList<Powerup>();
 		
+		
 		// Set aircraft colour
 		// Default is white
 		aircraftColour = (id < AIRCRAFT_COLOURS.length)
@@ -184,6 +185,7 @@ public class Player implements Serializable {
 	public int getSelectedPathpoint() {
 		return selectedPathpoint;
 	}
+	
 
 	/**
 	 * Gets whether the player has clicked the compass or not.

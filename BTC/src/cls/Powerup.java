@@ -94,9 +94,9 @@ public class Powerup implements Serializable {
 	private static HashMap<PowerupEffect, Integer> setUpPlayerAffectedMap() {
 		HashMap<PowerupEffect, Integer> playerAffectedMap =
 				new HashMap<PowerupEffect, Integer>();
-		playerAffectedMap.put(PowerupEffect.FOG, 0);
+		playerAffectedMap.put(PowerupEffect.FOG, 1);
 		playerAffectedMap.put(PowerupEffect.SPEED_UP, 1);
-		playerAffectedMap.put(PowerupEffect.SLOW_DOWN, 1);
+		playerAffectedMap.put(PowerupEffect.SLOW_DOWN, 0);
 		playerAffectedMap.put(PowerupEffect.TRANSFER, 0);
 		return playerAffectedMap;
 	}
@@ -110,8 +110,17 @@ public class Powerup implements Serializable {
 		effectDurationsMap.put(PowerupEffect.FOG, 5000);
 		effectDurationsMap.put(PowerupEffect.SPEED_UP, 5000);
 		effectDurationsMap.put(PowerupEffect.SLOW_DOWN, 5000);
-		effectDurationsMap.put(PowerupEffect.TRANSFER, 5000);
+		effectDurationsMap.put(PowerupEffect.TRANSFER, 0);
 		return effectDurationsMap;
+	}
+	
+	/**
+	 * Gets whether the powerup has been activated or not.
+	 * @return <code>true</code> if the powerup has been activated,
+	 * 			otherwise <code>false</code>
+	 */
+	public boolean isActive() {
+		return !(timeActivated == -1);
 	}
 	
 	/**
@@ -123,11 +132,11 @@ public class Powerup implements Serializable {
 	}
 	
 	/**
-	 * Gets the duration of this powerup's effect.
-	 * @return the duration of this powerup's effect
+	 * Gets the time at which this powerup's effect should end.
+	 * @return the time at which this powerup's effect should end
 	 */
-	public long getDuration() {
-		return EFFECT_DURATIONS_MAP.get(effect);
+	public long getEndTime() {
+		return getTimeActivated() + EFFECT_DURATIONS_MAP.get(effect);
 	}
 	
 	/**
@@ -198,6 +207,7 @@ public class Powerup implements Serializable {
 	 * Performs the powerup's effect.
 	 */
 	public void activateEffect() {
+		// Store the time at which the powerup was activated
 		timeActivated = System.currentTimeMillis();
 		
 		switch (effect) {
@@ -220,8 +230,48 @@ public class Powerup implements Serializable {
 		}
 	}
 	
-	private void handleFog() {
+	public void deactivateEffect() {
+		// Remove the powerup
+		Game.getInstance().getPlayer().removePowerup(this);
 		
+		switch (effect) {
+		case FOG:
+			removeFog();
+			System.out.println("FOG");
+			break;
+		case SPEED_UP:
+			removeSpeedUp();
+			System.out.println("SPEED+");
+			break;
+		case SLOW_DOWN:
+			removeSlowDown();
+			System.out.println("SPEED-");
+			break;
+		case TRANSFER:
+			break;
+		}
+	}
+	
+	/**
+	 * Stops planes from taking off/landing.
+	 */
+	private void handleFog() {
+		MultiPlayerGame gameInstance = ((MultiPlayerGame) Game.getInstance());
+		
+		for (Aircraft a : gameInstance.getPlayer().getAircraft()) {
+			a.setIsFog(true);
+		}
+	}
+	
+	/** 
+	 * Removes fog effect.
+	 */
+	private void removeFog() {
+		MultiPlayerGame gameInstance = ((MultiPlayerGame) Game.getInstance());
+		
+		for (Aircraft a : gameInstance.getPlayer().getAircraft()) {
+			a.setIsFog(false);
+		}
 	}
 	
 	//Subject to change on which player it affects/percentages
@@ -237,9 +287,21 @@ public class Powerup implements Serializable {
 		}
 	}
 	
+	/**
+	 * Remove powerup speed up.
+	 */
+	private void removeSpeedUp() {
+		MultiPlayerGame gameInstance = ((MultiPlayerGame) Game.getInstance());
+		gameInstance.getPlayer().removePowerup(this);
+		
+		for (Aircraft a : gameInstance.getPlayer().getAircraft()) {
+			a.getVelocity().scaleByAndSet(0.5);
+		}
+	}
+	
 	//Subject to change on which player it affects/percentages
 	/**
-	 * Slows down the other players aircraft to half their current speed.
+	 * Slows down your aircraft to half their current speed.
 	 */
 	private void handleSlowDown() {
 		MultiPlayerGame gameInstance = ((MultiPlayerGame) Game.getInstance());
@@ -251,7 +313,20 @@ public class Powerup implements Serializable {
 	}
 	
 	/**
-	 * Transfers control of a players plane to the other player
+	 * Remove slow down effect.
+	 */
+	private void removeSlowDown() {
+		MultiPlayerGame gameInstance = ((MultiPlayerGame) Game.getInstance());
+		gameInstance.getPlayer().removePowerup(this);
+		
+		// Set each aircraft's velocity to be half as large
+		for (Aircraft a : gameInstance.getPlayer().getAircraft()) {
+			a.getVelocity().scaleByAndSet(2);
+		}
+	}
+	
+	/**
+	 * Transfers control of a player's plane to the other player.
 	 */
 	private void handleTransfer() {
 		if (aircraft != null) {
