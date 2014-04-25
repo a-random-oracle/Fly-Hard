@@ -241,24 +241,26 @@ public class MultiPlayerGame extends Game {
 		// Update the opposing player
 		updatePlayer(timeDifference, opposingPlayer);
 		
-		// Fire any powerups attached to the player
-	    ListIterator<Powerup> iterator = player.getPowerups().listIterator();
-	    
-	    while(iterator.hasNext()) {
-	        Powerup powerup = iterator.next();
-	        
-	        // If the powerup hasn't yet been activated
-	        if (!powerup.isActive()) {
-	        	// Activate it
-	        	powerup.activateEffect();
-	        } else {
-	        	// If the powerup has finished
-		        if (powerup.getEndTime() <= System.currentTimeMillis()) {
-		        	// Deactivate it
-		        	powerup.deactivateEffect();
-		        	iterator.remove();
+		synchronized (player.getPowerups()) {
+			// Fire any powerups attached to the player
+			ListIterator<Powerup> iterator = player.getPowerups().listIterator();
+
+			while(iterator.hasNext()) {
+				Powerup powerup = iterator.next();
+
+				// If the powerup hasn't yet been activated
+				if (!powerup.isActive()) {
+					// Activate it
+					powerup.activateEffect();
+				} else {
+					// If the powerup has finished
+					if (powerup.getEndTime() <= System.currentTimeMillis()) {
+						// Deactivate it
+						powerup.deactivateEffect();
+						iterator.remove();
+					}
 				}
-	        }
+			}
 	    }
 
 		// Deselect any aircraft which are inside the airspace of the other player

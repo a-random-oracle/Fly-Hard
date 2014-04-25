@@ -179,15 +179,6 @@ public class Powerup implements Serializable {
 		// Get the running game instance
 		MultiPlayerGame gameInstance = ((MultiPlayerGame) Game.getInstance());
 		
-		System.out.println("DEBUG: " + PLAYER_AFFECTED_MAP.get(effect));
-		
-		if (PLAYER_AFFECTED_MAP.get(effect) == null) {
-			for (PowerupEffect key : PLAYER_AFFECTED_MAP.keySet()) {
-				System.out.println("Key: " + key
-						+ " = " + PLAYER_AFFECTED_MAP.get(key));
-			}
-		}
-		
 		if (PLAYER_AFFECTED_MAP.get(effect) == 0) {
 			gameInstance.getPlayer().addPowerup(this);
 		} else if (PLAYER_AFFECTED_MAP.get(effect) == 1) {
