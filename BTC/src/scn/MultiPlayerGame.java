@@ -256,10 +256,9 @@ public class MultiPlayerGame extends Game {
 		        if (powerup.getEndTime() <= System.currentTimeMillis()) {
 		        	// Deactivate it
 		        	powerup.deactivateEffect();
+		        	iterator.remove();
 				}
 	        }
-	        
-	        iterator.remove();
 	    }
 
 		// Deselect any aircraft which are inside the airspace of the other player
