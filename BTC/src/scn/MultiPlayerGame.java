@@ -240,8 +240,6 @@ public class MultiPlayerGame extends Game {
 		// Update the opposing player
 		updatePlayer(timeDifference, opposingPlayer);
 		
-		ArrayList<Powerup> powerupsToRemove = new ArrayList<Powerup>();
-		
 		for (Powerup powerup : player.getPowerups()) {
 			// If the powerup hasn't yet been activated
 			if (!powerup.isActive()) {
@@ -252,14 +250,7 @@ public class MultiPlayerGame extends Game {
 				if (powerup.getEndTime() <= System.currentTimeMillis()) {
 					// Deactivate it
 					powerup.deactivateEffect();
-					powerupsToRemove.add(powerup);
 				}
-			}
-		}
-		
-		for (Powerup powerup : powerupsToRemove) {
-			while (player.getPowerups().contains(powerup)) {
-				player.getPowerups().remove(powerup);
 			}
 		}
 
