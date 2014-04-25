@@ -94,9 +94,9 @@ public class Powerup implements Serializable {
 	private static HashMap<PowerupEffect, Integer> setUpPlayerAffectedMap() {
 		HashMap<PowerupEffect, Integer> playerAffectedMap =
 				new HashMap<PowerupEffect, Integer>();
-		playerAffectedMap.put(PowerupEffect.FOG, 0);
+		playerAffectedMap.put(PowerupEffect.FOG, 1);
 		playerAffectedMap.put(PowerupEffect.SPEED_UP, 1);
-		playerAffectedMap.put(PowerupEffect.SLOW_DOWN, 1);
+		playerAffectedMap.put(PowerupEffect.SLOW_DOWN, 0);
 		playerAffectedMap.put(PowerupEffect.TRANSFER, 0);
 		return playerAffectedMap;
 	}
@@ -110,7 +110,7 @@ public class Powerup implements Serializable {
 		effectDurationsMap.put(PowerupEffect.FOG, 5000);
 		effectDurationsMap.put(PowerupEffect.SPEED_UP, 5000);
 		effectDurationsMap.put(PowerupEffect.SLOW_DOWN, 5000);
-		effectDurationsMap.put(PowerupEffect.TRANSFER, 5000);
+		effectDurationsMap.put(PowerupEffect.TRANSFER, 0);
 		return effectDurationsMap;
 	}
 	
@@ -220,8 +220,15 @@ public class Powerup implements Serializable {
 		}
 	}
 	
+	/**
+	 * Stops planes from taking off/landing due to 'fog'
+	 */
 	private void handleFog() {
+		MultiPlayerGame gameInstance = ((MultiPlayerGame) Game.getInstance());
 		
+		for (Aircraft a : gameInstance.getPlayer().getAircraft()) {
+			a.setIsFog(true);
+		}
 	}
 	
 	//Subject to change on which player it affects/percentages
@@ -239,7 +246,7 @@ public class Powerup implements Serializable {
 	
 	//Subject to change on which player it affects/percentages
 	/**
-	 * Slows down the other players aircraft to half their current speed.
+	 * Slows down your aircraft to half their current speed.
 	 */
 	private void handleSlowDown() {
 		MultiPlayerGame gameInstance = ((MultiPlayerGame) Game.getInstance());

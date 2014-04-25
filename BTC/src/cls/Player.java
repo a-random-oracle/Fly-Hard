@@ -106,6 +106,7 @@ public class Player implements Serializable {
 		this.aircraft = new ArrayList<Aircraft>();
 		this.powerups = new ArrayList<Powerup>();
 		
+		
 		// Set aircraft colour
 		// Default is white
 		aircraftColour = (id < AIRCRAFT_COLOURS.length)
@@ -184,6 +185,7 @@ public class Player implements Serializable {
 	public int getSelectedPathpoint() {
 		return selectedPathpoint;
 	}
+	
 
 	/**
 	 * Gets whether the player has clicked the compass or not.
