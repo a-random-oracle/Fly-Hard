@@ -56,7 +56,7 @@ public class Lobby extends Scene {
 	private static InputBox nameEntryBox = new InputBox(Color.white, Color.darkGray,
 			(int) nameEntryBoxPos.getX() + Game.X_OFFSET,
 			(int) nameEntryBoxPos.getY() + Game.Y_OFFSET,
-			200, 23, true);;
+			200, 23, true);
 
 	/** The button used to create a new game. The player then becomes a host. */
 	private ButtonText createGameButton;
@@ -92,6 +92,7 @@ public class Lobby extends Scene {
 			public void action() {
 				// Set the player as a host
 				NetworkManager.setHost(true);
+				setWaitingForOpponent(true);
 			}
 		};
 
@@ -146,14 +147,6 @@ public class Lobby extends Scene {
 			// Reset the time
 			timeSinceStartGameUpdate = 0;
 		}
-
-		// Activate the create button only when a name has been entered
-		// into the input box
-		/*if (!nameEntryBox.isEmpty()) {
-			createGameButton.setAvailability(true);
-		} else {
-			createGameButton.setAvailability(false);
-		}*/ //XXX
 		
 		// Update the name entry box
 		nameEntryBox.update(timeDifference);
