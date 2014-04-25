@@ -179,9 +179,6 @@ public abstract class NetworkManager {
 			// Get the response headers
 			setID(Integer.parseInt(connection
 					.getHeaderField("fh-client-id")));
-			setName(connection.getHeaderField("fh-client-name"));
-			setHost(Boolean.parseBoolean(connection
-					.getHeaderField("fh-client-host")));
 
 			// Flush the output stream
 			outputStream.flush();
@@ -243,9 +240,6 @@ public abstract class NetworkManager {
 			// Get the response headers
 			setID(Integer.parseInt(connection
 					.getHeaderField("fh-client-id")));
-			setName(connection.getHeaderField("fh-client-name"));
-			setHost(Boolean.parseBoolean(connection
-					.getHeaderField("fh-client-host")));
 			
 			// Flush the output stream
 			outputStream.flush();
