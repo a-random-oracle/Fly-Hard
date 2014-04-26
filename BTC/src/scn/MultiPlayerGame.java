@@ -227,19 +227,6 @@ public class MultiPlayerGame extends Game {
 		// Check if any powerups have been taken
 		checkPowerups();
 		
-		// Receive data
-		updateData();
-
-		// Send current player's data to the server
-		NetworkManager.sendData(System.currentTimeMillis(), player);
-
-		super.update(timeDifference);
-
-		if (paused) return;
-
-		// Update the opposing player
-		updatePlayer(timeDifference, opposingPlayer);
-		
 		for (Powerup powerup : player.getPowerups()) {
 			// If the powerup hasn't yet been activated
 			if (!powerup.isActive()) {
@@ -253,11 +240,24 @@ public class MultiPlayerGame extends Game {
 				}
 			}
 		}
-
+		
 		// Deselect any aircraft which are inside the airspace of the other player
 		// This ensures that players can't keep controlling aircraft
 		// after they've entered another player's airspace
 		returnToAirspace();
+		
+		// Receive data
+		updateData();
+
+		// Send current player's data to the server
+		NetworkManager.sendData(System.currentTimeMillis(), player);
+
+		super.update(timeDifference);
+
+		if (paused) return;
+
+		// Update the opposing player
+		updatePlayer(timeDifference, opposingPlayer);
 	}
 	
 	/**
