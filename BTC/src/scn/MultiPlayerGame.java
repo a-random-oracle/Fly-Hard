@@ -227,16 +227,17 @@ public class MultiPlayerGame extends Game {
 		// Check if any powerups have been taken
 		checkPowerups();
 		
-		for (Powerup powerup : player.getPowerups()) {
+		for (int i = player.getPowerups().size() - 1; i >= 0; i--) {
 			// If the powerup hasn't yet been activated
-			if (!powerup.isActive()) {
+			if (!player.getPowerups().get(i).isActive()) {
 				// Activate it
-				powerup.activateEffect();
+				player.getPowerups().get(i).activateEffect();
 			} else {
 				// If the powerup has finished
-				if (powerup.getEndTime() <= System.currentTimeMillis()) {
+				if (player.getPowerups().get(i).getEndTime()
+						<= System.currentTimeMillis()) {
 					// Deactivate it
-					powerup.deactivateEffect();
+					player.getPowerups().get(i).deactivateEffect();
 				}
 			}
 		}
@@ -270,7 +271,9 @@ public class MultiPlayerGame extends Game {
 		if (data != null) {
 			if (data instanceof Player) {
 				// Set the opposing player's data
-				opposingPlayer = (Player) data;
+				Player newData = (Player) data;
+				newData.setAircraft(opposingPlayer.getAircraft());
+				opposingPlayer = newData;
 				
 				// Check if any powerups have been claimed
 				for (int i = 0; i > powerupPoints.length; i++) {
