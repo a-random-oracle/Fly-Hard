@@ -272,9 +272,8 @@ public class MultiPlayerGame extends Game {
 			if (data instanceof Player) {
 				// Set the opposing player's data
 				Player newData = (Player) data;
-				newData.setAircraft(opposingPlayer.getAircraft());
 				opposingPlayer = newData;
-				
+
 				// Check if any powerups have been claimed
 				for (int i = 0; i > powerupPoints.length; i++) {
 					if (powerupPoints[i] != null

@@ -1082,5 +1082,9 @@ public class Aircraft implements Serializable {
 	public void setTimeWaiting(int timeWaiting) {
 		this.timeWaiting = timeWaiting;
 	}
+	
+	public void setPosition(Vector newPosition) {
+		position = newPosition;
+	}
 
 }
