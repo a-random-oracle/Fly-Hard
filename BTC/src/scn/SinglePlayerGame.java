@@ -53,14 +53,6 @@ public class SinglePlayerGame extends Game {
 	public void start() {
 		super.start();
 		
-		// Assign location waypoints to the player
-		locationWaypointMap.put(0, 0);
-		locationWaypointMap.put(1, 0);
-		locationWaypointMap.put(2, 0);
-		locationWaypointMap.put(3, 0);
-		locationWaypointMap.put(4, 0);
-		locationWaypointMap.put(5, 0);
-		
 		// Generate list of waypoints to pass to the player
 		Waypoint[] playersWaypoints = new Waypoint[airspaceWaypoints.length
 		                                           + locationWaypoints.length];

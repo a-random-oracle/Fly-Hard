@@ -810,7 +810,7 @@ public abstract class Game extends Scene {
 		Airport destinationAirport = null;
 
 		// Get a list of this player's location waypoints
-		Waypoint[] playersLocationWaypoints = player.getWaypoints();
+		Waypoint[] playersLocationWaypoints = getLocationWaypoints(player);
 
 		// Get a list of location waypoints where a crash would not be immediate
 		ArrayList<Waypoint> availableOrigins = getAvailableEntryPoints(player);
@@ -985,27 +985,47 @@ public abstract class Game extends Scene {
 	}
 
 	/**
+	 * Returns an array of location waypoints for the specified player.
+	 * @param player - the player whose entry points should be checked
+	 * @return a list of available entry points
+	 */
+	public Waypoint[] getLocationWaypoints(Player player) {
+		ArrayList<Waypoint> locationWaypoints = new ArrayList<Waypoint>();
+
+		// Only check location waypoints which are under the players' control
+		Waypoint[] playersLocationWaypoints = player.getWaypoints();
+
+		for (Waypoint entryPoint : playersLocationWaypoints) {
+			if (entryPoint.isEntryOrExit()) {
+				locationWaypoints.add(entryPoint);
+			}
+		}
+
+		return locationWaypoints.toArray(
+				new Waypoint[locationWaypoints.size()]);
+	}
+	
+	/**
 	 * Returns array of entry points that are fair to be entry points for a plane.
 	 * <p>
 	 * Specifically, returns points where no plane is currently going to exit the
 	 * airspace there, also it is not too close to any plane.
 	 * </p>
-	 * @param player
-	 * 			the player whose entry points should be checked
+	 * @param player - the player whose entry points should be checked
 	 * @return a list of available entry points
 	 */
 	public ArrayList<Waypoint> getAvailableEntryPoints(Player player) {
 		ArrayList<Waypoint> availableEntryPoints = new ArrayList<Waypoint>();
 
 		// Only check location waypoints which are under the players' control
-		Waypoint[] playersLocationWaypoints = player.getWaypoints();
+		Waypoint[] playersLocationWaypoints = getLocationWaypoints(player);
 
 		for (Waypoint entryPoint : playersLocationWaypoints) {
 			boolean isAvailable = true;
 			// Prevents spawning a plane at a waypoint if:
 			//   - any plane is currently going towards it
 			//   - or any plane is less than 250 from it
-
+			
 			for (Aircraft aircraft : getAllAircraft()) {
 				// Check if any plane is currently going towards the
 				// exit point/chosen originPoint
@@ -1021,6 +1041,7 @@ public abstract class Game extends Scene {
 				availableEntryPoints.add(entryPoint);
 			}
 		}
+		
 		return availableEntryPoints;
 	}
 
