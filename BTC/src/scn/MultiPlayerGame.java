@@ -113,14 +113,6 @@ public class MultiPlayerGame extends Game {
 				new Waypoint(0.5, 0.86146, false, true)
 		};
 
-		// Assign location waypoints to the player
-		locationWaypointMap.put(0, 0);
-		locationWaypointMap.put(1, 0);
-		locationWaypointMap.put(2, 1);
-		locationWaypointMap.put(3, 1);
-		locationWaypointMap.put(4, 0);
-		locationWaypointMap.put(5, 1);
-
 		// Set up the game
 		setUpGame(playerPosition);
 
@@ -158,12 +150,16 @@ public class MultiPlayerGame extends Game {
 		player0Waypoints[2] = airspaceWaypoints[2];
 		player0Waypoints[3] = airspaceWaypoints[3];
 		player0Waypoints[4] = airspaceWaypoints[4];
+		player0Waypoints[4] = airspaceWaypoints[5];
 
-		player1Waypoints[0] = airspaceWaypoints[5];
-		player1Waypoints[1] = airspaceWaypoints[6];
-		player1Waypoints[2] = airspaceWaypoints[7];
-		player1Waypoints[3] = airspaceWaypoints[8];
-		player1Waypoints[4] = airspaceWaypoints[9];
+		player1Waypoints[0] = airspaceWaypoints[8];
+		player1Waypoints[1] = airspaceWaypoints[9];
+		player1Waypoints[2] = airspaceWaypoints[10];
+		player1Waypoints[3] = airspaceWaypoints[11];
+		player1Waypoints[4] = airspaceWaypoints[12];
+		player1Waypoints[3] = airspaceWaypoints[13];
+		player1Waypoints[4] = airspaceWaypoints[14];
+		player1Waypoints[4] = airspaceWaypoints[15];
 
 		// Add in location waypoints
 		player0Waypoints[5] = locationWaypoints[0];

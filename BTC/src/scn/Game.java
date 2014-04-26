@@ -3,7 +3,6 @@ package scn;
 import java.io.File;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.Hashtable;
 
 import lib.ButtonText;
 import lib.jog.audio;
@@ -65,9 +64,6 @@ public abstract class Game extends Scene {
 	/** The waypoints through which aircraft must travel to reach their destination */
 	protected static Waypoint[] airspaceWaypoints;
 
-	/** The location waypoints under each players' control */
-	protected static Hashtable<Integer, Integer> locationWaypointMap;
-
 	/** Is the game paused */
 	protected static boolean paused;
 	
@@ -125,22 +121,22 @@ public abstract class Game extends Scene {
 
 		// Define other waypoints
 		airspaceWaypoints = new Waypoint[] {
-				new Waypoint(0.09766, 0.18229, false, true),
-				new Waypoint(0.15625, 0.66146, false, true),
-				new Waypoint(0.19531, 0.41667, false, true),
-				new Waypoint(0.23, 0.9, false, true),
-				new Waypoint(0.25, 0.3, false, true),
-				new Waypoint(0.27, 0.7, false, true),
-				new Waypoint(0.39062, 0.20833, false, true), //middle waypoints
-				new Waypoint(0.39063, 0.68229, false, true), //middle waypoints
-				new Waypoint(0.54688, 0.10417, false, true),
-				new Waypoint(0.62500, 0.78125, false, true),
-				new Waypoint(0.67, 0.2, false, true),
-				new Waypoint(0.7, 0.5, false, true),
-				new Waypoint(0.85, 0.8, false, true),
-				new Waypoint(0.78125, 0.78125, false, true),
-				new Waypoint(0.81250, 0.15625, false, true),
-				new Waypoint(0.82031, 0.41667, false, true)
+				new Waypoint(0.10, 0.18, false, true),
+				new Waypoint(0.16, 0.66, false, true),
+				new Waypoint(0.20, 0.42, false, true),
+				new Waypoint(0.23, 0.90, false, true),
+				new Waypoint(0.25, 0.30, false, true),
+				new Waypoint(0.27, 0.70, false, true),
+				new Waypoint(0.39, 0.21, false, true), //middle waypoints
+				new Waypoint(0.39, 0.69, false, true), //middle waypoints
+				new Waypoint(0.55, 0.10, false, true),
+				new Waypoint(0.63, 0.78, false, true),
+				new Waypoint(0.67, 0.20, false, true),
+				new Waypoint(0.70, 0.50, false, true),
+				new Waypoint(0.85, 0.80, false, true),
+				new Waypoint(0.78, 0.78, false, true),
+				new Waypoint(0.81, 0.16, false, true),
+				new Waypoint(0.82, 0.42, false, true)
 		};
 	}
 
@@ -153,9 +149,6 @@ public abstract class Game extends Scene {
 	 */
 	@Override
 	public void start() {
-		// Set up waypoints
-		locationWaypointMap = new Hashtable<Integer, Integer>();
-
 		// Set up variables
 		out = new OrdersBox(window.width() - X_OFFSET + 20,
 				Y_OFFSET, X_OFFSET - 40, window.height() - (2 * Y_OFFSET), 30);
@@ -817,7 +810,7 @@ public abstract class Game extends Scene {
 		Airport destinationAirport = null;
 
 		// Get a list of this player's location waypoints
-		Waypoint[] playersLocationWaypoints = getPlayersLocationWaypoints(player);
+		Waypoint[] playersLocationWaypoints = player.getWaypoints();
 
 		// Get a list of location waypoints where a crash would not be immediate
 		ArrayList<Waypoint> availableOrigins = getAvailableEntryPoints(player);
@@ -1005,7 +998,7 @@ public abstract class Game extends Scene {
 		ArrayList<Waypoint> availableEntryPoints = new ArrayList<Waypoint>();
 
 		// Only check location waypoints which are under the players' control
-		Waypoint[] playersLocationWaypoints = getPlayersLocationWaypoints(player);
+		Waypoint[] playersLocationWaypoints = player.getWaypoints();
 
 		for (Waypoint entryPoint : playersLocationWaypoints) {
 			boolean isAvailable = true;
@@ -1185,48 +1178,6 @@ public abstract class Game extends Scene {
 	 */
 	public ArrayList<Aircraft> getAllAircraft() {
 		return player.getAircraft();
-	}
-
-	/**
-	 * Gets all the location waypoints assigned to a particular player.
-	 * @param player
-	 * 			the player to get waypoints for
-	 * @return a list of the selected player's location waypoints
-	 */
-	public Waypoint[] getPlayersLocationWaypoints(Player player) {
-		return getPlayersLocationWaypoints(player.getID());
-	}
-
-	/**
-	 * Gets all the location waypoints assigned to a particular player's ID.
-	 * @param playerID
-	 * 			the ID of the player to get waypoints for
-	 * @return a list of the selected player's location waypoints
-	 */
-	public Waypoint[] getPlayersLocationWaypoints(int playerID) {
-		int count = 0;
-		int index = 0;
-
-		// Scan through location waypoint map to get the number
-		// of location waypoints assigned to this player
-		for (int i = 0; i < locationWaypointMap.entrySet().size(); i++) {
-			if (locationWaypointMap.get(i) == playerID) count++;
-		}
-
-		// Create a new array to hold the waypoints
-		Waypoint[] playersLocationWaypoints = new Waypoint[count];
-
-		// Loop through each location waypoint, and check which player it's
-		// assigned to; if the assigned player is the current player, add it to
-		// the list to check
-		for (int i = 0; i < locationWaypointMap.entrySet().size(); i++) {
-			if (locationWaypointMap.get(i) == playerID) {
-				playersLocationWaypoints[index] = locationWaypoints[i];
-				index++;
-			}
-		}
-
-		return playersLocationWaypoints;
 	}
 
 	/**
