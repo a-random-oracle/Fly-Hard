@@ -280,6 +280,15 @@ public class NetworkThread extends Thread {
 	}
 	
 	/**
+	 * Unpauses the thread.
+	 */
+	public void unpause() {
+		synchronized (statusMutex) {
+			paused = false;
+		}
+	}
+	
+	/**
 	 * Stops the thread.
 	 */
 	public void end() {

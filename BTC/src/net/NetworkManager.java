@@ -52,9 +52,8 @@ public abstract class NetworkManager {
 	 * This starts the network thread.
 	 * </p>
 	 */
-	public static void initialise() {
-		// Start the network thread
-		networkThread.start();
+	public static void startThread() {
+		networkThread.unpause();
 	}
 	
 	
@@ -386,6 +385,13 @@ public abstract class NetworkManager {
 		}
 	}
 	
+	
+	/**
+	 * Pauses the network thread.
+	 */
+	public static void pause() {
+		networkThread.pause();
+	}
 
 	/**
 	 * Closes any open connections.

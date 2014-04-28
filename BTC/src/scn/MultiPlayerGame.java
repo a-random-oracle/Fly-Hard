@@ -104,7 +104,7 @@ public class MultiPlayerGame extends Game {
 		super.start();
 		
 		// Set up the network manager
-		NetworkManager.initialise();
+		NetworkManager.startThread();
 		
 		// Define other waypoints
 		powerupPoints = new Waypoint[] {
@@ -630,7 +630,8 @@ public class MultiPlayerGame extends Game {
 
 		// Send a message to the opponent to let
 		// them know we're closing
-		NetworkManager.sendMessage("END_GAME");
+		NetworkManager.postMessage("END_GAME");
+		NetworkManager.pause();
 	}
 
 
