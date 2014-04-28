@@ -81,12 +81,12 @@ public class FlightStrip implements EventHandler {
     }
 
     private void drawFlightNumber() {
-//    	btc.Main.display.drawString((float)(positionX + width/2), (float)(positionY + (height/2)), (currentAircraft.getName().substring(0,2)), org.newdawn.slick.Color.red);
+    	btc.Main.display.drawString((float)(positionX + width/2), (float)(positionY + (height/2)), (currentAircraft.getName().substring(0,2)), org.newdawn.slick.Color.red);
 //    	graphics.print(currentAircraft.getName(),(positionX + (width/2)), (positionY + (height/2)));
     }
 
     private void drawAirline() {
-    	
+
         graphics.print(currentAircraft.getAirline(),
         		(positionX + 2 + (width/3)), (positionY + 2));
     }

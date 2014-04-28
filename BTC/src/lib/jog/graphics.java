@@ -189,7 +189,9 @@ public abstract class graphics {
 		 * @param size the size of the created font.
 		 */
 		private SystemFont(String name, int size) {
+			
 			java.awt.Font awtFont = new java.awt.Font("Times New Roman", java.awt.Font.PLAIN, size);
+			//java.awt.Font robotoo = new java.awt.Font("gfx/Robot-Black.ttf", java.awt.Font.PLAIN, size);
 			_font = new TrueTypeFont(awtFont, false);
 		}
 		
