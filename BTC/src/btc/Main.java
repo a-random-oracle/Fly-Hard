@@ -1,14 +1,18 @@
 package btc;
 
+import java.awt.Font;
 import java.awt.GraphicsEnvironment;	
 import java.awt.Rectangle;
 import java.io.File;
+import java.io.InputStream;
 import java.util.Random;
 import java.util.Stack;
 
 import net.NetworkManager;
 
 import org.lwjgl.Sys;
+import org.newdawn.slick.TrueTypeFont;
+import org.newdawn.slick.util.ResourceLoader;
 
 import scn.Scene;
 import scn.Title;
@@ -58,6 +62,8 @@ public class Main implements input.EventHandler {
 	
 	/** The random instance to use to synchronise across the network */
 	private static Random random;
+	
+	public static TrueTypeFont display;
 	
 	/** The locations of the icon files */
 	final private String[] ICON_FILENAMES = {
@@ -142,6 +148,16 @@ public class Main implements input.EventHandler {
 				("ABCDEFGHIJKLMNOPQRSTUVWXYZ abcdefghijklmnopqrstuvwxyz" +
 						"1234567890.,_-!?()[]><#~:;/\\^'\"{}+=@@@@@@@@`"));
 		graphics.setFont(font);
+		
+		try {
+			InputStream inputStream = ResourceLoader.getResourceAsStream("gfx/Roboto-Black.ttf");
+			
+			Font robotoBlack = Font.createFont(Font.TRUETYPE_FONT, inputStream);
+			robotoBlack = robotoBlack.deriveFont(24f);
+			display = new TrueTypeFont(robotoBlack, false);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		
 		sceneStack = new Stack<Scene>();
 		setScene(new Title());
