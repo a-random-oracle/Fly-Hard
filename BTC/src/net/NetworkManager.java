@@ -185,8 +185,10 @@ public abstract class NetworkManager {
 			}
 
 			// Get the response headers
-			setID(Long.parseLong(connection
-					.getHeaderField("fh-client-id")));
+			if (connection.getHeaderField("fh-client-id") != null) {
+				setID(Long.parseLong(connection
+						.getHeaderField("fh-client-id")));
+			}
 
 			// Flush the output stream
 			outputStream.flush();
