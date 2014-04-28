@@ -55,6 +55,9 @@ public class MultiPlayerGame extends Game {
 	private Player opposingPlayer;
 
 	/** Time since new powerup generated */ 
+	private double dataUpdateTimeElapsed;
+	
+	/** Time since new powerup generated */ 
 	private double powerupGenerationTimeElapsed;
 
 	/** Interval between powerup spawn */ 
@@ -192,7 +195,7 @@ public class MultiPlayerGame extends Game {
 		// Update powerups
 		powerupGenerationTimeElapsed += timeDifference;
 
-		if (this.powerupGenerationTimeElapsed > this.powerUpInterval) {
+		if (powerupGenerationTimeElapsed > powerUpInterval) {
 			powerupGenerationTimeElapsed = 0;
 
 			// Only one player is responsible for generating powerups
@@ -246,8 +249,13 @@ public class MultiPlayerGame extends Game {
 		// Receive data
 		updateData();
 
+		// Update game data
+		dataUpdateTimeElapsed += timeDifference;
+		
+		if (dataUpdateTimeElapsed > 200) {
 		// Send current player's data to the server
 		NetworkManager.sendData(System.currentTimeMillis(), player);
+		}
 
 		super.update(timeDifference);
 
