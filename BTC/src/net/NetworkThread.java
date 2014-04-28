@@ -58,7 +58,7 @@ public class NetworkThread extends Thread {
 		this.priorityResponseBuffer = new LinkedList<Serializable>();
 		this.mostRecent = 0;
 		this.status = true;
-		this.paused = false;
+		this.paused = true;
 		this.statusMutex = new Object();
 	}
 	
