@@ -27,7 +27,7 @@ public abstract class NetworkManager {
 	public static final String DATA_EXT = "/data";
 	
 	/** The connection ID to the server */
-	private static int id = -1;
+	private static long id = -1;
 	
 	/** The connection name */
 	private static String name = "";
@@ -186,7 +186,7 @@ public abstract class NetworkManager {
 			}
 
 			// Get the response headers
-			setID(Integer.parseInt(connection
+			setID(Long.parseLong(connection
 					.getHeaderField("fh-client-id")));
 
 			// Flush the output stream
@@ -332,7 +332,7 @@ public abstract class NetworkManager {
 	 * Sets the player's ID.
 	 * @param name - the player's ID
 	 */
-	public static synchronized void setID(int id) {
+	private static synchronized void setID(long id) {
 		NetworkManager.id = id;
 	}
 	
