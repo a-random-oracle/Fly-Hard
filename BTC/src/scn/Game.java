@@ -33,7 +33,7 @@ public abstract class Game extends Scene {
 
 	private final int FLIGHTSTRIP_Y = window.height()/3;
 	
-	private final int FLIGHTSTRIP_W = 120;
+	private final int FLIGHTSTRIP_W = 160;
 	
 	private final int FLIGHTSTRIP_H = 60;
 	
@@ -81,6 +81,8 @@ public abstract class Game extends Scene {
 	
 	/** The current player */
 	protected Player player;
+	
+	public int flightCount = 0; // TODO Actually make this do things.
 
 	// Testing FlightStrip output
 	private static FlightStrip flightStrip;
@@ -103,7 +105,7 @@ public abstract class Game extends Scene {
 		// Define airports
 		airports = new Airport[] {
 				new Airport("Mosgrizzly Airport", (1d/7d), (1d/2d)),
-				new Airport("Mosbear Airport", (6d/7d), (1d/2d))
+				new Airport("Yolo Airport", (6d/7d), (1d/2d))
 		};
 
 		// Define entry and exit points

@@ -2,7 +2,7 @@
 //   / | / | / | /   In use by mwuk **BEWARE CHANGES**
 //  /  |/  |/  |/
 //
-// V 0.1.2
+// V 0.1.5
 
 package cls;
 
@@ -70,31 +70,49 @@ public class FlightStrip implements EventHandler {
             drawFlightNumber();
             drawAirline();
             drawAltitude();
+            drawRoute();
+            drawStatus();
         }
     }
 
     private void drawOutline() {
         graphics.setColour(graphics.blue);
-        graphics.rectangle(false, positionX, positionY, width, height);
+        graphics.rectangle(true, positionX, positionY, width, height);
         graphics.setColour(graphics.white);
-        graphics.rectangle(true, positionX, positionY, (width/3), height);
+        graphics.rectangle(true, positionX + 2, positionY + 2, 40, height - 4);
+
     }
 
     private void drawFlightNumber() {
-    	btc.Main.display.drawString((float)(positionX + width/2), (float)(positionY + (height/2)), (currentAircraft.getName().substring(0,2)), org.newdawn.slick.Color.red);
+//    	btc.Main.display.drawString((float)(positionX + width/2), (float)(positionY + (height/2)), (currentAircraft.getName().substring(0,2)), org.newdawn.slick.Color.red);
 //    	graphics.print(currentAircraft.getName(),(positionX + (width/2)), (positionY + (height/2)));
-//    	graphics.print(currentAircraft.getName().substring(0,2), (positionX), positionY);
+    	graphics.setColour(graphics.black);
+    	graphics.print(currentAircraft.getName().substring(0,2), (positionX + 2), (positionY + 2));
+    	graphics.print(currentAircraft.getName().substring(2,5), (positionX + 2), (positionY + 30));
     }
 
     private void drawAirline() {
-    	
-        graphics.print(currentAircraft.getAirline(),
-        		(positionX + 2 + (width/3)), (positionY + 2));
+    	graphics.setColour(graphics.white);
+        graphics.print(currentAircraft.getAirline(), (positionX + 2 + 40), (positionY + 2));
     }
 
     private void drawAltitude() {
 //        btc.Main.display.drawString((float)(positionX + (width/2)), (float)(positionY + height), (new Integer(currentAircraft.getAltitude()).toString() + "ft"));
-//    	graphics.print(new Integer(currentAircraft.getAltitude()).toString() + "ft", (positionX + (width/2)), ((positionY + height) - 12));
+    	graphics.print(new Integer(currentAircraft.getAltitude()).toString() + "ft", (positionX + (width/2)), ((positionY + height) - 24));
+    }
+    
+    private void drawRoute() {
+    	graphics.print(currentAircraft.getOrigin().substring(0,3) + " to " + currentAircraft.getDestination().substring(0, 3), (positionX + (width/2) - 20), (positionY + height - 36));
+    }
+    
+    private void drawStatus() {
+    	if (currentAircraft.isInDanger()) {
+    		graphics.setColour(graphics.red);
+    		graphics.rectangle(true, (positionX + 42), (positionY + height - 14), 116, 12);
+    	} else {
+    		graphics.setColour(graphics.green);
+    		graphics.rectangle(true, (positionX + 42), (positionY + height - 14), 116, 12);
+    	}
     }
 
     @Override
