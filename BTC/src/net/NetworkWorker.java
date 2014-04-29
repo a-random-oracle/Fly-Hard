@@ -6,13 +6,13 @@ import java.util.Map.Entry;
 import java.util.TreeMap;
 
 /**
- * Thread used to transfer data in parallel with the game.
+ * Worker used to transfer data in parallel with the game.
  * <p>
- * This thread provides no guarantees regarding the time between
+ * The worker provides no guarantees regarding the time between
  * data being passed to the queue and data being sent.
  * </p>
  * <p>
- * There is also no guarantee that data written to the thread
+ * There is also no guarantee that data written to the worker
  * will ever get sent. This is due to an effort to only send the
  * most up-to-date data.
  * </p>
@@ -63,10 +63,12 @@ public class NetworkWorker implements Runnable {
 	 */
 	@Override
 	public void run() {
-		// Repeat while the thread is running
+		// Repeat while the worker is running
 		while (getStatus()) {
 			sendNextData();
 		}
+		
+		NetworkManager.resetConnectionProperties();
 	}
 	
 	/**
@@ -222,7 +224,7 @@ public class NetworkWorker implements Runnable {
 	}
 	
 	/**
-	 * Stops the thread.
+	 * Stops the worker.
 	 */
 	public void end() {
 		// Obtain a lock on the status attribute

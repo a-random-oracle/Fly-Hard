@@ -70,14 +70,13 @@ public abstract class NetworkManager {
 		// Obtain a lock on the network thread
 		synchronized (networkThread) {
 			networkWorker.end();
-			resetConnectionProperties();
 		}
 	}
 	
 	/**
 	 * Resets the ID, name and host attributes.
 	 */
-	private static void resetConnectionProperties() {
+	public static void resetConnectionProperties() {
 		// Obtain a lock on the header fields
 		synchronized (headerMutex) {
 			setID(-1L);
