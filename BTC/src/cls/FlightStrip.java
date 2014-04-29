@@ -16,7 +16,9 @@ public class FlightStrip implements EventHandler {
 
     private boolean isVisible;
 
-    private cls.Aircraft currentAircraft;
+    private cls.Aircraft aircraft;
+    
+    private cls.FlightPlan flightPlan;
 
     private double positionX;
 
@@ -34,12 +36,14 @@ public class FlightStrip implements EventHandler {
      * @param w - the width of the strip
      * @param h - the height of the strip
      */
-    public FlightStrip(double x, double y, double w, double h) {
-        positionX = x;
-        positionY = y;
+    public FlightStrip(/*double x, double y, */double w, double h, Aircraft plane, FlightPlan plan) {
+        positionX = Math.random();
+        positionY = Math.random();
         width = w;
         height = h;
-        hide();
+        aircraft = plane;
+        flightPlan = plan;
+        draw();
     }
 
 
@@ -53,18 +57,18 @@ public class FlightStrip implements EventHandler {
      */
     public void show(Aircraft aircraft) {
     	if (aircraft != null) {
-    		currentAircraft = aircraft;
+    		aircraft = aircraft;
     		isVisible = true;
     	}
     }
 
     public void hide() {
-        currentAircraft = null;
+        aircraft = null;
         isVisible = false;
     }
 
     public void draw() {
-        drawOutline();
+        	drawOutline();
 
         if (isVisible) {
             drawFlightNumber();
@@ -88,8 +92,7 @@ public class FlightStrip implements EventHandler {
 
     private void drawAirline() {
     	
-        graphics.print(currentAircraft.getAirline(),
-        		(positionX + 2 + (width/3)), (positionY + 2));
+        graphics.print(aircraft.getAirline(), (positionX + 2 + (width/3)), (positionY + 2));
     }
 
     private void drawAltitude() {
