@@ -367,6 +367,8 @@ public class MultiPlayerGame extends Game {
 		
 		drawPowerupPoints();
 		
+		graphics.setViewport();
+		
 		// Temp flightstrip draw call.
 		for (FlightStrip fs : player.getFlightStrips()) {
 			fs.draw((playerPosition == 0) ? 16 : window.width() - (X_OFFSET) + 16);

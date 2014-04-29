@@ -170,10 +170,6 @@ public abstract class Game extends Scene {
 			//music.play(); TODO <- add this back in for release
 		}
 
-//	if (!Main.testing) {
-//		flightStrip = new FlightStrip(FLIGHTSTRIP_X, FLIGHTSTRIP_Y, FLIGHTSTRIP_W, FLIGHTSTRIP_H);
-//	}
-
 		// Reset game attributes
 		timeElapsed = 0;
 	}
@@ -264,13 +260,15 @@ public abstract class Game extends Scene {
 				}
 
 				player.getScore().addScore(player.getAircraft().get(i));
-				player.getAircraft().remove(i);
 				
 				for (int j = player.getFlightStrips().size() - 1; j >= 0; j--) {
-					if (player.getAircraft().equals(player.getFlightStrips().get(i).getAircraft())) {
+					if (player.getAircraft().get(i).equals(
+							player.getFlightStrips().get(i).getAircraft())) {
 						player.getFlightStrips().remove(i);
 					}
 				}
+				
+				player.getAircraft().remove(i);
 			}
 		}
 
@@ -362,6 +360,8 @@ public abstract class Game extends Scene {
 		drawAircraft(player);
 		drawSelectedAircraft();
 		drawManualControlButton(player);
+		
+		graphics.setViewport();
 		
 		// Temp flightstrip draw call.
 		for (FlightStrip fs : player.getFlightStrips()) {
@@ -961,8 +961,8 @@ public abstract class Game extends Scene {
 	}
 	
 	public FlightStrip createFlightStrip(Aircraft incomingPlane) {
-		
-		FlightStrip newFlightStrip = new FlightStrip(FLIGHTSTRIP_W, FLIGHTSTRIP_H, incomingPlane, incomingPlane.getFlightPlan());
+		FlightStrip newFlightStrip = new FlightStrip(FLIGHTSTRIP_W, FLIGHTSTRIP_H,
+				incomingPlane, incomingPlane.getFlightPlan());
 		player.getFlightStrips().add(newFlightStrip);
 		return newFlightStrip;
 	}
