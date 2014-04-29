@@ -86,6 +86,9 @@ public class Lobby extends Scene {
 
 	@Override
 	public void start() {
+		// Reset the network manager
+		NetworkManager.resetConnectionProperties();
+		
 		// Implement the action that occurs upon clicking the create game button
 		ButtonText.Action createGame = new ButtonText.Action() {
 			@Override
