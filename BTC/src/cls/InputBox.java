@@ -164,6 +164,18 @@ public class InputBox {
 		InputBox.validKeys.add(input.KEY_8);
 		InputBox.validKeys.add(input.KEY_9);
 		
+		// Add the num pad keys to the list of valid entry keys
+		InputBox.validKeys.add(input.KEY_NUM_0);
+		InputBox.validKeys.add(input.KEY_NUM_1);
+		InputBox.validKeys.add(input.KEY_NUM_2);
+		InputBox.validKeys.add(input.KEY_NUM_3);
+		InputBox.validKeys.add(input.KEY_NUM_4);
+		InputBox.validKeys.add(input.KEY_NUM_5);
+		InputBox.validKeys.add(input.KEY_NUM_6);
+		InputBox.validKeys.add(input.KEY_NUM_7);
+		InputBox.validKeys.add(input.KEY_NUM_8);
+		InputBox.validKeys.add(input.KEY_NUM_9);
+		
 		// Add the alphabet to the list of valid entry keys
 		InputBox.validKeys.add(input.KEY_A);
 		InputBox.validKeys.add(input.KEY_B);
@@ -316,6 +328,36 @@ public class InputBox {
 				if (!(text.length() >= 12)) {
 					text += " ";
 				}
+				break;
+			case input.KEY_NUM_0:
+				text = text + "0";
+				break;
+			case input.KEY_NUM_1:
+				text = text + "1";
+				break;
+			case input.KEY_NUM_2:
+				text = text + "2";
+				break;
+			case input.KEY_NUM_3:
+				text = text + "3";
+				break;
+			case input.KEY_NUM_4:
+				text = text + "4";
+				break;
+			case input.KEY_NUM_5:
+				text = text + "5";
+				break;
+			case input.KEY_NUM_6:
+				text = text + "6";
+				break;
+			case input.KEY_NUM_7:
+				text = text + "7";
+				break;
+			case input.KEY_NUM_8:
+				text = text + "8";
+				break;
+			case input.KEY_NUM_9:
+				text = text + "9";
 				break;
 			default:
 				if (!(text.length() >= 12)) {
