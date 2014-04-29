@@ -324,6 +324,8 @@ public abstract class NetworkManager {
 	 * @return the network thread's ID
 	 */
 	public static long getNetworkThreadID() {
+		if (networkThread == null) networkThread = new NetworkThread();
+		
 		// Obtain a lock on the network thread
 		synchronized (networkThread) {
 			return networkThread.getId();
