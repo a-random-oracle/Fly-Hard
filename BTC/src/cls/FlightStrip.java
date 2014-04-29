@@ -81,8 +81,9 @@ public class FlightStrip implements EventHandler {
     }
 
     private void drawFlightNumber() {
-//    	btc.Main.display.drawString((float)(positionX + width/2), (float)(positionY + (height/2)), (currentAircraft.getName().substring(0,2)), org.newdawn.slick.Color.red);
+    	btc.Main.display.drawString((float)(positionX + width/2), (float)(positionY + (height/2)), (currentAircraft.getName().substring(0,2)), org.newdawn.slick.Color.red);
 //    	graphics.print(currentAircraft.getName(),(positionX + (width/2)), (positionY + (height/2)));
+//    	graphics.print(currentAircraft.getName().substring(0,2), (positionX), positionY);
     }
 
     private void drawAirline() {
@@ -92,8 +93,8 @@ public class FlightStrip implements EventHandler {
     }
 
     private void drawAltitude() {
-        graphics.print(new Integer(currentAircraft.getAltitude()).toString(),
-        		(positionX + (width/2)), ((positionY + height) - 12));
+//        btc.Main.display.drawString((float)(positionX + (width/2)), (float)(positionY + height), (new Integer(currentAircraft.getAltitude()).toString() + "ft"));
+//    	graphics.print(new Integer(currentAircraft.getAltitude()).toString() + "ft", (positionX + (width/2)), ((positionY + height) - 12));
     }
 
     @Override
