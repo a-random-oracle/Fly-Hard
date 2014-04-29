@@ -272,9 +272,18 @@ public abstract class NetworkManager {
 			// Get the response headers
 			// Obtain a lock on the header fields
 			synchronized (headerMutex) {
-				if (connection.getHeaderField("fh-client-id") != null) {
+				if (connection.getHeaderField("fh-client-id") != null
+						&& !"".equals(connection
+								.getHeaderField("fh-client-id"))) {
 					setID(Long.parseLong(connection
 							.getHeaderField("fh-client-id")));
+				}
+				
+				if (connection.getHeaderField("fh-client-messages") != null
+						&& !"".equals(connection
+								.getHeaderField("fh-client-messages"))) {
+					InstructionHandler.handleInstruction(connection
+							.getHeaderField("fh-client-messages"));
 				}
 			}
 			
