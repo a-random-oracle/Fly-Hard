@@ -523,8 +523,8 @@ public abstract class Game extends Scene {
 		graphics.print(String.valueOf(aircraftCount)
 				+ " aircraft in the airspace.", 32 + X_OFFSET, 32);
 		
-		graphics.print("Total Score: " + String.valueOf(player.getScore().getScore()),
-				Main.TARGET_WIDTH / 3 + X_OFFSET, 32);
+		graphics.printCentred("Total Score: " + String.valueOf(player.getScore().getScore()),
+				Main.TARGET_WIDTH / 3 + X_OFFSET, 32, 1, 150);
 	}
 
 	/**
