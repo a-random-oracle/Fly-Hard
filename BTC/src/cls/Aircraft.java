@@ -103,6 +103,8 @@ public class Aircraft implements Serializable {
 	/** A list of the aircraft violation this aircraft's separation distance */
 	private ArrayList<Aircraft> planesTooNear = new ArrayList<Aircraft>();
 	
+	private boolean inDanger = false;
+	
 	/** How long the aircraft has been waiting to take off in the airport */
 	private int timeWaiting = 0;
 	
@@ -689,6 +691,10 @@ public class Aircraft implements Serializable {
 			}
 		}
 	}
+	
+	public void drawScore() {
+		graphics.print(Integer.toString(score), position.getX() + 4, position.getY() + 5);
+	}
 
 	/**
 	 * Updates the number of planes that are violating the separation rule. Also
@@ -711,6 +717,7 @@ public class Aircraft implements Serializable {
 				if (!collisionWarningSoundFlag) {
 					collisionWarningSoundFlag = true;
 					WARNING_SOUND.play();
+					inDanger = true;
 				}
 				// Decrement score for getting within separation distance
 				decrementScoreSmall();
@@ -718,6 +725,7 @@ public class Aircraft implements Serializable {
 		}
 		if (planesTooNear.isEmpty()) {
 			collisionWarningSoundFlag = false;
+			inDanger = false;
 		}
 		return -1;
 	}
@@ -1044,6 +1052,23 @@ public class Aircraft implements Serializable {
 		return true;
 	}
 
+	/**
+	 * Gets name of origin for Flightstrips
+	 * @return The name of the flight's origin.
+	 */
+	
+	public String getOrigin() {
+		return this.flightPlan.getOriginName();
+	}
+	
+	public String getDestination() {
+		return this.flightPlan.getDestinationName();
+	}
+	
+	public boolean isInDanger() {
+		return this.inDanger;
+	}
+	
 	public int getScore() {
 		return score;
 	}
@@ -1085,6 +1110,10 @@ public class Aircraft implements Serializable {
 	
 	public void setPosition(Vector newPosition) {
 		position = newPosition;
+	}
+	
+	public int getCurrentRouteStage() {
+		return currentRouteStage;
 	}
 	
 	public void generateFlightPlan(Waypoint[] sceneWaypoints,

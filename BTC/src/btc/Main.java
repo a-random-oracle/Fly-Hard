@@ -202,7 +202,7 @@ public class Main implements input.EventHandler {
 	 */
 	public static void quit() {
 		currentScene.close();
-		NetworkManager.close();
+		NetworkManager.pause();
 		window.dispose();
 		audio.dispose();
 		System.exit(0);

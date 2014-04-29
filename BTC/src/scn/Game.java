@@ -81,6 +81,8 @@ public abstract class Game extends Scene {
 	
 	/** The current player */
 	protected Player player;
+	
+	public int flightCount = 0; // TODO Actually make this do things.
 
 	// Testing FlightStrip output
 	private static FlightStrip flightStrip;
@@ -103,7 +105,7 @@ public abstract class Game extends Scene {
 		// Define airports
 		airports = new Airport[] {
 				new Airport("Mosgrizzly Airport", (1d/7d), (1d/2d)),
-				new Airport("Mosbear Airport", (6d/7d), (1d/2d))
+				new Airport("Yolo Airport", (6d/7d), (1d/2d))
 		};
 
 		// Define entry and exit points
@@ -376,6 +378,8 @@ public abstract class Game extends Scene {
 		for (Aircraft aircraft : player.getAircraft()) {
 			aircraft.draw(player.getAircraftColour(), player.getControlAltitude());
 
+			//draw the score of each aircraft
+			aircraft.drawScore();
 			if (aircraft.isMouseOver()) {
 				aircraft.drawFlightPath(false);
 			}
@@ -817,8 +821,7 @@ public abstract class Game extends Scene {
 		ArrayList<Waypoint> availableOrigins = getAvailableEntryPoints(player);
 
 		if (availableOrigins.isEmpty()) {
-			int randomAirport = Main.getRandom()
-					.nextInt((player.getAirports().length - 1) + 1);
+			int randomAirport = Main.getRandom().nextInt((player.getAirports().length - 1) + 1);
 
 			if (player.getAirports()[randomAirport].aircraftHangar.size()
 					== player.getAirports()[randomAirport].getHangarSize()) {
@@ -943,12 +946,11 @@ public abstract class Game extends Scene {
 		createFlightStrip(newPlane);
 		
 		return newPlane;
-		
 	}
 	
 	public FlightStrip createFlightStrip(Aircraft incomingPlane) {
 		
-		return new FlightStrip(FLIGHTSTRIP_W, FLIGHTSTRIP_H, incomingPlane, incomingPlane.getFlightPlan());
+		return new FlightStrip(window.width(), window.height(), FLIGHTSTRIP_W, FLIGHTSTRIP_H, incomingPlane, incomingPlane.getFlightPlan());
 	}
 	
 
