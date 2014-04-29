@@ -376,6 +376,8 @@ public abstract class Game extends Scene {
 		for (Aircraft aircraft : player.getAircraft()) {
 			aircraft.draw(player.getAircraftColour(), player.getControlAltitude());
 
+			//draw the score of each aircraft
+			aircraft.drawScore();
 			if (aircraft.isMouseOver()) {
 				aircraft.drawFlightPath(false);
 			}

@@ -689,6 +689,10 @@ public class Aircraft implements Serializable {
 			}
 		}
 	}
+	
+	public void drawScore() {
+		graphics.print(Integer.toString(score), position.getX() + 4, position.getY() + 5);
+	}
 
 	/**
 	 * Updates the number of planes that are violating the separation rule. Also
