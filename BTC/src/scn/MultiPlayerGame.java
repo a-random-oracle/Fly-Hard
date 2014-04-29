@@ -348,11 +348,6 @@ public class MultiPlayerGame extends Game {
 		
 		// Draw the middle zone
 		drawMiddleZone();
-		
-		// Temp flightstrip draw call.
-		for (FlightStrip fs : opposingPlayer.getFlightStrips()) {
-			fs.draw(window.width() - (X_OFFSET) + 16);
-		}
 	}
 
 	@Override
@@ -371,6 +366,16 @@ public class MultiPlayerGame extends Game {
 		drawManualControlButton(player);
 		
 		drawPowerupPoints();
+		
+		// Temp flightstrip draw call.
+		for (FlightStrip fs : player.getFlightStrips()) {
+			fs.draw((playerPosition == 0) ? 16 : window.width() - (X_OFFSET) + 16);
+		}
+
+		// Temp flightstrip draw call.
+		for (FlightStrip fs : player.getFlightStrips()) {
+			fs.draw((playerPosition == 1) ? window.width() - (X_OFFSET) + 16 : 16);
+		}
 	}
 
 	/**

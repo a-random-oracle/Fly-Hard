@@ -341,17 +341,10 @@ public abstract class Game extends Scene {
 		// area
 		graphics.setViewport();
 		drawAdditional(getAllAircraft().size());
-
-		// Temp flightstrip draw call.
-		for (FlightStrip fs : player.getFlightStrips()) {
-			fs.draw(16);
-		}
 		
 		// Draw debug box
 		// PLEASE DO NOT REMOVE - this is very useful for debugging
 		out.draw();
-		
-	
 	}
 
 	/**
@@ -363,6 +356,11 @@ public abstract class Game extends Scene {
 		drawAircraft(player);
 		drawSelectedAircraft();
 		drawManualControlButton(player);
+		
+		// Temp flightstrip draw call.
+		for (FlightStrip fs : player.getFlightStrips()) {
+			fs.draw(16);
+		}
 	}
 
 	/**
