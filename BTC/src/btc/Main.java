@@ -204,7 +204,7 @@ public class Main implements input.EventHandler {
 	 */
 	public static void quit() {
 		currentScene.close();
-		NetworkManager.pause();
+		NetworkManager.stopThread();
 		window.dispose();
 		audio.dispose();
 		System.exit(0);

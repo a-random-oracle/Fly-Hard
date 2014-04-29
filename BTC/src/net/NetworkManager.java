@@ -34,9 +34,15 @@ public abstract class NetworkManager {
 	
 	/** The connection host status */
 	private static boolean isHost = false;
+	
+	/** The mutex used to protect the header fields */
+	private static Object headerMutex = new Object();
 
-	/** The thread to send data on */
-	private static NetworkThread networkThread;
+	/** The task which sends and receives */
+	private static NetworkWorker networkWorker = new NetworkWorker();
+	
+	/** The thread to send and receive data on */
+	private static Thread networkThread = new Thread(networkWorker);
 	
 	/** A map for temporarily storing data in order to make use of entries */
 	private static TreeMap<Long, byte[]> transientDataBuffer =
@@ -47,18 +53,42 @@ public abstract class NetworkManager {
 
 	
 	/**
-	 * Initialises the new network manager.
-	 * <p>
-	 * This starts the network thread.
-	 * </p>
+	 * Starts the network thread and network worker.
 	 */
 	public static void startThread() {
-		networkThread = new NetworkThread();
+		// Obtain a lock on the network thread
+		synchronized (networkThread) {
+			networkThread = new Thread(networkWorker);
+			networkThread.start();
+		}
+	}
+	
+	/**
+	 * Stops the network thread and network worker.
+	 */
+	public static void stopThread() {
+		// Obtain a lock on the network thread
+		synchronized (networkThread) {
+			networkWorker.end();
+			resetConnectionProperties();
+		}
+	}
+	
+	/**
+	 * Resets the ID, name and host attributes.
+	 */
+	private static void resetConnectionProperties() {
+		// Obtain a lock on the header fields
+		synchronized (headerMutex) {
+			setID(-1L);
+			setName("");
+			setHost(false);
+		}
 	}
 	
 	
 	/**
-	 * Adds data to the network thread.
+	 * Adds data to the network worker.
 	 * <p>
 	 * The data will then be sent to the server after an arbitrary length
 	 * of time.
@@ -69,32 +99,17 @@ public abstract class NetworkManager {
 	public static void sendData(long timeValid, Serializable data) {
 		// Obtain a lock on the network thread
 		synchronized (networkThread) {
-			networkThread.writeData(timeValid, data);
+			networkWorker.writeData(timeValid, data);
 		}
 	}
 	
 	/**
-	 * Retrieve the next response from the network thread.
+	 * Retrieve the next response from the network worker.
 	 */
 	public static Serializable receiveData() {
 		// Obtain a lock on the network thread
 		synchronized (networkThread) {
-			return networkThread.readResponse();
-		}
-	}
-
-	/**
-	 * Adds a message to the network thread.
-	 * <p>
-	 * The message will then be sent to the server after an arbitrary length
-	 * of time.
-	 * </p>
-	 * @param message - the message to send
-	 */
-	public static void sendMessage(String message) {
-		// Obtain a lock on the network thread
-		synchronized (networkThread) {
-			networkThread.writeMessage(message);
+			return networkWorker.readResponse();
 		}
 	}
 	
@@ -124,12 +139,16 @@ public abstract class NetworkManager {
 			// Set request properties and headers
 			connection.setRequestProperty("user-agent",
 					"Fly-Hard");
-			connection.setRequestProperty("fh-client-id",
-					String.valueOf(id));
-			connection.setRequestProperty("fh-client-name",
-					name);
-			connection.setRequestProperty("fh-client-host",
-					String.valueOf(isHost));
+			
+			// Obtain a lock on the header fields
+			synchronized (headerMutex) {
+				connection.setRequestProperty("fh-client-id",
+						String.valueOf(id));
+				connection.setRequestProperty("fh-client-name",
+						name);
+				connection.setRequestProperty("fh-client-host",
+						String.valueOf(isHost));
+			}
 			
 		} catch (ProtocolException e) {
 			print(e);
@@ -185,9 +204,12 @@ public abstract class NetworkManager {
 			}
 
 			// Get the response headers
-			if (connection.getHeaderField("fh-client-id") != null) {
-				setID(Long.parseLong(connection
-						.getHeaderField("fh-client-id")));
+			// Obtain a lock on the header fields
+			synchronized (headerMutex) {
+				if (connection.getHeaderField("fh-client-id") != null) {
+					setID(Long.parseLong(connection
+							.getHeaderField("fh-client-id")));
+				}
 			}
 			
 			// Flush the output stream
@@ -248,9 +270,12 @@ public abstract class NetworkManager {
 			receivedData = (Entry<Long, byte[]>) inputStream.readObject();
 			
 			// Get the response headers
-			if (connection.getHeaderField("fh-client-id") != null) {
-				setID(Long.parseLong(connection
-						.getHeaderField("fh-client-id")));
+			// Obtain a lock on the header fields
+			synchronized (headerMutex) {
+				if (connection.getHeaderField("fh-client-id") != null) {
+					setID(Long.parseLong(connection
+							.getHeaderField("fh-client-id")));
+				}
 			}
 			
 			// Flush the output stream
@@ -325,8 +350,6 @@ public abstract class NetworkManager {
 	 * @return the network thread's ID
 	 */
 	public static long getNetworkThreadID() {
-		if (networkThread == null) networkThread = new NetworkThread();
-		
 		// Obtain a lock on the network thread
 		synchronized (networkThread) {
 			return networkThread.getId();
@@ -337,16 +360,22 @@ public abstract class NetworkManager {
 	 * Sets the player's ID.
 	 * @param name - the player's ID
 	 */
-	public static synchronized void setID(long id) {
-		NetworkManager.id = id;
+	public static void setID(long id) {
+		// Obtain a lock on the header fields
+		synchronized (headerMutex) {
+			NetworkManager.id = id;
+		}
 	}
 	
 	/**
 	 * Sets the player's name.
 	 * @param name - the player's name
 	 */
-	public static synchronized void setName(String name) {
-		NetworkManager.name = name;
+	public static void setName(String name) {
+		// Obtain a lock on the header fields
+		synchronized (headerMutex) {
+			NetworkManager.name = name;
+		}
 	}
 	
 	/**
@@ -354,8 +383,11 @@ public abstract class NetworkManager {
 	 * @param isHost - <code>true</code> if a player should be a host,
 	 * 			otherwise <code>false</code>
 	 */
-	public static synchronized void setHost(boolean isHost) {
-		NetworkManager.isHost = isHost;
+	public static void setHost(boolean isHost) {
+		// Obtain a lock on the header fields
+		synchronized (headerMutex) {
+			NetworkManager.isHost = isHost;
+		}
 	}
 	
 	
@@ -389,15 +421,6 @@ public abstract class NetworkManager {
 				System.err.println("at " + e.getStackTrace()[i].toString());
 			}
 		}
-	}
-	
-	
-	/**
-	 * Pauses the network thread.
-	 */
-	public static void pause() {
-		if (networkThread != null) networkThread.end();
-		setID(-1L);
 	}
 
 }

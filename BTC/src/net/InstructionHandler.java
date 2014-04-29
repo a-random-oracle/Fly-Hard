@@ -83,14 +83,14 @@ public abstract class InstructionHandler {
 		
 		// Switch to the appropriate method
 		switch (instr) {
+		case "END_GAME":
+			handleEndGame();
+			break;
 		case "SET_SEED":
 			handleSetSeed(parameters);
 			break;
 		case "START_GAME":
 			handleStartGame(parameters);
-			break;
-		case "END_GAME":
-			handleEndGame();
 			break;
 		}
 	}
