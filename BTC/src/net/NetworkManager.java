@@ -27,7 +27,7 @@ public abstract class NetworkManager {
 	public static final String DATA_EXT = "/data";
 	
 	/** The connection ID to the server */
-	private static int id = -1;
+	private static long id = -1;
 	
 	/** The connection name */
 	private static String name = "";
@@ -36,7 +36,7 @@ public abstract class NetworkManager {
 	private static boolean isHost = false;
 
 	/** The thread to send data on */
-	private static NetworkThread networkThread = new NetworkThread();
+	private static NetworkThread networkThread;
 	
 	/** A map for temporarily storing data in order to make use of entries */
 	private static TreeMap<Long, byte[]> transientDataBuffer =
@@ -52,9 +52,8 @@ public abstract class NetworkManager {
 	 * This starts the network thread.
 	 * </p>
 	 */
-	public static void initialise() {
-		// Start the network thread
-		networkThread.start();
+	public static void startThread() {
+		networkThread = new NetworkThread();
 	}
 	
 	
@@ -181,14 +180,16 @@ public abstract class NetworkManager {
 			// Get the received data
 			receivedMessages = (String) inputStream.readObject();
 
-			if (message != null && !message.equals("")) {
+			if (!message.equals("NULL")) {
 				print("Received response: " + receivedMessages);
 			}
 
 			// Get the response headers
-			setID(Integer.parseInt(connection
-					.getHeaderField("fh-client-id")));
-
+			if (connection.getHeaderField("fh-client-id") != null) {
+				setID(Long.parseLong(connection
+						.getHeaderField("fh-client-id")));
+			}
+			
 			// Flush the output stream
 			outputStream.flush();
 
@@ -247,8 +248,10 @@ public abstract class NetworkManager {
 			receivedData = (Entry<Long, byte[]>) inputStream.readObject();
 			
 			// Get the response headers
-			setID(Integer.parseInt(connection
-					.getHeaderField("fh-client-id")));
+			if (connection.getHeaderField("fh-client-id") != null) {
+				setID(Long.parseLong(connection
+						.getHeaderField("fh-client-id")));
+			}
 			
 			// Flush the output stream
 			outputStream.flush();
@@ -322,6 +325,8 @@ public abstract class NetworkManager {
 	 * @return the network thread's ID
 	 */
 	public static long getNetworkThreadID() {
+		if (networkThread == null) networkThread = new NetworkThread();
+		
 		// Obtain a lock on the network thread
 		synchronized (networkThread) {
 			return networkThread.getId();
@@ -332,7 +337,7 @@ public abstract class NetworkManager {
 	 * Sets the player's ID.
 	 * @param name - the player's ID
 	 */
-	public static synchronized void setID(int id) {
+	public static synchronized void setID(long id) {
 		NetworkManager.id = id;
 	}
 	
@@ -386,6 +391,14 @@ public abstract class NetworkManager {
 		}
 	}
 	
+	
+	/**
+	 * Pauses the network thread.
+	 */
+	public static void pause() {
+		if (networkThread != null) networkThread.end();
+		setID(-1L);
+	}
 
 	/**
 	 * Closes any open connections.
@@ -393,8 +406,7 @@ public abstract class NetworkManager {
 	public static void close() {
 		// Send a message to the opponent to let
 		// them know we're closing
-		NetworkManager.postMessage("END");
-
+		
 		if (networkThread != null) networkThread.end();
 	}
 

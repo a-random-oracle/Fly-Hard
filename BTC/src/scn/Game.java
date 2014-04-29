@@ -803,7 +803,7 @@ public abstract class Game extends Scene {
 	 * Handle aircraft creation.
 	 * @return the created aircraft object
 	 */
-	protected Aircraft createAircraft(Player player) {
+	public Aircraft createAircraft(Player player) {
 		String destinationName;
 		String originName = "";
 		Waypoint originPoint = null;

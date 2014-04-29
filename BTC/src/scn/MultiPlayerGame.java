@@ -55,6 +55,9 @@ public class MultiPlayerGame extends Game {
 	private Player opposingPlayer;
 
 	/** Time since new powerup generated */ 
+	private double dataUpdateTimeElapsed;
+	
+	/** Time since new powerup generated */ 
 	private double powerupGenerationTimeElapsed;
 
 	/** Interval between powerup spawn */ 
@@ -104,7 +107,7 @@ public class MultiPlayerGame extends Game {
 		super.start();
 		
 		// Set up the network manager
-		NetworkManager.initialise();
+		NetworkManager.startThread();
 		
 		// Define other waypoints
 		powerupPoints = new Waypoint[] {
@@ -129,6 +132,7 @@ public class MultiPlayerGame extends Game {
 				32, 128, 32, 8, 4);
 
 		aircraftUnderTransfer = new ArrayList<Aircraft>();
+		dataUpdateTimeElapsed = 0;
 		powerupGenerationTimeElapsed = 0;
 		powerUpInterval = 5;
 	}
@@ -192,7 +196,7 @@ public class MultiPlayerGame extends Game {
 		// Update powerups
 		powerupGenerationTimeElapsed += timeDifference;
 
-		if (this.powerupGenerationTimeElapsed > this.powerUpInterval) {
+		if (powerupGenerationTimeElapsed > powerUpInterval) {
 			powerupGenerationTimeElapsed = 0;
 
 			// Only one player is responsible for generating powerups
@@ -246,8 +250,13 @@ public class MultiPlayerGame extends Game {
 		// Receive data
 		updateData();
 
-		// Send current player's data to the server
-		NetworkManager.sendData(System.currentTimeMillis(), player);
+		// Update game data
+		dataUpdateTimeElapsed += timeDifference;
+		
+		if (dataUpdateTimeElapsed > 0.01) {
+			// Send current player's data to the server
+			NetworkManager.sendData(System.currentTimeMillis(), player);
+		}
 
 		super.update(timeDifference);
 
@@ -630,6 +639,7 @@ public class MultiPlayerGame extends Game {
 
 		// Send a message to the opponent to let
 		// them know we're closing
+		NetworkManager.pause();
 		NetworkManager.sendMessage("END_GAME");
 	}
 
