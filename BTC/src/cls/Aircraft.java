@@ -1088,15 +1088,14 @@ public class Aircraft implements Serializable {
 	}
 	
 	public void generateFlightPlan(Waypoint[] sceneWaypoints,
-			String nameDestination, Vector destinationPoint,
+			String nameDestination, Waypoint destinationPoint,
 			Airport destinationAirport) {
 		flightPlan = new FlightPlan(sceneWaypoints,
 				flightPlan.getOriginName(),
 				nameDestination,
 				new Waypoint(position.getX(), position.getY(),
 						false, false),
-				new Waypoint(destinationPoint.getX(), destinationPoint.getY(),
-						false, false),
+				destinationPoint,
 				flightPlan.getOriginAirport(),
 				destinationAirport);
 	}
