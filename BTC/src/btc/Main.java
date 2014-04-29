@@ -1,10 +1,10 @@
 package btc;
 
-import java.awt.Font;
+import java.awt.FontFormatException;
 import java.awt.GraphicsEnvironment;
 import java.awt.Rectangle;
 import java.io.File;
-import java.io.InputStream;
+import java.io.IOException;
 import java.util.Random;
 import java.util.Stack;
 
@@ -62,8 +62,6 @@ public class Main implements input.EventHandler {
 
 	/** Whether the game isbeing exited */
 	private static boolean exiting;
-
-	public static TrueTypeFont display;
 
 	/** The locations of the icon files */
 	final private String[] ICON_FILENAMES = {
@@ -141,20 +139,25 @@ public class Main implements input.EventHandler {
 		window.initialise(TITLE, (int)(width),(int)(height),
 				(int)(xOffset), (int)(yOffset), fullscreen);
 		graphics.initialise();
-		graphics.Font font = graphics.newBitmapFont("gfx" + File.separator + "font.png",
-				("ABCDEFGHIJKLMNOPQRSTUVWXYZ abcdefghijklmnopqrstuvwxyz" +
-						"1234567890.,_-!?()[]><#~:;/\\^'\"{}+=@@@@@@@@`"));
-		graphics.setFont(font);
-
+		
+		//graphics.Font font = graphics.newBitmapFont("gfx" + File.separator + "font.png",
+		//		("ABCDEFGHIJKLMNOPQRSTUVWXYZ abcdefghijklmnopqrstuvwxyz" +
+		//				"1234567890.,_-!?()[]><#~:;/\\^'\"{}+=@@@@@@@@`"));
+		
+		java.awt.Font font = null;
+		java.awt.Font font2 = null;
+		
 		try {
-			InputStream inputStream = ResourceLoader.getResourceAsStream("gfx/Roboto-Black.ttf");
-
-			Font robotoBlack = Font.createFont(Font.TRUETYPE_FONT, inputStream);
-			robotoBlack = robotoBlack.deriveFont(24f);
-			display = new TrueTypeFont(robotoBlack, false);
-		} catch (Exception e) {
+			font = java.awt.Font.createFont(java.awt.Font.TRUETYPE_FONT,
+						ResourceLoader.getResourceAsStream(
+								"gfx" + File.separator + "Roboto-Black.ttf"));
+			font2 = font.deriveFont(10F);
+			GraphicsEnvironment.getLocalGraphicsEnvironment().registerFont(font2);
+		} catch (FontFormatException | IOException e) {
 			e.printStackTrace();
 		}
+		
+		graphics.setFont(new TrueTypeFont(font2, true), 1);
 
 		sceneStack = new Stack<Scene>();
 		setScene(new Title());

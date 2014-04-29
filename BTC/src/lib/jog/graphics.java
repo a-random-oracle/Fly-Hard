@@ -189,10 +189,16 @@ public abstract class graphics {
 		 * @param size the size of the created font.
 		 */
 		private SystemFont(String name, int size) {
-			
-			java.awt.Font awtFont = new java.awt.Font("Times New Roman", java.awt.Font.PLAIN, size);
-			//java.awt.Font robotoo = new java.awt.Font("gfx/Robot-Black.ttf", java.awt.Font.PLAIN, size);
-			_font = new TrueTypeFont(awtFont, false);
+			java.awt.Font font = new java.awt.Font("Times New Roman", java.awt.Font.PLAIN, size);
+			_font = new TrueTypeFont(font, false);
+		}
+		
+		/**
+		 * Constructor for a system font.
+		 * @param font the truetype font
+		 */
+		private SystemFont(TrueTypeFont font, int size) {
+			_font = font;
 		}
 		
 		/**
@@ -205,10 +211,12 @@ public abstract class graphics {
 		protected void print(double x, double y, String text, double size) {
 			y = y - window.height();
 			
+			glEnable(GL_TEXTURE_2D);
 			glPushMatrix();
 			glScaled(1, -1, 0);
 			_font.drawString((int)x, (int)y, text);
 			glPopMatrix();
+			glDisable(GL_TEXTURE_2D);
 		}
 
 		/**
@@ -224,10 +232,12 @@ public abstract class graphics {
 			y = y - window.height();
 			x += (width - _font.getWidth(text)) / 2;
 			
+			glEnable(GL_TEXTURE_2D);
 			glPushMatrix();
 			glScaled(1, -1, 0);
 			_font.drawString((int)x, (int)y, text);
 			glPopMatrix();
+			glDisable(GL_TEXTURE_2D);
 		}
 		
 		/**
@@ -237,10 +247,12 @@ public abstract class graphics {
 			y = y - window.height();
 			x += (width - _font.getWidth(text));
 			
+			glEnable(GL_TEXTURE_2D);
 			glPushMatrix();
 			glScaled(1, -1, 0);
 			_font.drawString((int)x, (int)y, text);
 			glPopMatrix();
+			glDisable(GL_TEXTURE_2D);
 		}
 		
 	
@@ -455,6 +467,14 @@ public abstract class graphics {
 	}
 	
 	/**
+	 * Sets the font to print text with.
+	 * @param font the new font to be active.
+	 */
+	static public void setFont(TrueTypeFont font, int size) {
+		currentFont = newSystemFont(font, size);
+	}
+
+	/**
 	 * Sets a new viewport for graphics to be drawn to. Anything graphical that would
 	 * affect pixels outside the new viewport will not affect those pixels.
 	 * All graphical operations are also transformed by the x and y coordinates,
@@ -503,6 +523,9 @@ public abstract class graphics {
 	}
 	static public SystemFont newSystemFont(String fontName) {
 		return newSystemFont(fontName, 24);
+	}
+	static public SystemFont newSystemFont(TrueTypeFont font, int size) {
+		return new SystemFont(font, size);
 	}
 		
 	/**
