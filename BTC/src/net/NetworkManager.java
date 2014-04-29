@@ -400,14 +400,4 @@ public abstract class NetworkManager {
 		setID(-1L);
 	}
 
-	/**
-	 * Closes any open connections.
-	 */
-	public static void close() {
-		// Send a message to the opponent to let
-		// them know we're closing
-		
-		if (networkThread != null) networkThread.end();
-	}
-
 }
