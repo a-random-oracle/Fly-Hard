@@ -60,6 +60,8 @@ public class NetworkThread extends Thread {
 		this.status = true;
 		this.paused = true;
 		this.statusMutex = new Object();
+		
+		this.start();
 	}
 	
 	
@@ -71,14 +73,12 @@ public class NetworkThread extends Thread {
 		// Repeat while the thread is running
 		while (getStatus()) {
 			if (isPaused()) {
-				System.out.println("WAIT");
 				try {
 					Thread.sleep(200);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
 			} else {
-				System.out.println("GO");
 				sendNextData();
 				sendMessages();
 			}
