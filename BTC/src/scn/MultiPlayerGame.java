@@ -375,7 +375,7 @@ public class MultiPlayerGame extends Game {
 		}
 
 		// Temp flightstrip draw call.
-		for (FlightStrip fs : player.getFlightStrips()) {
+		for (FlightStrip fs : opposingPlayer.getFlightStrips()) {
 			fs.draw((playerPosition == 1) ? window.width() - (X_OFFSET) + 16 : 16);
 		}
 	}
