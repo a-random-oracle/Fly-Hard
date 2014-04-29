@@ -180,7 +180,7 @@ public abstract class NetworkManager {
 			// Get the received data
 			receivedMessages = (String) inputStream.readObject();
 
-			if (message != null && !message.equals("")) {
+			if (!message.equals("NULL")) {
 				print("Received response: " + receivedMessages);
 			}
 
@@ -189,7 +189,7 @@ public abstract class NetworkManager {
 				setID(Long.parseLong(connection
 						.getHeaderField("fh-client-id")));
 			}
-			System.out.println(id);
+			System.out.println("ID: " + id);
 
 			// Flush the output stream
 			outputStream.flush();
@@ -249,8 +249,10 @@ public abstract class NetworkManager {
 			receivedData = (Entry<Long, byte[]>) inputStream.readObject();
 			
 			// Get the response headers
-			setID(Integer.parseInt(connection
-					.getHeaderField("fh-client-id")));
+			if (connection.getHeaderField("fh-client-id") != null) {
+				setID(Long.parseLong(connection
+						.getHeaderField("fh-client-id")));
+			}
 			
 			// Flush the output stream
 			outputStream.flush();
@@ -395,7 +397,7 @@ public abstract class NetworkManager {
 	 * Pauses the network thread.
 	 */
 	public static void pause() {
-		networkThread.end();
+		if (networkThread != null) networkThread.end();
 		setID(-1L);
 	}
 
@@ -405,8 +407,7 @@ public abstract class NetworkManager {
 	public static void close() {
 		// Send a message to the opponent to let
 		// them know we're closing
-		NetworkManager.postMessage("END");
-
+		
 		if (networkThread != null) networkThread.end();
 	}
 
