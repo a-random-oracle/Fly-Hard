@@ -64,21 +64,23 @@ public class NetworkThread extends Thread {
 	
 	
 	/**
-	 * Sends data in the data buffer.
+	 * Sends data and messages.
 	 */
 	@Override
 	public void run() {
 		// Repeat while the thread is running
 		while (getStatus()) {
-			if (!isPaused()) {
-				sendNextData();
-				sendMessages();
-			} else {
+			if (isPaused()) {
+				System.out.println("WAIT");
 				try {
 					Thread.sleep(200);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
+			} else {
+				System.out.println("GO");
+				sendNextData();
+				sendMessages();
 			}
 		}
 	}
