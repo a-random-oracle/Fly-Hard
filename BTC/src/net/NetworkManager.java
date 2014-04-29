@@ -36,7 +36,7 @@ public abstract class NetworkManager {
 	private static boolean isHost = false;
 
 	/** The thread to send data on */
-	private static NetworkThread networkThread = new NetworkThread();
+	private static NetworkThread networkThread;
 	
 	/** A map for temporarily storing data in order to make use of entries */
 	private static TreeMap<Long, byte[]> transientDataBuffer =
@@ -53,7 +53,7 @@ public abstract class NetworkManager {
 	 * </p>
 	 */
 	public static void startThread() {
-		networkThread.unpause();
+		networkThread = new NetworkThread();
 	}
 	
 	
@@ -393,7 +393,7 @@ public abstract class NetworkManager {
 	 * Pauses the network thread.
 	 */
 	public static void pause() {
-		networkThread.pause();
+		networkThread.end();
 		setID(-1L);
 	}
 

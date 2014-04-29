@@ -40,9 +40,6 @@ public class NetworkThread extends Thread {
 	/** The thread's status */
 	private boolean status;
 	
-	/** Whether the thread has been paused */
-	private boolean paused;
-	
 	/** The status mutex */
 	private Object statusMutex;
 	
@@ -58,7 +55,6 @@ public class NetworkThread extends Thread {
 		this.priorityResponseBuffer = new LinkedList<Serializable>();
 		this.mostRecent = 0;
 		this.status = true;
-		this.paused = true;
 		this.statusMutex = new Object();
 		
 		this.start();
@@ -72,16 +68,8 @@ public class NetworkThread extends Thread {
 	public void run() {
 		// Repeat while the thread is running
 		while (getStatus()) {
-			if (isPaused()) {
-				try {
-					Thread.sleep(200);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-			} else {
-				sendNextData();
-				sendMessages();
-			}
+			sendNextData();
+			sendMessages();
 		}
 	}
 	
@@ -260,33 +248,9 @@ public class NetworkThread extends Thread {
 		}
 	}
 	
-	private boolean isPaused() {
-		synchronized (statusMutex) {
-			return paused;
-		}
-	}
-	
 	private boolean getStatus() {
 		synchronized (statusMutex) {
 			return status;
-		}
-	}
-	
-	/**
-	 * Pauses (temporarily stops) the thread.
-	 */
-	public void pause() {
-		synchronized (statusMutex) {
-			paused = true;
-		}
-	}
-	
-	/**
-	 * Unpauses the thread.
-	 */
-	public void unpause() {
-		synchronized (statusMutex) {
-			paused = false;
 		}
 	}
 	
@@ -295,7 +259,6 @@ public class NetworkThread extends Thread {
 	 */
 	public void end() {
 		synchronized (statusMutex) {
-			paused = true;
 			status = false;
 		}
 	}
