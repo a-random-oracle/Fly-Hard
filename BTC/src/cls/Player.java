@@ -32,6 +32,9 @@ public class Player implements Serializable {
 	/** The aircraft under the player's control */
 	private ArrayList<Aircraft> aircraft;
 	
+	/** Array list of flight-strips and ting */
+	private ArrayList<FlightStrip> flightStrips;
+	
 	/** The waypoints under the player's control */
 	private Waypoint[] waypoints;
 	
@@ -104,6 +107,7 @@ public class Player implements Serializable {
 		this.lives = 3;
 		this.score = new Score();
 		this.aircraft = new ArrayList<Aircraft>();
+		this.flightStrips = new ArrayList<FlightStrip>();
 		this.powerups = new ArrayList<Powerup>();
 		
 		
@@ -144,6 +148,10 @@ public class Player implements Serializable {
 	 */
 	public ArrayList<Aircraft> getAircraft() {
 		return aircraft;
+	}
+	
+	public ArrayList<FlightStrip> getFlightStrips() {
+		return flightStrips;
 	}
 	
 	/**

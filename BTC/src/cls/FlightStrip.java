@@ -2,15 +2,19 @@
 //   / | / | / | /   In use by mwuk **BEWARE CHANGES**
 //  /  |/  |/  |/
 //
-// V 0.1.5
+// V 0.9
 
 package cls;
 
 import java.awt.Color;
 
+import scn.Game;
+
 import btc.Main;
+import cls.Player;
 import lib.jog.graphics;
 import lib.jog.input.EventHandler;          // <= May not be required
+import lib.jog.window;
 
 public class FlightStrip implements EventHandler {
 
@@ -20,9 +24,7 @@ public class FlightStrip implements EventHandler {
     
     private cls.FlightPlan flightPlan;
 
-    private double positionX;
-
-    private double positionY;
+    private double positionY = 20;
 
     private double width;
 
@@ -36,15 +38,20 @@ public class FlightStrip implements EventHandler {
      * @param w - the width of the strip
      * @param h - the height of the strip
      */
-    public FlightStrip(double x, double y, double w, double h, Aircraft plane, FlightPlan plan) {
-        positionX = 0 + (int)(Math.random() * (x/2));
-        positionY = 0 + (int)(Math.random() * (y/2));
-        width = w;
+    public FlightStrip(double w, double h, Aircraft plane, FlightPlan plan) {
+//        if (Game.getInstance() != null && Game.getInstance().getPlayer() != null && Game.getInstance().getPlayer().getFlightStrips() != null) {
+//        	for (FlightStrip fs : Game.getInstance().getPlayer().getFlightStrips()) {
+//        		if (fs.getY() == positionY) {
+        			positionY += 80 * Game.getInstance().getPlayer().getFlightStrips().size();
+//        		}
+//        	}
+//        }
+    	width = w;
         height = h;
         aircraft = plane;
         flightPlan = plan;
         isVisible = true;
-        draw();
+        
 
     }
 
@@ -57,69 +64,75 @@ public class FlightStrip implements EventHandler {
      * </p>
      * @param aircraft - the aircraft to display the strip of
      */
-    public void show(Aircraft aircraft) {
+///    public void show(Aircraft aircraft) {
 //    	if (aircraft != null) {
 //    		aircraft = aircraft;
 //    		isVisible = true;
 //    	}
-    }
+//    }
 
     public void hide() {
         //aircraft = null;
         isVisible = false;
     }
+    
 
-    public void draw() {
-        	drawOutline();
-        if (isVisible) {
-            drawFlightNumber();
-            drawAirline();
-            drawAltitude();
-            drawRoute();
-            drawStatus();
-        }
-        
+    public void draw(double xOffset) {
+        	drawOutline(xOffset);
+            drawFlightNumber(xOffset);
+            drawAirline(xOffset);
+            drawAltitude(xOffset);
+            drawRoute(xOffset);
+            drawStatus(xOffset);        
     }
 
-    private void drawOutline() {
+    private void drawOutline(double xOffset) {
+    	// TODO mouseover/click highlight (plane/strip sync)
         graphics.setColour(graphics.blue);
-        graphics.rectangle(true, positionX, positionY, width, height);
+        graphics.rectangle(true, xOffset, positionY, width, height);
         graphics.setColour(graphics.white);
-        graphics.rectangle(true, positionX + 2, positionY + 2, 40, height - 4);
+        graphics.rectangle(true, xOffset + 2, positionY + 2, 40, height - 4);
 
     }
 
-    private void drawFlightNumber() {
-//    	btc.Main.display.drawString((float)(positionX + width/2), (float)(positionY + (height/2)), (aircraft.getName().substring(0,2)), org.newdawn.slick.Color.red);
-//    	graphics.print(aircraft.getName(),(positionX + (width/2)), (positionY + (height/2)));
+    private void drawFlightNumber(double xOffset) {
     	graphics.setColour(graphics.black);
-    	graphics.print(aircraft.getName().substring(0,2), (positionX + 2), (positionY + 2));
-    	graphics.print(aircraft.getName().substring(2,5), (positionX + 2), (positionY + 30));
+    	graphics.print(aircraft.getName().substring(0,2), (xOffset + 2), (positionY + 2));
+    	graphics.print(aircraft.getName().substring(2,5), (xOffset + 2), (positionY + 30));
     }
 
-    private void drawAirline() {
+    private void drawAirline(double xOffset) {
     	graphics.setColour(graphics.white);
-        graphics.print(aircraft.getAirline(), (positionX + 2 + 40), (positionY + 2));
+        graphics.print(aircraft.getAirline(), (xOffset + 2 + 40), (positionY + 2));
 
     }
 
-    private void drawAltitude() {
-//        btc.Main.display.drawString((float)(positionX + (width/2)), (float)(positionY + height), (new Integer(aircraft.getAltitude()).toString() + "ft"));
-    	graphics.print(new Integer(aircraft.getAltitude()).toString() + "ft", (positionX + (width/2)), ((positionY + height) - 24));
+    private void drawAltitude(double xOffset) {
+//        btc.Main.display.drawString((float)(xOffset + (width/2)), (float)(positionY + height), (new Integer(aircraft.getAltitude()).toString() + "ft"));
+    	graphics.print(new Integer(aircraft.getAltitude()).toString() + "ft", (xOffset + (width/2)), ((positionY + height) - 24));
     }
     
-    private void drawRoute() {
-    	graphics.print(aircraft.getOrigin().substring(0,3) + " to " + aircraft.getDestination().substring(0, 3), (positionX + (width/2) - 20), (positionY + height - 36));
+    private void drawRoute(double xOffset) {
+    	graphics.print(aircraft.getOrigin().substring(0,3) + " TO " + aircraft.getDestination().substring(0, 3), (xOffset + (width/2) - 20), (positionY + height - 36));
     }
     
-    private void drawStatus() {
+    private void drawStatus(double xOffset) {
     	if (aircraft.isInDanger()) {
     		graphics.setColour(graphics.red);
-    		graphics.rectangle(true, (positionX + 42), (positionY + height - 14), 116, 12);
+    		graphics.rectangle(true, (xOffset + 42), (positionY + height - 14), 116, 12);
+    		graphics.setColour(graphics.white);
+            graphics.printCentred("SHIIIIIIIIT", (xOffset + 100), (positionY + height - 14), 1, 1);
+
     	} else {
     		graphics.setColour(graphics.green);
-    		graphics.rectangle(true, (positionX + 42), (positionY + height - 14), 116, 12);
+    		graphics.rectangle(true, (xOffset + 42), (positionY + height - 14), 116, 12);
+    		graphics.setColour(graphics.white);
+            graphics.printCentred("AWW YISS", (xOffset + 100), (positionY + height - 14), 1, 1);
     	}
+    }
+    
+    public double getY() {
+    	return this.positionY;
     }
 
     @Override

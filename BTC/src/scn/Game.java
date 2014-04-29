@@ -85,7 +85,7 @@ public abstract class Game extends Scene {
 	public int flightCount = 0; // TODO Actually make this do things.
 
 	// Testing FlightStrip output
-	private static FlightStrip flightStrip;
+//	private static FlightStrip flightStrip;
 	
 	/** The current difficulty setting */
 	protected DifficultySetting difficulty;
@@ -343,11 +343,15 @@ public abstract class Game extends Scene {
 		drawAdditional(getAllAircraft().size());
 
 		// Temp flightstrip draw call.
-//		flightStrip.draw();
-
+		for (FlightStrip fs : player.getFlightStrips()) {
+			fs.draw(16);
+		}
+		
 		// Draw debug box
 		// PLEASE DO NOT REMOVE - this is very useful for debugging
 		out.draw();
+		
+	
 	}
 
 	/**
@@ -553,7 +557,7 @@ public abstract class Game extends Scene {
 				Aircraft clickedAircraft = findClickedAircraft(x, y, player);
 				deselectAircraft(player);
 				player.setSelectedAircraft(clickedAircraft);
-				flightStrip.show(clickedAircraft);
+				//flightStrip.show(clickedAircraft);
 			} else if (waypointInFlightplanClicked(x, y,
 					player.getSelectedAircraft(), player)
 					&& !player.getSelectedAircraft().isManuallyControlled()) {
@@ -950,7 +954,9 @@ public abstract class Game extends Scene {
 	
 	public FlightStrip createFlightStrip(Aircraft incomingPlane) {
 		
-		return new FlightStrip(window.width(), window.height(), FLIGHTSTRIP_W, FLIGHTSTRIP_H, incomingPlane, incomingPlane.getFlightPlan());
+		FlightStrip newFlightStrip = new FlightStrip(FLIGHTSTRIP_W, FLIGHTSTRIP_H, incomingPlane, incomingPlane.getFlightPlan());
+		player.getFlightStrips().add(newFlightStrip);
+		return newFlightStrip;
 	}
 	
 

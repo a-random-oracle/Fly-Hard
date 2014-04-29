@@ -12,6 +12,7 @@ import lib.jog.window;
 import lib.jog.graphics.Image;
 import cls.Aircraft;
 import cls.Airport;
+import cls.FlightStrip;
 import cls.Player;
 import cls.Powerup;
 import cls.Waypoint;
@@ -347,6 +348,11 @@ public class MultiPlayerGame extends Game {
 		
 		// Draw the middle zone
 		drawMiddleZone();
+		
+		// Temp flightstrip draw call.
+		for (FlightStrip fs : opposingPlayer.getFlightStrips()) {
+			fs.draw(window.width() - (X_OFFSET) + 16);
+		}
 	}
 
 	@Override

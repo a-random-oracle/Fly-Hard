@@ -114,6 +114,7 @@ public class Aircraft implements Serializable {
 	/** If fog is enabled */
 	private boolean isFog;
 
+
 	/**
 	 * Constructor for an aircraft.
 	 * @param name - the name of the flight
@@ -944,7 +945,7 @@ public class Aircraft implements Serializable {
 	
 	/**
 	 * Sets whether there is fog.
-	 * @param fog - whether there is fog
+	 * @param fog - whether there is fogGame
 	 */
 	public void setIsFog(boolean fog) {
 		this.isFog = fog;
@@ -1021,7 +1022,7 @@ public class Aircraft implements Serializable {
 				+ ((flightName == null) ? 0 : flightName.hashCode());
 		return result;
 	}
-
+	
 	/**
 	 * Compares this aircraft to another aircraft.
 	 * <p>
