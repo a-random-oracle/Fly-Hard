@@ -691,6 +691,10 @@ public class Aircraft implements Serializable {
 			}
 		}
 	}
+	
+	public void drawScore() {
+		graphics.print(Integer.toString(score), position.getX() + 4, position.getY() + 5);
+	}
 
 	/**
 	 * Updates the number of planes that are violating the separation rule. Also
@@ -1106,6 +1110,21 @@ public class Aircraft implements Serializable {
 	
 	public void setPosition(Vector newPosition) {
 		position = newPosition;
+	}
+	
+	public void generateFlightPlan(Waypoint[] sceneWaypoints,
+			String nameDestination, Waypoint destinationPoint,
+			Airport destinationAirport) {
+		flightPlan = new FlightPlan(sceneWaypoints,
+				flightPlan.getOriginName(),
+				nameDestination,
+				new Waypoint(position.getX(), position.getY(),
+						false, false),
+				destinationPoint,
+				flightPlan.getOriginAirport(),
+				destinationAirport);
+		
+		currentRouteStage = 0;
 	}
 
 }

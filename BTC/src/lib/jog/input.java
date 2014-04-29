@@ -181,6 +181,16 @@ public abstract class input {
 	public final static int KEY_8 = Keyboard.KEY_8;
 	public final static int KEY_9 = Keyboard.KEY_9;
 	public final static int KEY_0 = Keyboard.KEY_0;
+	public final static int KEY_NUM_1 = Keyboard.KEY_NUMPAD1;
+	public final static int KEY_NUM_2 = Keyboard.KEY_NUMPAD2;
+	public final static int KEY_NUM_3 = Keyboard.KEY_NUMPAD3;
+	public final static int KEY_NUM_4 = Keyboard.KEY_NUMPAD4;
+	public final static int KEY_NUM_5 = Keyboard.KEY_NUMPAD5;
+	public final static int KEY_NUM_6 = Keyboard.KEY_NUMPAD6;
+	public final static int KEY_NUM_7 = Keyboard.KEY_NUMPAD7;
+	public final static int KEY_NUM_8 = Keyboard.KEY_NUMPAD8;
+	public final static int KEY_NUM_9 = Keyboard.KEY_NUMPAD9;
+	public final static int KEY_NUM_0 = Keyboard.KEY_NUMPAD0;
 	
 	public final static int KEY_F1 = Keyboard.KEY_F1;
 	public final static int KEY_F2 = Keyboard.KEY_F2;

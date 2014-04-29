@@ -132,6 +132,7 @@ public class MultiPlayerGame extends Game {
 				32, 128, 32, 8, 4);
 
 		aircraftUnderTransfer = new ArrayList<Aircraft>();
+		dataUpdateTimeElapsed = 0;
 		powerupGenerationTimeElapsed = 0;
 		powerUpInterval = 5;
 	}
@@ -252,9 +253,9 @@ public class MultiPlayerGame extends Game {
 		// Update game data
 		dataUpdateTimeElapsed += timeDifference;
 		
-		if (dataUpdateTimeElapsed > 200) {
-		// Send current player's data to the server
-		NetworkManager.sendData(System.currentTimeMillis(), player);
+		if (dataUpdateTimeElapsed > 0.01) {
+			// Send current player's data to the server
+			NetworkManager.sendData(System.currentTimeMillis(), player);
 		}
 
 		super.update(timeDifference);
@@ -638,8 +639,8 @@ public class MultiPlayerGame extends Game {
 
 		// Send a message to the opponent to let
 		// them know we're closing
-		NetworkManager.postMessage("END_GAME");
 		NetworkManager.pause();
+		NetworkManager.sendMessage("END_GAME");
 	}
 
 

@@ -378,6 +378,8 @@ public abstract class Game extends Scene {
 		for (Aircraft aircraft : player.getAircraft()) {
 			aircraft.draw(player.getAircraftColour(), player.getControlAltitude());
 
+			//draw the score of each aircraft
+			aircraft.drawScore();
 			if (aircraft.isMouseOver()) {
 				aircraft.drawFlightPath(false);
 			}
@@ -803,7 +805,7 @@ public abstract class Game extends Scene {
 	 * Handle aircraft creation.
 	 * @return the created aircraft object
 	 */
-	protected Aircraft createAircraft(Player player) {
+	public Aircraft createAircraft(Player player) {
 		String destinationName;
 		String originName = "";
 		Waypoint originPoint = null;
