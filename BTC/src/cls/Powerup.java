@@ -249,9 +249,10 @@ public class Powerup implements Serializable {
 	private void handleFog() {
 		MultiPlayerGame gameInstance = ((MultiPlayerGame) Game.getInstance());
 		
-		for (Aircraft a : gameInstance.getPlayer().getAircraft()) {
-			a.setIsFog(true);
+		for (Airport a : gameInstance.getPlayer().getAirports()) {
+			a.setIsActive(true);
 		}
+		
 	}
 	
 	/** 
@@ -260,9 +261,10 @@ public class Powerup implements Serializable {
 	private void removeFog() {
 		MultiPlayerGame gameInstance = ((MultiPlayerGame) Game.getInstance());
 		
-		for (Aircraft a : gameInstance.getPlayer().getAircraft()) {
-			a.setIsFog(false);
+		for (Airport a : gameInstance.getPlayer().getAirports()) {
+			a.setIsActive(false);
 		}
+		
 	}
 	
 	//Subject to change on which player it affects/percentages

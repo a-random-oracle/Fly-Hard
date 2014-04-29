@@ -106,14 +106,14 @@ public class Aircraft implements Serializable {
 	/** A list of the aircraft violation this aircraft's separation distance */
 	private ArrayList<Aircraft> planesTooNear = new ArrayList<Aircraft>();
 	
+	private boolean inDanger = false;
+	
 	/** How long the aircraft has been waiting to take off in the airport */
 	private int timeWaiting = 0;
 	
 	/** Whether or not a point penalty has been applied to an aircraft waiting to take off */
 	private boolean airportPenaltyApplied = false;
 	
-	/** If fog is enabled */
-	private boolean isFog;
 
 	/**
 	 * Constructor for an aircraft.
@@ -143,7 +143,6 @@ public class Aircraft implements Serializable {
 		this.position = originPoint.getLocation();
 		this.isWaitingToLand = (destinationAirport != null);
 		this.score = 100;
-		this.isFog = false;
 
 		// Set aircraft's altitude to a random height
 		int altitudeOffset = (Main.getRandom().nextInt(2)) == 0 ? 28000 : 30000;
@@ -720,6 +719,7 @@ public class Aircraft implements Serializable {
 				if (!collisionWarningSoundFlag) {
 					collisionWarningSoundFlag = true;
 					WARNING_SOUND.play();
+					inDanger = true;
 				}
 				// Decrement score for getting within separation distance
 				decrementScoreSmall();
@@ -727,6 +727,7 @@ public class Aircraft implements Serializable {
 		}
 		if (planesTooNear.isEmpty()) {
 			collisionWarningSoundFlag = false;
+			inDanger = false;
 		}
 		return -1;
 	}
@@ -814,13 +815,13 @@ public class Aircraft implements Serializable {
 	 * Causes the aircraft to land at its airport.
 	 */
 	public void land() {
-		if (isFog != true) {
-			isWaitingToLand = false;
-			isLanding = true;
-			isManuallyControlled = false;
-			if (flightPlan.getDestinationAirport() != null) {
-				flightPlan.getDestinationAirport().isActive = true;
-			}
+
+		isWaitingToLand = false;
+		isLanding = true;
+		isManuallyControlled = false;
+		if (flightPlan.getDestinationAirport() != null) {
+			flightPlan.getDestinationAirport().isActive = true;
+
 		}
 	}
 
@@ -828,19 +829,19 @@ public class Aircraft implements Serializable {
 	 * Adds this aircraft to the player whose airport it is departing from.
 	 */
 	public void takeOff() {
-		if (isFog != true) {
-			if (flightPlan.getOriginAirport() != null) {
 
-				// Add the aircraft to the player whose airport
-				// it is departing from
-				for (Airport airport : Game.getInstance().getAllAirports()) {
-					if (airport.equals(flightPlan.getOriginAirport())) {
-						Game.getInstance().getPlayerFromAirport(
-								airport).getAircraft().add(this);
-						return;
-					}
+		if (flightPlan.getOriginAirport() != null) {
+
+			// Add the aircraft to the player whose airport
+			// it is departing from
+			for (Airport airport : Game.getInstance().getAllAirports()) {
+				if (airport.equals(flightPlan.getOriginAirport())) {
+					Game.getInstance().getPlayerFromAirport(
+							airport).getAircraft().add(this);
+					return;
 				}
 			}
+
 		}
 	}
 
@@ -951,21 +952,6 @@ public class Aircraft implements Serializable {
 		return flightPlan;
 	}
 	
-	/**
-	 * Gets whether fog is enabled or not.
-	 * @return whether fog is enabled or not
-	 */
-	public boolean getIsFog() {
-		return isFog;
-	}
-	
-	/**
-	 * Sets whether there is fog.
-	 * @param fog - whether there is fog
-	 */
-	public void setIsFog(boolean fog) {
-		this.isFog = fog;
-	}
 
 	/**
 	 * Sets the manual bearing the aircraft is following.
@@ -1069,6 +1055,23 @@ public class Aircraft implements Serializable {
 		return true;
 	}
 
+	/**
+	 * Gets name of origin for Flightstrips
+	 * @return The name of the flight's origin.
+	 */
+	
+	public String getOrigin() {
+		return this.flightPlan.getOriginName();
+	}
+	
+	public String getDestination() {
+		return this.flightPlan.getDestinationName();
+	}
+	
+	public boolean isInDanger() {
+		return this.inDanger;
+	}
+	
 	public int getScore() {
 		return score;
 	}
