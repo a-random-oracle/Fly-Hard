@@ -322,6 +322,16 @@ public class Powerup implements Serializable {
 			// Get the running game instance
 			MultiPlayerGame gameInstance = ((MultiPlayerGame) Game.getInstance());
 			
+			// Refresh the aircraft's route
+			Aircraft tempAircraft = gameInstance
+					.createAircraft(gameInstance.getOpposingPlayer());
+			
+			aircraft.generateFlightPlan(
+					gameInstance.getOpposingPlayer().getWaypoints(),
+					tempAircraft.getFlightPlan().getDestinationName(),
+					tempAircraft.getFlightPlan().getDestination(),
+					tempAircraft.getFlightPlan().getDestinationAirport());
+			
 			// Add the aircraft to the list of aircraft under transfer
 			gameInstance.getAircraftUnderTransfer().add(aircraft);
 			

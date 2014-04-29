@@ -189,8 +189,7 @@ public abstract class NetworkManager {
 				setID(Long.parseLong(connection
 						.getHeaderField("fh-client-id")));
 			}
-			System.out.println("ID: " + id);
-
+			
 			// Flush the output stream
 			outputStream.flush();
 
