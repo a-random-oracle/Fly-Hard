@@ -198,6 +198,10 @@ public class MultiPlayerGame extends Game {
 
 		if (powerupGenerationTimeElapsed > powerUpInterval) {
 			powerupGenerationTimeElapsed = 0;
+			
+			if (player.getSelectedAircraft() != null) {
+				System.out.println(player.getSelectedAircraft().getCurrentRouteStage());
+			}
 
 			// Only one player is responsible for generating powerups
 			if (playerPosition == 1) {

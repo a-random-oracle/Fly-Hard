@@ -1087,6 +1087,10 @@ public class Aircraft implements Serializable {
 		position = newPosition;
 	}
 	
+	public int getCurrentRouteStage() {
+		return currentRouteStage;
+	}
+	
 	public void generateFlightPlan(Waypoint[] sceneWaypoints,
 			String nameDestination, Waypoint destinationPoint,
 			Airport destinationAirport) {
