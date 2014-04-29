@@ -166,6 +166,8 @@ public abstract class InstructionHandler {
 				Game.getInstance().setEnding(true);
 			}
 		}
+		
+		NetworkManager.setID(-1);
 	}
 	
 	

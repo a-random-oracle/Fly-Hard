@@ -333,7 +333,7 @@ public abstract class NetworkManager {
 	 * Sets the player's ID.
 	 * @param name - the player's ID
 	 */
-	private static synchronized void setID(long id) {
+	public static synchronized void setID(long id) {
 		NetworkManager.id = id;
 	}
 	
