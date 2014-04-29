@@ -72,7 +72,10 @@ public class Aircraft implements Serializable {
 
 	/** Whether the aircraft has reached its destination */
 	private boolean hasFinished = false;
-
+	
+	/** Whether the aircraft is crashed */
+	private boolean hasCrashed = false;
+	
 	/** Whether the aircraft is currently at an airport and waiting to land */
 	public boolean isWaitingToLand;
 
@@ -708,6 +711,8 @@ public class Aircraft implements Serializable {
 			Aircraft plane = aircraft.get(i);
 			if (plane != this && isWithin(plane, RADIUS)) { // Planes crash
 				hasFinished = true;
+				hasCrashed = true;
+				plane.crashPlane();
 				return i;
 			} else if (plane != this && isWithin(plane, minimumSeparation)) {
 				// Breaching separation distance
@@ -724,6 +729,12 @@ public class Aircraft implements Serializable {
 			collisionWarningSoundFlag = false;
 		}
 		return -1;
+	}
+	
+	public void crashPlane() {
+		planesTooNear.clear();
+		hasFinished = true;
+		hasCrashed = true;
 	}
 
 	/**
@@ -879,6 +890,16 @@ public class Aircraft implements Serializable {
 	 */
 	public boolean isFinished() {
 		return hasFinished;
+	}
+	
+	/**
+	 * Gets whether the plane is in a "crashed" state if
+	 * <code>isFinished</code> returns true.
+	 * @return <code>true</code> if the aircraft has finished, otherwise
+	 *         <code>false</code>
+	 */
+	public boolean isCrashed() {
+		return hasCrashed;
 	}
 
 	/**
