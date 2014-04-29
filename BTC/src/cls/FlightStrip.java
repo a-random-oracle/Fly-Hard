@@ -7,18 +7,21 @@
 package cls;
 
 import java.awt.Color;
+import java.io.Serializable;
 
 import scn.Game;
-
 import btc.Main;
 import cls.Player;
 import lib.jog.graphics;
 import lib.jog.input.EventHandler;          // <= May not be required
 import lib.jog.window;
 
-public class FlightStrip implements EventHandler {
+public class FlightStrip implements Serializable, EventHandler {
 
-    private boolean isVisible;
+	/** Serialization ID */
+	private static final long serialVersionUID = -7542014798949722639L;
+
+	private boolean isVisible;
 
     private cls.Aircraft aircraft;
     
