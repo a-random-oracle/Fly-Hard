@@ -73,6 +73,10 @@ public class FlightStrip implements Serializable, EventHandler {
 //    		isVisible = true;
 //    	}
 //    }
+    
+    public Aircraft getAircraft() {
+    	return aircraft;
+    }
 
     public void hide() {
         //aircraft = null;

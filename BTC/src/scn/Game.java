@@ -265,6 +265,12 @@ public abstract class Game extends Scene {
 
 				player.getScore().addScore(player.getAircraft().get(i));
 				player.getAircraft().remove(i);
+				
+				for (int j = player.getFlightStrips().size() - 1; j >= 0; j--) {
+					if (player.getAircraft().equals(player.getFlightStrips().get(i).getAircraft())) {
+						player.getFlightStrips().remove(i);
+					}
+				}
 			}
 		}
 
