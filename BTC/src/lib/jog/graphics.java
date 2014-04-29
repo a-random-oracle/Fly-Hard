@@ -28,11 +28,11 @@ public abstract class graphics {
 	 */
 	public static abstract class Font {
 		
-		protected abstract void print(double x, double y, String text, double size);
+		protected abstract void print(double x, double y, String text, double size, Color colour);
 
-		protected abstract void printCentred(double x, double y, double width, String text, double size);
+		protected abstract void printCentred(double x, double y, double width, String text, double size, Color colour);
 		
-		protected abstract void printRight(double x, double y, double width, String text, double size);
+		protected abstract void printRight(double x, double y, double width, String text, double size, Color colour);
 		
 	}
 	
@@ -67,7 +67,7 @@ public abstract class graphics {
 		 * @param size The size of the drawn text.
 		 */
 		@Override
-		protected void print(double x, double y, String text, double size) {
+		protected void print(double x, double y, String text, double size, Color colour) {
 			y = window.height() - y;
 			double w = image.height();
 			double h = -image.height();
@@ -106,7 +106,7 @@ public abstract class graphics {
 		 * @param size The size of the drawn text.
 		 */
 		@Override
-		protected void printCentred(double x, double y, double width, String text, double size) {
+		protected void printCentred(double x, double y, double width, String text, double size, Color colour) {
 			y = window.height() - y;
 			double w = image.height();
 			double h = -image.height();
@@ -139,7 +139,7 @@ public abstract class graphics {
 		/**
 		 * Hacked above method that prints to the right of the x and y coordinates.
 		 */
-		protected void printRight(double x, double y, double width, String text, double size) {
+		protected void printRight(double x, double y, double width, String text, double size, Color colour) {
 			y = window.height() - y;
 			double w = image.height();
 			double h = -image.height();
@@ -197,7 +197,7 @@ public abstract class graphics {
 		 * Constructor for a system font.
 		 * @param font the truetype font
 		 */
-		private SystemFont(TrueTypeFont font, int size) {
+		private SystemFont(TrueTypeFont font) {
 			_font = font;
 		}
 		
@@ -208,13 +208,13 @@ public abstract class graphics {
 		 * @param text The text to be drawn.
  		 */
 		@Override
-		protected void print(double x, double y, String text, double size) {
+		protected void print(double x, double y, String text, double size, Color colour) {
 			y = y - window.height();
 			
 			glEnable(GL_TEXTURE_2D);
 			glPushMatrix();
 			glScaled(1, -1, 0);
-			_font.drawString((int)x, (int)y, text);
+			_font.drawString((int)x, (int)y, text, colour);
 			glPopMatrix();
 			glDisable(GL_TEXTURE_2D);
 		}
@@ -228,14 +228,14 @@ public abstract class graphics {
 		 * @param size The size of the drawn text.
 		 */
 		@Override
-		public void printCentred(double x, double y, double width, String text, double size) {
+		public void printCentred(double x, double y, double width, String text, double size, Color colour) {
 			y = y - window.height();
 			x += (width - _font.getWidth(text)) / 2;
 			
 			glEnable(GL_TEXTURE_2D);
 			glPushMatrix();
 			glScaled(1, -1, 0);
-			_font.drawString((int)x, (int)y, text);
+			_font.drawString((int)x, (int)y, text, colour);
 			glPopMatrix();
 			glDisable(GL_TEXTURE_2D);
 		}
@@ -243,14 +243,14 @@ public abstract class graphics {
 		/**
 		 * Hacked above method that prints to the right of the x and y coordinates.
 		 */
-		public void printRight(double x, double y, double width, String text, double size) {
+		public void printRight(double x, double y, double width, String text, double size, Color colour) {
 			y = y - window.height();
 			x += (width - _font.getWidth(text));
 			
 			glEnable(GL_TEXTURE_2D);
 			glPushMatrix();
 			glScaled(1, -1, 0);
-			_font.drawString((int)x, (int)y, text);
+			_font.drawString((int)x, (int)y, text, colour);
 			glPopMatrix();
 			glDisable(GL_TEXTURE_2D);
 		}
@@ -448,7 +448,10 @@ public abstract class graphics {
 		double alpha = Math.max(0, Math.min(255, a)) / 255;
 		glColor4d(red, green, blue, alpha);
 	}
-	static public void setColour(int r, int g, int b) { setColour(r, g, b, 255); }
+	
+	static public void setColour(int r, int g, int b) {
+		setColour(r, g, b, 255);
+	}
 	
 	/**
 	 * Accesses the colour things are currently being drawn.
@@ -470,8 +473,8 @@ public abstract class graphics {
 	 * Sets the font to print text with.
 	 * @param font the new font to be active.
 	 */
-	static public void setFont(TrueTypeFont font, int size) {
-		currentFont = newSystemFont(font, size);
+	static public void setFont(TrueTypeFont font) {
+		currentFont = newSystemFont(font);
 	}
 
 	/**
@@ -524,8 +527,8 @@ public abstract class graphics {
 	static public SystemFont newSystemFont(String fontName) {
 		return newSystemFont(fontName, 24);
 	}
-	static public SystemFont newSystemFont(TrueTypeFont font, int size) {
-		return new SystemFont(font, size);
+	static public SystemFont newSystemFont(TrueTypeFont font) {
+		return new SystemFont(font);
 	}
 		
 	/**
@@ -887,10 +890,27 @@ public abstract class graphics {
 	 */
 	static public void print(String text, double x, double y, double size) {
 		if (currentFont == null) currentFont = newSystemFont("Times New Roman");
-		currentFont.print(x, y, text, size);
+		currentFont.print(x, y, text, size, currentColour);
 	}
-	static public void print(String text, double x, double y){
-		print(text, x, y, 1);
+	
+	/**
+	 * Draws text to the screen using the current font. If no font has yet been made, it creates a default.
+	 * @param text the characters to be drawn.
+	 * @param x the x coordinate to draw the text at.
+	 * @param y the y coordinate to draw the text at.
+	 * @param size the size to draw the text at.
+	 */
+	static public void print(String text, double x, double y, double size, Color colour) {
+		if (currentFont == null) currentFont = newSystemFont("Times New Roman");
+		currentFont.print(x, y, text, size, colour);
+	}
+	
+	static public void print(String text, double x, double y) {
+		print(text, x, y, 1, currentColour);
+	}
+	
+	static public void print(String text, double x, double y, Color colour) {
+		print(text, x, y, 1, colour);
 	}
 	
 	/**
@@ -902,7 +922,19 @@ public abstract class graphics {
 	 * @param scale - The scale to be applied to the text
 	 */
 	static public void printScaled(String text, double x, double y, double size, double scale) {
-		print(text, x * scale, y * scale, size * scale);
+		print(text, x * scale, y * scale, size * scale, currentColour);
+	}
+	
+	/**
+	 * Draws text to the screen that is scaled to the user's screen size
+	 * @param text the characters to be drawn.
+	 * @param x - the x coordinate to draw the text at.
+	 * @param y - the y coordinate to draw the text at.
+	 * @param size - the size to draw the text at.
+	 * @param scale - The scale to be applied to the text
+	 */
+	static public void printScaled(String text, double x, double y, double size, Color colour, double scale) {
+		print(text, x * scale, y * scale, size * scale, colour);
 	}
 	
 	/**
@@ -915,7 +947,20 @@ public abstract class graphics {
 	 */
 	static public void printCentred(String text, double x, double y, double size, double width) {
 		if (currentFont == null) currentFont = newSystemFont("Times New Roman");
-		currentFont.printCentred(x, y, width, text, size);
+		currentFont.printCentred(x, y, width, text, size, currentColour);
+	}
+	
+	/**
+	 * Draws text to the screen using the current font. If no font has yet been made, it creates a default.
+	 * @param text the characters to be drawn.
+	 * @param x the x coordinate to draw the text at.
+	 * @param y the y coordinate to draw the text at.
+	 * @param size the size to draw the text at.
+	 * @param width the width the text is centred around.
+	 */
+	static public void printCentred(String text, double x, double y, double size, double width, Color colour) {
+		if (currentFont == null) currentFont = newSystemFont("Times New Roman");
+		currentFont.printCentred(x, y, width, text, size, colour);
 	}
 	
 	/**
@@ -928,7 +973,20 @@ public abstract class graphics {
 	 */
 	static public void printRight(String text, double x, double y, double size, double width) {
 		if (currentFont == null) currentFont = newSystemFont("Times New Roman");
-		currentFont.printRight(x, y, width, text, size);
+		currentFont.printRight(x, y, width, text, size, currentColour);
+	}
+	
+	/**
+	 * Prints to the right of x/y coordinates.
+	 * @param text is the String to print.
+	 * @param x coordinate to print from.
+	 * @param y coordinate to print from.
+	 * @param size scales the text.
+	 * @param width is redundant.
+	 */
+	static public void printRight(String text, double x, double y, double size, double width, Color colour) {
+		if (currentFont == null) currentFont = newSystemFont("Times New Roman");
+		currentFont.printRight(x, y, width, text, size, colour);
 	}
 	
 	/**

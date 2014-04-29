@@ -145,19 +145,18 @@ public class Main implements input.EventHandler {
 		//				"1234567890.,_-!?()[]><#~:;/\\^'\"{}+=@@@@@@@@`"));
 		
 		java.awt.Font font = null;
-		java.awt.Font font2 = null;
 		
 		try {
 			font = java.awt.Font.createFont(java.awt.Font.TRUETYPE_FONT,
 						ResourceLoader.getResourceAsStream(
-								"gfx" + File.separator + "Roboto-Black.ttf"));
-			font2 = font.deriveFont(10F);
-			GraphicsEnvironment.getLocalGraphicsEnvironment().registerFont(font2);
+								"gfx" + File.separator + "Roboto-Black.ttf"))
+								.deriveFont(12F);
+			GraphicsEnvironment.getLocalGraphicsEnvironment().registerFont(font);
 		} catch (FontFormatException | IOException e) {
 			e.printStackTrace();
 		}
 		
-		graphics.setFont(new TrueTypeFont(font2, true), 1);
+		graphics.setFont(new TrueTypeFont(font, false));
 
 		sceneStack = new Stack<Scene>();
 		setScene(new Title());
