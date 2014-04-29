@@ -494,6 +494,7 @@ public class MultiPlayerGame extends Game {
 		for (Aircraft plane : player.getAircraft()) {
 			int collisionState = plane.updateCollisions(timeDifference,
 					getAllAircraft());
+			
 			if (collisionState >= 0) {
 				int lives = player.getLives();
 				player.setLives(lives--);

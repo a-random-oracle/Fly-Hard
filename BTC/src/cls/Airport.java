@@ -383,7 +383,7 @@ public class Airport extends Waypoint implements EventHandler, Serializable {
 	 * Causes the next aircraft in the hangar to take off.
 	 */
 	public void signalTakeOff() {
-		if (!aircraftHangar.isEmpty()) {
+		if (!aircraftHangar.isEmpty() && !isActive) {
 			Aircraft aircraft = aircraftHangar.remove(0);
 			timeEntered.remove(0);
 			aircraft.takeOff();
@@ -476,6 +476,10 @@ public class Airport extends Waypoint implements EventHandler, Serializable {
 	
 	private double getDeparturesHeight() {
 		return RELATIVE_DEPARTURES_HEIGHT * getMinScale();
+	}
+	
+	public void setIsActive(boolean newValue) {
+		this.isActive = newValue;
 	}
 	
 	/**

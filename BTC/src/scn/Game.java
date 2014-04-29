@@ -29,11 +29,11 @@ public abstract class Game extends Scene {
 	/** The distance between the top edge of the screen and the map area */
 	public final static int Y_OFFSET = 48;
 
-	private final int FLIGHTSTRIP_X = 16;
+	private final int FLIGHTSTRIP_X = 16;			// TODO This will go.
 
-	private final int FLIGHTSTRIP_Y = window.height()/3;
+	private final int FLIGHTSTRIP_Y = window.height()/3;	// TODO This will go.
 	
-	private final int FLIGHTSTRIP_W = 120;
+	private final int FLIGHTSTRIP_W = 160;
 	
 	private final int FLIGHTSTRIP_H = 60;
 	
@@ -81,6 +81,8 @@ public abstract class Game extends Scene {
 	
 	/** The current player */
 	protected Player player;
+	
+	public int flightCount = 0; // TODO Actually make this do things.
 
 	// Testing FlightStrip output
 	private static FlightStrip flightStrip;
@@ -103,7 +105,7 @@ public abstract class Game extends Scene {
 		// Define airports
 		airports = new Airport[] {
 				new Airport("Mosgrizzly Airport", (1d/7d), (1d/2d)),
-				new Airport("Mosbear Airport", (6d/7d), (1d/2d))
+				new Airport("Yolo Airport", (6d/7d), (1d/2d))
 		};
 
 		// Define entry and exit points
@@ -168,9 +170,9 @@ public abstract class Game extends Scene {
 			//music.play(); TODO <- add this back in for release
 		}
 
-	if (!Main.testing) {
-		flightStrip = new FlightStrip(FLIGHTSTRIP_X, FLIGHTSTRIP_Y, FLIGHTSTRIP_W, FLIGHTSTRIP_H);
-	}
+//	if (!Main.testing) {
+//		flightStrip = new FlightStrip(FLIGHTSTRIP_X, FLIGHTSTRIP_Y, FLIGHTSTRIP_W, FLIGHTSTRIP_H);
+//	}
 
 		// Reset game attributes
 		timeElapsed = 0;
@@ -341,7 +343,7 @@ public abstract class Game extends Scene {
 		drawAdditional(getAllAircraft().size());
 
 		// Temp flightstrip draw call.
-		flightStrip.draw();
+//		flightStrip.draw();
 
 		// Draw debug box
 		// PLEASE DO NOT REMOVE - this is very useful for debugging
@@ -814,6 +816,7 @@ public abstract class Game extends Scene {
 		Waypoint destinationPoint;
 		Airport originAirport = null;
 		Airport destinationAirport = null;
+		Aircraft newPlane = null;
 
 		// Get a list of this player's location waypoints
 		Waypoint[] playersLocationWaypoints = getLocationWaypoints(player);
@@ -822,8 +825,7 @@ public abstract class Game extends Scene {
 		ArrayList<Waypoint> availableOrigins = getAvailableEntryPoints(player);
 
 		if (availableOrigins.isEmpty()) {
-			int randomAirport = Main.getRandom()
-					.nextInt((player.getAirports().length - 1) + 1);
+			int randomAirport = Main.getRandom().nextInt((player.getAirports().length - 1) + 1);
 
 			if (player.getAirports()[randomAirport].aircraftHangar.size()
 					== player.getAirports()[randomAirport].getHangarSize()) {
@@ -940,18 +942,28 @@ public abstract class Game extends Scene {
 		// Generate a random speed, centred around 37
 		int speed = 32 + (int)(Main.getRandom().nextInt(10));
 
-		return new Aircraft(name, carrier, destinationName, originName,
+		newPlane = new Aircraft(name, carrier, destinationName, originName,
 				destinationPoint, originPoint, speed,
 				player.getWaypoints(), difficulty, originAirport,
 				destinationAirport);
+		
+		createFlightStrip(newPlane);
+		
+		return newPlane;
 	}
+	
+	public FlightStrip createFlightStrip(Aircraft incomingPlane) {
+		
+		return new FlightStrip(window.width(), window.height(), FLIGHTSTRIP_W, FLIGHTSTRIP_H, incomingPlane, incomingPlane.getFlightPlan());
+	}
+	
 
 	/**
 	 * Causes deselection of the selected aircraft.
 	 * @param player
 	 * 			the player to reset the selected plane attribute for
 	 */
-	public void deselectAircraft(Player player) {
+ 	public void deselectAircraft(Player player) {
 		deselectAircraft(player.getSelectedAircraft(), player);
 	}
 
