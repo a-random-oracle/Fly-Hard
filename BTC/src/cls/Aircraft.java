@@ -109,8 +109,6 @@ public class Aircraft implements Serializable {
 	/** Whether or not a point penalty has been applied to an aircraft waiting to take off */
 	private boolean airportPenaltyApplied = false;
 	
-	/** If fog is enabled */
-	private boolean isFog;
 
 	/**
 	 * Constructor for an aircraft.
@@ -140,7 +138,6 @@ public class Aircraft implements Serializable {
 		this.position = originPoint.getLocation();
 		this.isWaitingToLand = (destinationAirport != null);
 		this.score = 100;
-		this.isFog = false;
 
 		// Set aircraft's altitude to a random height
 		int altitudeOffset = (Main.getRandom().nextInt(2)) == 0 ? 28000 : 30000;
@@ -803,13 +800,13 @@ public class Aircraft implements Serializable {
 	 * Causes the aircraft to land at its airport.
 	 */
 	public void land() {
-		if (isFog != true) {
-			isWaitingToLand = false;
-			isLanding = true;
-			isManuallyControlled = false;
-			if (flightPlan.getDestinationAirport() != null) {
-				flightPlan.getDestinationAirport().isActive = true;
-			}
+
+		isWaitingToLand = false;
+		isLanding = true;
+		isManuallyControlled = false;
+		if (flightPlan.getDestinationAirport() != null) {
+			flightPlan.getDestinationAirport().isActive = true;
+
 		}
 	}
 
@@ -817,19 +814,19 @@ public class Aircraft implements Serializable {
 	 * Adds this aircraft to the player whose airport it is departing from.
 	 */
 	public void takeOff() {
-		if (isFog != true) {
-			if (flightPlan.getOriginAirport() != null) {
 
-				// Add the aircraft to the player whose airport
-				// it is departing from
-				for (Airport airport : Game.getInstance().getAllAirports()) {
-					if (airport.equals(flightPlan.getOriginAirport())) {
-						Game.getInstance().getPlayerFromAirport(
-								airport).getAircraft().add(this);
-						return;
-					}
+		if (flightPlan.getOriginAirport() != null) {
+
+			// Add the aircraft to the player whose airport
+			// it is departing from
+			for (Airport airport : Game.getInstance().getAllAirports()) {
+				if (airport.equals(flightPlan.getOriginAirport())) {
+					Game.getInstance().getPlayerFromAirport(
+							airport).getAircraft().add(this);
+					return;
 				}
 			}
+
 		}
 	}
 
@@ -930,21 +927,6 @@ public class Aircraft implements Serializable {
 		return flightPlan;
 	}
 	
-	/**
-	 * Gets whether fog is enabled or not.
-	 * @return whether fog is enabled or not
-	 */
-	public boolean getIsFog() {
-		return isFog;
-	}
-	
-	/**
-	 * Sets whether there is fog.
-	 * @param fog - whether there is fog
-	 */
-	public void setIsFog(boolean fog) {
-		this.isFog = fog;
-	}
 
 	/**
 	 * Sets the manual bearing the aircraft is following.
