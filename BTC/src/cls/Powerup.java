@@ -345,6 +345,10 @@ public class Powerup implements Serializable {
 					gameInstance.getOpposingPlayer().getWaypoints(),
 					destinationName, destinationPoint, destinationAirport);
 			
+			for (Waypoint wp : aircraft.getFlightPlan().getRoute()) {
+				System.out.println(wp.getLocation().toString());
+			}
+			
 			// Add the aircraft to the list of aircraft under transfer
 			gameInstance.getAircraftUnderTransfer().add(aircraft);
 			

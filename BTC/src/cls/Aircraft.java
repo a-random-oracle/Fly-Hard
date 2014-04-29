@@ -1098,6 +1098,8 @@ public class Aircraft implements Serializable {
 				destinationPoint,
 				flightPlan.getOriginAirport(),
 				destinationAirport);
+		
+		currentRouteStage = 0;
 	}
 
 }
