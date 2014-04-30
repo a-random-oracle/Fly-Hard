@@ -950,12 +950,12 @@ public abstract class Game extends Scene {
 				player.getWaypoints(), difficulty, originAirport,
 				destinationAirport);
 		
-		createFlightStrip(newPlane);
+		createFlightStrip(player, newPlane);
 		
 		return newPlane;
 	}
 	
-	public FlightStrip createFlightStrip(Aircraft incomingPlane) {
+	public FlightStrip createFlightStrip(Player player, Aircraft incomingPlane) {
 		FlightStrip newFlightStrip = new FlightStrip(incomingPlane);
 		player.getFlightStrips().add(newFlightStrip);
 		return newFlightStrip;
