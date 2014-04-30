@@ -185,7 +185,10 @@ public abstract class Game extends Scene {
 		timeElapsed += timeDifference;
 
 		// Check if any aircraft in the airspace have collided
-		checkCollisions(timeDifference);
+		Aircraft[] collidedAircraft = checkCollisions(timeDifference);
+		if (collidedAircraft != null) {
+			gameOver(collidedAircraft[0], collidedAircraft[1]);
+		}
 
 		// Update the player
 		updatePlayer(timeDifference, player);
@@ -730,15 +733,16 @@ public abstract class Game extends Scene {
 	 * Check if any aircraft in the airspace have collided.
 	 * @param timeDifference - the time since the last collision check
 	 */
-	protected void checkCollisions(double timeDifference) {
+	protected Aircraft[] checkCollisions(double timeDifference) {
 		for (Aircraft plane : getAllAircraft()) {
 			Aircraft collidedWith = plane.updateCollisions(timeDifference,
 					getAllAircraft());
 			if (collidedWith != null) {
-				gameOver(plane, collidedWith);
-				return;
+				return new Aircraft[] {plane, collidedWith};
 			}
 		}
+		
+		return null;
 	}
 
 	/**

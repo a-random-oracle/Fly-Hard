@@ -273,9 +273,6 @@ public class MultiPlayerGame extends Game {
 
 		// Update the opposing player
 		updatePlayer(timeDifference, opposingPlayer);
-		
-		//Check for endgame
-		checkLives();
 	}
 	
 	/**
@@ -523,7 +520,7 @@ public class MultiPlayerGame extends Game {
 	}
 	
 	@Override
-	public void checkCollisions(double timeDifference) {
+	public Aircraft[] checkCollisions(double timeDifference) {
 		for (Aircraft plane : player.getAircraft()) {
 			if (plane.isFinished())
 				continue;
@@ -533,27 +530,26 @@ public class MultiPlayerGame extends Game {
 			
 			if (collidedWith != null) {
 				player.setLives(player.getLives() - 1);
-				gameOver(plane, collidedWith);
-				return;
+				return new Aircraft[] {plane, collidedWith};
 			}
 		}
+		
+		return null;
 	}
 
 	@Override
 	public void gameOver(Aircraft plane1, Aircraft plane2) {
-		if (checkLives()) {
-			player.getAircraft().clear();
-			opposingPlayer.getAircraft().clear();
+		player.getAircraft().clear();
+		opposingPlayer.getAircraft().clear();
 
-			for (Airport airport : player.getAirports()) {
-				airport.clear();
-			}
-
-			for (Airport airport : opposingPlayer.getAirports()) {
-				airport.clear();
-			}
-			super.gameOver(plane1, plane2);
+		for (Airport airport : player.getAirports()) {
+			airport.clear();
 		}
+
+		for (Airport airport : opposingPlayer.getAirports()) {
+			airport.clear();
+		}
+		super.gameOver(plane1, plane2);
 	}
 	
 
