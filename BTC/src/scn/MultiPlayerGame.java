@@ -273,6 +273,9 @@ public class MultiPlayerGame extends Game {
 
 		// Update the opposing player
 		updatePlayer(timeDifference, opposingPlayer);
+		
+		//Check for endgame
+		checkLives();
 	}
 	
 	/**
@@ -530,6 +533,7 @@ public class MultiPlayerGame extends Game {
 			
 			if (collidedWith != null) {
 				player.setLives(player.getLives() - 1);
+				gameOver(plane, collidedWith);
 				return;
 			}
 		}
