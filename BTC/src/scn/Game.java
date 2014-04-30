@@ -196,6 +196,23 @@ public abstract class Game extends Scene {
 			fs.update(timeDifference);
 			player.getFlightStrips().add(fs);
 		}
+		
+		// Deselect and remove any aircraft which have completed their routes
+		for (int i = player.getAircraft().size() - 1; i >= 0; i--) {
+			if (player.getAircraft().get(i).isFinished()) {
+				if (player.getAircraft().get(i).equals(player
+						.getSelectedAircraft())) {
+					deselectAircraft(player);
+				}
+
+				player.getScore().addScore(player.getAircraft().get(i));
+
+				player.getFlightStrips().remove(getFlightStripFromAircraft(
+						player.getAircraft().get(i)));
+
+				player.getAircraft().remove(i);
+			}
+		}
 
 		if (player.getSelectedAircraft() != null) {
 			if (player.getSelectedAircraft().isManuallyControlled()) {
@@ -246,23 +263,6 @@ public abstract class Game extends Scene {
 		// Update aircraft
 		for (Aircraft aircraft : player.getAircraft()) {
 			aircraft.update(timeDifference);
-		}
-
-		// Deselect and remove any aircraft which have completed their routes
-		for (int i = player.getAircraft().size() - 1; i >= 0; i--) {
-			if (player.getAircraft().get(i).isFinished()) {
-				if (player.getAircraft().get(i).equals(player
-						.getSelectedAircraft())) {
-					deselectAircraft(player);
-				}
-
-				player.getScore().addScore(player.getAircraft().get(i));
-				
-				player.getFlightStrips().remove(getFlightStripFromAircraft(
-						player.getAircraft().get(i)));
-				
-				player.getAircraft().remove(i);
-			}
 		}
 
 		// Update the airports
