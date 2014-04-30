@@ -803,7 +803,10 @@ public abstract class Game extends Scene {
 
 			// Otherwise, add the aircraft to the airspace
 			player.getAircraft().add(aircraft);
-			player.getFlightStrips().add(new FlightStrip(aircraft));
+			
+			if (player.equals(this.player)) {
+				player.getFlightStrips().add(new FlightStrip(aircraft));
+			}
 		}
 	}
 
