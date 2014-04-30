@@ -705,7 +705,7 @@ public class Aircraft implements Serializable {
 	 * @return index of plane breaching separation distance with this plane, or
 	 *         -1 if no planes are in violation.
 	 */
-	public int updateCollisions(double timeDifference, ArrayList<Aircraft> aircraft) {
+	public Aircraft updateCollisions(double timeDifference, ArrayList<Aircraft> aircraft) {
 		planesTooNear.clear();
 		for (int i = 0; i < aircraft.size(); i++) {
 			Aircraft plane = aircraft.get(i);
@@ -713,7 +713,7 @@ public class Aircraft implements Serializable {
 				hasFinished = true;
 				hasCrashed = true;
 				plane.crashPlane();
-				return i;
+				return plane;
 			} else if (plane != this && isWithin(plane, minimumSeparation)) {
 				// Breaching separation distance
 				planesTooNear.add(plane);
@@ -730,7 +730,7 @@ public class Aircraft implements Serializable {
 			collisionWarningSoundFlag = false;
 			inDanger = false;
 		}
-		return -1;
+		return null;
 	}
 	
 	public void crashPlane() {

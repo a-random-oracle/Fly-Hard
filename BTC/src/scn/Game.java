@@ -520,6 +520,8 @@ public abstract class Game extends Scene {
 		
 		graphics.printCentred("Total Score: " + String.valueOf(player.getScore().getScore()),
 				Main.TARGET_WIDTH / 3 + X_OFFSET, 32, 1, 150);
+		
+		graphics.printCentred("Lives : " + player.getLives(), 32 + X_OFFSET, window.height() - Y_OFFSET, 50, 2);
 	}
 
 	/**
@@ -725,10 +727,10 @@ public abstract class Game extends Scene {
 	 */
 	protected void checkCollisions(double timeDifference) {
 		for (Aircraft plane : getAllAircraft()) {
-			int collisionState = plane.updateCollisions(timeDifference,
+			Aircraft collidedWith = plane.updateCollisions(timeDifference,
 					getAllAircraft());
-			if (collisionState >= 0) {
-				gameOver(plane, getAllAircraft().get(collisionState));
+			if (collidedWith != null) {
+				gameOver(plane, collidedWith);
 				return;
 			}
 		}
