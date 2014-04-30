@@ -839,6 +839,8 @@ public class Aircraft implements Serializable {
 				if (airport.equals(flightPlan.getOriginAirport())) {
 					Game.getInstance().getPlayerFromAirport(
 							airport).getAircraft().add(this);
+					Game.getInstance().getPlayer().getFlightStrips()
+							.add(new FlightStrip(this));
 					return;
 				}
 			}

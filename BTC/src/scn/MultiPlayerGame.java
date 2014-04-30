@@ -653,6 +653,29 @@ public class MultiPlayerGame extends Game {
 		return allAircraft;
 	}
 	
+	/**
+	 * Gets a flight strip from an aircraft.
+	 * @param aircraft - the aircraft who's flight strip should be returned
+	 * @return the flight strip for the specified aircraft
+	 */
+	public FlightStrip getFlightStripFromAircraft(Aircraft aircraft) {
+		if (aircraft != null) {
+			for (FlightStrip fs : player.getFlightStrips()) {
+				if (aircraft.equals(fs.getAircraft())) {
+					return fs;
+				}
+			}
+			
+			for (FlightStrip fs : opposingPlayer.getFlightStrips()) {
+				if (aircraft.equals(fs.getAircraft())) {
+					return fs;
+				}
+			}
+		}
+		
+		return null;
+	}
+	
 	public ArrayList<Aircraft> getAircraftUnderTransfer() {
 		return aircraftUnderTransfer;
 	}

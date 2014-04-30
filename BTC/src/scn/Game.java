@@ -245,6 +245,18 @@ public abstract class Game extends Scene {
 		for (Aircraft aircraft : player.getAircraft()) {
 			aircraft.update(timeDifference);
 		}
+		
+		// Copy flight strip array
+		@SuppressWarnings("unchecked")
+		ArrayList<FlightStrip> shuffledFlightStrips =
+				(ArrayList<FlightStrip>) player.getFlightStrips().clone();
+		player.getFlightStrips().clear();
+		
+		// Update flight strips
+		for (FlightStrip fs : shuffledFlightStrips) {
+			fs.update(timeDifference);
+			player.getFlightStrips().add(fs);
+		}
 
 		// Deselect and remove any aircraft which have completed their routes
 		for (int i = player.getAircraft().size() - 1; i >= 0; i--) {
@@ -256,12 +268,8 @@ public abstract class Game extends Scene {
 
 				player.getScore().addScore(player.getAircraft().get(i));
 				
-				for (int j = player.getFlightStrips().size() - 1; j >= 0; j--) {
-					if (player.getAircraft().get(i).equals(
-							player.getFlightStrips().get(i).getAircraft())) {
-						player.getFlightStrips().remove(i);
-					}
-				}
+				player.getFlightStrips().remove(getFlightStripFromAircraft(
+						player.getAircraft().get(i)));
 				
 				player.getAircraft().remove(i);
 			}
@@ -519,10 +527,6 @@ public abstract class Game extends Scene {
 		// Print this to the screen
 		graphics.print(timePlayed, window.width() - X_OFFSET
 				- (timePlayed.length() * 8 + 32), 32);
-
-		// Print the highlighted altitude to the screen TODO <- check with Mark
-		//graphics.print(String.valueOf("Highlighted altitude: " + Integer
-		//		.toString(highlightedAltitude)) , 32 + xOffset, 15);
 
 		// Print the number of aircraft in the airspace to the screen
 		graphics.print(String.valueOf(aircraftCount)
@@ -805,6 +809,7 @@ public abstract class Game extends Scene {
 
 			// Otherwise, add the aircraft to the airspace
 			player.getAircraft().add(aircraft);
+			player.getFlightStrips().add(new FlightStrip(aircraft));
 		}
 	}
 
@@ -950,15 +955,7 @@ public abstract class Game extends Scene {
 				player.getWaypoints(), difficulty, originAirport,
 				destinationAirport);
 		
-		createFlightStrip(player, newPlane);
-		
 		return newPlane;
-	}
-	
-	public FlightStrip createFlightStrip(Player player, Aircraft incomingPlane) {
-		FlightStrip newFlightStrip = new FlightStrip(incomingPlane);
-		player.getFlightStrips().add(newFlightStrip);
-		return newFlightStrip;
 	}
 	
 
@@ -1273,6 +1270,23 @@ public abstract class Game extends Scene {
 			}
 		}
 	
+		return null;
+	}
+	
+	/**
+	 * Gets a flight strip from an aircraft.
+	 * @param aircraft - the aircraft who's flight strip should be returned
+	 * @return the flight strip for the specified aircraft
+	 */
+	public FlightStrip getFlightStripFromAircraft(Aircraft aircraft) {
+		if (aircraft != null) {
+			for (FlightStrip fs : player.getFlightStrips()) {
+				if (aircraft.equals(fs.getAircraft())) {
+					return fs;
+				}
+			}
+		}
+		
 		return null;
 	}
 

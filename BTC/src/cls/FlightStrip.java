@@ -21,6 +21,9 @@ public class FlightStrip implements Serializable {
 	
 	/** The default height */
 	private static final int STANDARD_HEIGHT = 60;
+	
+	/** The default separation */
+	private static final int SEPARATION = 10;
 
 	/** Whether the flight strip should be drawn or not */
 	private boolean isVisible;
@@ -43,7 +46,7 @@ public class FlightStrip implements Serializable {
      * @param aircraft - the linked aircraft
      */
     public FlightStrip(Aircraft aircraft) {
-    	this.positionY += 80 * Game.getInstance().getPlayer().getFlightStrips().size();
+    	this.positionY = getNextSlot();
     	this.width = STANDARD_WIDTH;
     	this.height = STANDARD_HEIGHT;
     	this.aircraft = aircraft;
@@ -67,9 +70,7 @@ public class FlightStrip implements Serializable {
     	this.width = width;
     	this.height = height;
     	this.aircraft = aircraft;
-    	
-    	// If the aircraft starts at an airport, hide the flight strip
-    	this.isVisible = aircraft.getFlightPlan().getOriginAirport() == null;
+    	this.isVisible = true;
     }
     
     
@@ -79,6 +80,22 @@ public class FlightStrip implements Serializable {
      */
     public Aircraft getAircraft() {
     	return aircraft;
+    }
+    
+    /**
+     * Gets the top of the next available slot for a flight strip.
+     * @return the top of the next available slot for a flight strip
+     */
+    private double getNextSlot() {
+    	double nextSlot = 0;
+    	
+    	for (FlightStrip fs : Game.getInstance().getPlayer().getFlightStrips()) {
+    		if (fs.isVisible) {
+    			nextSlot += fs.height + SEPARATION;
+    		}
+    	}
+    	
+    	return nextSlot;
     }
     
     /**
@@ -102,13 +119,14 @@ public class FlightStrip implements Serializable {
     /**
      * Updates the flight strip.
      */
-    public void update() {
-
+    public void update(double dt) {
+    	this.positionY = getNextSlot();
     }
     
     /**
      * Draws the flight strip.
-     * @param xOffset - the horizontal offset from the window's left edge.
+     * @param xOffset - the horizontal offset from the window's left edge
+     * @param yOffset - the vertical offset from the window's top edge
      */
     public void draw(double xOffset, double yOffset) {
     	if (isVisible) {
