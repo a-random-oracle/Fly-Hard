@@ -123,6 +123,10 @@ public class Powerup implements Serializable {
 		return effectDurationsMap;
 	}
 	
+	public PowerupEffect getEffect() {
+		return effect;
+	}
+	
 	/**
 	 * Gets whether the powerup has been activated or not.
 	 * @return <code>true</code> if the powerup has been activated,
@@ -215,14 +219,14 @@ public class Powerup implements Serializable {
 			handleFog();
 			System.out.println("FOG");
 			break;
-		case SPEED_UP:
+		/*case SPEED_UP:
 			handleSpeedUp();
 			System.out.println("SPEED+");
 			break;
 		case SLOW_DOWN:
 			handleSlowDown();
 			System.out.println("SPEED-");
-			break;
+			break;*/
 		case TRANSFER:
 			handleTransfer();
 			System.out.println("TRANSFER");
@@ -239,14 +243,14 @@ public class Powerup implements Serializable {
 			removeFog();
 			System.out.println("FOG");
 			break;
-		case SPEED_UP:
+		/*case SPEED_UP:
 			removeSpeedUp();
 			System.out.println("SPEED+");
 			break;
 		case SLOW_DOWN:
 			removeSlowDown();
 			System.out.println("SPEED-");
-			break;
+			break;*/
 		case TRANSFER:
 			break;
 		}

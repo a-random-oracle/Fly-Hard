@@ -234,7 +234,7 @@ public class Aircraft implements Serializable {
 		}
 
 		// Update position
-		Vector dv = velocity.scaleBy(timeDifference);
+		Vector dv = getVelocity().scaleBy(timeDifference);
 		position = position.add(dv);
 
 		// Update target
@@ -424,11 +424,11 @@ public class Aircraft implements Serializable {
 	private void turnBy(double angle) {
 		double cosA = Math.cos(angle);
 		double sinA = Math.sin(angle);
-		double x = velocity.getX();
-		double y = velocity.getY();
+		double x = getVelocity().getX();
+		double y = getVelocity().getY();
 
 		velocity = new Vector((x * cosA) - (y * sinA), (y * cosA) + (x * sinA),
-				velocity.getZ());
+				getVelocity().getZ());
 	}
 
 	/**
@@ -928,7 +928,7 @@ public class Aircraft implements Serializable {
 	 * @return the aircraft's bearing
 	 */
 	public double getBearing() {
-		return Math.atan2(velocity.getY(), velocity.getX());
+		return Math.atan2(getVelocity().getY(), getVelocity().getX());
 	}
 
 	/**
@@ -936,7 +936,7 @@ public class Aircraft implements Serializable {
 	 * @return the aircraft's speed
 	 */
 	public double getSpeed() {
-		return velocity.magnitude();
+		return getVelocity().magnitude();
 	}
 	
 	/** 
@@ -944,7 +944,31 @@ public class Aircraft implements Serializable {
 	 * @return the aircraft's velocity
 	 */
 	public Vector getVelocity() {
-		return velocity;
+		// Check if the player has an active velocity-affecting powerup
+		Player player = null;
+		if (Game.getInstance() != null) {
+			player = Game.getInstance().getPlayerFromAircraft(this);
+		}
+		
+		double speedScale = 1;
+		if (player != null && player.getPowerups() != null) {
+			for (Powerup powerup : player.getPowerups()) {
+				if (powerup.isActive()) {
+					switch (powerup.getEffect()) {
+					case SPEED_UP:
+						speedScale *= 2;
+						break;
+					case SLOW_DOWN:
+						speedScale /= 2;
+						break;
+					default:
+						break;
+					}
+				}
+			}
+		}
+		
+		return velocity.scaleBy(speedScale);
 	}
 
 	/**
@@ -972,7 +996,7 @@ public class Aircraft implements Serializable {
 	 * @param height - the altitude to move the aircraft to
 	 */
 	private void setAltitude(int height) {
-		this.velocity.setZ(height);
+		this.getVelocity().setZ(height);
 	}
 
 	/**
