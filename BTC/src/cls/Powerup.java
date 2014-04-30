@@ -280,54 +280,52 @@ public class Powerup implements Serializable {
 		
 	}
 	
-	//Subject to change on which player it affects/percentages
 	/**
 	 * Speeds up the other player's aircraft by 2x.
 	 */
-	private void handleSpeedUp() {
+	/*private void handleSpeedUp() {
 		MultiPlayerGame gameInstance = ((MultiPlayerGame) Game.getInstance());
 		
 		// Set each aircraft's velocity to be twice as large
 		for (Aircraft a : gameInstance.getPlayer().getAircraft()) {
 			a.getVelocity().scaleByAndSet(2);
 		}
-	}
+	}*/
 	
 	/**
 	 * Remove powerup speed up.
 	 */
-	private void removeSpeedUp() {
+	/*private void removeSpeedUp() {
 		MultiPlayerGame gameInstance = ((MultiPlayerGame) Game.getInstance());
 		
 		for (Aircraft a : gameInstance.getPlayer().getAircraft()) {
 			a.getVelocity().scaleByAndSet(0.5);
 		}
-	}
+	}*/
 	
-	//Subject to change on which player it affects/percentages
 	/**
 	 * Slows down your aircraft to half their current speed.
 	 */
-	private void handleSlowDown() {
+	/*private void handleSlowDown() {
 		MultiPlayerGame gameInstance = ((MultiPlayerGame) Game.getInstance());
 		
 		// Set each aircraft's velocity to be half as large
 		for (Aircraft a : gameInstance.getPlayer().getAircraft()) {
 			a.getVelocity().scaleByAndSet(0.5);
 		}
-	}
+	}*/
 	
 	/**
 	 * Remove slow down effect.
 	 */
-	private void removeSlowDown() {
+	/*private void removeSlowDown() {
 		MultiPlayerGame gameInstance = ((MultiPlayerGame) Game.getInstance());
 		
 		// Set each aircraft's velocity to be half as large
 		for (Aircraft a : gameInstance.getPlayer().getAircraft()) {
 			a.getVelocity().scaleByAndSet(2);
 		}
-	}
+	}*/
 	
 	/**
 	 * Transfers control of a player's plane to the other player.
