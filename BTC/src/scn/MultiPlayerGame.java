@@ -539,6 +539,18 @@ public class MultiPlayerGame extends Game {
 			}
 		}
 		
+		for (Aircraft plane : opposingPlayer.getAircraft()) {
+			if (plane.isFinished())
+				continue;
+
+			Aircraft collidedWith = plane.updateCollisions(timeDifference,
+					getAllAircraft());
+
+			if (collidedWith != null) {
+				return new Aircraft[] {plane, collidedWith};
+			}
+		}
+		
 		return null;
 	}
 
