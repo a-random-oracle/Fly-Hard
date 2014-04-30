@@ -15,7 +15,6 @@ import lib.jog.graphics.Image;
 import cls.Aircraft;
 import cls.Airport;
 import cls.FlightStrip;
-import cls.OrdersBox;
 import cls.Player;
 import cls.Player.TurningState;
 import cls.Waypoint;
@@ -64,9 +63,6 @@ public abstract class Game extends Scene {
 	
 	/** The manual control buttons */
 	protected static ButtonText manualControlButton;
-
-	// PLEASE DO NOT REMOVE - this is very useful for debugging
-	public static OrdersBox out;
 	
 	/** Difficulty settings: easy, medium and hard */
 	public enum DifficultySetting {EASY, MEDIUM, HARD}
@@ -144,8 +140,6 @@ public abstract class Game extends Scene {
 	@Override
 	public void start() {
 		// Set up variables
-		out = new OrdersBox(window.width() - X_OFFSET + 20,
-				Y_OFFSET, X_OFFSET - 40, window.height() - (2 * Y_OFFSET), 30);
 		paused = false;
 
 		if (!Main.testing) {
@@ -226,10 +220,6 @@ public abstract class Game extends Scene {
 				.setAltitudeState(Aircraft.ALTITUDE_CLIMB);
 			}
 		}
-
-		// Update debug box
-		// PLEASE DO NOT REMOVE - this is very useful for debugging
-		out.update(timeDifference);
 	}
 	
 	/**
@@ -348,10 +338,6 @@ public abstract class Game extends Scene {
 		// area
 		graphics.setViewport();
 		drawAdditional(getAllAircraft().size());
-		
-		// Draw debug box
-		// PLEASE DO NOT REMOVE - this is very useful for debugging
-		out.draw();
 	}
 
 	/**
