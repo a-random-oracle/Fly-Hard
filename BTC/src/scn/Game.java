@@ -101,21 +101,20 @@ public abstract class Game extends Scene {
 		// Define other waypoints
 		airspaceWaypoints = new Waypoint[] {
 				new Waypoint(0.10, 0.18, false, true),
+				new Waypoint(0.10, 0.83, false, true),
 				new Waypoint(0.16, 0.66, false, true),
-				new Waypoint(0.20, 0.42, false, true),
 				new Waypoint(0.23, 0.90, false, true),
-				new Waypoint(0.25, 0.30, false, true),
+				new Waypoint(0.26, 0.37, false, true),
 				new Waypoint(0.27, 0.70, false, true),
-				new Waypoint(0.39, 0.21, false, true), //middle waypoints
-				new Waypoint(0.39, 0.69, false, true), //middle waypoints
-				new Waypoint(0.55, 0.10, false, true),
+				new Waypoint(0.32, 0.12, false, true),
+				
 				new Waypoint(0.63, 0.78, false, true),
 				new Waypoint(0.67, 0.20, false, true),
-				new Waypoint(0.70, 0.50, false, true),
-				new Waypoint(0.85, 0.80, false, true),
-				new Waypoint(0.78, 0.78, false, true),
+				new Waypoint(0.72, 0.43, false, true),
+				new Waypoint(0.72, 0.90, false, true),
 				new Waypoint(0.81, 0.16, false, true),
-				new Waypoint(0.82, 0.42, false, true)
+				new Waypoint(0.82, 0.80, false, true),
+				new Waypoint(0.92, 0.32, false, true),
 		};
 	}
 
@@ -674,11 +673,6 @@ public abstract class Game extends Scene {
 			player.getAircraft().clear();
 			for (Airport airport : player.getAirports()) airport.clear();
 			Main.closeScene();
-			break;
-		case input.KEY_F5 :
-			Aircraft a1 = createAircraft(player);
-			Aircraft a2 = createAircraft(player);
-			gameOver(a1, a2, true);
 			break;
 		}
 	}
