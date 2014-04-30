@@ -260,7 +260,7 @@ public class MultiPlayerGame extends Game {
 		
 		if (dataUpdateTimeElapsed > 0.01) {
 			// Send current player's data to the server
-			NetworkManager.sendData(System.currentTimeMillis(), player);
+			NetworkManager.sendData(System.currentTimeMillis(), new Player(player));
 		}
 
 		super.update(timeDifference);

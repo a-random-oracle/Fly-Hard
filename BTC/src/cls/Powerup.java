@@ -182,7 +182,11 @@ public class Powerup implements Serializable {
 		if (PLAYER_AFFECTED_MAP.get(effect) == 0) {
 			gameInstance.getPlayer().addPowerup(this);
 		} else if (PLAYER_AFFECTED_MAP.get(effect) == 1) {
-			NetworkManager.sendData(-1, this);
+			try {
+				NetworkManager.sendData(-1, (Powerup) this.clone());
+			} catch (CloneNotSupportedException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 	

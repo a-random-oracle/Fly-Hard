@@ -117,6 +117,30 @@ public class Player implements Serializable {
 				? AIRCRAFT_COLOURS[id] : new Integer[] {255, 255, 255};
 	}
 	
+	/**
+	 * Creates a player.
+	 * @param player - the player to clone
+	 */
+	public Player(Player player) {
+		this.id = player.id;
+		this.airports = player.airports;
+		this.waypoints = player.waypoints;
+		this.maxAircraft = player.maxAircraft;
+		this.selectedAircraft = player.selectedAircraft;
+		this.selectedWaypoint = player.selectedWaypoint;
+		this.selectedPathpoint = player.selectedPathpoint;
+		this.compassClicked = player.compassClicked;
+		this.waypointClicked = player.waypointClicked;
+		this.flightGenerationTimeElapsed = player.flightGenerationTimeElapsed;
+		this.controlAltitude = player.controlAltitude;
+		this.lives = player.lives;
+		this.score = player.score;
+		this.aircraft = player.aircraft;
+		this.flightStrips = player.flightStrips;
+		this.powerups = player.powerups;
+		this.aircraftColour = player.aircraftColour;
+	}
+	
 	
 	/**
 	 * Gets the player's unique ID.

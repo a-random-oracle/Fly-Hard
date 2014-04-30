@@ -184,6 +184,18 @@ public abstract class Game extends Scene {
 
 		// Update the player
 		updatePlayer(timeDifference, player);
+		
+		// Copy flight strip array
+		@SuppressWarnings("unchecked")
+		ArrayList<FlightStrip> shuffledFlightStrips =
+		(ArrayList<FlightStrip>) player.getFlightStrips().clone();
+		player.getFlightStrips().clear();
+
+		// Update flight strips
+		for (FlightStrip fs : shuffledFlightStrips) {
+			fs.update(timeDifference);
+			player.getFlightStrips().add(fs);
+		}
 
 		if (player.getSelectedAircraft() != null) {
 			if (player.getSelectedAircraft().isManuallyControlled()) {
@@ -234,18 +246,6 @@ public abstract class Game extends Scene {
 		// Update aircraft
 		for (Aircraft aircraft : player.getAircraft()) {
 			aircraft.update(timeDifference);
-		}
-		
-		// Copy flight strip array
-		@SuppressWarnings("unchecked")
-		ArrayList<FlightStrip> shuffledFlightStrips =
-				(ArrayList<FlightStrip>) player.getFlightStrips().clone();
-		player.getFlightStrips().clear();
-		
-		// Update flight strips
-		for (FlightStrip fs : shuffledFlightStrips) {
-			fs.update(timeDifference);
-			player.getFlightStrips().add(fs);
 		}
 
 		// Deselect and remove any aircraft which have completed their routes
@@ -543,6 +543,10 @@ public abstract class Game extends Scene {
 	@Override
 	public void mousePressed(int key, int x, int y) {
 		if (paused) return;
+		
+		for (FlightStrip fs : player.getFlightStrips()) {
+			fs.mousePressed(key, x, y);
+		}
 
 		if (key == input.MOUSE_LEFT) {
 			if (aircraftClicked(x, y, player)) {
@@ -627,6 +631,10 @@ public abstract class Game extends Scene {
 	@Override
 	public void mouseReleased(int key, int x, int y) {
 		if (paused) return;
+		
+		for (FlightStrip fs : player.getFlightStrips()) {
+			fs.mouseReleased(key, x, y);
+		}
 
 		for (Airport airport : player.getAirports()) {
 			airport.mouseReleased(key, x, y);
