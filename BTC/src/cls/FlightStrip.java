@@ -89,9 +89,14 @@ public class FlightStrip implements Serializable {
     private double getNextSlot() {
     	double nextSlot = 0;
     	
-    	for (FlightStrip fs : Game.getInstance().getPlayer().getFlightStrips()) {
-    		if (fs.isVisible) {
-    			nextSlot += fs.height + SEPARATION;
+    	if (Game.getInstance() != null
+    			&& Game.getInstance().getPlayer() != null
+    			&& Game.getInstance().getPlayer().getFlightStrips() != null) {
+    		for (FlightStrip fs : Game.getInstance()
+    				.getPlayer().getFlightStrips()) {
+    			if (fs.isVisible) {
+    				nextSlot += fs.height + SEPARATION;
+    			}
     		}
     	}
     	
