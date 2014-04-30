@@ -360,9 +360,13 @@ public class Powerup implements Serializable {
 			
 			// Add the aircraft to the opposing player's list of aircraft
 			gameInstance.getOpposingPlayer().getAircraft().add(aircraft);
+			gameInstance.getOpposingPlayer().getFlightStrips()
+					.add(new FlightStrip(aircraft));
 			
 			// Remove the aircraft from the current player's control
 			gameInstance.getPlayer().getAircraft().remove(aircraft);
+			gameInstance.getPlayer().getFlightStrips()
+					.remove(gameInstance.getFlightStripFromAircraft(aircraft));
 
 			// Send *both* players' data to the other player
 			NetworkManager.sendData(-1, new Player[] {

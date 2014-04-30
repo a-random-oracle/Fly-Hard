@@ -21,19 +21,23 @@ public class MultiPlayerGame extends Game {
 	
 	/** The image used for the fog powerup effect */
 	public static final Image FOG_IMAGE =
-			graphics.newImage("gfx/pUp" + File.separator + "fog9a.png");
+			graphics.newImage("gfx" + File.separator + "pup_new"
+					+ File.separator + "cloud_32.png");
 	
 	/** The image used for the speed up powerup effect */
 	public static final Image SPEED_UP_IMAGE =
-			graphics.newImage("gfx/pUp" + File.separator + "speed3a.png");
+			graphics.newImage("gfx" + File.separator + "pup_new"
+					+ File.separator + "speed_32.png");
 	
 	/** The image used for the slow down powerup effect */
 	public static final Image SLOW_DOWN_IMAGE =
-			graphics.newImage("gfx/pUp" + File.separator + "slow2a.png");
+			graphics.newImage("gfx" + File.separator + "pup_new"
+					+ File.separator + "slow_32.png");
 	
 	/** The image used for the transfer powerup effect */
 	public static final Image TRANSFER_IMAGE =
-			graphics.newImage("gfx/pUp" + File.separator + "transfer1a.png");
+			graphics.newImage("gfx" + File.separator + "pup_new"
+					+ File.separator + "transfer_32.png");
 	
 	/** The y-coordinate at which the middle zone borders begin */
 	private static int yStart = window.height() - Y_OFFSET;
