@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import btc.Main;
 import net.NetworkManager;
 import lib.ButtonText;
+import lib.SpriteAnimation;
 import lib.jog.graphics;
 import lib.jog.input;
 import lib.jog.window;
@@ -15,30 +16,31 @@ import cls.Airport;
 import cls.FlightStrip;
 import cls.Player;
 import cls.Powerup;
+import cls.Vector;
 import cls.Waypoint;
 
 public class MultiPlayerGame extends Game {
-	
+
 	/** The image used for the fog powerup effect */
 	public static final Image FOG_IMAGE =
 			graphics.newImage("gfx" + File.separator + "pup_new"
 					+ File.separator + "cloud_32.png");
-	
+
 	/** The image used for the speed up powerup effect */
 	public static final Image SPEED_UP_IMAGE =
 			graphics.newImage("gfx" + File.separator + "pup_new"
 					+ File.separator + "speed_32.png");
-	
+
 	/** The image used for the slow down powerup effect */
 	public static final Image SLOW_DOWN_IMAGE =
 			graphics.newImage("gfx" + File.separator + "pup_new"
 					+ File.separator + "slow_32.png");
-	
+
 	/** The image used for the transfer powerup effect */
 	public static final Image TRANSFER_IMAGE =
 			graphics.newImage("gfx" + File.separator + "pup_new"
 					+ File.separator + "transfer_32.png");
-	
+
 	/** The y-coordinate at which the middle zone borders begin */
 	private static int yStart = window.height() - Y_OFFSET;
 
@@ -50,7 +52,7 @@ public class MultiPlayerGame extends Game {
 
 	/** The x-coordinate at which the right middle zone border is located */
 	public static int rightEntryX = window.width() - leftEntryX;
-	
+
 	private static Waypoint[] powerupPoints;
 
 	/** The player's position: 0 = left-hand side, 1 = right-hand side */
@@ -61,7 +63,7 @@ public class MultiPlayerGame extends Game {
 
 	/** Time since new powerup generated */ 
 	private double dataUpdateTimeElapsed;
-	
+
 	/** Time since new powerup generated */ 
 	private double powerupGenerationTimeElapsed;
 
@@ -70,6 +72,9 @@ public class MultiPlayerGame extends Game {
 
 	/** The list of aircraft which are currently being transferred */
 	private ArrayList<Aircraft> aircraftUnderTransfer;
+	
+	/** A sprite animation to handle the frame by frame drawing of the explosion */
+	private SpriteAnimation explosionAnim;
 
 
 	/**
@@ -110,10 +115,10 @@ public class MultiPlayerGame extends Game {
 	@Override
 	public void start() {
 		super.start();
-		
+
 		// Set up the network manager
 		NetworkManager.startThread();
-		
+
 		// Define other waypoints
 		powerupPoints = new Waypoint[] {
 				new Waypoint(0.5, 0.30833, false, true),
@@ -203,7 +208,7 @@ public class MultiPlayerGame extends Game {
 
 		if (powerupGenerationTimeElapsed > powerUpInterval) {
 			powerupGenerationTimeElapsed = 0;
-			
+
 			if (player.getSelectedAircraft() != null) {
 				System.out.println(player.getSelectedAircraft().getCurrentRouteStage());
 			}
@@ -223,7 +228,7 @@ public class MultiPlayerGame extends Game {
 					Waypoint randomWaypoint =
 							powerupPoints[Main.getRandom()
 							              .nextInt(powerupPoints.length)];
-					
+
 					// Generate a new powerup on the selected waypoint
 					randomWaypoint.setPowerup(new Powerup());
 
@@ -232,10 +237,10 @@ public class MultiPlayerGame extends Game {
 				}
 			}
 		}
-		
+
 		// Check if any powerups have been taken
 		checkPowerups();
-		
+
 		for (int i = player.getPowerups().size() - 1; i >= 0; i--) {
 			// If the powerup hasn't yet been activated
 			if (!player.getPowerups().get(i).isActive()) {
@@ -250,18 +255,18 @@ public class MultiPlayerGame extends Game {
 				}
 			}
 		}
-		
+
 		// Deselect any aircraft which are inside the airspace of the other player
 		// This ensures that players can't keep controlling aircraft
 		// after they've entered another player's airspace
 		returnToAirspace();
-		
+
 		// Receive data
 		updateData();
 
 		// Update game data
 		dataUpdateTimeElapsed += timeDifference;
-		
+
 		if (dataUpdateTimeElapsed > 0.01) {
 			// Send current player's data to the server
 			NetworkManager.sendData(System.currentTimeMillis(), new Player(player));
@@ -274,7 +279,7 @@ public class MultiPlayerGame extends Game {
 		// Update the opposing player
 		updatePlayer(timeDifference, opposingPlayer);
 	}
-	
+
 	/**
 	 * Sends and receives player and powerup data.
 	 */
@@ -317,7 +322,7 @@ public class MultiPlayerGame extends Game {
 			} else if (data instanceof Waypoint) {
 				// Update the waypoint
 				Waypoint updatedWaypoint = (Waypoint) data;
-				
+
 				// Loop through the middle waypoints to find the one to update
 				for (Waypoint waypoint : powerupPoints) {
 					if (waypoint.equals(updatedWaypoint)) {
@@ -332,7 +337,7 @@ public class MultiPlayerGame extends Game {
 					player = playerArray[1];
 					opposingPlayer = playerArray[0];
 				}
-				
+
 				// Check if any powerups have been claimed
 				for (int i = 0; i > powerupPoints.length; i++) {
 					if (powerupPoints[i] != null
@@ -345,11 +350,11 @@ public class MultiPlayerGame extends Game {
 			}
 		}
 	}
-	
+
 	@Override
 	public void draw() {
 		super.draw();
-		
+
 		// Draw the middle zone
 		drawMiddleZone();
 	}
@@ -368,19 +373,19 @@ public class MultiPlayerGame extends Game {
 		drawSelectedAircraft();
 
 		drawManualControlButton(player);
-		
+
 		drawPowerupPoints();
-		
-		
+
+
 		// Draw flight strips
 		graphics.setViewport();
-		
+
 		switch (playerPosition) {
 		case 0:
 			for (FlightStrip fs : player.getFlightStrips()) {
 				fs.draw(16, 20);
 			}
-			
+
 			for (FlightStrip fs : opposingPlayer.getFlightStrips()) {
 				fs.draw(window.width() - (X_OFFSET) + 16, 20);
 			}
@@ -389,7 +394,7 @@ public class MultiPlayerGame extends Game {
 			for (FlightStrip fs : player.getFlightStrips()) {
 				fs.draw(window.width() - (X_OFFSET) + 16, 20);
 			}
-			
+
 			for (FlightStrip fs : opposingPlayer.getFlightStrips()) {
 				fs.draw(16, 20);
 			}
@@ -417,7 +422,7 @@ public class MultiPlayerGame extends Game {
 		graphics.line(leftEntryX, yStart, leftEntryX, yEnd);
 		graphics.line(rightEntryX, yStart, rightEntryX, yEnd);
 	}
-	
+
 	/**
 	 * Draws the middle waypoints.
 	 */
@@ -426,7 +431,7 @@ public class MultiPlayerGame extends Game {
 		for (Waypoint waypoint : powerupPoints) {
 			// Draw the waypoint
 			waypoint.draw(graphics.blue_transp);
-			
+
 			// If the waypoint has a powerup attached, draw the powerup
 			if (waypoint.getPowerup() != null) {
 				waypoint.getPowerup().draw(waypoint.getLocation().getX(),
@@ -478,7 +483,7 @@ public class MultiPlayerGame extends Game {
 			return false;
 		}
 	}
-	
+
 	/**
 	 * Checks if an aircraft has flown over a waypoint which is holding a powerup.
 	 * <p>
@@ -497,10 +502,10 @@ public class MultiPlayerGame extends Game {
 						&& waypoint.getPowerup() != null) {
 					// Add the waypoint to the appropriate player
 					waypoint.getPowerup().addToPlayer();
-					
+
 					// Register the aircraft as that which obtained the powerup
 					waypoint.getPowerup().registerAircraft(aircraft);
-					
+
 					// And remove the powerup from the waypoint
 					waypoint.setPowerup(null);
 				}
@@ -518,16 +523,16 @@ public class MultiPlayerGame extends Game {
 			}
 		}
 	}
-	
+
 	@Override
 	public Aircraft[] checkCollisions(double timeDifference) {
 		for (Aircraft plane : player.getAircraft()) {
 			if (plane.isFinished())
 				continue;
-			
+
 			Aircraft collidedWith = plane.updateCollisions(timeDifference,
 					getAllAircraft());
-			
+
 			if (collidedWith != null) {
 				player.setLives(player.getLives() - 1);
 				return new Aircraft[] {plane, collidedWith};
@@ -537,21 +542,49 @@ public class MultiPlayerGame extends Game {
 		return null;
 	}
 
+	public void explodePlanes(Aircraft plane1, Aircraft plane2) {
+		// The number of frames in each dimension of the animation image
+		int framesAcross = 8;
+		int framesDown = 4;
+		
+		Vector origin = new Vector(Game.X_OFFSET, Game.Y_OFFSET, 0);
+		
+		//Vector crash = plane1.getPosition().add(new Vector((plane1.getPosition().getX() - plane2.getPosition().getX()) / 2,
+			//	(plane1.getPosition().getY() - plane2.getPosition().getY()) / 2, 0)).add(origin);
+		
+		// Load explosion animation image
+		Image explosion = graphics.newImage("gfx" + File.separator + "explosionFrames.png");
+		
+		Vector midPoint = plane1.getPosition().add(plane2.getPosition())
+				.scaleBy(0.5).add(origin);
+		Vector explosionPos = midPoint.sub(new Vector(explosion.width()/(framesAcross*2),
+				explosion.height()/(framesDown*2), 0));
+		
+		explosionAnim = new SpriteAnimation(explosion,
+				(int)explosionPos.getX(), (int)explosionPos.getY(),
+				6, 16, framesAcross, framesDown, false);
+		
+		explosionAnim.draw();
+	}
+
 	@Override
 	public void gameOver(Aircraft plane1, Aircraft plane2) {
-		player.getAircraft().clear();
-		opposingPlayer.getAircraft().clear();
+		if (checkLives()) {
+			player.getAircraft().clear();
+			opposingPlayer.getAircraft().clear();
 
-		for (Airport airport : player.getAirports()) {
-			airport.clear();
-		}
+			for (Airport airport : player.getAirports()) {
+				airport.clear();
+			}
 
-		for (Airport airport : opposingPlayer.getAirports()) {
-			airport.clear();
+			for (Airport airport : opposingPlayer.getAirports()) {
+				airport.clear();
+			}
+			
+			super.gameOver(plane1, plane2);
 		}
-		super.gameOver(plane1, plane2);
 	}
-	
+
 
 	/**
 	 * Gets a player from an aircraft.
@@ -658,7 +691,7 @@ public class MultiPlayerGame extends Game {
 
 		return allAircraft;
 	}
-	
+
 	/**
 	 * Gets a flight strip from an aircraft.
 	 * @param aircraft - the aircraft who's flight strip should be returned
@@ -671,21 +704,21 @@ public class MultiPlayerGame extends Game {
 					return fs;
 				}
 			}
-			
+
 			for (FlightStrip fs : opposingPlayer.getFlightStrips()) {
 				if (aircraft.equals(fs.getAircraft())) {
 					return fs;
 				}
 			}
 		}
-		
+
 		return null;
 	}
-	
+
 	public ArrayList<Aircraft> getAircraftUnderTransfer() {
 		return aircraftUnderTransfer;
 	}
-	
+
 	public Player getOpposingPlayer() {
 		return opposingPlayer;
 	}
@@ -721,5 +754,5 @@ public class MultiPlayerGame extends Game {
 		player.setAircraft(new ArrayList<Aircraft>());
 		opposingPlayer.setAircraft(new ArrayList<Aircraft>());
 	}
-	
+
 }
