@@ -387,7 +387,7 @@ public class MultiPlayerGame extends Game {
 			}
 			
 			for (FlightStrip fs : opposingPlayer.getFlightStrips()) {
-				fs.draw(window.width() - (X_OFFSET) + 16, 20);
+				fs.draw(16, 20);
 			}
 			break;
 		}
