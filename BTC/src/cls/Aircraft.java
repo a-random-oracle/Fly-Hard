@@ -494,7 +494,7 @@ public class Aircraft implements Serializable {
 		}
 
 		// Draw planes with a lower altitude smaller
-		double scale = 2 * (position.getZ() / 30000);
+		double scale = 2 * Math.max((position.getZ() / 30000), (14d / 15d));
 
 		// Draw plane image
 		graphics.setColour(colour[0], colour[1], colour[2], alpha);
