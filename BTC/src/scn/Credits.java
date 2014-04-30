@@ -56,7 +56,7 @@ public class Credits extends Scene {
 		boolean hurried = input.isKeyDown(input.KEY_SPACE) || input.isMouseDown(input.MOUSE_LEFT);
 		speed = hurried ? 4f : 1f;
 		scrollPosition += SCROLL_SPEED * time_difference * speed;
-		if (scrollPosition > 1100) scrollPosition = -window.height();
+		if (scrollPosition > 1500) scrollPosition = -window.height();
 	}
 
 	@Override
