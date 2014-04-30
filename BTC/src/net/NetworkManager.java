@@ -60,6 +60,7 @@ public abstract class NetworkManager {
 	public static void startThread() {
 		// Obtain a lock on the network thread
 		synchronized (networkThread) {
+			networkWorker = new NetworkWorker();
 			networkThread = new Thread(networkWorker);
 			networkThread.start();
 		}

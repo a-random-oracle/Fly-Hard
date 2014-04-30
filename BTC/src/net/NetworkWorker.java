@@ -67,8 +67,6 @@ public class NetworkWorker implements Runnable {
 		while (getStatus()) {
 			sendNextData();
 		}
-		
-		NetworkManager.resetConnectionProperties();
 	}
 	
 	/**
