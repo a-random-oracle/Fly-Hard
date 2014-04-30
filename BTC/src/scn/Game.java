@@ -177,7 +177,10 @@ public abstract class Game extends Scene {
 	public void update(double timeDifference) {
 		if (paused) return;
 		
-		if (ending) Main.closeScene();
+		if (ending) {
+			ending = false;
+			Main.closeScene();
+		}
 
 		// Update the time the game has run for
 		timeElapsed += timeDifference;
