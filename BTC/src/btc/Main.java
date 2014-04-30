@@ -35,6 +35,10 @@ public class Main implements input.EventHandler {
 		Main.testing = false;
 		new Main(false);
 	}
+	
+	
+	/** The game's version number */
+	public static final String VERSION = "Fly-Hard-0.1";
 
 	/** The title to display in the game window */
 	private final String TITLE = "Bear Traffic Controller: GOA Edition";

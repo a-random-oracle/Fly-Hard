@@ -6,152 +6,168 @@
 
 package cls;
 
-import java.awt.Color;
 import java.io.Serializable;
 
 import scn.Game;
-import btc.Main;
-import cls.Player;
 import lib.jog.graphics;
-import lib.jog.input.EventHandler;          // <= May not be required
-import lib.jog.window;
 
-public class FlightStrip implements Serializable, EventHandler {
+public class FlightStrip implements Serializable {
 
-	/** Serialization ID */
+	/** Serialisation ID */
 	private static final long serialVersionUID = -7542014798949722639L;
+	
+	/** The default width */
+	private static final int STANDARD_WIDTH = 160;
+	
+	/** The default height */
+	private static final int STANDARD_HEIGHT = 60;
 
+	/** Whether the flight strip should be drawn or not */
 	private boolean isVisible;
 
-    private cls.Aircraft aircraft;
-    
-    private cls.FlightPlan flightPlan;
+	/** The aircraft which the flight strip is linked to */
+    private Aircraft aircraft;
 
-    private double positionY = 20;
+    /** The flight strip's vertical position */
+    private double positionY = 0;
 
+    /** The flight strip's width */
     private double width;
 
+    /** The flight strip's height */
     private double height;
 
 
     /**
      * Constructor for flight strips.
-     * @param x - the x coord to draw at
-     * @param y - tht y coord to draw at
-     * @param w - the width of the strip
-     * @param h - the height of the strip
+     * @param aircraft - the linked aircraft
      */
-    public FlightStrip(double w, double h, Aircraft plane, FlightPlan plan) {
-//        if (Game.getInstance() != null && Game.getInstance().getPlayer() != null && Game.getInstance().getPlayer().getFlightStrips() != null) {
-//        	for (FlightStrip fs : Game.getInstance().getPlayer().getFlightStrips()) {
-//        		if (fs.getY() == positionY) {
-        			positionY += 80 * Game.getInstance().getPlayer().getFlightStrips().size();
-//        		}
-//        	}
-//        }
-    	width = w;
-        height = h;
-        aircraft = plane;
-        flightPlan = plan;
-        isVisible = true;
-        
-
+    public FlightStrip(Aircraft aircraft) {
+    	this.positionY += 80 * Game.getInstance().getPlayer().getFlightStrips().size();
+    	this.width = STANDARD_WIDTH;
+    	this.height = STANDARD_HEIGHT;
+    	this.aircraft = aircraft;
+    	this.isVisible = true;
     }
-
-
+    
+    /**
+     * Constructor for flight strips.
+     * @param width - the width of the strip
+     * @param height - the height of the strip
+     * @param aircraft - the linked aircraft
+     */
+    public FlightStrip(double width, double height, Aircraft aircraft) {
+    	// Get the next available slot
+    	for (FlightStrip fs : Game.getInstance().getPlayer().getFlightStrips()) {
+    		if (fs.isVisible) {
+    			this.positionY += fs.width;
+    		}
+    	}
+    	
+    	this.width = width;
+    	this.height = height;
+    	this.aircraft = aircraft;
+    	
+    	// If the aircraft starts at an airport, hide the flight strip
+    	this.isVisible = aircraft.getFlightPlan().getOriginAirport() == null;
+    }
+    
+    
+    /**
+     * Gets the aircraft connected to the flight strip.
+     * @return the aircraft connected to the flight strip
+     */
+    public Aircraft getAircraft() {
+    	return aircraft;
+    }
+    
     /**
      * Shows strip for selected aircraft (prototyping only).
      * <p>
      * This will potentially become a method to call externally
      * to trigger instantiation of a strip.
      * </p>
-     * @param aircraft - the aircraft to display the strip of
      */
-///    public void show(Aircraft aircraft) {
-//    	if (aircraft != null) {
-//    		aircraft = aircraft;
-//    		isVisible = true;
-//    	}
-//    }
-    
-    public Aircraft getAircraft() {
-    	return aircraft;
-    }
+	public void show() {
+		isVisible = true;
+	}
 
+	/**
+	 * Stops the flight strip from being drawn.
+	 */
     public void hide() {
-        //aircraft = null;
         isVisible = false;
     }
     
+    /**
+     * Updates the flight strip.
+     */
+    public void update() {
 
-    public void draw(double xOffset) {
-        	drawOutline(xOffset);
-            drawFlightNumber(xOffset);
-            drawAirline(xOffset);
-            drawAltitude(xOffset);
-            drawRoute(xOffset);
-            drawStatus(xOffset);        
+    }
+    
+    /**
+     * Draws the flight strip.
+     * @param xOffset - the horizontal offset from the window's left edge.
+     */
+    public void draw(double xOffset, double yOffset) {
+    	if (isVisible) {
+    		drawOutline(xOffset, yOffset);
+    		drawFlightNumber(xOffset, yOffset);
+    		drawAirline(xOffset, yOffset);
+    		drawAltitude(xOffset, yOffset);
+    		drawRoute(xOffset, yOffset);
+    		drawStatus(xOffset, yOffset);
+    	}
     }
 
-    private void drawOutline(double xOffset) {
+    private void drawOutline(double xOffset, double yOffset) {
     	// TODO mouseover/click highlight (plane/strip sync)
         graphics.setColour(graphics.blue);
-        graphics.rectangle(true, xOffset, positionY, width, height);
+        graphics.rectangle(true, xOffset, yOffset + positionY, width, height);
         graphics.setColour(graphics.white);
-        graphics.rectangle(true, xOffset + 2, positionY + 2, 40, height - 4);
-
+        graphics.rectangle(true, xOffset + 2, yOffset + positionY + 2, 40, height - 4);
     }
 
-    private void drawFlightNumber(double xOffset) {
+    private void drawFlightNumber(double xOffset, double yOffset) {
     	graphics.setColour(graphics.black);
-    	graphics.print(aircraft.getName().substring(0,2), (xOffset + 2), (positionY + 2));
-    	graphics.print(aircraft.getName().substring(2,5), (xOffset + 2), (positionY + 30));
+    	graphics.print(aircraft.getName().substring(0,2), (xOffset + 2), (yOffset + positionY + 2));
+    	graphics.print(aircraft.getName().substring(2,5), (xOffset + 2), (yOffset + positionY + 30));
     }
 
-    private void drawAirline(double xOffset) {
+    private void drawAirline(double xOffset, double yOffset) {
     	graphics.setColour(graphics.white);
-        graphics.print(aircraft.getAirline(), (xOffset + 2 + 40), (positionY + 2));
+        graphics.print(aircraft.getAirline(), (xOffset + 2 + 40), (yOffset + positionY + 2));
 
     }
 
-    private void drawAltitude(double xOffset) {
-//        btc.Main.display.drawString((float)(xOffset + (width/2)), (float)(positionY + height), (new Integer(aircraft.getAltitude()).toString() + "ft"));
-    	graphics.print(new Integer(aircraft.getAltitude()).toString() + "ft", (xOffset + (width/2)), ((positionY + height) - 24));
+    private void drawAltitude(double xOffset, double yOffset) {
+//        btc.Main.display.drawString((float)(xOffset + (width/2)), (float)(yOffset + positionY + height), (new Integer(aircraft.getAltitude()).toString() + "ft"));
+    	graphics.print(new Integer(aircraft.getAltitude()).toString() + "ft", (xOffset + (width/2)), ((yOffset + positionY + height) - 24));
     }
     
-    private void drawRoute(double xOffset) {
-    	graphics.print(aircraft.getOrigin().substring(0,3) + " TO " + aircraft.getDestination().substring(0, 3), (xOffset + (width/2) - 20), (positionY + height - 36));
+    private void drawRoute(double xOffset, double yOffset) {
+    	graphics.print(aircraft.getOrigin().substring(0, 3) + " TO " + aircraft.getDestination().substring(0, 3), (xOffset + (width/2) - 20), (yOffset + positionY + height - 36));
     }
     
-    private void drawStatus(double xOffset) {
+    private void drawStatus(double xOffset, double yOffset) {
     	if (aircraft.isInDanger()) {
     		graphics.setColour(graphics.red);
-    		graphics.rectangle(true, (xOffset + 42), (positionY + height - 14), 116, 12);
+    		graphics.rectangle(true, (xOffset + 42), (yOffset + positionY + height - 14), 116, 12);
     		graphics.setColour(graphics.white);
-            graphics.printCentred("SHIIIIIIIIT", (xOffset + 100), (positionY + height - 14), 1, 1);
+            graphics.printCentred("SHIIIIIIIIT", (xOffset + 100), (yOffset + positionY + height - 14), 1, 1);
 
     	} else {
     		graphics.setColour(graphics.green);
-    		graphics.rectangle(true, (xOffset + 42), (positionY + height - 14), 116, 12);
+    		graphics.rectangle(true, (xOffset + 42), (yOffset + positionY + height - 14), 116, 12);
     		graphics.setColour(graphics.white);
-            graphics.printCentred("AWW YISS", (xOffset + 100), (positionY + height - 14), 1, 1);
+            graphics.printCentred("AWW YISS", (xOffset + 100), (yOffset + positionY + height - 14), 1, 1);
     	}
     }
+
     
-    public double getY() {
-    	return this.positionY;
-    }
-
-    @Override
     public void mousePressed(int key, int x, int y) {}
-
-    @Override
+    
     public void mouseReleased(int key, int mx, int my) {}
-
-    @Override
-    public void keyPressed(int key) {}
-
-    @Override
-    public void keyReleased(int key) {}
 
 }

@@ -28,14 +28,6 @@ public abstract class Game extends Scene {
 
 	/** The distance between the top edge of the screen and the map area */
 	public final static int Y_OFFSET = 48;
-
-	private final int FLIGHTSTRIP_X = 16;			// TODO This will go.
-
-	private final int FLIGHTSTRIP_Y = window.height()/3;	// TODO This will go.
-	
-	private final int FLIGHTSTRIP_W = 160;
-	
-	private final int FLIGHTSTRIP_H = 60;
 	
 	/** The image to use for aircraft */
 	public static Image aircraftImage;
@@ -363,9 +355,9 @@ public abstract class Game extends Scene {
 		
 		graphics.setViewport();
 		
-		// Temp flightstrip draw call.
+		// Draw flight strips
 		for (FlightStrip fs : player.getFlightStrips()) {
-			fs.draw(16);
+			fs.draw(16, 20);
 		}
 	}
 
@@ -961,8 +953,7 @@ public abstract class Game extends Scene {
 	}
 	
 	public FlightStrip createFlightStrip(Aircraft incomingPlane) {
-		FlightStrip newFlightStrip = new FlightStrip(FLIGHTSTRIP_W, FLIGHTSTRIP_H,
-				incomingPlane, incomingPlane.getFlightPlan());
+		FlightStrip newFlightStrip = new FlightStrip(incomingPlane);
 		player.getFlightStrips().add(newFlightStrip);
 		return newFlightStrip;
 	}

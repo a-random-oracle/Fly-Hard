@@ -14,6 +14,8 @@ import java.net.URL;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 
+import btc.Main;
+
 public abstract class NetworkManager {
 
 	/** The server's URL */
@@ -136,8 +138,7 @@ public abstract class NetworkManager {
 			connection.setDoOutput(true);
 			
 			// Set request properties and headers
-			connection.setRequestProperty("user-agent",
-					"Fly-Hard");
+			connection.setRequestProperty("user-agent", Main.VERSION);
 			
 			// Obtain a lock on the header fields
 			synchronized (headerMutex) {
