@@ -107,7 +107,7 @@ public class Powerup implements Serializable {
 	private static HashMap<PowerupEffect, Integer> setUpEffectDurationsMap() {
 		HashMap<PowerupEffect, Integer> effectDurationsMap =
 				new HashMap<PowerupEffect, Integer>();
-		effectDurationsMap.put(PowerupEffect.FOG, 5000);
+		effectDurationsMap.put(PowerupEffect.FOG, 20000);
 		effectDurationsMap.put(PowerupEffect.SPEED_UP, 5000);
 		effectDurationsMap.put(PowerupEffect.SLOW_DOWN, 5000);
 		effectDurationsMap.put(PowerupEffect.TRANSFER, 0);
