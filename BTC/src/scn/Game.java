@@ -58,8 +58,11 @@ public abstract class Game extends Scene {
 	/** Is the game paused */
 	protected static boolean paused;
 	
-	/** The the game about to end */
+	/** Whether the game about to end */
 	protected static boolean ending;
+	
+	/** Whether the game is about to go to the gameover scene */
+	protected static boolean gameOver;
 	
 	/** The manual control buttons */
 	protected static ButtonText manualControlButton;
@@ -141,6 +144,8 @@ public abstract class Game extends Scene {
 	public void start() {
 		// Set up variables
 		paused = false;
+		ending = false;
+		gameOver = false;
 
 		if (!Main.testing) {
 			// Load in graphics
@@ -752,6 +757,7 @@ public abstract class Game extends Scene {
 		// TODO <- add back in for release
 		//playSound(audio.newSoundEffect("sfx" + File.separator + "crash.ogg"));
 
+		gameOver = true;
 		Main.closeScene();
 		Main.setScene(new GameOver(plane1, plane2, player.getScore().getScore())); //TODO <- pass score
 	}
