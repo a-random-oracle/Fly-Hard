@@ -115,6 +115,7 @@ public class Aircraft implements Serializable {
 	private boolean airportPenaltyApplied = false;
 	
 
+
 	/**
 	 * Constructor for an aircraft.
 	 * @param name - the name of the flight
@@ -838,6 +839,8 @@ public class Aircraft implements Serializable {
 				if (airport.equals(flightPlan.getOriginAirport())) {
 					Game.getInstance().getPlayerFromAirport(
 							airport).getAircraft().add(this);
+					Game.getInstance().getPlayer().getFlightStrips()
+							.add(new FlightStrip(this));
 					return;
 				}
 			}
@@ -951,7 +954,6 @@ public class Aircraft implements Serializable {
 	public FlightPlan getFlightPlan() {
 		return flightPlan;
 	}
-	
 
 	/**
 	 * Sets the manual bearing the aircraft is following.
@@ -1024,7 +1026,7 @@ public class Aircraft implements Serializable {
 				+ ((flightName == null) ? 0 : flightName.hashCode());
 		return result;
 	}
-
+	
 	/**
 	 * Compares this aircraft to another aircraft.
 	 * <p>

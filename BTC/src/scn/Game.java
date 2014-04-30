@@ -15,7 +15,6 @@ import lib.jog.graphics.Image;
 import cls.Aircraft;
 import cls.Airport;
 import cls.FlightStrip;
-import cls.OrdersBox;
 import cls.Player;
 import cls.Player.TurningState;
 import cls.Waypoint;
@@ -28,14 +27,6 @@ public abstract class Game extends Scene {
 
 	/** The distance between the top edge of the screen and the map area */
 	public final static int Y_OFFSET = 48;
-
-	private final int FLIGHTSTRIP_X = 16;			// TODO This will go.
-
-	private final int FLIGHTSTRIP_Y = window.height()/3;	// TODO This will go.
-	
-	private final int FLIGHTSTRIP_W = 160;
-	
-	private final int FLIGHTSTRIP_H = 60;
 	
 	/** The image to use for aircraft */
 	public static Image aircraftImage;
@@ -72,9 +63,6 @@ public abstract class Game extends Scene {
 	
 	/** The manual control buttons */
 	protected static ButtonText manualControlButton;
-
-	// PLEASE DO NOT REMOVE - this is very useful for debugging
-	public static OrdersBox out;
 	
 	/** Difficulty settings: easy, medium and hard */
 	public enum DifficultySetting {EASY, MEDIUM, HARD}
@@ -85,7 +73,7 @@ public abstract class Game extends Scene {
 	public int flightCount = 0; // TODO Actually make this do things.
 
 	// Testing FlightStrip output
-	private static FlightStrip flightStrip;
+//	private static FlightStrip flightStrip;
 	
 	/** The current difficulty setting */
 	protected DifficultySetting difficulty;
@@ -152,8 +140,6 @@ public abstract class Game extends Scene {
 	@Override
 	public void start() {
 		// Set up variables
-		out = new OrdersBox(window.width() - X_OFFSET + 20,
-				Y_OFFSET, X_OFFSET - 40, window.height() - (2 * Y_OFFSET), 30);
 		paused = false;
 
 		if (!Main.testing) {
@@ -170,10 +156,6 @@ public abstract class Game extends Scene {
 			//music.play(); TODO <- add this back in for release
 		}
 
-//	if (!Main.testing) {
-//		flightStrip = new FlightStrip(FLIGHTSTRIP_X, FLIGHTSTRIP_Y, FLIGHTSTRIP_W, FLIGHTSTRIP_H);
-//	}
-
 		// Reset game attributes
 		timeElapsed = 0;
 	}
@@ -189,7 +171,10 @@ public abstract class Game extends Scene {
 	public void update(double timeDifference) {
 		if (paused) return;
 		
-		if (ending) Main.closeScene();
+		if (ending) {
+			ending = false;
+			Main.closeScene();
+		}
 
 		// Update the time the game has run for
 		timeElapsed += timeDifference;
@@ -199,6 +184,18 @@ public abstract class Game extends Scene {
 
 		// Update the player
 		updatePlayer(timeDifference, player);
+		
+		// Copy flight strip array
+		@SuppressWarnings("unchecked")
+		ArrayList<FlightStrip> shuffledFlightStrips =
+		(ArrayList<FlightStrip>) player.getFlightStrips().clone();
+		player.getFlightStrips().clear();
+
+		// Update flight strips
+		for (FlightStrip fs : shuffledFlightStrips) {
+			fs.update(timeDifference);
+			player.getFlightStrips().add(fs);
+		}
 
 		if (player.getSelectedAircraft() != null) {
 			if (player.getSelectedAircraft().isManuallyControlled()) {
@@ -235,10 +232,6 @@ public abstract class Game extends Scene {
 				.setAltitudeState(Aircraft.ALTITUDE_CLIMB);
 			}
 		}
-
-		// Update debug box
-		// PLEASE DO NOT REMOVE - this is very useful for debugging
-		out.update(timeDifference);
 	}
 	
 	/**
@@ -264,6 +257,10 @@ public abstract class Game extends Scene {
 				}
 
 				player.getScore().addScore(player.getAircraft().get(i));
+				
+				player.getFlightStrips().remove(getFlightStripFromAircraft(
+						player.getAircraft().get(i)));
+				
 				player.getAircraft().remove(i);
 			}
 		}
@@ -341,13 +338,6 @@ public abstract class Game extends Scene {
 		// area
 		graphics.setViewport();
 		drawAdditional(getAllAircraft().size());
-
-		// Temp flightstrip draw call.
-//		flightStrip.draw();
-
-		// Draw debug box
-		// PLEASE DO NOT REMOVE - this is very useful for debugging
-		out.draw();
 	}
 
 	/**
@@ -359,6 +349,13 @@ public abstract class Game extends Scene {
 		drawAircraft(player);
 		drawSelectedAircraft();
 		drawManualControlButton(player);
+		
+		graphics.setViewport();
+		
+		// Draw flight strips
+		for (FlightStrip fs : player.getFlightStrips()) {
+			fs.draw(16, 20);
+		}
 	}
 
 	/**
@@ -517,10 +514,6 @@ public abstract class Game extends Scene {
 		graphics.print(timePlayed, window.width() - X_OFFSET
 				- (timePlayed.length() * 8 + 32), 32);
 
-		// Print the highlighted altitude to the screen TODO <- check with Mark
-		//graphics.print(String.valueOf("Highlighted altitude: " + Integer
-		//		.toString(highlightedAltitude)) , 32 + xOffset, 15);
-
 		// Print the number of aircraft in the airspace to the screen
 		graphics.print(String.valueOf(aircraftCount)
 				+ " aircraft in the airspace.", 32 + X_OFFSET, 32);
@@ -551,6 +544,10 @@ public abstract class Game extends Scene {
 	@Override
 	public void mousePressed(int key, int x, int y) {
 		if (paused) return;
+		
+		for (FlightStrip fs : player.getFlightStrips()) {
+			fs.mousePressed(key, x, y);
+		}
 
 		if (key == input.MOUSE_LEFT) {
 			if (aircraftClicked(x, y, player)) {
@@ -558,7 +555,7 @@ public abstract class Game extends Scene {
 				Aircraft clickedAircraft = findClickedAircraft(x, y, player);
 				deselectAircraft(player);
 				player.setSelectedAircraft(clickedAircraft);
-				flightStrip.show(clickedAircraft);
+				//flightStrip.show(clickedAircraft);
 			} else if (waypointInFlightplanClicked(x, y,
 					player.getSelectedAircraft(), player)
 					&& !player.getSelectedAircraft().isManuallyControlled()) {
@@ -635,6 +632,10 @@ public abstract class Game extends Scene {
 	@Override
 	public void mouseReleased(int key, int x, int y) {
 		if (paused) return;
+		
+		for (FlightStrip fs : player.getFlightStrips()) {
+			fs.mouseReleased(key, x, y);
+		}
 
 		for (Airport airport : player.getAirports()) {
 			airport.mouseReleased(key, x, y);
@@ -803,6 +804,10 @@ public abstract class Game extends Scene {
 
 			// Otherwise, add the aircraft to the airspace
 			player.getAircraft().add(aircraft);
+			
+			if (player.equals(this.player)) {
+				player.getFlightStrips().add(new FlightStrip(aircraft));
+			}
 		}
 	}
 
@@ -948,14 +953,7 @@ public abstract class Game extends Scene {
 				player.getWaypoints(), difficulty, originAirport,
 				destinationAirport);
 		
-		createFlightStrip(newPlane);
-		
 		return newPlane;
-	}
-	
-	public FlightStrip createFlightStrip(Aircraft incomingPlane) {
-		
-		return new FlightStrip(window.width(), window.height(), FLIGHTSTRIP_W, FLIGHTSTRIP_H, incomingPlane, incomingPlane.getFlightPlan());
 	}
 	
 
@@ -1270,6 +1268,23 @@ public abstract class Game extends Scene {
 			}
 		}
 	
+		return null;
+	}
+	
+	/**
+	 * Gets a flight strip from an aircraft.
+	 * @param aircraft - the aircraft who's flight strip should be returned
+	 * @return the flight strip for the specified aircraft
+	 */
+	public FlightStrip getFlightStripFromAircraft(Aircraft aircraft) {
+		if (aircraft != null) {
+			for (FlightStrip fs : player.getFlightStrips()) {
+				if (aircraft.equals(fs.getAircraft())) {
+					return fs;
+				}
+			}
+		}
+		
 		return null;
 	}
 

@@ -107,7 +107,7 @@ public class Powerup implements Serializable {
 	private static HashMap<PowerupEffect, Integer> setUpEffectDurationsMap() {
 		HashMap<PowerupEffect, Integer> effectDurationsMap =
 				new HashMap<PowerupEffect, Integer>();
-		effectDurationsMap.put(PowerupEffect.FOG, 5000);
+		effectDurationsMap.put(PowerupEffect.FOG, 20000);
 		effectDurationsMap.put(PowerupEffect.SPEED_UP, 5000);
 		effectDurationsMap.put(PowerupEffect.SLOW_DOWN, 5000);
 		effectDurationsMap.put(PowerupEffect.TRANSFER, 0);
@@ -182,7 +182,11 @@ public class Powerup implements Serializable {
 		if (PLAYER_AFFECTED_MAP.get(effect) == 0) {
 			gameInstance.getPlayer().addPowerup(this);
 		} else if (PLAYER_AFFECTED_MAP.get(effect) == 1) {
-			NetworkManager.sendData(-1, this);
+			try {
+				NetworkManager.sendData(-1, (Powerup) this.clone());
+			} catch (CloneNotSupportedException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 	
@@ -356,9 +360,13 @@ public class Powerup implements Serializable {
 			
 			// Add the aircraft to the opposing player's list of aircraft
 			gameInstance.getOpposingPlayer().getAircraft().add(aircraft);
+			gameInstance.getOpposingPlayer().getFlightStrips()
+					.add(new FlightStrip(aircraft));
 			
 			// Remove the aircraft from the current player's control
 			gameInstance.getPlayer().getAircraft().remove(aircraft);
+			gameInstance.getPlayer().getFlightStrips()
+					.remove(gameInstance.getFlightStripFromAircraft(aircraft));
 
 			// Send *both* players' data to the other player
 			NetworkManager.sendData(-1, new Player[] {

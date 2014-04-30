@@ -71,6 +71,16 @@ public class Waypoint implements Serializable {
 		this.entryOrExit = entryOrExit;
 		this.name = "";
 	}
+	/**
+	 * Constructor for waypoints.
+	 * @param waypoint - the waypoint to clone
+	 */
+	public Waypoint(Waypoint waypoint) {
+		waypointLocation = waypoint.waypointLocation;
+		name = waypoint.name;
+		entryOrExit = waypoint.entryOrExit;
+		powerup = waypoint.powerup;
+	}
 	
 	/**
 	 * Gets the waypoint's vector location.

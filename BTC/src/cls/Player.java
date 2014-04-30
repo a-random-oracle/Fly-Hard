@@ -32,6 +32,9 @@ public class Player implements Serializable {
 	/** The aircraft under the player's control */
 	private ArrayList<Aircraft> aircraft;
 	
+	/** Array list of flight-strips and ting */
+	private ArrayList<FlightStrip> flightStrips;
+	
 	/** The waypoints under the player's control */
 	private Waypoint[] waypoints;
 	
@@ -104,6 +107,7 @@ public class Player implements Serializable {
 		this.lives = 3;
 		this.score = new Score();
 		this.aircraft = new ArrayList<Aircraft>();
+		this.flightStrips = new ArrayList<FlightStrip>();
 		this.powerups = new ArrayList<Powerup>();
 		
 		
@@ -111,6 +115,30 @@ public class Player implements Serializable {
 		// Default is white
 		aircraftColour = (id < AIRCRAFT_COLOURS.length)
 				? AIRCRAFT_COLOURS[id] : new Integer[] {255, 255, 255};
+	}
+	
+	/**
+	 * Creates a player.
+	 * @param player - the player to clone
+	 */
+	public Player(Player player) {
+		this.id = player.id;
+		this.airports = player.airports;
+		this.waypoints = player.waypoints;
+		this.maxAircraft = player.maxAircraft;
+		this.selectedAircraft = player.selectedAircraft;
+		this.selectedWaypoint = player.selectedWaypoint;
+		this.selectedPathpoint = player.selectedPathpoint;
+		this.compassClicked = player.compassClicked;
+		this.waypointClicked = player.waypointClicked;
+		this.flightGenerationTimeElapsed = player.flightGenerationTimeElapsed;
+		this.controlAltitude = player.controlAltitude;
+		this.lives = player.lives;
+		this.score = player.score;
+		this.aircraft = player.aircraft;
+		this.flightStrips = player.flightStrips;
+		this.powerups = player.powerups;
+		this.aircraftColour = player.aircraftColour;
 	}
 	
 	
@@ -144,6 +172,10 @@ public class Player implements Serializable {
 	 */
 	public ArrayList<Aircraft> getAircraft() {
 		return aircraft;
+	}
+	
+	public ArrayList<FlightStrip> getFlightStrips() {
+		return flightStrips;
 	}
 	
 	/**

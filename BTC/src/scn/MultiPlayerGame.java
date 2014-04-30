@@ -12,6 +12,7 @@ import lib.jog.window;
 import lib.jog.graphics.Image;
 import cls.Aircraft;
 import cls.Airport;
+import cls.FlightStrip;
 import cls.Player;
 import cls.Powerup;
 import cls.Waypoint;
@@ -20,19 +21,23 @@ public class MultiPlayerGame extends Game {
 	
 	/** The image used for the fog powerup effect */
 	public static final Image FOG_IMAGE =
-			graphics.newImage("gfx/pUp" + File.separator + "fog9a.png");
+			graphics.newImage("gfx" + File.separator + "pup_new"
+					+ File.separator + "cloud_32.png");
 	
 	/** The image used for the speed up powerup effect */
 	public static final Image SPEED_UP_IMAGE =
-			graphics.newImage("gfx/pUp" + File.separator + "speed3a.png");
+			graphics.newImage("gfx" + File.separator + "pup_new"
+					+ File.separator + "speed_32.png");
 	
 	/** The image used for the slow down powerup effect */
 	public static final Image SLOW_DOWN_IMAGE =
-			graphics.newImage("gfx/pUp" + File.separator + "slow2a.png");
+			graphics.newImage("gfx" + File.separator + "pup_new"
+					+ File.separator + "slow_32.png");
 	
 	/** The image used for the transfer powerup effect */
 	public static final Image TRANSFER_IMAGE =
-			graphics.newImage("gfx/pUp" + File.separator + "transfer1a.png");
+			graphics.newImage("gfx" + File.separator + "pup_new"
+					+ File.separator + "transfer_32.png");
 	
 	/** The y-coordinate at which the middle zone borders begin */
 	private static int yStart = window.height() - Y_OFFSET;
@@ -259,7 +264,7 @@ public class MultiPlayerGame extends Game {
 		
 		if (dataUpdateTimeElapsed > 0.01) {
 			// Send current player's data to the server
-			NetworkManager.sendData(System.currentTimeMillis(), player);
+			NetworkManager.sendData(System.currentTimeMillis(), new Player(player));
 		}
 
 		super.update(timeDifference);
@@ -365,6 +370,31 @@ public class MultiPlayerGame extends Game {
 		drawManualControlButton(player);
 		
 		drawPowerupPoints();
+		
+		
+		// Draw flight strips
+		graphics.setViewport();
+		
+		switch (playerPosition) {
+		case 0:
+			for (FlightStrip fs : player.getFlightStrips()) {
+				fs.draw(16, 20);
+			}
+			
+			for (FlightStrip fs : opposingPlayer.getFlightStrips()) {
+				fs.draw(window.width() - (X_OFFSET) + 16, 20);
+			}
+			break;
+		case 1:
+			for (FlightStrip fs : player.getFlightStrips()) {
+				fs.draw(window.width() - (X_OFFSET) + 16, 20);
+			}
+			
+			for (FlightStrip fs : opposingPlayer.getFlightStrips()) {
+				fs.draw(16, 20);
+			}
+			break;
+		}
 	}
 
 	/**
@@ -627,6 +657,29 @@ public class MultiPlayerGame extends Game {
 		return allAircraft;
 	}
 	
+	/**
+	 * Gets a flight strip from an aircraft.
+	 * @param aircraft - the aircraft who's flight strip should be returned
+	 * @return the flight strip for the specified aircraft
+	 */
+	public FlightStrip getFlightStripFromAircraft(Aircraft aircraft) {
+		if (aircraft != null) {
+			for (FlightStrip fs : player.getFlightStrips()) {
+				if (aircraft.equals(fs.getAircraft())) {
+					return fs;
+				}
+			}
+			
+			for (FlightStrip fs : opposingPlayer.getFlightStrips()) {
+				if (aircraft.equals(fs.getAircraft())) {
+					return fs;
+				}
+			}
+		}
+		
+		return null;
+	}
+	
 	public ArrayList<Aircraft> getAircraftUnderTransfer() {
 		return aircraftUnderTransfer;
 	}
@@ -644,8 +697,8 @@ public class MultiPlayerGame extends Game {
 
 		// Send a message to the opponent to let
 		// them know we're closing
-		NetworkManager.pause();
-		NetworkManager.sendMessage("END_GAME");
+		NetworkManager.stopThread();
+		NetworkManager.postMessage("END_GAME");
 	}
 
 

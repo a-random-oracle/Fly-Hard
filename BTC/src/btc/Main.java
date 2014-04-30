@@ -1,10 +1,10 @@
 package btc;
 
-import java.awt.Font;
+import java.awt.FontFormatException;
 import java.awt.GraphicsEnvironment;
 import java.awt.Rectangle;
 import java.io.File;
-import java.io.InputStream;
+import java.io.IOException;
 import java.util.Random;
 import java.util.Stack;
 
@@ -35,6 +35,10 @@ public class Main implements input.EventHandler {
 		Main.testing = false;
 		new Main(false);
 	}
+	
+	
+	/** The game's version number */
+	public static final String VERSION = "Fly-Hard-0.1";
 
 	/** The title to display in the game window */
 	private final String TITLE = "Bear Traffic Controller: GOA Edition";
@@ -58,12 +62,10 @@ public class Main implements input.EventHandler {
 	private static double yScale = 1;
 
 	/** The random instance to use to synchronise across the network */
-	private static Random random;
+	private static Random random = new Random();
 
 	/** Whether the game isbeing exited */
 	private static boolean exiting;
-
-	public static TrueTypeFont display;
 
 	/** The locations of the icon files */
 	final private String[] ICON_FILENAMES = {
@@ -91,9 +93,6 @@ public class Main implements input.EventHandler {
 	private Main(boolean fullscreen) {
 		double xOffset = 0;
 		double yOffset = 0;
-
-		// Set up the random instance
-		random = new Random();
 
 		// Get screen dimensions
 		Rectangle windowBounds = GraphicsEnvironment
@@ -141,20 +140,24 @@ public class Main implements input.EventHandler {
 		window.initialise(TITLE, (int)(width),(int)(height),
 				(int)(xOffset), (int)(yOffset), fullscreen);
 		graphics.initialise();
-		graphics.Font font = graphics.newBitmapFont("gfx" + File.separator + "font.png",
-				("ABCDEFGHIJKLMNOPQRSTUVWXYZ abcdefghijklmnopqrstuvwxyz" +
-						"1234567890.,_-!?()[]><#~:;/\\^'\"{}+=@@@@@@@@`"));
-		graphics.setFont(font);
-
+		
+		//graphics.Font font = graphics.newBitmapFont("gfx" + File.separator + "font.png",
+		//		("ABCDEFGHIJKLMNOPQRSTUVWXYZ abcdefghijklmnopqrstuvwxyz" +
+		//				"1234567890.,_-!?()[]><#~:;/\\^'\"{}+=@@@@@@@@`"));
+		
+		java.awt.Font font = null;
+		
 		try {
-			InputStream inputStream = ResourceLoader.getResourceAsStream("gfx/Roboto-Black.ttf");
-
-			Font robotoBlack = Font.createFont(Font.TRUETYPE_FONT, inputStream);
-			robotoBlack = robotoBlack.deriveFont(24f);
-			display = new TrueTypeFont(robotoBlack, false);
-		} catch (Exception e) {
+			font = java.awt.Font.createFont(java.awt.Font.TRUETYPE_FONT,
+						ResourceLoader.getResourceAsStream(
+								"gfx" + File.separator + "Roboto-Black.ttf"))
+								.deriveFont(12F);
+			GraphicsEnvironment.getLocalGraphicsEnvironment().registerFont(font);
+		} catch (FontFormatException | IOException e) {
 			e.printStackTrace();
 		}
+		
+		graphics.setFont(new TrueTypeFont(font, false));
 
 		sceneStack = new Stack<Scene>();
 		setScene(new Title());
@@ -202,7 +205,7 @@ public class Main implements input.EventHandler {
 	 */
 	public static void quit() {
 		currentScene.close();
-		NetworkManager.pause();
+		NetworkManager.stopThread();
 		window.dispose();
 		audio.dispose();
 		System.exit(0);

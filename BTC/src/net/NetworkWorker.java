@@ -6,27 +6,27 @@ import java.util.Map.Entry;
 import java.util.TreeMap;
 
 /**
- * Thread used to transfer data in parallel with the game.
+ * Worker used to transfer data in parallel with the game.
  * <p>
- * This thread provides no guarantees regarding the time between
+ * The worker provides no guarantees regarding the time between
  * data being passed to the queue and data being sent.
  * </p>
  * <p>
- * There is also no guarantee that data written to the thread
+ * There is also no guarantee that data written to the worker
  * will ever get sent. This is due to an effort to only send the
  * most up-to-date data.
  * </p>
+ * <p>
+ * A priority buffer is provided to ensure that specific data will be sent.
+ * </p>
  */
-public class NetworkThread extends Thread {
+public class NetworkWorker implements Runnable {
 
 	/** The data still to be sent */
 	private TreeMap<Long, Serializable> dataBuffer;
 	
 	/** The priority data still to be sent */
 	private LinkedList<Serializable> priorityDataBuffer;
-	
-	/** The messages still to be sent */
-	private String messages;
 	
 	/** The data still to be read */
 	private TreeMap<Long, Serializable> responseBuffer;
@@ -47,17 +47,14 @@ public class NetworkThread extends Thread {
 	/**
 	 * Constructs a new thread for sending data.
 	 */
-	public NetworkThread() {
+	public NetworkWorker() {
 		this.dataBuffer = new TreeMap<Long, Serializable>();
 		this.priorityDataBuffer = new LinkedList<Serializable>();
-		this.messages = "";
 		this.responseBuffer = new TreeMap<Long, Serializable>();
 		this.priorityResponseBuffer = new LinkedList<Serializable>();
 		this.mostRecent = 0;
 		this.status = true;
 		this.statusMutex = new Object();
-		
-		this.start();
 	}
 	
 	
@@ -66,10 +63,9 @@ public class NetworkThread extends Thread {
 	 */
 	@Override
 	public void run() {
-		// Repeat while the thread is running
+		// Repeat while the worker is running
 		while (getStatus()) {
 			sendNextData();
-			sendMessages();
 		}
 	}
 	
@@ -214,50 +210,22 @@ public class NetworkThread extends Thread {
 	}
 	
 	/**
-	 * Sends the messages in the message string.
-	 * <p>
-	 * NOTE: this method is <b>destructive</b>, i.e. the sent messages
-	 * will be removed from the message string after being sent.
-	 * </p>
+	 * Gets the thread's status.
+	 * @return <code>true</code> if the thread is currently running,
+	 * 			otherwise <code>false</code>
 	 */
-	private void sendMessages() {
-		String messageString = "";
-		
-		// Obtain a lock on the message string
-		synchronized(messageString) {
-			// Get (and clear) the message string
-			messageString = messages;
-			messages = "";
-		}
-		
-		// Send the post request to the server
-		NetworkManager.postMessage(messageString);
-	}
-	
-	/**
-	 * Writes a message to the message string.
-	 * @param message - the message to write to the message string
-	 */
-	public void writeMessage(String message) {
-		// Obtain a lock on the message string
-		synchronized(messages) {
-			if (message != null && !message.equals("")) {
-				// Write the message to the message string
-				messages += message;
-			}
-		}
-	}
-	
 	private boolean getStatus() {
+		// Obtain a lock on the status attribute
 		synchronized (statusMutex) {
 			return status;
 		}
 	}
 	
 	/**
-	 * Stops the thread.
+	 * Stops the worker.
 	 */
 	public void end() {
+		// Obtain a lock on the status attribute
 		synchronized (statusMutex) {
 			status = false;
 		}
