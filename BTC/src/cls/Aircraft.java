@@ -428,7 +428,7 @@ public class Aircraft implements Serializable {
 		double y = getVelocity().getY();
 
 		velocity = new Vector((x * cosA) - (y * sinA), (y * cosA) + (x * sinA),
-				getVelocity().getZ());
+				velocity.getZ());
 	}
 
 	/**
