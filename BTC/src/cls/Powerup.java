@@ -83,6 +83,15 @@ public class Powerup implements Serializable {
 		this.timeActivated = -1;
 	}
 	
+	/**
+	 * Constructor for powerups.
+	 * @param powerup - the powerup to clone
+	 */
+	public Powerup(Powerup powerup) {
+		this.effect = powerup.effect;
+		this.timeActivated = powerup.timeActivated;
+	}
+	
 	
 	/**
 	 * Sets up the player affected map.
@@ -182,11 +191,7 @@ public class Powerup implements Serializable {
 		if (PLAYER_AFFECTED_MAP.get(effect) == 0) {
 			gameInstance.getPlayer().addPowerup(this);
 		} else if (PLAYER_AFFECTED_MAP.get(effect) == 1) {
-			try {
-				NetworkManager.sendData(-1, (Powerup) this.clone());
-			} catch (CloneNotSupportedException e) {
-				e.printStackTrace();
-			}
+			NetworkManager.sendData(-1, new Powerup(this));
 		}
 	}
 	
