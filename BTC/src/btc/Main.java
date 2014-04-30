@@ -68,7 +68,7 @@ public class Main implements input.EventHandler {
 	private static double yScale = 1;
 
 	/** The random instance to use to synchronise across the network */
-	private static Random random;
+	private static Random random = new Random();
 
 	/** Whether the game is being exited */
 	private static boolean exiting;
@@ -99,9 +99,6 @@ public class Main implements input.EventHandler {
 	private Main(boolean fullscreen) {
 		double xOffset = 0;
 		double yOffset = 0;
-
-		// Set up the random instance
-		random = new Random();
 
 		// Get screen dimensions
 		Rectangle windowBounds = GraphicsEnvironment
