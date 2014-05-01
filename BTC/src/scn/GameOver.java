@@ -82,13 +82,13 @@ public class GameOver extends Scene {
 		
 		// Load explosion animation image
 		explosion = graphics.newImage("gfx" + File.separator + "ani" + File.separator + "explosionFrames.png");
-		
-		Vector midPoint = aircraft1.getPosition().add(aircraft2.getPosition())
-				.scaleBy(0.5).add(origin);
-		Vector explosionPos = midPoint.sub(new Vector(explosion.width()/(framesAcross*2),
-				explosion.height()/(framesDown*2), 0));
-		
+
 		if (aircraft1 != null && aircraft2 != null) {
+			Vector midPoint = aircraft1.getPosition().add(aircraft2.getPosition())
+					.scaleBy(0.5).add(origin);
+			Vector explosionPos = midPoint.sub(new Vector(explosion.width()/(framesAcross*2),
+					explosion.height()/(framesDown*2), 0));
+			
 			explosionAnim = new SpriteAnimation(explosion,
 					(int)explosionPos.getX(), (int)explosionPos.getY(),
 					6, 16, framesAcross, framesDown, false);
