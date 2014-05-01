@@ -381,6 +381,16 @@ public class MultiPlayerGame extends Game {
 
 		// Draw the middle zone
 		drawMiddleZone();
+		
+		// Display the player's lives
+		graphics.print("Lives : " + player.getLives(),
+				X_OFFSET + 32,
+				window.height() - Y_OFFSET + 5, 1);
+		
+		// Display the opponent's lives
+		graphics.printRight("Opponents Lives : " + opposingPlayer.getLives(),
+				window.width() - X_OFFSET - 32,
+				window.height() - Y_OFFSET + 5, 1, 0);
 	}
 
 	@Override

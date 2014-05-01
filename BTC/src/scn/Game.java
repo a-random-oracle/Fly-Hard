@@ -503,9 +503,6 @@ public abstract class Game extends Scene {
 		//Print the player's total score
 		graphics.printCentred("Total Score: " + String.valueOf(player.getScore()),
 				Main.TARGET_WIDTH / 3 + X_OFFSET, 32, 1, 150);
-		
-		graphics.print("Lives : " + player.getLives(),
-				X_OFFSET + 32, window.height() - Y_OFFSET + 5, 1);
 	}
 
 	/**
