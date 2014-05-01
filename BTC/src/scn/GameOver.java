@@ -77,7 +77,7 @@ public class GameOver extends Scene {
 		this.score = score;
 		
 		// Load explosion animation image
-		explosion = graphics.newImage("gfx" + File.separator + "explosionFrames.png");
+		explosion = graphics.newImage("gfx" + File.separator + "ani" + File.separator + "explosionFrames.png");
 		
 		Vector midPoint = aircraft1.getPosition().add(aircraft2.getPosition())
 				.scaleBy(0.5).add(origin);

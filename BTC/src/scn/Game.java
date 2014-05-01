@@ -129,10 +129,13 @@ public abstract class Game extends Scene {
 	public void start() {
 		if (!Main.testing) {
 			// Load in graphics
-			background = graphics.newImage("gfx" + File.separator + "background_base.png");
+			background = graphics.newImage("gfx" + File.separator
+					+ "bkg" + File.separator + "background_base.png");
 
-			aircraftImage = graphics.newImage("gfx" + File.separator + "plane.png");
-			airportImage = graphics.newImage("gfx" + File.separator + "Airport.png");
+			aircraftImage = graphics.newImage("gfx" + File.separator
+					+ "air" + File.separator + "plane.png");
+			airportImage = graphics.newImage("gfx" + File.separator
+					+ "apt" + File.separator + "Airport.png");
 
 			// Load in music
 			music = audio.newMusic("sfx" + File.separator + "Gypsy_Shoegazer.ogg");

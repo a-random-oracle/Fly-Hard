@@ -21,24 +21,29 @@ import cls.Waypoint;
 
 public class MultiPlayerGame extends Game {
 
+	/** The base image to provide powerup colours */
+	public static final Image BASE_IMAGE =
+			graphics.newImage("gfx" + File.separator + "pup"
+					+ File.separator + "base_32.png");
+	
 	/** The image used for the fog powerup effect */
 	public static final Image FOG_IMAGE =
-			graphics.newImage("gfx" + File.separator + "pup_new"
+			graphics.newImage("gfx" + File.separator + "pup"
 					+ File.separator + "cloud_32.png");
 
 	/** The image used for the speed up powerup effect */
 	public static final Image SPEED_UP_IMAGE =
-			graphics.newImage("gfx" + File.separator + "pup_new"
+			graphics.newImage("gfx" + File.separator + "pup"
 					+ File.separator + "speed_32.png");
 
 	/** The image used for the slow down powerup effect */
 	public static final Image SLOW_DOWN_IMAGE =
-			graphics.newImage("gfx" + File.separator + "pup_new"
+			graphics.newImage("gfx" + File.separator + "pup"
 					+ File.separator + "slow_32.png");
 
 	/** The image used for the transfer powerup effect */
 	public static final Image TRANSFER_IMAGE =
-			graphics.newImage("gfx" + File.separator + "pup_new"
+			graphics.newImage("gfx" + File.separator + "pup"
 					+ File.separator + "transfer_32.png");
 	
 	/** The instruction to send to the server on ending the game */
@@ -135,9 +140,9 @@ public class MultiPlayerGame extends Game {
 
 		// Define other waypoints
 		powerupPoints = new Waypoint[] {
-				new Waypoint(0.5, 0.30833, false, true),
-				new Waypoint(0.5, 0.56667, false, true),
-				new Waypoint(0.5, 0.86146, false, true)
+				new Waypoint(0.50, 0.27, false, true),
+				new Waypoint(0.50, 0.50, false, true),
+				new Waypoint(0.50, 0.73, false, true)
 		};
 
 		// Set up the game
@@ -537,11 +542,16 @@ public class MultiPlayerGame extends Game {
 		
 		Vector origin = new Vector(Game.X_OFFSET, Game.Y_OFFSET, 0);
 		
-		//Vector crash = plane1.getPosition().add(new Vector((plane1.getPosition().getX() - plane2.getPosition().getX()) / 2,
-			//	(plane1.getPosition().getY() - plane2.getPosition().getY()) / 2, 0)).add(origin);
-		
+		/*Vector crash = plane1.getPosition().add(
+				new Vector((plane1.getPosition().getX()
+						- plane2.getPosition().getX()) / 2,
+						(plane1.getPosition().getY()
+								- plane2.getPosition().getY()) / 2, 0))
+								.add(origin);*/
+
 		// Load explosion animation image
-		Image explosion = graphics.newImage("gfx" + File.separator + "explosionFrames.png");
+		Image explosion = graphics.newImage("gfx" + File.separator
+				+ "ani" + File.separator + "explosionFrames.png");
 		
 		Vector midPoint = plane1.getPosition().add(plane2.getPosition())
 				.scaleBy(0.5).add(origin);

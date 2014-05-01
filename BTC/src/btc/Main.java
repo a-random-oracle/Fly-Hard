@@ -38,7 +38,7 @@ public class Main implements input.EventHandler {
 	
 	
 	/** The game's version number */
-	public static final String VERSION = "Fly-Hard-0.2";
+	public static final String VERSION = "Fly-Hard-0.3";
 
 	/** The title to display in the game window */
 	private static final String TITLE = "Bear Traffic Controller: GOA Edition";
@@ -75,9 +75,9 @@ public class Main implements input.EventHandler {
 
 	/** The locations of the icon files */
 	final private String[] ICON_FILENAMES = {
-		"gfx" + File.separator + "icon16.png",
-		"gfx" + File.separator + "icon32.png",
-		"gfx" + File.separator + "icon64.png",
+		"gfx" + File.separator + "ico" + File.separator + "icon16.png",
+		"gfx" + File.separator + "ico" + File.separator + "icon32.png",
+		"gfx" + File.separator + "ico" + File.separator + "icon64.png",
 	};
 
 	/** Whether the game is currently being tested or not */
@@ -147,16 +147,17 @@ public class Main implements input.EventHandler {
 				(int)(xOffset), (int)(yOffset), fullscreen);
 		graphics.initialise();
 		
-		standardFont = graphics.newBitmapFont("gfx" + File.separator + "font.png",
+		standardFont = graphics.newBitmapFont("gfx" + File.separator + "fnt"
+				+ File.separator + "font.png",
 				("ABCDEFGHIJKLMNOPQRSTUVWXYZ abcdefghijklmnopqrstuvwxyz" +
 						"1234567890.,_-!?()[]><#~:;/\\^'\"{}+=@@@@@@@@`"));
-		
+
 		try {
 			flightstripFont = new TrueTypeFont(
 					java.awt.Font.createFont(java.awt.Font.TRUETYPE_FONT,
 							ResourceLoader.getResourceAsStream(
-									"gfx" + File.separator + "Roboto-Black.ttf"))
-									.deriveFont(12F), false);
+									"gfx" + File.separator + "fnt" + File.separator
+									+ "Roboto-Black.ttf")).deriveFont(12F), false);
 		} catch (FontFormatException | IOException e) {
 			e.printStackTrace();
 		}
