@@ -326,7 +326,7 @@ public abstract class Game extends Scene {
 		drawWaypoints(player);
 		drawAircraft(player);
 		drawSelectedAircraft();
-		drawManualControlButton(player);
+		//drawManualControlButton(player);
 		
 		graphics.setViewport();
 		

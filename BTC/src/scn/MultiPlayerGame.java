@@ -391,7 +391,7 @@ public class MultiPlayerGame extends Game {
 
 		drawSelectedAircraft();
 
-		drawManualControlButton(player);
+		//drawManualControlButton(player);
 
 		drawPowerupPoints();
 
