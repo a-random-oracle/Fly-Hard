@@ -7,46 +7,42 @@ import org.junit.Test;
 
 import scn.Game.DifficultySetting;
 import cls.Aircraft;
-import cls.Score;
 import cls.Waypoint;
 
 public class ScoreTest {
-	Score testScore;
+	
+	/** The test score */
+	int testScore;
+	
+	/** The test aircraft */
 	Aircraft testAircraft;
 	
 	
+	/**
+	 * Sets up the tests.
+	 */
 	@Before
-	public void setUp(){
-		testScore = new Score();
+	public void setUp() {
+		testScore = 0;
 		
-		Waypoint[] waypointList = new Waypoint[]{
+		Waypoint[] waypointList = new Waypoint[] {
 				new Waypoint(0, 0, true, false),
 				new Waypoint(100, 100, true, false),
 				new Waypoint(25, 75, false, false),
 				new Waypoint(75, 25, false, false),
-				new Waypoint(50,50, false, false)};
+				new Waypoint(50,50, false, false)
+				};
 		
 		testAircraft = new Aircraft("TSTAircraft", "TestAir", "Berlin", "Dublin",
 				new Waypoint(100, 100, true, false), new Waypoint(0, 0, true, false),
 				10.0, waypointList, DifficultySetting.MEDIUM, null, null);	
 	}
 	
-	//Test that the score starts at 0
+	/**
+	 * Tests that score is decremented when an aircraft's flight path is altered.
+	 */
 	@Test
-	public void testScoreStartsZero(){
-		assertTrue("Score does not start at zero", testScore.getScore()==0);
-	}
-	//Test addScore
-	@Test
-	public void testAddScore(){
-		testScore.addScore(testAircraft);
-		assertTrue("Score not added successfully", testScore.getScore()==100);
-	}
-	
-	
-	//Test aircraft score decrement for altering path
-	@Test
-	public void testScoreDecrementAlterPath(){
+	public void testScoreDecrementAlterPath() {
 		testAircraft.alterPath(1, new Waypoint(25, 75, false, false));
 		assertTrue("Score not decremented successfully", testAircraft.getScore()==99);
 	}

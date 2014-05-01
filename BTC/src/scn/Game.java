@@ -186,7 +186,8 @@ public abstract class Game extends Scene {
 					deselectAircraft(player);
 				}
 
-				player.getScore().addScore(player.getAircraft().get(i));
+				player.setScore(player.getScore()
+						+ player.getAircraft().get(i).getScore());
 
 				player.getFlightStrips().remove(getFlightStripFromAircraft(
 						player.getAircraft().get(i)));
@@ -500,10 +501,11 @@ public abstract class Game extends Scene {
 				+ " aircraft in the airspace.", 32 + X_OFFSET, 32);
 		
 		//Print the player's total score
-		graphics.printCentred("Total Score: " + String.valueOf(player.getScore().getScore()),
+		graphics.printCentred("Total Score: " + String.valueOf(player.getScore()),
 				Main.TARGET_WIDTH / 3 + X_OFFSET, 32, 1, 150);
 		
-		graphics.printCentred("Lives : " + player.getLives(), 32 + X_OFFSET, window.height() - Y_OFFSET, 50, 2);
+		graphics.print("Lives : " + player.getLives(),
+				X_OFFSET + 32, window.height() - Y_OFFSET + 5, 1);
 	}
 
 	/**
@@ -723,7 +725,7 @@ public abstract class Game extends Scene {
 		//playSound(audio.newSoundEffect("sfx" + File.separator + "crash.ogg"));
 
 		Main.closeScene();
-		Main.setScene(new GameOver(plane1, plane2, player.getScore().getScore()));
+		Main.setScene(new GameOver(plane1, plane2, player.getScore()));
 	}
 
 	/**

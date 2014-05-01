@@ -69,7 +69,7 @@ public class Player implements Serializable {
 	private ArrayList<Powerup> powerups;
 	
 	/** The player's score */
-	private Score score;
+	private int score;
 	
 	/** The player's remaining lives */
 	private int lives;
@@ -105,7 +105,7 @@ public class Player implements Serializable {
 		this.flightGenerationTimeElapsed = 6;
 		this.controlAltitude = 30000;
 		this.lives = 3;
-		this.score = new Score();
+		this.score = 0;
 		this.aircraft = new ArrayList<Aircraft>();
 		this.flightStrips = new ArrayList<FlightStrip>();
 		this.powerups = new ArrayList<Powerup>();
@@ -273,7 +273,7 @@ public class Player implements Serializable {
 	 * Gets the player's score.
 	 * @return the player's score
 	 */
-	public Score getScore() {
+	public int getScore() {
 		return score;
 	}
 	
@@ -405,7 +405,7 @@ public class Player implements Serializable {
 	 * Sets the player's score.
 	 * @param score - the new score
 	 */
-	public void setScore(Score score) {
+	public void setScore(int score) {
 		this.score = score;
 	}
 	
