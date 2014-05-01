@@ -71,8 +71,12 @@ public class GameOver extends Scene {
 		aircraft2 = plane2;
 		origin = new Vector(Game.X_OFFSET, Game.Y_OFFSET, 0);
 		
-		crash = plane1.getPosition().add(new Vector((plane1.getPosition().getX() - plane2.getPosition().getX()) / 2,
-				(plane1.getPosition().getY() - plane2.getPosition().getY()) / 2, 0)).add(origin);
+		if (aircraft1 != null && aircraft2 != null) {
+			crash = plane1.getPosition().add(new Vector((plane1.getPosition().getX()
+							- plane2.getPosition().getX()) / 2,
+					(plane1.getPosition().getY()
+							- plane2.getPosition().getY()) / 2, 0)).add(origin);
+		}
 		
 		this.score = score;
 		
@@ -84,9 +88,11 @@ public class GameOver extends Scene {
 		Vector explosionPos = midPoint.sub(new Vector(explosion.width()/(framesAcross*2),
 				explosion.height()/(framesDown*2), 0));
 		
-		explosionAnim = new SpriteAnimation(explosion,
-				(int)explosionPos.getX(), (int)explosionPos.getY(),
-				6, 16, framesAcross, framesDown, false);
+		if (aircraft1 != null && aircraft2 != null) {
+			explosionAnim = new SpriteAnimation(explosion,
+					(int)explosionPos.getX(), (int)explosionPos.getY(),
+					6, 16, framesAcross, framesDown, false);
+		}
 	}
 	
 	/**
@@ -126,11 +132,13 @@ public class GameOver extends Scene {
 	 */
 	@Override
 	public void update(double timeDifference) {
-		if (explosionAnim.hasFinished()){
-			timer += timeDifference;
-			textBox.update(timeDifference);
-		} else {
-			explosionAnim.update(timeDifference);
+		if (aircraft1 != null && aircraft2 != null) {
+			if (explosionAnim.hasFinished()){
+				timer += timeDifference;
+				textBox.update(timeDifference);
+			} else {
+				explosionAnim.update(timeDifference);
+			}
 		}
 	}
 
@@ -166,22 +174,29 @@ public class GameOver extends Scene {
 	 */
 	public void draw() {
 		graphics.setColour(graphics.green);
-		graphics.printCentred(aircraft1.getName() + " crashed into " + aircraft2.getName()
-				+ ".", 0, 32, 2, window.width());
+		
+		if (aircraft1 != null && aircraft2 != null) {
+			graphics.printCentred(aircraft1.getName() + " crashed into " + aircraft2.getName()
+					+ ".", 0, 32, 2, window.width());
+		}
+		
 		graphics.printCentred("Total score: " + String.valueOf(score), 0, 64, 4, window.width());
-		if (explosionAnim.hasFinished()) {
-			textBox.draw();
-		} else {
-			aircraft1.draw(new Integer[] {255, 255, 255},
-					(int) aircraft1.getPosition().getZ(), origin);
-			aircraft2.draw(new Integer[] {255, 255, 255},
-					(int) aircraft1.getPosition().getZ(), origin);
-			
-			double radius = 20; // Radius of explosion
-			graphics.setColour(graphics.red);
-			graphics.circle(false, crash.getX() - 5, crash.getY() - 5, radius);
-			
-			explosionAnim.draw();
+		
+		if (aircraft1 != null && aircraft2 != null) {
+			if (explosionAnim.hasFinished()) {
+				textBox.draw();
+			} else {
+				aircraft1.draw(new Integer[] {255, 255, 255},
+						(int) aircraft1.getPosition().getZ(), origin);
+				aircraft2.draw(new Integer[] {255, 255, 255},
+						(int) aircraft1.getPosition().getZ(), origin);
+
+				double radius = 20; // Radius of explosion
+				graphics.setColour(graphics.red);
+				graphics.circle(false, crash.getX() - 5, crash.getY() - 5, radius);
+
+				explosionAnim.draw();
+			}
 		}
 		
 		int opacity = (int)(255 * Math.sin(timer));
