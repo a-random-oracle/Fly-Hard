@@ -79,13 +79,6 @@ public class AircraftTest {
 		assertTrue("Manually controlled = false", false == status);
 	}
 	
-	// Test getSpeed function
-	@Test
-	public void testGetSpeed(){
-		double speed = (int) (testAircraft.getSpeed() + 0.5);
-		assertTrue("Speed = 20", speed == 20.0);
-	}
-	
 	// Test getAltitudeState
 	@Test
 	public void testAltitudeState(){

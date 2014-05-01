@@ -214,7 +214,7 @@ public class Aircraft implements Serializable {
 				// Decrease altitude rapidly (2501/second),
 				// ~11 seconds to fully descend
 				position.setZ(position.getZ() - 2501 * timeDifference);
-			} else { // Gone too low, land it now TODO (check this)
+			} else { // Gone too low, land it now
 				if (flightPlan.getDestinationAirport() != null) {
 					flightPlan.getDestinationAirport().isActive = false;
 					hasFinished = true;
@@ -234,7 +234,7 @@ public class Aircraft implements Serializable {
 		}
 
 		// Update position
-		Vector dv = getVelocity().scaleBy(timeDifference);
+		Vector dv = velocity.scaleBy(timeDifference).scaleBy(getSpeedScale()); //TODO
 		position = position.add(dv);
 
 		// Update target
@@ -424,8 +424,8 @@ public class Aircraft implements Serializable {
 	private void turnBy(double angle) {
 		double cosA = Math.cos(angle);
 		double sinA = Math.sin(angle);
-		double x = getVelocity().getX();
-		double y = getVelocity().getY();
+		double x = velocity.getX();
+		double y = velocity.getY();
 
 		velocity = new Vector((x * cosA) - (y * sinA), (y * cosA) + (x * sinA),
 				velocity.getZ());
@@ -928,22 +928,15 @@ public class Aircraft implements Serializable {
 	 * @return the aircraft's bearing
 	 */
 	public double getBearing() {
-		return Math.atan2(getVelocity().getY(), getVelocity().getX());
-	}
-
-	/**
-	 * Gets the aircraft's speed.
-	 * @return the aircraft's speed
-	 */
-	public double getSpeed() {
-		return getVelocity().magnitude();
+		Vector scaledVelocity = velocity.scaleBy(getSpeedScale());
+		return Math.atan2(scaledVelocity.getY(), scaledVelocity.getX());
 	}
 	
 	/** 
-	 * Gets the aircrafts velocity
-	 * @return the aircraft's velocity
+	 * Gets the current speed modifier due to the player's powerups.
+	 * @return the amount to scale the aircraft's speed by
 	 */
-	public Vector getVelocity() {
+	public double getSpeedScale() {
 		// Check if the player has an active velocity-affecting powerup
 		Player player = null;
 		if (Game.getInstance() != null) {
@@ -968,7 +961,7 @@ public class Aircraft implements Serializable {
 			}
 		}
 		
-		return velocity.scaleBy(speedScale);
+		return speedScale;
 	}
 
 	/**
@@ -996,7 +989,7 @@ public class Aircraft implements Serializable {
 	 * @param height - the altitude to move the aircraft to
 	 */
 	private void setAltitude(int height) {
-		this.getVelocity().setZ(height);
+		this.velocity.setZ(height);
 	}
 
 	/**
