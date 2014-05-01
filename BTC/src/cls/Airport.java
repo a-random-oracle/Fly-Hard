@@ -67,23 +67,43 @@ public class Airport extends Waypoint implements EventHandler, Serializable {
 	 * <p>
 	 * Sets up the airport image, and scales the location attributes.
 	 * </p>
-	 * @param name
-	 * 			the airport's name
-	 * @param x
-	 * 			the position at which the centre of the airport
-	 * 			should be located
-	 * @param y
-	 * 			the position at which the centre of the airport
-	 * 			should be located
+	 * @param name - the airport's name
+	 * @param x - the position at which the centre of the airport
+	 * 				should be located
+	 * @param y - the position at which the centre of the airport
+	 * 				should be located
 	 */
 	public Airport(String name, double x, double y) {
 		super(x, y, true, name, true);
 	}
-	  
+	
+	/**
+	 * Constructs an airport.
+	 * @param airport - the airport to copy
+	 * @param waypoint - the superclass object
+	 */
+	@SuppressWarnings("unchecked")
+	private Airport(Airport airport, Waypoint waypoint) {
+		super(waypoint);
+		isActive = airport.isActive;
+		isArrivalsClicked = airport.isArrivalsClicked;
+		isDeparturesClicked = airport.isDeparturesClicked;
+		aircraftWaitingToLand = (airport.aircraftWaitingToLand != null)
+				? (ArrayList<Aircraft>)
+						airport.aircraftWaitingToLand.clone() : null;
+		aircraftHangar = (airport.aircraftHangar != null)
+				? (ArrayList<Aircraft>)
+						airport.aircraftHangar.clone() : null;
+		timeEntered = (airport.timeEntered != null)
+				? (ArrayList<Double>)
+						airport.timeEntered.clone() : null;
+		hangarSize = airport.hangarSize;
+	}
+	
+	
 	/** 
 	 * Updates the aircraft at the airport.
-	 * @param aircraft
-	 * 			the list of aircraft to check
+	 * @param aircraft - the list of aircraft to check
 	 */
 	public void update(ArrayList<Aircraft> aircraft) {
 		aircraftWaitingToLand.clear();
@@ -116,7 +136,7 @@ public class Airport extends Waypoint implements EventHandler, Serializable {
 		if (aircraftHangar.size() > 0) {
 			// Colour fades from green (fine) to red (danger)
 			// over 5 seconds as plane is waiting
-			int timeWaiting = (int)(Game.getInstance().getTime() - timeEntered.get(0));//FIXME <- null pointer
+			int timeWaiting = (int)(Game.getInstance().getTime() - timeEntered.get(0));
 			
 			for(int i = 0; i < aircraftHangar.size(); i++ ) {
 				int planeTimeWaiting = (int)(Game.getInstance().getTime() - timeEntered.get(0));
@@ -191,12 +211,9 @@ public class Airport extends Waypoint implements EventHandler, Serializable {
 
 	/**
 	 * Handles mouse click events.
-	 * @param key
-	 * 			the key which was pressed
-	 * @param x
-	 * 			the x position of the mouse
-	 * @param y
-	 * 			the y position of the mouse
+	 * @param key - the key which was pressed
+	 * @param x - the x position of the mouse
+	 * @param y - the y position of the mouse
 	 */
 	@Override
 	public void mousePressed(int key, int x, int y) {
@@ -211,12 +228,9 @@ public class Airport extends Waypoint implements EventHandler, Serializable {
 
 	/**
 	 * Handles mouse release events.
-	 * @param key
-	 * 			the key which was pressed
-	 * @param x
-	 * 			the x position of the mouse
-	 * @param y
-	 * 			the y position of the mouse
+	 * @param key - the key which was pressed
+	 * @param x - the x position of the mouse
+	 * @param y - the y position of the mouse
 	 */
 	@Override
 	public void mouseReleased(int key, int x, int y) {
@@ -238,10 +252,8 @@ public class Airport extends Waypoint implements EventHandler, Serializable {
 	
 	/**
 	 * Determines whether the arrivals area has just been clicked.
-	 * @param x
-	 * 			the x position of the mouse
-	 * @param y
-	 * 			the y position of the mouse
+	 * @param x - the x position of the mouse
+	 * @param y - the y position of the mouse
 	 * @return <code>true</code> if the arrivals area has been clicked,
 	 * 			<code>false</code> otherwise
 	 */
@@ -251,10 +263,8 @@ public class Airport extends Waypoint implements EventHandler, Serializable {
 	
 	/**
 	 * Determines whether the departures area has just been clicked.
-	 * @param x
-	 * 			the x position of the mouse
-	 * @param y
-	 * 			the y position of the mouse
+	 * @param x - the x position of the mouse
+	 * @param y - the y position of the mouse
 	 * @return <code>true</code> if the departures area has been clicked,
 	 * 			<code>false</code> otherwise
 	 */
@@ -269,18 +279,12 @@ public class Airport extends Waypoint implements EventHandler, Serializable {
 	 * The region to check starts at the point (x, y), with width
 	 * 'width' and height 'height'.
 	 * </p>
-	 * @param testX
-	 * 			the x position of the point to test
-	 * @param testY
-	 * 			the y position of the point to test
-	 * @param x
-	 * 			the x co-ord of the top-left of the region
-	 * @param y
-	 * 			the y co-ord of the top-left of the region
-	 * @param width
-	 * 			the width of the region
-	 * @param height
-	 * 			the height of the region
+	 * @param testX - the x position of the point to test
+	 * @param testY - the y position of the point to test
+	 * @param x - the x co-ord of the top-left of the region
+	 * @param y - the y co-ord of the top-left of the region
+	 * @param width - the width of the region
+	 * @param height - the height of the region
 	 * @return <code>true</code> if the position is within the region specified,
 	 * 			<code>false</code> otherwise
 	 */
@@ -294,8 +298,7 @@ public class Airport extends Waypoint implements EventHandler, Serializable {
 	
 	/**
 	 * Calculates whether a position is within the arrivals area.
-	 * @param position
-	 * 			the position to check
+	 * @param position - the position to check
 	 * @return <code>true</code> if the position is within the arrivals area,
 	 * 			otherwise <code>false</code>
 	 */
@@ -311,11 +314,9 @@ public class Airport extends Waypoint implements EventHandler, Serializable {
 	
 	/**
 	 * Calculates whether a position is within the arrivals area, with an optional offset.
-	 * @param position
-	 * 			the position to check
-	 * @param applyOffset
-	 * 			<code>true</code> if the airspace offset should be taken
-	 * 			into consideration, otherwise <code>false</code>
+	 * @param position - the position to check
+	 * @param applyOffset - <code>true</code> if the airspace offset should be taken
+	 * 							into consideration, otherwise <code>false</code>
 	 * @return <code>true</code> if the position is within the arrivals area,
 	 * 			otherwise <code>false</code>
 	 */
@@ -331,8 +332,7 @@ public class Airport extends Waypoint implements EventHandler, Serializable {
 	
 	/**
 	 * Calculates whether a position is within the departures area.
-	 * @param position
-	 * 			the point to be tested
+	 * @param position - the point to be tested
 	 * @return <code>true</code> if the position is within the departures area,
 	 * 			otherwise <code>false</code>
 	 */
@@ -366,8 +366,7 @@ public class Airport extends Waypoint implements EventHandler, Serializable {
 	 * The aircraft will only be added if the current size is less than the maximum
 	 * specified by hangarSize.
 	 * </p>
-	 * @param aircraft
-	 * 			the aircraft to add to the hangar
+	 * @param aircraft - the aircraft to add to the hangar
 	 */
 	public void addToHangar(Aircraft aircraft) {
 		if (aircraftHangar.size() < hangarSize) {
@@ -392,8 +391,7 @@ public class Airport extends Waypoint implements EventHandler, Serializable {
 	
 	/**
 	 * Calculates the longest amount of time any aircraft has been waiting.
-	 * @param currentTime
-	 * 			the current game time
+	 * @param currentTime - the current game time
 	 * @return the longest amount of time an aircraft has been waiting for
 	 */
 	public double getLongestTimeInHangar(double currentTime) {
@@ -434,52 +432,102 @@ public class Airport extends Waypoint implements EventHandler, Serializable {
 		return Math.min(xScale, yScale);
 	}
 	
+	/**
+	 * Gets the airport's x position.
+	 * @return the airport's x position
+	 */
 	private double getLocationX() {
 		return getLocation().getX()
 				- ((RELATIVE_ARRIVALS_X + (RELATIVE_ARRIVALS_WIDTH / 2))
 						* getMinScale());
 	}
 	
+	/**
+	 * Gets the airport's y position.
+	 * @return the airport's y position
+	 */
 	private double getLocationY() {
 		return getLocation().getY()
 				- ((RELATIVE_ARRIVALS_Y + (RELATIVE_ARRIVALS_HEIGHT / 2))
 						* getMinScale());
 	}
 	
+	/**
+	 * Gets the airport's arrivals area's x position.
+	 * @return the airport's arrivals area's x position
+	 */
 	private double getArrivalsX() {
 		return getLocationX() + (RELATIVE_ARRIVALS_X * getMinScale());
 	}
 	
+	/**
+	 * Gets the airport's arrivals area's y position.
+	 * @return the airport's arrivals area's y position
+	 */
 	private double getArrivalsY() {
 		return getLocationY() + (RELATIVE_ARRIVALS_Y * getMinScale());
 	}
 	
+	/**
+	 * Gets the airport's arrivals area's width.
+	 * @return the airport's arrivals area's width
+	 */
 	private double getArrivalsWidth() {
 		return RELATIVE_ARRIVALS_WIDTH * getMinScale();
 	}
 	
+	/**
+	 * Gets the airport's arrivals area's height.
+	 * @return the airport's arrivals area's height
+	 */
 	private double getArrivalsHeight() {
 		return RELATIVE_ARRIVALS_HEIGHT * getMinScale();
 	}
 	
+	/**
+	 * Gets the airport's arrivals area's height.
+	 * @return the airport's arrivals area's height
+	 */
 	private double getDeparturesX() {
 		return getLocationX() + (RELATIVE_DEPARTURES_X * getMinScale());
 	}
 	
+	/**
+	 * Gets the airport's departures area's y position.
+	 * @return the airport's departures area's y position
+	 */
 	private double getDeparturesY() {
 		return getLocationY() + (RELATIVE_DEPARTURES_Y * getMinScale());
 	}
 	
+	/**
+	 * Gets the airport's departures area's width.
+	 * @return the airport's departures area's width
+	 */
 	private double getDeparturesWidth() {
 		return RELATIVE_DEPARTURES_WIDTH * getMinScale();
 	}
 	
+	/**
+	 * Gets the airport's departures area's height.
+	 * @return the airport's departures area's height
+	 */
 	private double getDeparturesHeight() {
 		return RELATIVE_DEPARTURES_HEIGHT * getMinScale();
 	}
 	
-	public void setIsActive(boolean newValue) {
-		this.isActive = newValue;
+	/**
+	 * Sets the airport as active.
+	 */
+	public void setActive() {
+		this.isActive = true;
+	}
+	
+	/**
+	 * Sets the airport as not active.
+	 */
+	public void setInactive() {
+		this.isActive = false;
 	}
 	
 	/**
@@ -494,6 +542,13 @@ public class Airport extends Waypoint implements EventHandler, Serializable {
 			aircraftHangar.remove(0);
 			timeEntered.remove(0);
 		}	
+	}
+	
+	/**
+	 * Clones the airport.
+	 */
+	public Airport clone() {
+		return new Airport(this, super.clone());
 	}
 	
 }

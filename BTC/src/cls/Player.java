@@ -119,15 +119,19 @@ public class Player implements Serializable {
 	
 	/**
 	 * Creates a player.
-	 * @param player - the player to clone
+	 * @param player - the player to copy
 	 */
-	public Player(Player player) {
+	@SuppressWarnings("unchecked")
+	private Player(Player player) {
 		this.id = player.id;
-		this.airports = player.airports;
-		this.waypoints = player.waypoints;
+		this.airports = (player.airports != null) ? player.airports.clone() : null;
+		this.waypoints = (player.waypoints != null)
+				? player.waypoints.clone() : null;
 		this.maxAircraft = player.maxAircraft;
-		this.selectedAircraft = player.selectedAircraft;
-		this.selectedWaypoint = player.selectedWaypoint;
+		this.selectedAircraft = (player.selectedAircraft != null)
+				? player.selectedAircraft.clone() : null;
+		this.selectedWaypoint = (player.selectedWaypoint != null)
+				? player.selectedWaypoint.clone() : null;
 		this.selectedPathpoint = player.selectedPathpoint;
 		this.compassClicked = player.compassClicked;
 		this.waypointClicked = player.waypointClicked;
@@ -135,10 +139,13 @@ public class Player implements Serializable {
 		this.controlAltitude = player.controlAltitude;
 		this.lives = player.lives;
 		this.score = player.score;
-		this.aircraft = player.aircraft;
-		this.flightStrips = player.flightStrips;
-		this.powerups = player.powerups;
-		this.aircraftColour = player.aircraftColour;
+		this.aircraft = (player.aircraft != null)
+				? (ArrayList<Aircraft>) player.aircraft.clone() : null;
+		this.flightStrips = (player.flightStrips != null)
+				? (ArrayList<FlightStrip>) player.flightStrips.clone() : null;
+		this.powerups = (player.powerups != null)
+				? (ArrayList<Powerup>) player.powerups.clone() : null;
+		this.aircraftColour = player.aircraftColour.clone();
 	}
 	
 	
@@ -427,6 +434,14 @@ public class Player implements Serializable {
 				+ ", flightGenerationTimeElapsed=" + flightGenerationTimeElapsed
 				+ ", controlAltitude=" + controlAltitude
 				+ ", score=" + score + "]";
+	}
+	
+	
+	/**
+	 * Clones the player.
+	 */
+	public Player clone() {
+		return new Player(this);
 	}
 	
 }

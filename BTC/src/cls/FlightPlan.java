@@ -29,7 +29,18 @@ public class FlightPlan implements Serializable {
 	/** The airport which the aircraft following this path is heading towards */
 	private Airport destinationAirport;
 	
-	FlightPlan(Waypoint[] route, String originName, String destinationName,
+	
+	/**
+	 * Constructs a flight plan.
+	 * @param route - the waypoints to use
+	 * @param originName - the name of the origin location
+	 * @param destinationName - the name of the destination location
+	 * @param originPoint - the point at which the flight plan starts
+	 * @param destinationPoint - the point at which the flight plan ends
+	 * @param originAirport - the airport which the aircraft originated at
+	 * @param destinationAirport - the airport which the aircraft is travelling to
+	 */
+	public FlightPlan(Waypoint[] route, String originName, String destinationName,
 			Waypoint originPoint, Waypoint destinationPoint,
 			Airport originAirport, Airport destinationAirport) {
 		this.route = findGreedyRoute(originPoint, destinationPoint, route);
@@ -41,30 +52,78 @@ public class FlightPlan implements Serializable {
 		this.destinationAirport= destinationAirport;
 	}
 	
+	/**
+	 * Constructs a flight plan.
+	 * @param flightPlan - the flight plan to copy
+	 */
+	private FlightPlan(FlightPlan flightPlan) {
+		route = (flightPlan.route != null)
+				? flightPlan.route.clone() : null;
+		originName = flightPlan.originName;
+		origin = (flightPlan.origin != null)
+				? flightPlan.origin.clone() : null;
+		destinationName = flightPlan.destinationName;
+		destination = (flightPlan.destination != null)
+				? flightPlan.destination.clone() : null;
+		originAirport = (flightPlan.originAirport != null)
+				? flightPlan.originAirport.clone() : null;
+		destinationAirport = (flightPlan.destinationAirport != null)
+				? flightPlan.destinationAirport.clone() : null;
+	}
+	
+	
+	/**
+	 * Gets the route which the flight plan describes.
+	 * @return the route which the flight plan describes
+	 */
 	public Waypoint[] getRoute() {
 		return route;
 	}
 	
+	/**
+	 * Gets the name of the location at the beginning of the flight plan.
+	 * @return the name of the location at the beginning of the flight plan.
+	 */
 	public String getOriginName() {
 		return originName;
 	}
 	
+	/**
+	 * Gets the location at the beginning of the flight plan.
+	 * @return the location at the beginning of the flight plan.
+	 */
 	public Vector getOrigin() {
 		return origin;
 	}
 	
+	/**
+	 * Gets the name of the location at the end of the flight plan.
+	 * @return the name of the location at the end of the flight plan.
+	 */
 	public String getDestinationName() {
 		return destinationName;
 	}
 	
+	/**
+	 * Gets the location at the end of the flight plan.
+	 * @return the location at the end of the flight plan.
+	 */
 	public Vector getDestination() {
 		return destination;
 	}
 	
+	/**
+	 * Gets the airport at the beginning of the flight plan.
+	 * @return the airport at the beginning of the flight plan.
+	 */
 	public Airport getOriginAirport() {
 		return originAirport;
 	}
 	
+	/**
+	 * Gets the airport at the end of the flight plan.
+	 * @return the airport at the end of the flight plan.
+	 */
 	public Airport getDestinationAirport() {
 		return destinationAirport;
 	}
@@ -96,14 +155,16 @@ public class FlightPlan implements Serializable {
 	
 	/**
 	 * Creates a sensible route from an origin to a destination from an array of waypoints.
-	 * 
-	 * Waypoint costs are considered according to distance from current aircraft location
-	 * Costs are further weighted by distance from waypoint to destination
-	 * @param origin the waypoint from which to begin
-	 * @param destination the waypoint at which to end
-	 * @param waypoints the waypoints to be used
-	 * @return a sensible route between the origin and the destination, using a sensible
-	 * 			amount of waypoint
+	 * <p>
+	 * Waypoint costs are considered according to distance from current aircraft location.
+	 * </p>
+	 * <p>
+	 * Costs are further weighted by distance from waypoint to destination.
+	 * </p>
+	 * @param origin - the waypoint from which to begin
+	 * @param destination - the waypoint at which to end
+	 * @param waypoints - the waypoints to be used
+	 * @return a sensible route between the origin and the destination
 	 */
 	public Waypoint[] findGreedyRoute(Waypoint origin, Waypoint destination,
 			Waypoint[] waypoints) {
@@ -222,8 +283,7 @@ public class FlightPlan implements Serializable {
 	
 	/**
 	 * Gets the position of a waypoint in the flight plan.
-	 * @param waypoint
-	 * 			the waypoint to get the position of
+	 * @param waypoint - the waypoint to get the position of
 	 * @return the position of the specified waypoint
 	 */
 	public int indexOfWaypoint(Waypoint waypoint) {
@@ -232,6 +292,14 @@ public class FlightPlan implements Serializable {
 			if (getRoute()[i] == waypoint) index = i;
 		}
 		return index;
+	}
+	
+	
+	/**
+	 * Clones the flight plan.
+	 */
+	public FlightPlan clone() {
+		return new FlightPlan(this);
 	}
 	
 }

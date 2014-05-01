@@ -295,7 +295,7 @@ public class MultiPlayerGame extends Game {
 
 		if (dataUpdateTimeElapsed > 0.01) {
 			// Send current player's data to the server
-			NetworkManager.sendData(System.currentTimeMillis(), new Player(player));
+			NetworkManager.sendData(System.currentTimeMillis(), player.clone());
 		}
 
 		super.update(timeDifference);
@@ -659,7 +659,7 @@ public class MultiPlayerGame extends Game {
 	public Airport getAirportFromName(String name) {
 		for (Airport airport : getAllAirports()) {
 			// If a match is found, return true
-			if (airport.name.equals(name)) return airport;
+			if (airport.getName().equals(name)) return airport;
 		}
 
 		// Otherwise

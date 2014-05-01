@@ -162,6 +162,41 @@ public class Aircraft implements Serializable {
 		// e.g. the minimum separation distance, turning speed, velocity
 		setDifficultySettings(difficulty);
 	}
+	
+	/**
+	 * Constructor for an aircraft.
+	 * @param aircraft - the aircraft to copy
+	 */
+	@SuppressWarnings("unchecked")
+	private Aircraft(Aircraft aircraft) {
+		turnSpeed = aircraft.turnSpeed;
+		flightName = aircraft.flightName;
+		airline = aircraft.airline;
+		position = (aircraft.position != null)
+				? aircraft.position.clone() : null;
+		velocity = (aircraft.velocity != null)
+				? aircraft.velocity.clone() : null;
+		score = aircraft.score;
+		separationViolationCounter = aircraft.separationViolationCounter;
+		isManuallyControlled = aircraft.isManuallyControlled;
+		hasFinished = aircraft.hasFinished;
+		hasCrashed = aircraft.hasCrashed;
+		isWaitingToLand = aircraft.isWaitingToLand;
+		verticalVelocity = aircraft.verticalVelocity;
+		flightPlan = (aircraft.flightPlan != null)
+				? aircraft.flightPlan.clone() : null;
+		isLanding = aircraft.isLanding;
+		currentTarget = (aircraft.currentTarget != null)
+				? aircraft.currentTarget.clone() : null;
+		manualBearingTarget = aircraft.manualBearingTarget;
+		currentRouteStage = aircraft.currentRouteStage;
+		altitudeState = aircraft.altitudeState;
+		collisionWarningSoundFlag = aircraft.collisionWarningSoundFlag;
+		planesTooNear = (ArrayList<Aircraft>) aircraft.planesTooNear.clone();
+		inDanger = aircraft.inDanger;
+		timeWaiting = aircraft.timeWaiting;
+		airportPenaltyApplied = aircraft.airportPenaltyApplied;
+	}
 
 	/**
 	 * Adjust the aircraft's attributes according to the difficulty of the
@@ -1122,6 +1157,14 @@ public class Aircraft implements Serializable {
 				destinationAirport);
 		
 		currentRouteStage = 0;
+	}
+	
+	
+	/**
+	 * Clones the aircraft.
+	 */
+	public Aircraft clone() {
+		return new Aircraft(this);
 	}
 
 }

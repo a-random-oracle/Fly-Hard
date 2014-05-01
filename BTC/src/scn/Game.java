@@ -766,7 +766,7 @@ public abstract class Game extends Scene {
 		if (aircraft != null && player != null) {
 			// If the aircraft starts at an airport, add it to that airport
 			for (Airport airport : player.getAirports()) {
-				if (aircraft.getFlightPlan().getOriginName().equals(airport.name)) {
+				if (aircraft.getFlightPlan().getOriginName().equals(airport.getName())) {
 					airport.addToHangar(aircraft);
 					return;
 				}
@@ -810,7 +810,7 @@ public abstract class Game extends Scene {
 				originAirport = player.getAirports()[randomAirport];
 				originPoint = player.getAirports()[randomAirport]
 						.getDeparturesCentre();
-				originName = player.getAirports()[randomAirport].name;
+				originName = player.getAirports()[randomAirport].getName();
 			}
 		} else {
 			originPoint = availableOrigins.get(
@@ -819,7 +819,7 @@ public abstract class Game extends Scene {
 			// If random point is an airport, use its departures location
 			if (originPoint instanceof Airport) {
 				originAirport = ((Airport) originPoint);
-				originName = originPoint.name;
+				originName = originPoint.getName();
 				originPoint = ((Airport) originPoint).getDeparturesCentre();
 			} else {
 				for (int i = 0; i < playersLocationWaypoints.length; i++) {
@@ -1042,7 +1042,7 @@ public abstract class Game extends Scene {
 	public Airport getAirportFromName(String name) {
 		for (Airport airport : player.getAirports()) {
 			// If a match is found, return true
-			if (airport.name.equals(name)) return airport;
+			if (airport.getName().equals(name)) return airport;
 		}
 
 		// Otherwise

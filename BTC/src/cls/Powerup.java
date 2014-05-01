@@ -85,11 +85,11 @@ public class Powerup implements Serializable {
 	
 	/**
 	 * Constructor for powerups.
-	 * @param powerup - the powerup to clone
+	 * @param powerup - the powerup to copy
 	 */
-	public Powerup(Powerup powerup) {
-		this.effect = powerup.effect;
-		this.timeActivated = powerup.timeActivated;
+	private Powerup(Powerup powerup) {
+		effect = powerup.effect;
+		timeActivated = powerup.timeActivated;
 	}
 	
 	
@@ -203,7 +203,7 @@ public class Powerup implements Serializable {
 		if (PLAYER_AFFECTED_MAP.get(effect) == 0) {
 			gameInstance.getPlayer().addPowerup(this);
 		} else if (PLAYER_AFFECTED_MAP.get(effect) == 1) {
-			NetworkManager.sendData(-1, new Powerup(this));
+			NetworkManager.sendData(-1, clone());
 		}
 	}
 	
@@ -257,7 +257,7 @@ public class Powerup implements Serializable {
 		MultiPlayerGame gameInstance = ((MultiPlayerGame) Game.getInstance());
 		
 		for (Airport a : gameInstance.getPlayer().getAirports()) {
-			a.setIsActive(true);
+			a.setActive();
 		}
 		
 	}
@@ -269,7 +269,7 @@ public class Powerup implements Serializable {
 		MultiPlayerGame gameInstance = ((MultiPlayerGame) Game.getInstance());
 		
 		for (Airport a : gameInstance.getPlayer().getAirports()) {
-			a.setIsActive(false);
+			a.setInactive();
 		}
 		
 	}
@@ -324,13 +324,21 @@ public class Powerup implements Serializable {
 
 			// Send *both* players' data to the other player
 			NetworkManager.sendData(-1, new Player[] {
-					gameInstance.getPlayer(),
-					gameInstance.getOpposingPlayer()
+					gameInstance.getPlayer().clone(),
+					gameInstance.getOpposingPlayer().clone()
 			});
 			
 			// Reset the selected aircraft
 			gameInstance.deselectAircraft(gameInstance.getPlayer());
 		}
+	}
+	
+	
+	/**
+	 * Clones the powerup.
+	 */
+	public Powerup clone() {
+		return new Powerup(this);
 	}
 	
 }

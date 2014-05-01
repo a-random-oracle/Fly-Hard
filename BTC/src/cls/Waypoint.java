@@ -18,16 +18,16 @@ public class Waypoint implements Serializable {
 	public static final int WAYPOINT_ICON_RADIUS = 8;
 	
 	/** The vector position of the waypoint */
-	private Vector waypointLocation;
+	protected Vector waypointLocation;
 	
 	/** The name to associate with this waypoint */
-	public String name;
+	protected String name;
 	
 	/** Marks whether the waypoint is an entry point, exit point or airport */
-	private boolean entryOrExit;
+	protected boolean entryOrExit;
 	
 	/** The powerup of this waypoint */
-	private Powerup powerup = null;
+	protected Powerup powerup = null;
 	
 	
 	/**
@@ -71,16 +71,20 @@ public class Waypoint implements Serializable {
 		this.entryOrExit = entryOrExit;
 		this.name = "";
 	}
+	
 	/**
 	 * Constructor for waypoints.
-	 * @param waypoint - the waypoint to clone
+	 * @param waypoint - the waypoint to copy
 	 */
-	public Waypoint(Waypoint waypoint) {
-		waypointLocation = waypoint.waypointLocation;
+	protected Waypoint(Waypoint waypoint) {
+		waypointLocation = (waypoint.waypointLocation != null)
+				? waypoint.waypointLocation.clone() : null;
 		name = waypoint.name;
 		entryOrExit = waypoint.entryOrExit;
-		powerup = waypoint.powerup;
+		powerup = (waypoint.powerup != null)
+				? waypoint.powerup.clone() : null;
 	}
+	
 	
 	/**
 	 * Gets the waypoint's vector location.
@@ -205,7 +209,8 @@ public class Waypoint implements Serializable {
 			this.powerup = powerup;
 		}
 	}
-
+	
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -215,7 +220,7 @@ public class Waypoint implements Serializable {
 				+ ((waypointLocation == null) ? 0 : waypointLocation.hashCode());
 		return result;
 	}
-
+	
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -231,6 +236,14 @@ public class Waypoint implements Serializable {
 		} else if (!waypointLocation.equals(other.waypointLocation))
 			return false;
 		return true;
+	}
+	
+	
+	/**
+	 * Clones the waypoint.
+	 */
+	public Waypoint clone() {
+		return new Waypoint(this);
 	}
 	
 }

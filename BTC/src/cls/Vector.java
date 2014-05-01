@@ -48,6 +48,16 @@ public class Vector implements Serializable {
 		this.z = z;
 	}
 	
+	/**
+	 * Constructor for a vector.
+	 * @param vector - the vector to copy
+	 */
+	private Vector(Vector vector) {
+		x = vector.x;
+		y = vector.y;
+		z = vector.z;
+	}
+	
 	
 	/**
 	 * Gets the x position of the vector.
@@ -213,6 +223,14 @@ public class Vector implements Serializable {
 		return "< Vector: X = " + getX()
 				+ " Y = " + getY()
 				+ " Z = " + getZ() + " >";
+	}
+	
+	
+	/**
+	 * Clones the vector.
+	 */
+	public Vector clone() {
+		return new Vector(this);
 	}
 
 }

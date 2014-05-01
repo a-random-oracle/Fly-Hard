@@ -74,6 +74,19 @@ public class FlightStrip implements Serializable {
     	this.isVisible = true;
     }
     
+    /**
+     * Constructor for flight strips.
+     * @param flightStrip - the flight strip to copy
+     */
+    private FlightStrip(FlightStrip flightStrip) {
+    	isVisible = flightStrip.isVisible;
+        aircraft = (flightStrip.aircraft != null)
+        		? flightStrip.aircraft.clone() : null;
+        positionY = flightStrip.positionY;
+        width = flightStrip.width;
+        height = flightStrip.height;
+    }
+    
     
     /**
      * Gets the aircraft connected to the flight strip.
@@ -195,5 +208,13 @@ public class FlightStrip implements Serializable {
     public void mousePressed(int key, int x, int y) {}
     
     public void mouseReleased(int key, int mx, int my) {}
+    
+    
+    /**
+	 * Clones the flight strip.
+	 */
+	public FlightStrip clone() {
+		return new FlightStrip(this);
+	}
 
 }
