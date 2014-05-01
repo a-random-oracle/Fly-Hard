@@ -170,8 +170,8 @@ public class MultiPlayerGame extends Game {
 	 */
 	private void setUpGame(int playerPosition) {
 		// Generate the lists of waypoints to pass to the players
-		Waypoint[] player0Waypoints = new Waypoint[6 + 3];
-		Waypoint[] player1Waypoints = new Waypoint[8 + 3];
+		Waypoint[] player0Waypoints = new Waypoint[7 + 3];
+		Waypoint[] player1Waypoints = new Waypoint[7 + 3];
 
 		player0Waypoints[0] = airspaceWaypoints[0];
 		player0Waypoints[1] = airspaceWaypoints[1];
@@ -179,7 +179,7 @@ public class MultiPlayerGame extends Game {
 		player0Waypoints[3] = airspaceWaypoints[3];
 		player0Waypoints[4] = airspaceWaypoints[4];
 		player0Waypoints[5] = airspaceWaypoints[5];
-		player0Waypoints[4] = airspaceWaypoints[6];
+		player0Waypoints[6] = airspaceWaypoints[6];
 
 		player1Waypoints[0] = airspaceWaypoints[7];
 		player1Waypoints[1] = airspaceWaypoints[8];
@@ -190,13 +190,13 @@ public class MultiPlayerGame extends Game {
 		player1Waypoints[6] = airspaceWaypoints[13];
 
 		// Add in location waypoints
-		player0Waypoints[6] = locationWaypoints[0];
-		player0Waypoints[7] = locationWaypoints[1];
-		player0Waypoints[8] = locationWaypoints[4];
+		player0Waypoints[7] = locationWaypoints[0];
+		player0Waypoints[8] = locationWaypoints[1];
+		player0Waypoints[9] = locationWaypoints[4];
 
-		player1Waypoints[8] = locationWaypoints[2];
-		player1Waypoints[9] = locationWaypoints[3];
-		player1Waypoints[10] = locationWaypoints[5];
+		player1Waypoints[7] = locationWaypoints[2];
+		player1Waypoints[8] = locationWaypoints[3];
+		player1Waypoints[9] = locationWaypoints[5];
 
 		// Add airports to lists
 		Airport[] player0Airports = new Airport[1];
