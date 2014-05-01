@@ -66,6 +66,9 @@ public class Aircraft implements Serializable {
 
 	/** The aircraft's score */
 	private int score;
+	
+	/** The time since a separation violation last occured */
+	private double separationViolationCounter;
 
 	/** Whether the aircraft is currently under manual control */
 	private boolean isManuallyControlled = false;
@@ -208,6 +211,8 @@ public class Aircraft implements Serializable {
 	public void update(double timeDifference) {
 		if (hasFinished) return;
 
+		separationViolationCounter += timeDifference;
+		
 		// Update altitude
 		if (isLanding) {
 			if (position.getZ() > 100) {
@@ -530,19 +535,7 @@ public class Aircraft implements Serializable {
 		
 		drawWarningCircles(offset);
 		
-		//test draw score
-		
 		graphics.setColour(128, 128, 128, alpha / 2.5);
-
-		/*if (offset != null) {
-			graphics.print(String.format("%d", score) + "+",
-					position.getX() + (RADIUS / 2) + offset.getX(),
-					position.getY() - (RADIUS / 2) + offset.getY());
-		} else {
-			graphics.print(String.format("%d", score) + "+",
-					position.getX() + (RADIUS / 2), position.getY()
-					- (RADIUS / 2));
-		}*/
 	}
 
 	/**
@@ -722,8 +715,9 @@ public class Aircraft implements Serializable {
 					WARNING_SOUND.play();
 					inDanger = true;
 				}
+				
 				// Decrement score for getting within separation distance
-				decrementScoreSmall();
+				decrementScoreSeparationViolation();
 			}
 		}
 		if (planesTooNear.isEmpty()) {
@@ -1000,36 +994,6 @@ public class Aircraft implements Serializable {
 	public void setAltitudeState(int state) {
 		this.altitudeState = state;
 	}
-
-	public void overwrite(Aircraft updatedAircraft) {
-		// Check that the update insn't null
-		if (updatedAircraft == null) return;
-
-		// Check that the IDs match
-		if (updatedAircraft.getName() != flightName) return;
-
-		turnSpeed = updatedAircraft.turnSpeed;
-	    airline = updatedAircraft.airline;
-		velocity = updatedAircraft.velocity;
-		score = updatedAircraft.score;
-		isManuallyControlled = updatedAircraft.isManuallyControlled;
-		hasFinished = updatedAircraft.hasFinished;
-		isWaitingToLand = updatedAircraft.isWaitingToLand;
-		verticalVelocity = updatedAircraft.verticalVelocity;
-		flightPlan = updatedAircraft.flightPlan;
-		isLanding = updatedAircraft.isLanding;
-		currentTarget = updatedAircraft.currentTarget;
-		manualBearingTarget = updatedAircraft.manualBearingTarget;
-		currentRouteStage = updatedAircraft.currentRouteStage;
-		altitudeState = updatedAircraft.altitudeState;
-		collisionWarningSoundFlag = updatedAircraft.collisionWarningSoundFlag;
-		planesTooNear = updatedAircraft.planesTooNear;
-		timeWaiting = updatedAircraft.timeWaiting;
-		airportPenaltyApplied = updatedAircraft.airportPenaltyApplied;
-		
-		/** The aircraft's current position */
-		//private Vector position;
-	}
 	
 	/**
 	 * Generates the hash code for this aircraft.
@@ -1097,6 +1061,13 @@ public class Aircraft implements Serializable {
 
 	public void setScore(int newScore) {
 		score = newScore;
+	}
+	
+	private void decrementScoreSeparationViolation() {
+		if (separationViolationCounter > 0.25) {
+			decrementScoreSmall();
+			separationViolationCounter = 0;
+		}
 	}
 	
 	public void decrementScoreSmall() {
