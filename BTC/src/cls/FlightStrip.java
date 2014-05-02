@@ -149,7 +149,7 @@ public class FlightStrip implements Serializable {
      */
     public void draw(double xOffset, double yOffset) {
     	if (isVisible) {
-    		graphics.setFont(Main.flightstripFont);
+    		graphics.setFont(Main.mainFont);
     		drawOutline(xOffset, yOffset);
     		drawFlightNumber(xOffset, yOffset);
     		drawAirline(xOffset, yOffset);
@@ -170,38 +170,44 @@ public class FlightStrip implements Serializable {
 
     private void drawFlightNumber(double xOffset, double yOffset) {
     	graphics.setColour(graphics.black);
-    	graphics.print(aircraft.getName().substring(0,2), (xOffset + 2), (yOffset + positionY + 2));
-    	graphics.print(aircraft.getName().substring(2,5), (xOffset + 2), (yOffset + positionY + 30));
+    	graphics.setFont(Main.flightstripFontSuper);
+    	graphics.printCentred(aircraft.getName().substring(0,2), (xOffset + 22), (yOffset + positionY + 2), 1, 1);
+    	graphics.setFont(Main.flightstripFontMid);
+    	graphics.printCentred(aircraft.getName().substring(2,5), (xOffset + 22), (yOffset + positionY + 30), 1, 1);
+    	graphics.setFont(Main.mainFont);
     }
 
     private void drawAirline(double xOffset, double yOffset) {
     	graphics.setColour(graphics.white);
-        graphics.print(aircraft.getAirline(), (xOffset + 2 + 40), (yOffset + positionY + 2));
+        graphics.print(aircraft.getAirline().toUpperCase(), (xOffset + 4 + 40), (yOffset + positionY + 2));
 
     }
 
     private void drawAltitude(double xOffset, double yOffset) {
 //        btc.Main.display.drawString((float)(xOffset + (width/2)), (float)(yOffset + positionY + height), (new Integer(aircraft.getAltitude()).toString() + "ft"));
-    	graphics.print(new Integer(aircraft.getAltitude()).toString() + "ft", (xOffset + (width/2)), ((yOffset + positionY + height) - 24));
+    	graphics.print(new Integer(aircraft.getAltitude()).toString() + "FT", (xOffset + 4 + 40), ((yOffset + positionY + height) - 30));
     }
     
     private void drawRoute(double xOffset, double yOffset) {
-    	graphics.print(aircraft.getOrigin().substring(0, 3) + " TO " + aircraft.getDestination().substring(0, 3), (xOffset + (width/2) - 20), (yOffset + positionY + height - 36));
+    	graphics.print(aircraft.getOrigin().substring(0, 3).toUpperCase() + " TO " + aircraft.getDestination().substring(0, 3).toUpperCase(), (xOffset + (width/2) + 8), (yOffset + positionY + height - 45));
     }
     
     private void drawStatus(double xOffset, double yOffset) {
+    	graphics.setFont(Main.flightstripFontWarn);
     	if (aircraft.isInDanger()) {
     		graphics.setColour(graphics.red);
     		graphics.rectangle(true, (xOffset + 42), (yOffset + positionY + height - 14), 116, 12);
     		graphics.setColour(graphics.white);
-            graphics.printCentred("SHIIIIIIIIT", (xOffset + 100), (yOffset + positionY + height - 14), 1, 1);
+            graphics.printCentred("WARNING", (xOffset + 100), (yOffset + positionY + height - 17), 1, 1);
 
     	} else {
     		graphics.setColour(graphics.green);
     		graphics.rectangle(true, (xOffset + 42), (yOffset + positionY + height - 14), 116, 12);
-    		graphics.setColour(graphics.white);
-            graphics.printCentred("AWW YISS", (xOffset + 100), (yOffset + positionY + height - 14), 1, 1);
+    		graphics.setColour(graphics.black);
+            graphics.printCentred("ON COURSE", (xOffset + 100), (yOffset + positionY + height - 17), 1, 1);
     	}
+    	graphics.setFont(Main.mainFont);
+    	graphics.setColour(graphics.white);
     }
     
     
