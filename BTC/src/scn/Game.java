@@ -328,7 +328,6 @@ public abstract class Game extends Scene {
 		drawWaypoints(player);
 		drawAircraft(player);
 		drawSelectedAircraft();
-		//drawManualControlButton(player);
 		
 		graphics.setViewport();
 		
@@ -336,6 +335,16 @@ public abstract class Game extends Scene {
 		for (FlightStrip fs : player.getFlightStrips()) {
 			fs.draw(16, 20);
 		}
+		
+		// Display the player's lives
+		graphics.print("Lives : " + player.getLives(),
+				getXOffset() + 32,
+				window.height() - getYOffset() + 5, 1);
+
+		// Display the player's score
+		graphics.print("Score : " + player.getScore(),
+				getXOffset() + 32,
+				window.height() - getYOffset() + 15, 1);
 	}
 
 	/**
@@ -479,10 +488,6 @@ public abstract class Game extends Scene {
 		// Print the number of aircraft in the airspace to the screen
 		graphics.print(String.valueOf(aircraftCount)
 				+ " aircraft in the airspace.", 32 + X_OFFSET, 32);
-		
-		//Print the player's total score
-		graphics.printCentred("Total Score: " + String.valueOf(player.getScore()),
-				Main.TARGET_WIDTH / 3 + X_OFFSET, 32, 1, 150);
 	}
 
 	/**

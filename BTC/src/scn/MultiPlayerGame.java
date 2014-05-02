@@ -362,16 +362,6 @@ public class MultiPlayerGame extends Game {
 
 		// Draw the middle zone
 		drawMiddleZone();
-		
-		// Display the player's lives
-		graphics.print("Lives : " + player.getLives(),
-				getXOffset() + 32,
-				window.height() - getYOffset() + 5, 1);
-		
-		// Display the opponent's lives
-		graphics.printRight("Opponents Lives : " + opposingPlayer.getLives(),
-				window.width() - getXOffset() - 32,
-				window.height() - getYOffset() + 5, 1, 0);
 	}
 
 	@Override
@@ -387,10 +377,7 @@ public class MultiPlayerGame extends Game {
 
 		drawSelectedAircraft();
 
-		//drawManualControlButton(player);
-
 		drawPowerupPoints();
-
 
 		// Draw flight strips
 		graphics.setViewport();
@@ -400,19 +387,61 @@ public class MultiPlayerGame extends Game {
 			for (FlightStrip fs : player.getFlightStrips()) {
 				fs.draw(16, 20);
 			}
+			
+			// Display the player's lives
+			graphics.print("Lives : " + player.getLives(),
+					getXOffset() + 32,
+					window.height() - getYOffset() + 5, 1);
+			
+			// Display the player's score
+			graphics.print("Score : " + player.getScore(),
+					getXOffset() + 32,
+					window.height() - getYOffset() + 15, 1);
 
 			for (FlightStrip fs : opposingPlayer.getFlightStrips()) {
 				fs.draw(window.width() - (getXOffset()) + 16, 20);
 			}
+			
+			// Display the opponent's lives
+			graphics.printRight("Opponent's Lives : " + opposingPlayer.getLives(),
+					window.width() - getXOffset() - 32,
+					window.height() - getYOffset() + 5, 1, 0);
+			
+			// Display the opponent's score
+			graphics.printRight("Opponent's Score : " + opposingPlayer.getScore(),
+					window.width() - getXOffset() - 32,
+					window.height() - getYOffset() + 15, 1, 0);
+
 			break;
 		case 1:
 			for (FlightStrip fs : player.getFlightStrips()) {
 				fs.draw(window.width() - (getXOffset()) + 16, 20);
 			}
+			
+			// Display the opponent's lives
+			graphics.print("Opponents Lives : " + opposingPlayer.getLives(),
+					window.width() - getXOffset() - 32,
+					window.height() - getYOffset() + 15, 1);
+
+			// Display the opponent's score
+			graphics.print("Opponent's Score : " + opposingPlayer.getScore(),
+					window.width() - getXOffset() - 32,
+					window.height() - getYOffset() + 5, 1);
 
 			for (FlightStrip fs : opposingPlayer.getFlightStrips()) {
 				fs.draw(16, 20);
 			}
+			
+			// Display the player's lives
+			graphics.printRight("Lives : " + player.getLives(),
+					getXOffset() + 32,
+					window.height() - getYOffset() + 5, 1, 0);
+			
+			// Display the player's score
+			graphics.printRight("Score : " + player.getScore(),
+					getXOffset() + 32,
+					window.height() - getYOffset() + 15, 1, 0);
+
 			break;
 		}
 	}
