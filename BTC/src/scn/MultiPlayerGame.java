@@ -452,14 +452,14 @@ public class MultiPlayerGame extends Game {
 			break; 
 		case 1: 
 			// Display the player's score 
-			graphics.printRight("Score : " + player.getLives(),
+			graphics.printRight("Lives : " + player.getLives(),
 					window.width() - getXOffset() - 32,
-					window.height() - getYOffset() + 15, 1, 0);
+					window.height() - getYOffset() + 5, 1, 0);
 
 			// Display the opponent's score
-			graphics.print("Opponent's Score : " + opposingPlayer.getLives(),
+			graphics.print("Opponent's Lives : " + opposingPlayer.getLives(),
 					getXOffset() + 32,
-					window.height() - getYOffset() + 15, 1);
+					window.height() - getYOffset() + 5, 1);
 
 			break;
 		}
