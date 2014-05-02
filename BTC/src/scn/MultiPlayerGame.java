@@ -7,7 +7,6 @@ import org.newdawn.slick.Color;
 
 import btc.Main;
 import net.NetworkManager;
-import lib.SpriteAnimation;
 import lib.jog.graphics;
 import lib.jog.input;
 import lib.jog.window;
@@ -17,7 +16,6 @@ import cls.Airport;
 import cls.FlightStrip;
 import cls.Player;
 import cls.Powerup;
-import cls.Vector;
 import cls.Waypoint;
 
 public class MultiPlayerGame extends Game {
@@ -75,9 +73,6 @@ public class MultiPlayerGame extends Game {
 
 	/** The list of aircraft which are currently being transferred */
 	private ArrayList<Aircraft> aircraftUnderTransfer;
-	
-	/** A sprite animation to handle the frame by frame drawing of the explosion */
-	private SpriteAnimation explosionAnim;
 	
 	/** Whether the game is about to exit to the lobby */
 	private boolean exitingToLobby;
@@ -561,36 +556,6 @@ public class MultiPlayerGame extends Game {
 				}
 			}
 		}
-	}
-
-	public void explodePlanes(Aircraft plane1, Aircraft plane2) {
-		// The number of frames in each dimension of the animation image
-		int framesAcross = 8;
-		int framesDown = 4;
-		
-		Vector origin = new Vector(Game.getXOffset(), Game.getYOffset(), 0);
-		
-		/*Vector crash = plane1.getPosition().add(
-				new Vector((plane1.getPosition().getX()
-						- plane2.getPosition().getX()) / 2,
-						(plane1.getPosition().getY()
-								- plane2.getPosition().getY()) / 2, 0))
-								.add(origin);*/
-
-		// Load explosion animation image
-		Image explosion = graphics.newImage("gfx" + File.separator
-				+ "ani" + File.separator + "explosionFrames.png");
-		
-		Vector midPoint = plane1.getPosition().add(plane2.getPosition())
-				.scaleBy(0.5).add(origin);
-		Vector explosionPos = midPoint.sub(new Vector(explosion.width()/(framesAcross*2),
-				explosion.height()/(framesDown*2), 0));
-		
-		explosionAnim = new SpriteAnimation(explosion,
-				(int)explosionPos.getX(), (int)explosionPos.getY(),
-				6, 16, framesAcross, framesDown, false);
-		
-		explosionAnim.draw();
 	}
 
 	@Override

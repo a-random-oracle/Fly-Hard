@@ -4,6 +4,7 @@ import java.io.File;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 
+import lib.SpriteAnimation;
 import lib.jog.audio;
 import lib.jog.graphics;
 import lib.jog.input;
@@ -15,18 +16,19 @@ import cls.Aircraft;
 import cls.Airport;
 import cls.FlightStrip;
 import cls.Player;
+import cls.Vector;
 import cls.Player.TurningState;
 import cls.Waypoint;
 import btc.Main;
 
 public abstract class Game extends Scene {
-	
+
 	/** The distance between the left edge of the screen and the map area */
 	private static final int X_OFFSET = 196;
 
 	/** The distance between the top edge of the screen and the map area */
 	private static final int Y_OFFSET = 48;
-	
+
 	/** The image to use for aircraft */
 	public static Image aircraftImage;
 
@@ -35,10 +37,10 @@ public abstract class Game extends Scene {
 
 	/** The unique instance of this class */
 	protected static Game instance = null;
-	
+
 	/** The time since the scene began */
 	protected static double timeElapsed;
-	
+
 	/** The music to play during the game scene */
 	protected static Music music;
 
@@ -53,15 +55,21 @@ public abstract class Game extends Scene {
 
 	/** The waypoints through which aircraft must travel to reach their destination */
 	protected static Waypoint[] airspaceWaypoints;
-	
+
 	/** Difficulty settings: easy, medium and hard */
 	public enum DifficultySetting {EASY, MEDIUM, HARD}
-	
+
 	/** The current player */
 	protected Player player;
-	
+
 	/** The current difficulty setting */
 	protected DifficultySetting difficulty;
+
+	/** A sprite animation to handle the frame by frame drawing of the explosion */
+	private SpriteAnimation explosionAnim;
+
+	/** Timer to allow for explosion and plane to be shown for a period, followed by the text box */
+	private double timer;
 
 
 	// Constructors ---------------------------------------------------------------------
@@ -84,6 +92,8 @@ public abstract class Game extends Scene {
 	 */
 	@Override
 	public void start() {
+		//initialise the timer
+		timer = 0;
 		// Define airports
 		airports = new Airport[] {
 				new Airport("Mosgrizzly Airport", (1d/7d), (1d/2d)),
@@ -156,12 +166,22 @@ public abstract class Game extends Scene {
 		// Update the time the game has run for
 		timeElapsed += timeDifference;
 
+		//update any explosion animations
+		if (explosionAnim != null) {
+
+			if (explosionAnim.hasFinished()){
+				timer += timeDifference;
+			} else {
+				explosionAnim.update(timeDifference);
+			}
+		}
+
 		// Check if any aircraft in the airspace have collided
 		checkCollisions(timeDifference);
 
 		// Update the player
 		updatePlayer(timeDifference, player);
-		
+
 		// Copy flight strip array
 		@SuppressWarnings("unchecked")
 		ArrayList<FlightStrip> shuffledFlightStrips =
@@ -173,7 +193,7 @@ public abstract class Game extends Scene {
 			fs.update(timeDifference);
 			player.getFlightStrips().add(fs);
 		}
-		
+
 		// Deselect and remove any aircraft which have completed their routes
 		for (int i = player.getAircraft().size() - 1; i >= 0; i--) {
 			if (player.getAircraft().get(i).isFinished()) {
@@ -230,7 +250,7 @@ public abstract class Game extends Scene {
 			}
 		}
 	}
-	
+
 	/**
 	 * Updates a player's attributes.
 	 * <p>
@@ -260,7 +280,7 @@ public abstract class Game extends Scene {
 				}
 			}
 		}
-		
+
 		// Handle turning
 		if (player.getSelectedAircraft() != null
 				&& player.getSelectedAircraft().isManuallyControlled()) {
@@ -276,7 +296,7 @@ public abstract class Game extends Scene {
 		// If the counter has reached 0, then spawn a new aircraft
 		player.setFlightGenerationTimeElapsed(player
 				.getFlightGenerationTimeElapsed() + timeDifference);
-		
+
 		if (player.getFlightGenerationTimeElapsed()
 				>= getFlightGenerationInterval(player)) {
 			player.setFlightGenerationTimeElapsed(
@@ -313,7 +333,7 @@ public abstract class Game extends Scene {
 
 		// Draw individual map features
 		drawMapFeatures();
-		
+
 		// Reset the viewport - these statistics can appear outside the game
 		// area
 		graphics.setViewport();
@@ -328,9 +348,8 @@ public abstract class Game extends Scene {
 		drawWaypoints(player);
 		drawAircraft(player);
 		drawSelectedAircraft();
-		
 		graphics.setViewport();
-		
+
 		// Draw flight strips
 		for (FlightStrip fs : player.getFlightStrips()) {
 			fs.draw(16, 20);
@@ -371,7 +390,7 @@ public abstract class Game extends Scene {
 			}
 		}
 	}
-	
+
 	/**
 	 * Draws additional features around the selected aircraft.
 	 */
@@ -488,6 +507,10 @@ public abstract class Game extends Scene {
 		// Print the number of aircraft in the airspace to the screen
 		graphics.print(String.valueOf(aircraftCount)
 				+ " aircraft in the airspace.", 32 + X_OFFSET, 32);
+
+		//Print the player's total score
+		graphics.printCentred("Total Score: " + String.valueOf(player.getScore()),
+				Main.TARGET_WIDTH / 3 + X_OFFSET, 32, 1, 150);
 	}
 
 	/**
@@ -677,14 +700,47 @@ public abstract class Game extends Scene {
 
 			Aircraft collidedWith = plane.updateCollisions(timeDifference,
 					getAllAircraft());
-			
+
 			if (collidedWith != null) {
-				player.setLives(player.getLives() - 1);
+
 				player.setScore(player.getScore() - 400);
+
+				explodePlanes(plane, collidedWith);
+
 				gameOver(plane, collidedWith, false);
 				return;
 			}
 		}
+	}
+
+	public void explodePlanes(Aircraft plane1, Aircraft plane2) {
+		// The number of frames in each dimension of the animation image
+		int framesAcross = 8;
+		int framesDown = 4;
+
+		Vector origin = new Vector(Game.getXOffset(), Game.getYOffset(), 0);
+
+		/*Vector crash = plane1.getPosition().add(
+				new Vector((plane1.getPosition().getX()
+						- plane2.getPosition().getX()) / 2,
+						(plane1.getPosition().getY()
+								- plane2.getPosition().getY()) / 2, 0))
+								.add(origin);*/
+
+		// Load explosion animation image
+		Image explosion = graphics.newImage("gfx" + File.separator
+				+ "ani" + File.separator + "explosionFrames.png");
+
+		Vector midPoint = plane1.getPosition().add(plane2.getPosition())
+				.scaleBy(0.5).add(origin);
+		Vector explosionPos = midPoint.sub(new Vector(explosion.width()/(framesAcross*2),
+				explosion.height()/(framesDown*2), 0));
+
+		explosionAnim = new SpriteAnimation(explosion,
+				(int)explosionPos.getX(), (int)explosionPos.getY(),
+				6, 16, framesAcross, framesDown, false);
+
+		explosionAnim.draw();
 	}
 
 	/**
@@ -758,7 +814,7 @@ public abstract class Game extends Scene {
 
 			// Otherwise, add the aircraft to the airspace
 			player.getAircraft().add(aircraft);
-			
+
 			if (player.equals(this.player)) {
 				player.getFlightStrips().add(new FlightStrip(aircraft));
 			}
@@ -839,43 +895,43 @@ public abstract class Game extends Scene {
 
 		// Assign a random airline to the flight and generate tag for flightName.
 		switch(Main.getRandom().nextInt(8)) {		//Generates random number between 0-5
-			case 0:
-				carrier = "Doge Air";
-				carrierTag = "DG";
-				break;
-			case 1:
-				carrier = "Britaniair";
-				carrierTag = "BA";
-				break;
-			case 2:
-				carrier = "KDT";
-				carrierTag = "KT";
-				break;
-			case 3:
-				carrier = "Canadair";
-				carrierTag = "CA";
-				break;
-			case 4:
-				carrier = "Wandairline";
-				carrierTag = "WZ";
-				break;
-			case 5:
-				carrier = "Wow Such Air";
-				carrierTag = "WW";
-				break;
-			case 6:
-				carrier = "Planet Express";
-				carrierTag = "PX";
-				break;
-			case 7:
-				carrier = "Aerobonia";
-				carrierTag = "AR";
-				break;
-			default:
-				Exception e = new Exception("Invalid carrier: " + carrier
+		case 0:
+			carrier = "Doge Air";
+			carrierTag = "DG";
+			break;
+		case 1:
+			carrier = "Britaniair";
+			carrierTag = "BA";
+			break;
+		case 2:
+			carrier = "KDT";
+			carrierTag = "KT";
+			break;
+		case 3:
+			carrier = "Canadair";
+			carrierTag = "CA";
+			break;
+		case 4:
+			carrier = "Wandairline";
+			carrierTag = "WZ";
+			break;
+		case 5:
+			carrier = "Wow Such Air";
+			carrierTag = "WW";
+			break;
+		case 6:
+			carrier = "Planet Express";
+			carrierTag = "PX";
+			break;
+		case 7:
+			carrier = "Aerobonia";
+			carrierTag = "AR";
+			break;
+		default:
+			Exception e = new Exception("Invalid carrier: " + carrier
 					+ ".");
-					e.printStackTrace();
-					break;
+			e.printStackTrace();
+			break;
 		}
 
 		// Generate a unique, random flight name, using carrierTag as prefix
@@ -893,7 +949,7 @@ public abstract class Game extends Scene {
 					break;
 				}
 			}
-			
+
 			if (!foundName) {
 				nameTaken = false;
 			}
@@ -906,16 +962,16 @@ public abstract class Game extends Scene {
 				destinationPoint, originPoint, speed,
 				player.getWaypoints(), difficulty, originAirport,
 				destinationAirport);
-		
+
 		return newPlane;
 	}
-	
+
 
 	/**
 	 * Causes deselection of the selected aircraft.
 	 * @param player - the player to reset the selected plane attribute for
 	 */
- 	public void deselectAircraft(Player player) {
+	public void deselectAircraft(Player player) {
 		deselectAircraft(player.getSelectedAircraft(), player);
 	}
 
@@ -964,7 +1020,7 @@ public abstract class Game extends Scene {
 		return locationWaypoints.toArray(
 				new Waypoint[locationWaypoints.size()]);
 	}
-	
+
 	/**
 	 * Returns array of entry points that are fair to be entry points for a plane.
 	 * <p>
@@ -985,7 +1041,7 @@ public abstract class Game extends Scene {
 			// Prevents spawning a plane at a waypoint if:
 			//   - any plane is currently going towards it
 			//   - or any plane is less than 250 from it
-			
+
 			for (Aircraft aircraft : getAllAircraft()) {
 				// Check if any plane is currently going towards the
 				// exit point/chosen originPoint
@@ -1001,7 +1057,7 @@ public abstract class Game extends Scene {
 				availableEntryPoints.add(entryPoint);
 			}
 		}
-		
+
 		return availableEntryPoints;
 	}
 
@@ -1113,7 +1169,7 @@ public abstract class Game extends Scene {
 	public static Game getInstance() {
 		return instance;
 	}
-	
+
 	/**
 	 * Gets the window's x-offset.
 	 * @return the window's x-offset
@@ -1125,7 +1181,7 @@ public abstract class Game extends Scene {
 			return 0;
 		}
 	}
-	
+
 	/**
 	 * Gets the window's y-offset.
 	 * @return the window's y-offset
@@ -1137,7 +1193,7 @@ public abstract class Game extends Scene {
 			return 0;
 		}
 	}
-	
+
 	/**
 	 * Gets the window's x-offset directly.
 	 * @return the window's x-offset
@@ -1145,7 +1201,7 @@ public abstract class Game extends Scene {
 	public static int getXOffsetDirect() {
 		return X_OFFSET;
 	}
-	
+
 	/**
 	 * Gets the window's y-offset directly.
 	 * @return the window's y-offset
@@ -1181,7 +1237,7 @@ public abstract class Game extends Scene {
 				return player;
 			}
 		}
-		
+
 		return null;
 	}
 
@@ -1207,7 +1263,7 @@ public abstract class Game extends Scene {
 	public Airport[] getAllAirports() {
 		return player.getAirports();
 	}
-	
+
 	/**
 	 * Gets an aircraft from its name.
 	 * @param name - the aircraft's name
@@ -1219,10 +1275,10 @@ public abstract class Game extends Scene {
 				return a;
 			}
 		}
-	
+
 		return null;
 	}
-	
+
 	/**
 	 * Gets a flight strip from an aircraft.
 	 * @param aircraft - the aircraft who's flight strip should be returned
@@ -1236,7 +1292,7 @@ public abstract class Game extends Scene {
 				}
 			}
 		}
-		
+
 		return null;
 	}
 
@@ -1247,7 +1303,7 @@ public abstract class Game extends Scene {
 	public double getTime() {
 		return timeElapsed;
 	}
-	
+
 
 	// Mutators -------------------------------------------------------------------------
 
