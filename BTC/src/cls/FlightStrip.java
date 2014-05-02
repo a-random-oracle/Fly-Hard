@@ -182,11 +182,11 @@ public class FlightStrip implements Serializable {
 
     private void drawAltitude(double xOffset, double yOffset) {
 //        btc.Main.display.drawString((float)(xOffset + (width/2)), (float)(yOffset + positionY + height), (new Integer(aircraft.getAltitude()).toString() + "ft"));
-    	graphics.print(new Integer(aircraft.getAltitude()).toString() + "ft", (xOffset + (width/2)), ((yOffset + positionY + height) - 24));
+    	graphics.print(String.format("%,d", (int) aircraft.getPosition().getZ()) + "ft", (xOffset + (width/2)), ((yOffset + positionY + height) - 24));
     }
     
     private void drawRoute(double xOffset, double yOffset) {
-    	graphics.print(aircraft.getOrigin().substring(0, 3) + " TO " + aircraft.getDestination().substring(0, 3), (xOffset + (width/2) - 20), (yOffset + positionY + height - 36));
+    	graphics.print(aircraft.getFlightPlan().getOriginName().substring(0, 3) + " TO " + aircraft.getFlightPlan().getDestinationName().substring(0, 3), (xOffset + (width/2) - 20), (yOffset + positionY + height - 36));
     }
     
     private void drawStatus(double xOffset, double yOffset) {

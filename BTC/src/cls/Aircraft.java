@@ -76,7 +76,7 @@ public class Aircraft implements Serializable {
 	/** Whether the aircraft has reached its destination */
 	private boolean hasFinished = false;
 	
-	/** Whether the aircraft is crashed */
+	/** Whether the aircraft has crashed */
 	private boolean hasCrashed = false;
 	
 	/** Whether the aircraft is currently at an airport and waiting to land */
@@ -274,8 +274,33 @@ public class Aircraft implements Serializable {
 		}
 
 		// Update position
-		Vector dv = velocity.scaleBy(timeDifference).scaleBy(getSpeedScale()); //TODO
+		Vector dv = velocity.scaleBy(timeDifference).scaleBy(getSpeedScale());
 		position = position.add(dv);
+		
+		// Check if this is a multiplayer game
+		if (Game.getInstance() instanceof MultiPlayerGame) {
+			// Check that the aircraft isn't outside the airspace,
+			// or outside the player's area
+			if (isOutOfAirspaceBounds() || isOutOfPlayersAirspace()) {
+				// Check if the aircraft s under manual control
+				if (isManuallyControlled) {
+					toggleManualControl();
+				} else {
+					resetBearing();
+				}
+			}
+		} else {
+			// Just check that the aircraft isn't outside the airspace
+			if (isOutOfAirspaceBounds()) {
+				// Check if the aircraft s under manual control
+				if (isManuallyControlled) {
+					toggleManualControl();
+				} else {
+					resetBearing();
+				}
+			}
+		}
+		
 
 		// Update target
 		if (currentTarget.equals(flightPlan.getDestination())
@@ -397,13 +422,16 @@ public class Aircraft implements Serializable {
 	public void alterPath(int routeStage, Waypoint newWaypoint) {
 		if ((!newWaypoint.isEntryOrExit()) && (routeStage > -1)) {
 			flightPlan.alterPath(routeStage, newWaypoint);
-			//decrement score as a penalty for altering flightplan
-			decrementScoreSmall();
-			if (!isManuallyControlled)
+			
+			// Decrement score as a penalty for altering the flight plan
+			decrementScoreLarge();
+			
+			if (!isManuallyControlled) {
 				resetBearing();
+			}
+			
 			if (routeStage == currentRouteStage) {
 				currentTarget = newWaypoint.getLocation();
-				// turnTowardsTarget(0);
 			}
 		}
 	}
@@ -822,6 +850,7 @@ public class Aircraft implements Serializable {
 			currentTarget = flightPlan.getRoute()[currentRouteStage]
 					.getLocation();
 		}
+		
 		turnTowardsTarget(0);
 	}
 
@@ -855,13 +884,15 @@ public class Aircraft implements Serializable {
 	 * Causes the aircraft to land at its airport.
 	 */
 	public void land() {
-
 		isWaitingToLand = false;
 		isLanding = true;
-		isManuallyControlled = false;
+		
+		if (isManuallyControlled) {
+			toggleManualControl();
+		}
+		
 		if (flightPlan.getDestinationAirport() != null) {
 			flightPlan.getDestinationAirport().isActive = true;
-
 		}
 	}
 
@@ -905,10 +936,6 @@ public class Aircraft implements Serializable {
 	public Vector getPosition() {
 		return position;
 	}
-
-    public int getAltitude() {
-        return (int)(position.getZ());
-    }
 
 	/**
 	 * Gets the aircraft's name.
@@ -1040,6 +1067,79 @@ public class Aircraft implements Serializable {
 		this.altitudeState = state;
 	}
 	
+	public boolean isInDanger() {
+		return this.inDanger;
+	}
+	
+	public int getScore() {
+		return score;
+	}
+	
+	private void decrementScoreSeparationViolation() {
+		if (separationViolationCounter > 0.25) {
+			decrementScoreSmall();
+			separationViolationCounter = 0;
+		}
+	}
+	
+	/**
+	 * Decrements the aircrafts score by a small amount.
+	 * <p>
+	 * Small = 1
+	 * </p>
+	 */
+	public void decrementScoreSmall() {
+		if(this.score > 0){
+			this.score = this.score - 1;
+		}
+		else return;
+	}
+	
+	/**
+	 * Decrements the aircrafts score by a large amount.
+	 * <p>
+	 * Large = 10
+	 * </p>
+	 */
+	public void decrementScoreLarge() {
+		if(this.score > 0) {
+			this.score = this.score - 10;
+		}
+		else return;
+	}
+	
+	public boolean isAirportPenaltyApplied() {
+		return airportPenaltyApplied;
+	}
+
+	public void setAirportPenaltyApplied(boolean airportPenaltyApplied) {
+		this.airportPenaltyApplied = airportPenaltyApplied;
+	}
+
+	public int getTimeWaiting() {
+		return timeWaiting;
+	}
+
+	public void setTimeWaiting(int timeWaiting) {
+		this.timeWaiting = timeWaiting;
+	}
+	
+	public void generateFlightPlan(Waypoint[] sceneWaypoints,
+			String nameDestination, Waypoint destinationPoint,
+			Airport destinationAirport) {
+		flightPlan = new FlightPlan(sceneWaypoints,
+				flightPlan.getOriginName(),
+				nameDestination,
+				new Waypoint(position.getX(), position.getY(),
+						false, false),
+				destinationPoint,
+				flightPlan.getOriginAirport(),
+				destinationAirport);
+		
+		currentRouteStage = 0;
+	}
+	
+	
 	/**
 	 * Generates the hash code for this aircraft.
 	 * @return the hash code for this aircraft
@@ -1081,92 +1181,6 @@ public class Aircraft implements Serializable {
 			return false;
 		}
 		return true;
-	}
-
-	/**
-	 * Gets name of origin for Flightstrips
-	 * @return The name of the flight's origin.
-	 */
-	
-	public String getOrigin() {
-		return this.flightPlan.getOriginName();
-	}
-	
-	public String getDestination() {
-		return this.flightPlan.getDestinationName();
-	}
-	
-	public boolean isInDanger() {
-		return this.inDanger;
-	}
-	
-	public int getScore() {
-		return score;
-	}
-
-	public void setScore(int newScore) {
-		score = newScore;
-	}
-	
-	private void decrementScoreSeparationViolation() {
-		if (separationViolationCounter > 0.25) {
-			decrementScoreSmall();
-			separationViolationCounter = 0;
-		}
-	}
-	
-	public void decrementScoreSmall() {
-		if(this.score > 0){
-			this.score = this.score - 1;
-		}
-		else return;
-	}
-	
-	public void decrementScoreLarge() {
-		if(this.score > 0) {
-			this.score = this.score - 10;
-		}
-		else return;
-	}
-	
-
-	public boolean isAirportPenaltyApplied() {
-		return airportPenaltyApplied;
-	}
-
-	public void setAirportPenaltyApplied(boolean airportPenaltyApplied) {
-		this.airportPenaltyApplied = airportPenaltyApplied;
-	}
-
-	public int getTimeWaiting() {
-		return timeWaiting;
-	}
-
-	public void setTimeWaiting(int timeWaiting) {
-		this.timeWaiting = timeWaiting;
-	}
-	
-	public void setPosition(Vector newPosition) {
-		position = newPosition;
-	}
-	
-	public int getCurrentRouteStage() {
-		return currentRouteStage;
-	}
-	
-	public void generateFlightPlan(Waypoint[] sceneWaypoints,
-			String nameDestination, Waypoint destinationPoint,
-			Airport destinationAirport) {
-		flightPlan = new FlightPlan(sceneWaypoints,
-				flightPlan.getOriginName(),
-				nameDestination,
-				new Waypoint(position.getX(), position.getY(),
-						false, false),
-				destinationPoint,
-				flightPlan.getOriginAirport(),
-				destinationAirport);
-		
-		currentRouteStage = 0;
 	}
 	
 	

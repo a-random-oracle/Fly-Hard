@@ -187,7 +187,7 @@ public abstract class Game extends Scene {
 		// Copy flight strip array
 		@SuppressWarnings("unchecked")
 		ArrayList<FlightStrip> shuffledFlightStrips =
-		(ArrayList<FlightStrip>) player.getFlightStrips().clone();
+				(ArrayList<FlightStrip>) player.getFlightStrips().clone();
 		player.getFlightStrips().clear();
 
 		// Update flight strips
@@ -217,36 +217,39 @@ public abstract class Game extends Scene {
 		}
 
 		if (player.getSelectedAircraft() != null) {
-			if (player.getSelectedAircraft().isManuallyControlled()) {
-				// Handle directional control for a manually
-				// controlled aircraft
-				if (input.keyPressed(new int[] {input.KEY_LEFT, input.KEY_A})) {
-					// Turn left when 'Left' or 'A' key is pressed
-					player.setTurningState(TurningState.TURNING_LEFT);
-				} else if (input.keyPressed(new int[] {input.KEY_RIGHT,
-						input.KEY_D})) {
-					// Turn right when 'Right' or 'D' key is pressed
-					player.setTurningState(TurningState.TURNING_RIGHT);
-				} else {
-					// Clear the turning state
-					player.setTurningState(TurningState.NOT_TURNING);
+			// Handle directional control
+			if (input.keyPressed(new int[] {input.KEY_LEFT, input.KEY_A})) {
+				// Turn left when 'Left' or 'A' key is pressed
+				player.setTurningState(TurningState.TURNING_LEFT);
+				
+				// Activate manual control if it isn't active already
+				if (!player.getSelectedAircraft().isManuallyControlled()) {
+					player.getSelectedAircraft().toggleManualControl();
 				}
-			} else if (input.keyPressed(new int[] {input.KEY_LEFT, input.KEY_A,
-					input.KEY_RIGHT, input.KEY_D})) {
-				// If any of the directional keys is pressed, set
-				// selected aircraft to manual control
-				toggleManualControl(player);
+			} else if (input.keyPressed(new int[] {input.KEY_RIGHT, input.KEY_D})) {
+				// Turn right when 'Right' or 'D' key is pressed
+				player.setTurningState(TurningState.TURNING_RIGHT);
+
+				// Activate manual control if it isn't active already
+				if (!player.getSelectedAircraft().isManuallyControlled()) {
+					player.getSelectedAircraft().toggleManualControl();
+				}
+			} else {
+				// Clear the turning state
+				player.setTurningState(TurningState.NOT_TURNING);
 			}
 
 			// Handle altitude controls
 			if (input.keyPressed(new int[] {input.KEY_S, input.KEY_DOWN})
 					&& (player.getSelectedAircraft()
 							.getPosition().getZ() > 28000)) {
+				// Descend
 				player.getSelectedAircraft()
 				.setAltitudeState(Aircraft.ALTITUDE_FALL);
 			} else if (input.keyPressed(new int[] {input.KEY_W, input.KEY_UP})
 					&& (player.getSelectedAircraft()
 							.getPosition().getZ() < 30000)) {
+				// Ascend
 				player.getSelectedAircraft()
 				.setAltitudeState(Aircraft.ALTITUDE_CLIMB);
 			}
@@ -270,17 +273,6 @@ public abstract class Game extends Scene {
 		// Update the airports
 		for (Airport airport : player.getAirports()) {
 			airport.update(player.getAircraft());
-		}
-
-		// Deselect any aircraft which are outside the airspace
-		// This ensures that players can't keep controlling aircraft
-		// after they've left the airspace
-		for (Aircraft airc : player.getAircraft()) {
-			if (!(airc.isAtDestination())) {
-				if (airc.isOutOfAirspaceBounds()) {
-					deselectAircraft(airc, player);
-				}
-			}
 		}
 
 		// Handle turning
@@ -530,20 +522,20 @@ public abstract class Game extends Scene {
 	 */
 	@Override
 	public void mousePressed(int key, int x, int y) {
+		// Send input to flight strips
 		for (FlightStrip fs : player.getFlightStrips()) {
 			fs.mousePressed(key, x, y);
 		}
+		
+		// Select an aircraft (if an aircraft was clicked)
+		if (aircraftClicked(x, y, player)) {
+			deselectAircraft(player);
+			player.setSelectedAircraft(findClickedAircraft(x, y, player));
+		}
 
 		if (key == input.MOUSE_LEFT) {
-			if (aircraftClicked(x, y, player)) {
-				// If an aircraft has been clicked, select it
-				Aircraft clickedAircraft = findClickedAircraft(x, y, player);
-				deselectAircraft(player);
-				player.setSelectedAircraft(clickedAircraft);
-				//flightStrip.show(clickedAircraft);
-			} else if (waypointInFlightplanClicked(x, y,
-					player.getSelectedAircraft(), player)
-					&& !player.getSelectedAircraft().isManuallyControlled()) {
+			if (waypointInFlightplanClicked(x, y, player.getSelectedAircraft(),
+					player) && !aircraftClicked(x, y, player)) {
 				// If a waypoint in the currently selected aircraft's flight
 				// plan has been clicked, save this waypoint to the
 				// clicked waypoint attribute
@@ -560,7 +552,6 @@ public abstract class Game extends Scene {
 						player.setSelectedWaypoint(null);
 					}
 				}
-
 			}
 
 			for (Airport airport : player.getAirports()) {
@@ -586,14 +577,9 @@ public abstract class Game extends Scene {
 				}
 			}
 		} else if (key == input.MOUSE_RIGHT) {
-			if (aircraftClicked(x, y, player)) {
-				deselectAircraft(player);
-				player.setSelectedAircraft(findClickedAircraft(x, y, player));
-			}
-
 			if (player.getSelectedAircraft() != null) {
 				if (compassClicked(x, y, player.getSelectedAircraft())) {
-					player.setCompassClicked(true); // Flag to mouseReleased
+					player.setCompassClicked(true);
 					if (!player.getSelectedAircraft().isManuallyControlled()) {
 						toggleManualControl(player);
 					}
@@ -988,11 +974,9 @@ public abstract class Game extends Scene {
 	 * Causes a player's selected aircraft to call methods to toggle manual control.
 	 */
 	protected void toggleManualControl(Player player) {
-		Aircraft selectedAircraft = player.getSelectedAircraft();
-
-		if (selectedAircraft == null) return;
-
-		selectedAircraft.toggleManualControl();
+		if (player.getSelectedAircraft() != null) {
+			player.getSelectedAircraft().toggleManualControl();
+		}
 	}
 
 	/**

@@ -36,7 +36,7 @@ public class Lobby extends Scene {
 	private static final Vector tableBottomRight = new Vector(0.60, 0.90, 0, true);
 	
 	/** Coordinates for the top left of the high scores table */
-	private static final Vector scoresTopLeft = new Vector(0.65, 0.25, 0, true); //TODO <- JUMPER
+	private static final Vector scoresTopLeft = new Vector(0.65, 0.25, 0, true);
 
 	/** Coordinates for the top right of the high scores table */
 	private static final Vector scoresTopRight = new Vector(0.93, 0.25, 0, true);
@@ -354,7 +354,7 @@ public class Lobby extends Scene {
 		graphics.printRight("Action", tableTopRight.getX() + Game.getXOffset() - 5,
 				tableTopLeft.getY() + Game.getYOffset() - 15, 1, 0);
 
-		// Draw the table border //TODO <- JUMPER
+		// Draw the table border
 		graphics.rectangle(false,
 				(tableTopLeft.getX() + Game.getXOffset()),
 				(tableTopLeft.getY() + Game.getYOffset()),
@@ -392,7 +392,7 @@ public class Lobby extends Scene {
 						1, (tableTopRight.getX() - tableTopLeft.getX()));
 			}
 			
-			// Draw the play game buttons //TODO <- JUMPER
+			// Draw the play game buttons
 			for (int i = 0; i < joinButtons.size(); i++) {
 				joinButtons.get(i).drawRight();
 			}
@@ -433,7 +433,7 @@ public class Lobby extends Scene {
 			for (Long score : highScores.descendingKeySet()) {
 				for (String name : highScores.get(score)) {
 					// Draw the numbers
-					graphics.printRight(String.valueOf(i),
+					graphics.printRight(String.valueOf(i + 1),
 							(scoresTopLeft.getX() + Game.getXOffset()) + 35,
 							(scoresTopLeft.getY() + Game.getYOffset()
 									+ ((i + 0.33) * rowHeight)), 1, 0);
