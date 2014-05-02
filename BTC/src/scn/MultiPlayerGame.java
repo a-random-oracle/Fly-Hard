@@ -580,10 +580,10 @@ public class MultiPlayerGame extends Game {
 			//		&& opposingPlayer.getLives() == 0;
 			
 			// Does the player have a higher score than the opponent
-			//boolean higherScore = player.getScore() > opposingPlayer.getScore();
+			boolean higherScore = player.getScore() > opposingPlayer.getScore();
 
 			if (!override) {
-				if (winOnLives) {
+				if (winOnLives && higherScore) {
 					endGameInstruction = "GAME_OVER:" + player.getScore() + ":"
 							+ plane1.getName() + ":" + plane2.getName();
 				} else {
@@ -591,7 +591,7 @@ public class MultiPlayerGame extends Game {
 							+ ":" + plane2.getName();
 				}
 			} else {
-				if (winOnLives) {
+				if (winOnLives && higherScore) {
 					endGameInstruction = "GAME_OVER_RECEIVED:" + player.getScore();
 				} else {
 					endGameInstruction = "GAME_OVER_RECEIVED";

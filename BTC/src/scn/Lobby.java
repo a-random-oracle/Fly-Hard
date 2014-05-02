@@ -509,10 +509,9 @@ public class Lobby extends Scene {
 	@Override
 	public void close() {
 		setWaitingForOpponent(false);
-
-		NetworkManager.stopThread();
-		NetworkManager.postMessage("END_GAME");
-		NetworkManager.resetConnectionProperties();
+		
+		NetworkManager.setHost(false);
+		NetworkManager.postMessage("LEAVING_LOBBY");
 	}
 
 	@Override

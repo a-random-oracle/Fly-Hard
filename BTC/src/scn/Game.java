@@ -182,8 +182,10 @@ public abstract class Game extends Scene {
 					deselectAircraft(player);
 				}
 
-				player.setScore(player.getScore()
-						+ player.getAircraft().get(i).getScore());
+				if (!player.getAircraft().get(i).isCrashed()) {
+					player.setScore(player.getScore()
+							+ player.getAircraft().get(i).getScore());
+				}
 
 				player.getFlightStrips().remove(getFlightStripFromAircraft(
 						player.getAircraft().get(i)));
