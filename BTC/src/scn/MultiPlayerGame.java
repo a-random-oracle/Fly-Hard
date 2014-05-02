@@ -557,7 +557,7 @@ public class MultiPlayerGame extends Game {
 	 * If so, the powerup is added to the appropriate player and removed from
 	 * its waypoint.
 	 * </p>
-	 * */
+	 */
 	private void checkPowerups() {
 		// Loop through each middle waypoint
 		for (Waypoint waypoint : powerupPoints) {

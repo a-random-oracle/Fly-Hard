@@ -844,7 +844,7 @@ public class Aircraft implements Serializable {
 	 * Resets the current target, and causes the aircraft to head towards
 	 * the new target.
 	 */
-	private void resetBearing() {
+	public void resetBearing() {
 		if (currentRouteStage < flightPlan.getRoute().length
 				& flightPlan.getRoute()[currentRouteStage] != null) {
 			currentTarget = flightPlan.getRoute()[currentRouteStage]
