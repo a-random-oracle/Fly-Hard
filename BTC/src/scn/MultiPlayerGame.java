@@ -575,6 +575,9 @@ public class MultiPlayerGame extends Game {
 
 					// And remove the powerup from the waypoint
 					waypoint.setPowerup(null);
+					
+					// Send the removal to the opponent
+					NetworkManager.sendData(-1, waypoint);
 				}
 			}
 
@@ -592,6 +595,9 @@ public class MultiPlayerGame extends Game {
 
 					// And remove the powerup from the waypoint
 					waypoint.setPowerup(null);
+					
+					// Send the removal to the opponent
+					NetworkManager.sendData(-1, waypoint);
 				}
 			}
 		}
