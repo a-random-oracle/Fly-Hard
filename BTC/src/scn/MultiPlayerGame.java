@@ -7,9 +7,11 @@ import org.newdawn.slick.Color;
 
 import btc.Main;
 import net.NetworkManager;
+import lib.jog.audio;
 import lib.jog.graphics;
 import lib.jog.input;
 import lib.jog.window;
+import lib.jog.audio.Sound;
 import lib.jog.graphics.Image;
 import cls.Aircraft;
 import cls.Airport;
@@ -79,6 +81,10 @@ public class MultiPlayerGame extends Game {
 	
 	/** Whether the game is about to exit to game over */
 	private boolean exitingToGameOver;
+	
+	/** The sound to play when powerup is picked up */
+	private final static Sound POWERUP_SOUND = audio.newSoundEffect("sfx"
+			+ File.separator + "powerup_2.ogg");
 	
 	private Aircraft[] passedCollidingAircraft;
 
@@ -542,6 +548,9 @@ public class MultiPlayerGame extends Game {
 
 					// And remove the powerup from the waypoint
 					waypoint.setPowerup(null);
+					
+					//Play powerup sound
+					POWERUP_SOUND.play();
 				}
 			}
 
