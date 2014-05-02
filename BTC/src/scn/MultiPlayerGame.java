@@ -378,7 +378,10 @@ public class MultiPlayerGame extends Game {
 		drawSelectedAircraft();
 
 		drawPowerupPoints();
-		
+
+		// Draw flight strips
+		graphics.setViewport();
+
 		switch (playerPosition) {
 		case 0:
 			// Display the player's lives
@@ -400,7 +403,15 @@ public class MultiPlayerGame extends Game {
 			graphics.printRight("Opponent's Score : " + opposingPlayer.getScore(),
 					window.width() - getXOffset() - 32,
 					window.height() - getYOffset() + 15, 1, 0);
+			
+			for (FlightStrip fs : player.getFlightStrips()) {
+				fs.draw(16, 20);
+			}
 
+			for (FlightStrip fs : opposingPlayer.getFlightStrips()) {
+				fs.draw(window.width() - (getXOffset()) + 16, 20);
+			}
+			
 			break;
 		case 1:
 			// Display the opponent's lives
@@ -422,25 +433,7 @@ public class MultiPlayerGame extends Game {
 			graphics.printRight("Score : " + player.getScore(),
 					getXOffset() + 32,
 					window.height() - getYOffset() + 15, 1, 0);
-
-			break;
-		}
-
-		// Draw flight strips
-		graphics.setViewport();
-
-		switch (playerPosition) {
-		case 0:
-			for (FlightStrip fs : player.getFlightStrips()) {
-				fs.draw(16, 20);
-			}
-
-			for (FlightStrip fs : opposingPlayer.getFlightStrips()) {
-				fs.draw(window.width() - (getXOffset()) + 16, 20);
-			}
 			
-			break;
-		case 1:
 			for (FlightStrip fs : player.getFlightStrips()) {
 				fs.draw(window.width() - (getXOffset()) + 16, 20);
 			}
