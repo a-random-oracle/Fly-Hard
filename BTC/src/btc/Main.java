@@ -38,7 +38,7 @@ public class Main implements input.EventHandler {
 	
 	
 	/** The game's version number */
-	public static final String VERSION = "Fly-Hard-0.5.2";
+	public static final String VERSION = "Fly-Hard-0.5.4";
 
 	/** The title to display in the game window */
 	private static final String TITLE = "Bear Traffic Controller: GOA Edition";
@@ -50,10 +50,10 @@ public class Main implements input.EventHandler {
 	public static final int TARGET_HEIGHT = 960;
 
 	/** The default size of the gap between the window edge and the left edge of the screen */
-	public static final int WIDTH_GAP = 20;
+	public static final int WIDTH_GAP = 40;
 
 	/** The default size of the gap between the window edge and the top edge of the screen */
-	public static final int HEIGHT_GAP = 20;
+	public static final int HEIGHT_GAP = 50;
 	
 	/** The standard font */
 	public static graphics.Font standardFont;

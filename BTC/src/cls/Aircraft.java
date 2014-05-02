@@ -689,8 +689,9 @@ public class Aircraft implements Serializable {
 	 * Draws lines starting from the aircraft, along its flight path to its
 	 * destination.
 	 */
-	public void drawFlightPath(boolean isSelected) {
-		if (isSelected) {
+	public void drawFlightPath() {
+		if (Game.getInstance().getPlayer().getSelectedAircraft() != null
+				&& Game.getInstance().getPlayer().getSelectedAircraft() == this) {
 			graphics.setColour(0, 128, 128);
 		} else {
 			graphics.setColour(0, 128, 128, 128);

@@ -379,7 +379,7 @@ public abstract class Game extends Scene {
 			//draw the score of each aircraft
 			aircraft.drawScore();
 			if (aircraft.isMouseOver()) {
-				aircraft.drawFlightPath(false);
+				aircraft.drawFlightPath();
 			}
 		}
 	}
@@ -407,7 +407,7 @@ public abstract class Game extends Scene {
 				}
 
 				// Draw the selected aircraft's flight path
-				player.getSelectedAircraft().drawFlightPath(true);
+				player.getSelectedAircraft().drawFlightPath();
 				graphics.setColour(graphics.green);
 			}
 		}
@@ -963,6 +963,10 @@ public abstract class Game extends Scene {
 	 */
 	protected void deselectAircraft(Aircraft aircraft, Player player) {
 		if (aircraft != null && aircraft.equals(player.getSelectedAircraft())) {
+			if (aircraft.isManuallyControlled()) {
+				aircraft.toggleManualControl();
+			}
+			
 			player.setSelectedAircraft(null);
 		}
 
