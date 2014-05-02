@@ -306,8 +306,8 @@ public class Airport extends Waypoint implements EventHandler, Serializable {
 		return isWithinRect(
 				(int)position.getX(),
 				(int)position.getY(),
-				(int)getArrivalsX() + Game.X_OFFSET,
-				(int)getArrivalsY() + Game.Y_OFFSET,
+				(int)getArrivalsX() + Game.getXOffset(),
+				(int)getArrivalsY() + Game.getYOffset(),
 				(int)getArrivalsWidth(),
 				(int)getArrivalsHeight());
 	}
@@ -340,8 +340,8 @@ public class Airport extends Waypoint implements EventHandler, Serializable {
 		return isWithinRect(
 				(int)position.getX(),
 				(int)position.getY(),
-				(int)getDeparturesX() + Game.X_OFFSET,
-				(int)getDeparturesY() + Game.Y_OFFSET,
+				(int)getDeparturesX() + Game.getXOffset(),
+				(int)getDeparturesY() + Game.getYOffset(),
 				(int)getDeparturesWidth(),
 				(int)getDeparturesHeight());
 	}
@@ -424,9 +424,9 @@ public class Airport extends Waypoint implements EventHandler, Serializable {
 	 * @return the minimum scale
 	 */
 	public static double getMinScale() {
-		double xScale = (double)(window.width() - (2 * Game.X_OFFSET))
+		double xScale = (double)(window.width() - (2 * Game.getXOffset()))
 				/ (double)Main.TARGET_WIDTH;
-		double yScale = (double)(window.height() - (2 * Game.Y_OFFSET))
+		double yScale = (double)(window.height() - (2 * Game.getYOffset()))
 				/ (double)Main.TARGET_HEIGHT;
 		
 		return Math.min(xScale, yScale);

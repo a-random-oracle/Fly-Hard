@@ -5,7 +5,6 @@ import java.util.ArrayList;
 
 import btc.Main;
 import net.NetworkManager;
-import lib.ButtonText;
 import lib.SpriteAnimation;
 import lib.jog.graphics;
 import lib.jog.input;
@@ -50,10 +49,10 @@ public class MultiPlayerGame extends Game {
 	private static String endGameInstruction;
 
 	/** The y-coordinate at which the middle zone borders begin */
-	private static int yStart = window.height() - Y_OFFSET;
+	private static int yStart = window.height() - getYOffset();
 
 	/** The y-coordinate at which the middle zone borders end */
-	private static int yEnd = Y_OFFSET;
+	private static int yEnd = getYOffset();
 
 	/** The x-coordinate at which the left middle zone border is located */
 	public static int leftEntryX = (int) (window.width() * (3d/7d));
@@ -147,18 +146,6 @@ public class MultiPlayerGame extends Game {
 
 		// Set up the game
 		setUpGame(playerPosition);
-
-		// Create the manual control buttons
-		ButtonText.Action manual = new ButtonText.Action() {
-			@Override
-			public void action() {
-				toggleManualControl(player);
-			}
-		};
-
-		manualControlButton = new ButtonText(" Take Control", manual,
-				(window.width() - 128 - (2 * X_OFFSET)) / 2,
-				32, 128, 32, 8, 4);
 
 		aircraftUnderTransfer = new ArrayList<Aircraft>();
 		dataUpdateTimeElapsed = 0;
@@ -384,13 +371,13 @@ public class MultiPlayerGame extends Game {
 		
 		// Display the player's lives
 		graphics.print("Lives : " + player.getLives(),
-				X_OFFSET + 32,
-				window.height() - Y_OFFSET + 5, 1);
+				getXOffset() + 32,
+				window.height() - getYOffset() + 5, 1);
 		
 		// Display the opponent's lives
 		graphics.printRight("Opponents Lives : " + opposingPlayer.getLives(),
-				window.width() - X_OFFSET - 32,
-				window.height() - Y_OFFSET + 5, 1, 0);
+				window.width() - getXOffset() - 32,
+				window.height() - getYOffset() + 5, 1, 0);
 	}
 
 	@Override
@@ -421,12 +408,12 @@ public class MultiPlayerGame extends Game {
 			}
 
 			for (FlightStrip fs : opposingPlayer.getFlightStrips()) {
-				fs.draw(window.width() - (X_OFFSET) + 16, 20);
+				fs.draw(window.width() - (getXOffset()) + 16, 20);
 			}
 			break;
 		case 1:
 			for (FlightStrip fs : player.getFlightStrips()) {
-				fs.draw(window.width() - (X_OFFSET) + 16, 20);
+				fs.draw(window.width() - (getXOffset()) + 16, 20);
 			}
 
 			for (FlightStrip fs : opposingPlayer.getFlightStrips()) {
@@ -550,7 +537,7 @@ public class MultiPlayerGame extends Game {
 		int framesAcross = 8;
 		int framesDown = 4;
 		
-		Vector origin = new Vector(Game.X_OFFSET, Game.Y_OFFSET, 0);
+		Vector origin = new Vector(Game.getXOffset(), Game.getYOffset(), 0);
 		
 		/*Vector crash = plane1.getPosition().add(
 				new Vector((plane1.getPosition().getX()

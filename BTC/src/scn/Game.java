@@ -23,10 +23,10 @@ import btc.Main;
 public abstract class Game extends Scene {
 	
 	/** The distance between the left edge of the screen and the map area */
-	public final static int X_OFFSET = 196;
+	private static final int X_OFFSET = 196;
 
 	/** The distance between the top edge of the screen and the map area */
-	public final static int Y_OFFSET = 48;
+	private static final int Y_OFFSET = 48;
 	
 	/** The image to use for aircraft */
 	public static Image aircraftImage;
@@ -154,6 +154,7 @@ public abstract class Game extends Scene {
 	 * Also runs collision detection and generates a new flight if flight
 	 * generation interval has been exceeded.
 	 * </p>
+	 * @param timeDifference - the time since the last update
 	 */
 	@Override
 	public void update(double timeDifference) {
@@ -476,7 +477,6 @@ public abstract class Game extends Scene {
 	/**
 	 * Draws a readout of the time the game has been played for, and number of planes
 	 * in the sky.
-	 * Also renders the player's total score.
 	 */
 	protected void drawAdditional(int aircraftCount) {
 		graphics.setColour(graphics.green);
@@ -929,8 +929,7 @@ public abstract class Game extends Scene {
 
 	/**
 	 * Causes deselection of the selected aircraft.
-	 * @param player
-	 * 			the player to reset the selected plane attribute for
+	 * @param player - the player to reset the selected plane attribute for
 	 */
  	public void deselectAircraft(Player player) {
 		deselectAircraft(player.getSelectedAircraft(), player);
@@ -938,10 +937,8 @@ public abstract class Game extends Scene {
 
 	/**
 	 * Causes deselection of the specified aircraft.
-	 * @param aircraft
-	 * 			the aircraft to deselect
-	 * @param player
-	 * 			the player to reset the selected plane attribute for
+	 * @param aircraft - the aircraft to deselect
+	 * @param player - the player to reset the selected plane attribute for
 	 */
 	protected void deselectAircraft(Aircraft aircraft, Player player) {
 		if (aircraft != null && aircraft.isManuallyControlled()) {
@@ -1034,8 +1031,7 @@ public abstract class Game extends Scene {
 
 	/**
 	 * Returns whether a given name is an airport or not.
-	 * @param name
-	 * 			the name to test
+	 * @param name - the name to test
 	 * @return <code>true</code> if the name matches an airport name,
 	 * 			otherwise <code>false</code>
 	 */
@@ -1054,12 +1050,9 @@ public abstract class Game extends Scene {
 
 	/**
 	 * Gets whether the manual control compass has been clicked or not.
-	 * @param x
-	 * 			the x position of the mouse
-	 * @param y
-	 * 			the y position of the mouse
-	 * @param aircraft
-	 * 			the aircraft whose compass region should be checked
+	 * @param x - the x position of the mouse
+	 * @param y - the y position of the mouse
+	 * @param aircraft - the aircraft whose compass region should be checked
 	 * @return <code>true</code> if the compass has been clicked,
 	 * 			otherwise <code>false</code>
 	 */
@@ -1075,12 +1068,9 @@ public abstract class Game extends Scene {
 
 	/**
 	 * Gets whether an aircraft has been clicked.
-	 * @param x
-	 * 			the x position of the mouse
-	 * @param y
-	 * 			the y position of the mouse
-	 * @param player
-	 * 			the player whose aircraft should be checked
+	 * @param x - the x position of the mouse
+	 * @param y - the y position of the mouse
+	 * @param player - the player whose aircraft should be checked
 	 * @return <code>true</code> if an aircraft has been clicked,
 	 * 			otherwise <code>false</code>
 	 */
@@ -1090,12 +1080,9 @@ public abstract class Game extends Scene {
 
 	/**
 	 * Gets the aircraft which has been clicked.
-	 * @param x
-	 * 			the x position of the mouse
-	 * @param y
-	 * 			the y position of the mouse
-	 * @param player
-	 * 			the player whose aircraft should be checked
+	 * @param x - the x position of the mouse
+	 * @param y - the y position of the mouse
+	 * @param player - the player whose aircraft should be checked
 	 * @return if an aircraft was clicked, returns the corresponding aircraft object,
 	 * 			otherwise returns null
 	 */
@@ -1110,12 +1097,9 @@ public abstract class Game extends Scene {
 
 	/**
 	 * Gets whether a waypoint in an aircraft's flight plan has been clicked.
-	 * @param x
-	 * 			the x position of the mouse
-	 * @param y
-	 * 			the y position of the mouse
-	 * @param player
-	 * 			the player whose waypoints should be searched
+	 * @param x - the x position of the mouse
+	 * @param y - the y position of the mouse
+	 * @param player - the player whose waypoints should be searched
 	 * @return <code>true</code> if a waypoint in an aircraft's flight plan
 	 * 			has been clicked, otherwise <code>false</code>
 	 */
@@ -1128,12 +1112,9 @@ public abstract class Game extends Scene {
 
 	/**
 	 * Gets the waypoint which has been clicked.
-	 * @param x
-	 * 			the x position of the mouse
-	 * @param y
-	 * 			the y position of the mouse
-	 * @param player
-	 * 			the player whose waypoints should be searched
+	 * @param x - the x position of the mouse
+	 * @param y - the y position of the mouse
+	 * @param player - the player whose waypoints should be searched
 	 * @return if a waypoint was clicked, returns the corresponding waypoint object,
 	 * 			otherwise returns null
 	 */
@@ -1148,12 +1129,9 @@ public abstract class Game extends Scene {
 
 	/**
 	 * Gets whether the manual control button has been clicked.
-	 * @param x
-	 * 			the mouse's x position
-	 * @param y
-	 * 			the mouse's y position
-	 * @param player
-	 * 			the player to check this for
+	 * @param x - the mouse's x position
+	 * @param y - the mouse's y position
+	 * @param player - the player to check this for
 	 * @return <code>true</code> if the manual control button has been
 	 * 			pressed, otherwise <code>false</code>
 	 */
@@ -1170,6 +1148,30 @@ public abstract class Game extends Scene {
 	 */
 	public static Game getInstance() {
 		return instance;
+	}
+	
+	/**
+	 * Gets the window's x-offset.
+	 * @return the window's x-offset
+	 */
+	public static int getXOffset() {
+		if (instance != null) {
+			return X_OFFSET;
+		} else {
+			return 0;
+		}
+	}
+	
+	/**
+	 * Gets the window's y-offset.
+	 * @return the window's y-offset
+	 */
+	public static int getYOffset() {
+		if (instance != null) {
+			return Y_OFFSET;
+		} else {
+			return 0;
+		}
 	}
 
 	/**

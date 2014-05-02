@@ -325,9 +325,9 @@ public class Aircraft implements Serializable {
 		double x = position.getX();
 		double y = position.getY();
 		return ((x < (RADIUS / 2))
-				|| (x > window.width() - (RADIUS / 2) - (2 * Game.X_OFFSET))
+				|| (x > window.width() - (RADIUS / 2) - (2 * Game.getXOffset()))
 				|| (y < (RADIUS / 2)) || (y > window.height() + (RADIUS / 2)
-						- (2 * Game.Y_OFFSET)));
+						- (2 * Game.getYOffset())));
 	}
 
 	/**
@@ -350,7 +350,7 @@ public class Aircraft implements Serializable {
 	 * 			the other player's airspace
 	 */
 	public boolean isOutOfPlayersAirspace() {
-		double x = position.getX() + Game.X_OFFSET;
+		double x = position.getX() + Game.getXOffset();
 		Player player = null;
 
 		if (Game.getInstance() != null) {
@@ -418,8 +418,8 @@ public class Aircraft implements Serializable {
 	 * 			<code>false</code> otherwise
 	 */
 	public boolean isMouseOver() {
-		return isMouseOver(input.mouseX() - Game.X_OFFSET, input.mouseY()
-				- Game.Y_OFFSET);
+		return isMouseOver(input.mouseX() - Game.getXOffset(), input.mouseY()
+				- Game.getYOffset());
 	}
 
 	/**
@@ -600,9 +600,9 @@ public class Aircraft implements Serializable {
 		double x, y;
 		if (isManuallyControlled && input.isMouseDown(input.MOUSE_RIGHT)) {
 			graphics.setColour(graphics.green_transp);
-			double r = Math.atan2((input.mouseY() - Game.Y_OFFSET)
+			double r = Math.atan2((input.mouseY() - Game.getYOffset())
 					- position.getY(),
-					(input.mouseX() - Game.X_OFFSET)
+					(input.mouseX() - Game.getXOffset())
 					- position.getX());
 			x = xpos + (COMPASS_RADIUS * Math.cos(r));
 			y = ypos + (COMPASS_RADIUS * Math.sin(r));

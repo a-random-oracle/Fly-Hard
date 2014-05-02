@@ -28,10 +28,10 @@ public class Lobby extends Scene {
 	private static final Vector tableTopLeft = new Vector(0.05, 0.2, 0, true);
 
 	/** Coordinates for the top right of the game selection table */
-	private static final Vector tableTopRight = new Vector(0.95, 0.2, 0, true);
+	private static final Vector tableTopRight = new Vector(0.75, 0.2, 0, true);
 
 	/** Coordinates for the bottom right of the game selection table */
-	private static final Vector tableBottomRight = new Vector(0.95, 0.95, 0, true);
+	private static final Vector tableBottomRight = new Vector(0.75, 0.95, 0, true);
 
 	/** The coordinates of the input box */
 	private static final Vector nameEntryBoxPos = new Vector(0.5, 0.02, 0, true);
@@ -54,8 +54,8 @@ public class Lobby extends Scene {
 	
 	/** The input box used for name entry */
 	private static InputBox nameEntryBox = new InputBox(Color.white, Color.darkGray,
-			(int) nameEntryBoxPos.getX() + Game.X_OFFSET,
-			(int) nameEntryBoxPos.getY() + Game.Y_OFFSET,
+			(int) nameEntryBoxPos.getX() + Game.getXOffset(),
+			(int) nameEntryBoxPos.getY() + Game.getYOffset(),
 			200, 23, true);
 
 	/** The button used to create a new game. The player then becomes a host. */
@@ -102,8 +102,8 @@ public class Lobby extends Scene {
 
 		createGameButton = new ButtonText("Create Game", createGame,
 				(int) (nameEntryBoxPos.getX()
-						+ (nameEntryBox.getWidth() / 2) + Game.X_OFFSET + 50),
-				(int) (nameEntryBoxPos.getY() + Game.Y_OFFSET + 3),
+						+ (nameEntryBox.getWidth() / 2) + Game.getXOffset() + 50),
+				(int) (nameEntryBoxPos.getY() + Game.getYOffset() + 3),
 				CREATE_BUTTON_W, CREATE_BUTTON_H, 0, 0, 2);
 	}
 
@@ -210,9 +210,9 @@ public class Lobby extends Scene {
 				// Create a new join button for the available connection
 				ButtonText joinButton = new ButtonText("Join Game",
 						currentAction,
-						(int) (tableTopRight.getX() - 5 + Game.X_OFFSET),
+						(int) (tableTopRight.getX() - 5 + Game.getXOffset()),
 						(int) (tableTopLeft.getY()
-								+ Game.Y_OFFSET + ((i + 0.33) * rowHeight)),
+								+ Game.getYOffset() + ((i + 0.33) * rowHeight)),
 						(int) ((tableTopRight.getX() - tableTopLeft.getX())
 								* (1d/8d)),
 						(int) (rowHeight * (3d/4d)), 0, 0);
@@ -232,8 +232,8 @@ public class Lobby extends Scene {
 	public void draw() {
 		// Draw the name entry label
 		graphics.printRight("Enter Name: ", (nameEntryBoxPos.getX()
-				- (nameEntryBox.getWidth() / 2) + Game.X_OFFSET),
-				(nameEntryBoxPos.getY() + Game.Y_OFFSET + 3), 2, 0);
+				- (nameEntryBox.getWidth() / 2) + Game.getXOffset()),
+				(nameEntryBoxPos.getY() + Game.getYOffset() + 3), 2, 0);
 		
 		// Draw the name entry input box
 		nameEntryBox.draw();
@@ -248,10 +248,10 @@ public class Lobby extends Scene {
 			
 			graphics.printCentred(waitingForOpponentDots.replace(".", " ")
 					+ " Waiting for an opponent to join " + waitingForOpponentDots,
-					tableTopLeft.getX() + Game.X_OFFSET,
+					tableTopLeft.getX() + Game.getXOffset(),
 					nameEntryBoxPos.getY()
 					+ ((tableTopLeft.getY() - nameEntryBoxPos.getY()) / 2)
-					+ Game.Y_OFFSET,
+					+ Game.getYOffset(),
 					2, (tableTopRight.getX() - tableTopLeft.getX()));
 		}
 
@@ -267,33 +267,33 @@ public class Lobby extends Scene {
 		graphics.setColour(255, 255, 255);
 
 		// Draw the host name column label
-		graphics.print("Host Name", tableTopLeft.getX() + Game.X_OFFSET + 5,
-				tableTopLeft.getY() + Game.Y_OFFSET - 15, 1);
+		graphics.print("Host Name", tableTopLeft.getX() + Game.getXOffset() + 5,
+				tableTopLeft.getY() + Game.getYOffset() - 15, 1);
 
 		// Draw the description column label
-		graphics.printCentred("Status", tableTopLeft.getX() + Game.X_OFFSET,
-				tableTopLeft.getY() + Game.Y_OFFSET - 15,
+		graphics.printCentred("Status", tableTopLeft.getX() + Game.getXOffset(),
+				tableTopLeft.getY() + Game.getYOffset() - 15,
 				1, (tableTopRight.getX() - tableTopLeft.getX()));
 		
 		// Draw the action column label
-		graphics.printRight("Action", tableTopRight.getX() + Game.X_OFFSET - 5,
-				tableTopLeft.getY() + Game.Y_OFFSET - 15, 1, 0);
+		graphics.printRight("Action", tableTopRight.getX() + Game.getXOffset() - 5,
+				tableTopLeft.getY() + Game.getYOffset() - 15, 1, 0);
 
 		// Draw the table outside border
 		graphics.rectangle(false,
-				(tableTopLeft.getX() + Game.X_OFFSET),
-				(tableTopLeft.getY() + Game.Y_OFFSET),
+				(tableTopLeft.getX() + Game.getXOffset()),
+				(tableTopLeft.getY() + Game.getYOffset()),
 				(tableTopRight.getX() - tableTopLeft.getX()),
 				(tableBottomRight.getY() - tableTopRight.getY()));
 
 		if (availablePlayers != null && availablePlayers.size() > 0) {
 			// Draw vertical lines below each player's row
 			for (int i = 0; i < joinButtons.size(); i++) {
-				graphics.line((tableTopLeft.getX() + Game.X_OFFSET),
-						(tableTopLeft.getY() + Game.Y_OFFSET
+				graphics.line((tableTopLeft.getX() + Game.getXOffset()),
+						(tableTopLeft.getY() + Game.getYOffset()
 								+ ((i + 1) * rowHeight)),
-						(tableTopRight.getX() + Game.X_OFFSET),
-						(tableTopLeft.getY() + Game.Y_OFFSET
+						(tableTopRight.getX() + Game.getXOffset()),
+						(tableTopLeft.getY() + Game.getYOffset()
 								+ ((i + 1) * rowHeight)));
 			}
 
@@ -302,8 +302,8 @@ public class Lobby extends Scene {
 			// Draw the player's names
 			for (int i = 0; i < joinButtons.size(); i++) {
 				graphics.print(availablePlayers.get(playerIDs[i]),
-						(tableTopLeft.getX() + Game.X_OFFSET) + 5,
-						(tableTopLeft.getY() + Game.Y_OFFSET
+						(tableTopLeft.getX() + Game.getXOffset()) + 5,
+						(tableTopLeft.getY() + Game.getYOffset()
 								+ ((i + 0.33) * rowHeight)));
 			}
 
@@ -311,8 +311,8 @@ public class Lobby extends Scene {
 			for (int i = 0; i < joinButtons.size(); i++) {
 				graphics.printCentred(waitingForOpponentDots.replace(".",  " ")
 						+ " Waiting for an opponent " + waitingForOpponentDots,
-						tableTopLeft.getX() + Game.X_OFFSET,
-						(tableTopLeft.getY() + Game.Y_OFFSET
+						tableTopLeft.getX() + Game.getXOffset(),
+						(tableTopLeft.getY() + Game.getYOffset()
 								+ ((i + 0.33) * rowHeight)),
 						1, (tableTopRight.getX() - tableTopLeft.getX()));
 			}

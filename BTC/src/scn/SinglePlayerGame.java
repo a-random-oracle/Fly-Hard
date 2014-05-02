@@ -2,8 +2,6 @@ package scn;
 
 import java.util.ArrayList;
 
-import lib.ButtonText;
-import lib.jog.window;
 import cls.Aircraft;
 import cls.Player;
 import cls.Waypoint;
@@ -69,18 +67,6 @@ public class SinglePlayerGame extends Game {
 		
 		// Set up the player
 		player = new Player(0, airports, playersWaypoints);
-
-		// Create the manual control button
-		ButtonText.Action manual = new ButtonText.Action() {
-			@Override
-			public void action() {
-				toggleManualControl(player);
-			}
-		};
-
-		manualControlButton = new ButtonText(" Take Control", manual,
-						(window.width() - 128 - (2 * X_OFFSET)) / 2,
-						32, 128, 32, 8, 4);
 
 		// Reset game attributes for each player
 		deselectAircraft(player);

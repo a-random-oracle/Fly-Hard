@@ -30,8 +30,8 @@ public class Vector implements Serializable {
 	 * @param z - the vector's z position
 	 */
 	public Vector(double x, double y, double z) {
-		this.x = x / (window.width() - (2 * Game.X_OFFSET));
-		this.y = y / (window.height() - (2 * Game.Y_OFFSET));
+		this.x = x / (window.width() - (2 * Game.getXOffset()));
+		this.y = y / (window.height() - (2 * Game.getYOffset()));
 		this.z = z;
 	}
 	
@@ -64,7 +64,7 @@ public class Vector implements Serializable {
 	 * @return the x position of the vector
 	 */
 	public double getX() {
-		return x * (window.width() - (2 * Game.X_OFFSET));
+		return x * (window.width() - (2 * Game.getXOffset()));
 	}
 
 	/**
@@ -72,7 +72,7 @@ public class Vector implements Serializable {
 	 * @return the y position of the vector
 	 */
 	public double getY() {
-		return y * (window.height() - (2 * Game.Y_OFFSET));
+		return y * (window.height() - (2 * Game.getYOffset()));
 	}
 	
 	/**
