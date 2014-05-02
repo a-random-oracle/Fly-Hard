@@ -17,7 +17,7 @@ public class Player implements Serializable {
 	};
 	
 	/** The default maximum number of aircraft */
-	private static final int DEFAULT_MAX_AIRCRAFT = 4;
+	private static final int DEFAULT_MAX_AIRCRAFT = 5;
 	
 	/** The possible turning states - not turning, turning left and turning right */
 	public enum TurningState {NOT_TURNING, TURNING_LEFT, TURNING_RIGHT};
