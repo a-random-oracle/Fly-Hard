@@ -232,6 +232,11 @@ public class Powerup implements Serializable {
 	 * Performs the powerup's effect.
 	 */
 	public void activateEffect() {
+		// Play powerup sound
+		if (timeActivated == -1) {
+			MultiPlayerGame.POWERUP_SOUND.play();
+		}
+		
 		// Store the time at which the powerup was activated
 		timeActivated = System.currentTimeMillis();
 		
