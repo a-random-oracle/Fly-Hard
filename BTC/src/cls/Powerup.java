@@ -160,51 +160,64 @@ public class Powerup implements Serializable {
 	 */
 	public void draw(double x, double y) {
 		// Draw the base image
-		graphics.setColour(Color.magenta);
+		graphics.setColour(Color.darkGray);
 		
-		graphics.draw(MultiPlayerGame.BASE_IMAGE,
+		graphics.drawScaled(MultiPlayerGame.BASE_IMAGE,
 				x - (MultiPlayerGame.BASE_IMAGE.width() / 2),
-				y - (MultiPlayerGame.BASE_IMAGE.height() / 2));
+				y - (MultiPlayerGame.BASE_IMAGE.height() / 2), 0.7);
 		
 		// Draw the powerup image
 		graphics.setColour(Color.white);
 		
 		switch (effect) {
 		case FOG:
-			graphics.draw(MultiPlayerGame.FOG_IMAGE,
+			graphics.drawScaled(MultiPlayerGame.FOG_IMAGE,
 					x - (MultiPlayerGame.FOG_IMAGE.width() / 2),
-					y - (MultiPlayerGame.FOG_IMAGE.height() / 2));
+					y - (MultiPlayerGame.FOG_IMAGE.height() / 2), 0.7);
 			break;
 		case SPEED_UP:
-			graphics.draw(MultiPlayerGame.SPEED_UP_IMAGE,
+			graphics.drawScaled(MultiPlayerGame.SPEED_UP_IMAGE,
 					x - (MultiPlayerGame.SPEED_UP_IMAGE.width() / 2),
-					y - (MultiPlayerGame.SPEED_UP_IMAGE.height() / 2));
+					y - (MultiPlayerGame.SPEED_UP_IMAGE.height() / 2), 0.7);
 			break;
 		case SLOW_DOWN:
-			graphics.draw(MultiPlayerGame.SLOW_DOWN_IMAGE,
+			graphics.drawScaled(MultiPlayerGame.SLOW_DOWN_IMAGE,
 					x - (MultiPlayerGame.SLOW_DOWN_IMAGE.width() / 2),
-					y - (MultiPlayerGame.SLOW_DOWN_IMAGE.height() / 2));
+					y - (MultiPlayerGame.SLOW_DOWN_IMAGE.height() / 2), 0.7);
 			break;
 		case TRANSFER:
-			graphics.draw(MultiPlayerGame.TRANSFER_IMAGE,
+			graphics.drawScaled(MultiPlayerGame.TRANSFER_IMAGE,
 					x - (MultiPlayerGame.TRANSFER_IMAGE.width() / 2),
-					y - (MultiPlayerGame.TRANSFER_IMAGE.height() / 2));
+					y - (MultiPlayerGame.TRANSFER_IMAGE.height() / 2), 0.7);
 			break;
 		}
 	}
 	
 	/**
 	 * Adds a powerup to the appropriate player.
+	 * @param player - the ID of the player who picked up the powerup
 	 */
-	public void addToPlayer() {
+	public void addToPlayer(int player) {
 		// Get the running game instance
 		MultiPlayerGame gameInstance = ((MultiPlayerGame) Game.getInstance());
 		
-		if (PLAYER_AFFECTED_MAP.get(effect) == 0) {
-			gameInstance.getPlayer().addPowerup(this);
-		} else if (PLAYER_AFFECTED_MAP.get(effect) == 1) {
-			NetworkManager.sendData(-1, clone());
+		switch (player) {
+		case 0:
+			if (PLAYER_AFFECTED_MAP.get(effect) == 0) {
+				gameInstance.getPlayer().addPowerup(this);
+			} else if (PLAYER_AFFECTED_MAP.get(effect) == 1) {
+				NetworkManager.sendData(-1, clone());
+			}
+			break;
+		case 1:
+			if (PLAYER_AFFECTED_MAP.get(effect) == 0) {
+				NetworkManager.sendData(-1, clone());
+			} else if (PLAYER_AFFECTED_MAP.get(effect) == 1) {
+				gameInstance.getPlayer().addPowerup(this);
+			}
+			break;
 		}
+		
 	}
 	
 	/**

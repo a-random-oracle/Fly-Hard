@@ -367,16 +367,25 @@ public class Aircraft implements Serializable {
 		
 		return false;
 	}
-
+	
 	/**
 	 * Checks if the aircraft is at (or near to) a specified point.
 	 * @param point - the point to check
 	 * @return <code>true</code> if the aircraft is at the specified point
 	 */
 	public boolean isAt(Vector point) {
+		return isAt(point, 10);
+	}
+
+	/**
+	 * Checks if the aircraft is at (or near to) a specified point.
+	 * @param point - the point to check
+	 * @return <code>true</code> if the aircraft is at the specified point
+	 */
+	public boolean isAt(Vector point, int leniencyRadius) {
 		double dy = point.getY() - position.getY();
 		double dx = point.getX() - position.getX();
-		return (dy * dy) + (dx * dx) < (10 * 10);
+		return (dy * dy) + (dx * dx) < (leniencyRadius * leniencyRadius);
 	}
 
 	/**

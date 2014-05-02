@@ -348,17 +348,18 @@ public abstract class Game extends Scene {
 		drawWaypoints(player);
 		drawAircraft(player);
 		drawSelectedAircraft();
+		
 		graphics.setViewport();
-
-		// Draw flight strips
-		for (FlightStrip fs : player.getFlightStrips()) {
-			fs.draw(16, 20);
-		}
 
 		// Display the player's score
 		graphics.print("Score : " + player.getScore(),
 				getXOffset() + 32,
 				window.height() - getYOffset() + 5, 1);
+		
+		// Draw flight strips
+		for (FlightStrip fs : player.getFlightStrips()) {
+			fs.draw(16, 20);
+		}
 	}
 
 	/**

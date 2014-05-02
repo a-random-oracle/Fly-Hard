@@ -141,7 +141,7 @@ public class MultiPlayerGame extends Game {
 		aircraftUnderTransfer = new ArrayList<Aircraft>();
 		dataUpdateTimeElapsed = 0;
 		powerupGenerationTimeElapsed = 0;
-		powerUpInterval = 30;
+		powerUpInterval = 20;
 	}
 
 	/**
@@ -376,77 +376,11 @@ public class MultiPlayerGame extends Game {
 
 		drawPowerupPoints();
 
-		// Draw flight strips
 		graphics.setViewport();
-
-		switch (playerPosition) {
-		case 0:
-			// Draw lives and score in white
-			graphics.setColour(Color.white);
-			
-			// Display the player's lives
-			graphics.print("Lives : " + player.getLives(),
-					getXOffset() + 32,
-					window.height() - getYOffset() + 5, 1);
-			
-			// Display the player's score
-			graphics.print("Score : " + player.getScore(),
-					getXOffset() + 32,
-					window.height() - getYOffset() + 15, 1);
-			
-			// Display the opponent's lives
-			graphics.printRight("Opponent's Lives : " + opposingPlayer.getLives(),
-					window.width() - getXOffset() - 32,
-					window.height() - getYOffset() + 5, 1, 0);
-			
-			// Display the opponent's score
-			graphics.printRight("Opponent's Score : " + opposingPlayer.getScore(),
-					window.width() - getXOffset() - 32,
-					window.height() - getYOffset() + 15, 1, 0);
-			
-			for (FlightStrip fs : player.getFlightStrips()) {
-				fs.draw(16, 20);
-			}
-
-			for (FlightStrip fs : opposingPlayer.getFlightStrips()) {
-				fs.draw(window.width() - (getXOffset()) + 16, 20);
-			}
-			
-			break;
-		case 1:
-			// Draw lives and score in white
-			graphics.setColour(Color.white);
-
-			// Display the opponent's lives
-			graphics.print("Opponents Lives : " + opposingPlayer.getLives(),
-					getXOffset() + 32,
-					window.height() - getYOffset() + 5, 1);
-
-			// Display the opponent's score
-			graphics.print("Opponent's Score : " + opposingPlayer.getScore(),
-					getXOffset() + 32,
-					window.height() - getYOffset() + 15, 1);
-			
-			// Display the player's lives
-			graphics.printRight("Lives : " + player.getLives(),
-					window.width() - getXOffset() - 32,
-					window.height() - getYOffset() + 5, 1, 0);
-			
-			// Display the player's score
-			graphics.printRight("Score : " + player.getScore(),
-					window.width() - getXOffset() - 32,
-					window.height() - getYOffset() + 15, 1, 0);
-			
-			for (FlightStrip fs : player.getFlightStrips()) {
-				fs.draw(window.width() - (getXOffset()) + 16, 20);
-			}
-			
-			for (FlightStrip fs : opposingPlayer.getFlightStrips()) {
-				fs.draw(16, 20);
-			}
-
-			break;
-		}
+		
+		drawLives();
+		drawScore();
+		drawFlightStrips();
 	}
 
 	/**
@@ -486,6 +420,95 @@ public class MultiPlayerGame extends Game {
 				waypoint.getPowerup().draw(waypoint.getLocation().getX(),
 						waypoint.getLocation().getY());
 			}
+		}
+	}
+	
+	private void drawLives() {
+		// Draw lives in white
+		graphics.setColour(Color.white);
+					
+		switch (playerPosition) {
+		case 0:
+			// Display the player's lives
+			graphics.print("Lives : " + player.getLives(),
+					getXOffset() + 32,
+					window.height() - getYOffset() + 5, 1);
+			
+			// Display the opponent's lives
+			graphics.printRight("Opponent's Lives : " + opposingPlayer.getLives(),
+					window.width() - getXOffset() - 32,
+					window.height() - getYOffset() + 5, 1, 0);
+			
+			break;
+		case 1:
+			// Display the player's score
+			graphics.printRight("Score : " + player.getScore(),
+					window.width() - getXOffset() - 32,
+					window.height() - getYOffset() + 15, 1, 0);
+
+			// Display the opponent's score
+			graphics.print("Opponent's Score : " + opposingPlayer.getScore(),
+					getXOffset() + 32,
+					window.height() - getYOffset() + 15, 1);
+			
+			break;
+		}
+	}
+
+	private void drawScore() {
+		// Draw score in white
+		graphics.setColour(Color.white);
+
+		switch (playerPosition) {
+		case 0:
+			// Display the player's score
+			graphics.print("Score : " + player.getScore(),
+					getXOffset() + 32,
+					window.height() - getYOffset() + 15, 1);
+			
+			// Display the opponent's score
+			graphics.printRight("Opponent's Score : " + opposingPlayer.getScore(),
+					window.width() - getXOffset() - 32,
+					window.height() - getYOffset() + 15, 1, 0);
+			
+			break;
+		case 1:
+			// Display the opponent's score
+			graphics.print("Opponent's Score : " + opposingPlayer.getScore(),
+					getXOffset() + 32,
+					window.height() - getYOffset() + 15, 1);
+			
+			// Display the player's score
+			graphics.printRight("Score : " + player.getScore(),
+					window.width() - getXOffset() - 32,
+					window.height() - getYOffset() + 15, 1, 0);
+
+			break;
+		}
+	}
+
+	private void drawFlightStrips() {
+		switch (playerPosition) {
+		case 0:
+			for (FlightStrip fs : player.getFlightStrips()) {
+				fs.draw(16, 20);
+			}
+
+			for (FlightStrip fs : opposingPlayer.getFlightStrips()) {
+				fs.draw(window.width() - (getXOffset()) + 16, 20);
+			}
+			
+			break;
+		case 1:
+			for (FlightStrip fs : player.getFlightStrips()) {
+				fs.draw(window.width() - (getXOffset()) + 16, 20);
+			}
+			
+			for (FlightStrip fs : opposingPlayer.getFlightStrips()) {
+				fs.draw(16, 20);
+			}
+
+			break;
 		}
 	}
 
@@ -535,7 +558,7 @@ public class MultiPlayerGame extends Game {
 				if (aircraft.isAt(waypoint.getLocation())
 						&& waypoint.getPowerup() != null) {
 					// Add the waypoint to the appropriate player
-					waypoint.getPowerup().addToPlayer();
+					waypoint.getPowerup().addToPlayer(0);
 
 					// Register the aircraft as that which obtained the powerup
 					waypoint.getPowerup().registerAircraft(aircraft);
@@ -544,14 +567,20 @@ public class MultiPlayerGame extends Game {
 					waypoint.setPowerup(null);
 				}
 			}
-
-			// Loop through each opposing aircraft
+			
+			// Loop through each of the opponent's aircraft
 			for (Aircraft aircraft : opposingPlayer.getAircraft()) {
 				// If the aircraft is at the waypoint, and if that waypoint has
 				// a powerup
 				if (aircraft.isAt(waypoint.getLocation())
 						&& waypoint.getPowerup() != null) {
-					// Just remove the powerup from the waypoint
+					// Add the waypoint to the appropriate player
+					waypoint.getPowerup().addToPlayer(1);
+
+					// Register the aircraft as that which obtained the powerup
+					waypoint.getPowerup().registerAircraft(aircraft);
+
+					// And remove the powerup from the waypoint
 					waypoint.setPowerup(null);
 				}
 			}
@@ -574,10 +603,6 @@ public class MultiPlayerGame extends Game {
 			
 			// Does the player have more lives than the opponent
 			boolean winOnLives = player.getLives() > opposingPlayer.getLives();
-			
-			// Do both players have no lives
-			//boolean noLives = player.getLives() == 0
-			//		&& opposingPlayer.getLives() == 0;
 			
 			// Does the player have a higher score than the opponent
 			boolean higherScore = player.getScore() > opposingPlayer.getScore();
