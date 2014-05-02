@@ -434,30 +434,34 @@ public class MultiPlayerGame extends Game {
 	}
 
 	private void drawLives() { 
-		// Draw lives in white
-		graphics.setColour(Color.white);
+		graphics.setColour(Color.green);
+		
+		String livesString =
+				String.format("%6d", player.getLives());
+		String opponentLivesString =
+				String.format("%6d", opposingPlayer.getLives());
 
 		switch (playerPosition) {
 		case 0:
 			// Display the player's lives
-			graphics.print("Lives : " + player.getLives(),
+			graphics.print("Lives : " + livesString,
 					getXOffset() + 32,
 					window.height() - getYOffset() + 5, 1);
 
 			// Display the opponent's lives
-			graphics.printRight("Opponent's Lives : " + opposingPlayer.getLives(),
+			graphics.printRight("Opponent's Lives : " + opponentLivesString,
 					window.width() - getXOffset() - 32,
 					window.height() - getYOffset() + 5, 1, 0);
 
 			break; 
 		case 1: 
-			// Display the player's score 
-			graphics.printRight("Lives : " + player.getLives(),
+			// Display the player's lives
+			graphics.printRight("Lives : " + livesString,
 					window.width() - getXOffset() - 32,
 					window.height() - getYOffset() + 5, 1, 0);
 
-			// Display the opponent's score
-			graphics.print("Opponent's Lives : " + opposingPlayer.getLives(),
+			// Display the opponent's lives
+			graphics.print("Opponent's Lives : " + opponentLivesString,
 					getXOffset() + 32,
 					window.height() - getYOffset() + 5, 1);
 
@@ -465,39 +469,45 @@ public class MultiPlayerGame extends Game {
 		}
 	}
 
-	private void drawScore() { 
-		// Draw score in white 
-		graphics.setColour(Color.white); 
+	private void drawScore() {
+		graphics.setColour(Color.green);
+		
+		String scoreString =
+				String.format("%6d", player.getScore());
+		String opponentScoreString =
+				String.format("%6d", opposingPlayer.getScore());
 
-		switch (playerPosition) { 
-		case 0: 
-			// Display the player's score 
-			graphics.print("Score : " + player.getScore(), 
-					getXOffset() + 32, 
-					window.height() - getYOffset() + 15, 1); 
-
-			// Display the opponent's score 
-			graphics.printRight("Opponent's Score : " + opposingPlayer.getScore(), 
-					window.width() - getXOffset() - 32, 
-					window.height() - getYOffset() + 15, 1, 0); 
-
-			break; 
-		case 1: 
-			// Display the opponent's score 
-			graphics.print("Opponent's Score : " + opposingPlayer.getScore(), 
-					getXOffset() + 32, 
-					window.height() - getYOffset() + 15, 1); 
-
+		switch (playerPosition) {
+		case 0:
 			// Display the player's score
-			graphics.printRight("Score : " + player.getScore(),
+			graphics.print("Score : " + scoreString,
+					getXOffset() + 32,
+					window.height() - getYOffset() + 15, 1);
+
+			// Display the opponent's score
+			graphics.printRight("Opponent's Score : " + opponentScoreString,
 					window.width() - getXOffset() - 32,
 					window.height() - getYOffset() + 15, 1, 0);
 
+			break;
+		case 1:
+			// Display the player's score
+			graphics.printRight("Score : " + scoreString,
+					window.width() - getXOffset() - 32,
+					window.height() - getYOffset() + 15, 1, 0);
+			
+			// Display the opponent's score
+			graphics.print("Opponent's Score : " + opponentScoreString,
+					getXOffset() + 32,
+					window.height() - getYOffset() + 15, 1);
+			
 			break;
 		}
 	}
 
 	private void drawFlightStrips() {
+		graphics.setColour(Color.green);
+		
 		switch (playerPosition) {
 		case 0:
 			for (FlightStrip fs : player.getFlightStrips()) {

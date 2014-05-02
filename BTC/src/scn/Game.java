@@ -4,6 +4,8 @@ import java.io.File;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 
+import org.newdawn.slick.Color;
+
 import lib.SpriteAnimation;
 import lib.jog.audio;
 import lib.jog.graphics;
@@ -350,12 +352,15 @@ public abstract class Game extends Scene {
 		drawSelectedAircraft();
 		
 		graphics.setViewport();
+		
+		graphics.setColour(Color.green);
 
 		// Display the player's score
-		graphics.print("Score : " + player.getScore(),
+		String scoreString = String.format("%6d", player.getScore());
+		graphics.print("Score : " + scoreString,
 				getXOffset() + 32,
 				window.height() - getYOffset() + 5, 1);
-		
+
 		// Draw flight strips
 		for (FlightStrip fs : player.getFlightStrips()) {
 			fs.draw(16, 20);
