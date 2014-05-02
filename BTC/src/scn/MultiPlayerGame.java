@@ -3,6 +3,8 @@ package scn;
 import java.io.File;
 import java.util.ArrayList;
 
+import org.newdawn.slick.Color;
+
 import btc.Main;
 import net.NetworkManager;
 import lib.SpriteAnimation;
@@ -384,6 +386,9 @@ public class MultiPlayerGame extends Game {
 
 		switch (playerPosition) {
 		case 0:
+			// Draw lives and score in white
+			graphics.setColour(Color.white);
+			
 			// Display the player's lives
 			graphics.print("Lives : " + player.getLives(),
 					getXOffset() + 32,
@@ -414,24 +419,27 @@ public class MultiPlayerGame extends Game {
 			
 			break;
 		case 1:
+			// Draw lives and score in white
+			graphics.setColour(Color.white);
+
 			// Display the opponent's lives
 			graphics.print("Opponents Lives : " + opposingPlayer.getLives(),
-					window.width() - getXOffset() - 32,
-					window.height() - getYOffset() + 15, 1);
+					getXOffset() + 32,
+					window.height() - getYOffset() + 5, 1);
 
 			// Display the opponent's score
 			graphics.print("Opponent's Score : " + opposingPlayer.getScore(),
-					window.width() - getXOffset() - 32,
-					window.height() - getYOffset() + 5, 1);
+					getXOffset() + 32,
+					window.height() - getYOffset() + 15, 1);
 			
 			// Display the player's lives
 			graphics.printRight("Lives : " + player.getLives(),
-					getXOffset() + 32,
+					window.width() - getXOffset() - 32,
 					window.height() - getYOffset() + 5, 1, 0);
 			
 			// Display the player's score
 			graphics.printRight("Score : " + player.getScore(),
-					getXOffset() + 32,
+					window.width() - getXOffset() - 32,
 					window.height() - getYOffset() + 15, 1, 0);
 			
 			for (FlightStrip fs : player.getFlightStrips()) {
