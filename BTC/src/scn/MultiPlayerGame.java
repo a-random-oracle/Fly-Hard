@@ -378,16 +378,9 @@ public class MultiPlayerGame extends Game {
 		drawSelectedAircraft();
 
 		drawPowerupPoints();
-
-		// Draw flight strips
-		graphics.setViewport();
-
+		
 		switch (playerPosition) {
 		case 0:
-			for (FlightStrip fs : player.getFlightStrips()) {
-				fs.draw(16, 20);
-			}
-			
 			// Display the player's lives
 			graphics.print("Lives : " + player.getLives(),
 					getXOffset() + 32,
@@ -397,10 +390,6 @@ public class MultiPlayerGame extends Game {
 			graphics.print("Score : " + player.getScore(),
 					getXOffset() + 32,
 					window.height() - getYOffset() + 15, 1);
-
-			for (FlightStrip fs : opposingPlayer.getFlightStrips()) {
-				fs.draw(window.width() - (getXOffset()) + 16, 20);
-			}
 			
 			// Display the opponent's lives
 			graphics.printRight("Opponent's Lives : " + opposingPlayer.getLives(),
@@ -414,10 +403,6 @@ public class MultiPlayerGame extends Game {
 
 			break;
 		case 1:
-			for (FlightStrip fs : player.getFlightStrips()) {
-				fs.draw(window.width() - (getXOffset()) + 16, 20);
-			}
-			
 			// Display the opponent's lives
 			graphics.print("Opponents Lives : " + opposingPlayer.getLives(),
 					window.width() - getXOffset() - 32,
@@ -427,10 +412,6 @@ public class MultiPlayerGame extends Game {
 			graphics.print("Opponent's Score : " + opposingPlayer.getScore(),
 					window.width() - getXOffset() - 32,
 					window.height() - getYOffset() + 5, 1);
-
-			for (FlightStrip fs : opposingPlayer.getFlightStrips()) {
-				fs.draw(16, 20);
-			}
 			
 			// Display the player's lives
 			graphics.printRight("Lives : " + player.getLives(),
@@ -441,6 +422,32 @@ public class MultiPlayerGame extends Game {
 			graphics.printRight("Score : " + player.getScore(),
 					getXOffset() + 32,
 					window.height() - getYOffset() + 15, 1, 0);
+
+			break;
+		}
+
+		// Draw flight strips
+		graphics.setViewport();
+
+		switch (playerPosition) {
+		case 0:
+			for (FlightStrip fs : player.getFlightStrips()) {
+				fs.draw(16, 20);
+			}
+
+			for (FlightStrip fs : opposingPlayer.getFlightStrips()) {
+				fs.draw(window.width() - (getXOffset()) + 16, 20);
+			}
+			
+			break;
+		case 1:
+			for (FlightStrip fs : player.getFlightStrips()) {
+				fs.draw(window.width() - (getXOffset()) + 16, 20);
+			}
+			
+			for (FlightStrip fs : opposingPlayer.getFlightStrips()) {
+				fs.draw(16, 20);
+			}
 
 			break;
 		}
