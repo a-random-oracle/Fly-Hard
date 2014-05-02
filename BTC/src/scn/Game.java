@@ -680,6 +680,7 @@ public abstract class Game extends Scene {
 			
 			if (collidedWith != null) {
 				player.setLives(player.getLives() - 1);
+				player.setScore(player.getScore() - 400);
 				gameOver(plane, collidedWith, false);
 				return;
 			}
