@@ -409,8 +409,12 @@ public class Lobby extends Scene {
 				+ Game.getYOffset(),
 				2, (scoresTopRight.getX() - scoresTopLeft.getX()));
 
+		// Draw the rank column label
+		graphics.print("Rank", scoresTopLeft.getX() + Game.getXOffset() + 5,
+				scoresTopLeft.getY() + Game.getYOffset() - 15, 1);
+
 		// Draw the name column label
-		graphics.print("Victor", scoresTopLeft.getX() + Game.getXOffset() + 5,
+		graphics.print("Name", scoresTopLeft.getX() + Game.getXOffset() + 50,
 				scoresTopLeft.getY() + Game.getYOffset() - 15, 1);
 
 		// Draw the score column label
@@ -428,9 +432,15 @@ public class Lobby extends Scene {
 			int i = 0;
 			for (Long score : highScores.descendingKeySet()) {
 				for (String name : highScores.get(score)) {
+					// Draw the numbers
+					graphics.printRight(String.valueOf(i),
+							(scoresTopLeft.getX() + Game.getXOffset()) + 35,
+							(scoresTopLeft.getY() + Game.getYOffset()
+									+ ((i + 0.33) * rowHeight)), 1, 0);
+					
 					// Draw the player's names
 					graphics.print(name,
-							(scoresTopLeft.getX() + Game.getXOffset()) + 5,
+							(scoresTopLeft.getX() + Game.getXOffset()) + 50,
 							(scoresTopLeft.getY() + Game.getYOffset()
 									+ ((i + 0.33) * rowHeight)));
 
