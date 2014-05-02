@@ -52,7 +52,7 @@ public class Lobby extends Scene {
 	private double timeSincePlayerUpdate = 1;
 	
 	/** The time since the list of high scores was last updated */
-	private double timeSinceScoreUpdate = 8.5;
+	private double timeSinceScoreUpdate = 10;
 
 	/** The time since the players waiting string was last updated */
 	private double timeSinceWaitingUpdate = 0.5;
