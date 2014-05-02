@@ -355,15 +355,16 @@ public class Aircraft implements Serializable {
 
 		if (Game.getInstance() != null) {
 			player = Game.getInstance().getPlayerFromAircraft(this);
-		}
-
-		if (player != null) {
-			if (Game.getInstance().getPlayerFromAircraft(this).getID() == 0) {
-				return (x > MultiPlayerGame.rightEntryX);
-			} else {
-				return (x < MultiPlayerGame.leftEntryX);
+			
+			if (player != null) {
+				if (Game.getInstance().getPlayerFromAircraft(this).getID() == 0) {
+					return (x > MultiPlayerGame.rightEntryX);
+				} else {
+					return (x < MultiPlayerGame.leftEntryX);
+				}
 			}
 		}
+		
 		return false;
 	}
 

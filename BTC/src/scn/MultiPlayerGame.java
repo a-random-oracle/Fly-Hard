@@ -516,10 +516,8 @@ public class MultiPlayerGame extends Game {
 	 */
 	public void returnToAirspace() {
 		for (Aircraft airc : player.getAircraft()) {
-			if (!airc.isAtDestination()) {
-				if (airc.isOutOfPlayersAirspace()) {
-					deselectAircraft(airc, player);
-				}
+			if (airc.isOutOfPlayersAirspace()) {
+				deselectAircraft(airc, player);
 			}
 		}
 	}
