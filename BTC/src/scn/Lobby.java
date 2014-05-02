@@ -139,7 +139,7 @@ public class Lobby extends Scene {
 		}
 		
 		// Update the list of high scores approximately every 10 seconds
-		if (timeSinceScoreUpdate > 10) {
+		if (timeSinceScoreUpdate > 2) {
 			// Update the list of players
 			updateHighScores();
 
@@ -148,7 +148,7 @@ public class Lobby extends Scene {
 		}
 
 		// Update dots on strings
-		if (timeSinceWaitingUpdate > 0.5) {
+		if (timeSinceWaitingUpdate > 0.25) {
 			if (waitingForOpponentDots.length() == 3) {
 				waitingForOpponentDots = "";
 			} else {
