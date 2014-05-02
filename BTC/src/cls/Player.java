@@ -3,6 +3,8 @@ package cls;
 import java.io.Serializable;
 import java.util.ArrayList;
 
+import scn.MultiPlayerGame;
+
 public class Player implements Serializable {
 	
 	/** Serialisation ID */
@@ -386,6 +388,9 @@ public class Player implements Serializable {
 	 * @param powerup - the powerup to add
 	 */
 	public void addPowerup(Powerup powerup) {
+		// Play powerup sound
+		MultiPlayerGame.POWERUP_SOUND.play();
+		
 		powerups.add(powerup);
 	}
 	
