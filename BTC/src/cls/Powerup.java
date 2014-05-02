@@ -233,7 +233,7 @@ public class Powerup implements Serializable {
 	 */
 	public void activateEffect() {
 		// Play powerup sound
-		if (timeActivated == -1) {
+		if (!isActive()) {
 			MultiPlayerGame.POWERUP_SOUND.play();
 		}
 		
