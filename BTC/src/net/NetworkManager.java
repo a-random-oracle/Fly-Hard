@@ -195,7 +195,11 @@ public abstract class NetworkManager {
 			connection.connect();
 
 			// Set up the input stream
+			try {
 			inputStream = new ObjectInputStream(connection.getInputStream());
+			} catch (IOException e) {
+				print(e);
+			}
 
 			// Get the received data
 			receivedMessages = (String) inputStream.readObject();
