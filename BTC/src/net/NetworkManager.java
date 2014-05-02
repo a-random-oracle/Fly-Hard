@@ -319,7 +319,7 @@ public abstract class NetworkManager {
 	 * @param data - the data to serialise
 	 * @return the data in a serialised form
 	 */
-	public static byte[] serialiseData(Serializable data) {
+	protected static byte[] serialiseData(Serializable data) {
 		ByteArrayOutputStream byteArrayOutputStream = null;
 		ObjectOutputStream serializeOutputStream = null;
 		
@@ -344,7 +344,7 @@ public abstract class NetworkManager {
 	 * @param data - the byte array to deserialise
 	 * @return the deserialised data entry
 	 */
-	public static Serializable deserialiseData(byte[] data) {
+	protected static Serializable deserialiseData(byte[] data) {
 		ByteArrayInputStream byteArrayInputStream = null;
 		ObjectInputStream deserializeInputStream = null;
 		
