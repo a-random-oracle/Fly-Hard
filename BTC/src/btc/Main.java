@@ -38,7 +38,7 @@ public class Main implements input.EventHandler {
 	
 	
 	/** The game's version number */
-	public static final String VERSION = "Fly-Hard-0.3";
+	public static final String VERSION = "Fly-Hard-0.4";
 
 	/** The title to display in the game window */
 	private static final String TITLE = "Bear Traffic Controller: GOA Edition";

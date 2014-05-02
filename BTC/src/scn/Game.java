@@ -4,7 +4,6 @@ import java.io.File;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 
-import lib.ButtonText;
 import lib.jog.audio;
 import lib.jog.graphics;
 import lib.jog.input;
@@ -55,9 +54,6 @@ public abstract class Game extends Scene {
 	/** The waypoints through which aircraft must travel to reach their destination */
 	protected static Waypoint[] airspaceWaypoints;
 	
-	/** The manual control buttons */
-	protected static ButtonText manualControlButton;
-	
 	/** Difficulty settings: easy, medium and hard */
 	public enum DifficultySetting {EASY, MEDIUM, HARD}
 	
@@ -76,46 +72,7 @@ public abstract class Game extends Scene {
 	 */
 	public Game(DifficultySetting difficulty) {
 		super();
-
 		this.difficulty = difficulty;
-
-		// Define airports
-		airports = new Airport[] {
-				new Airport("Mosgrizzly Airport", (1d/7d), (1d/2d)),
-				new Airport("Yolo Airport", (6d/7d), (1d/2d))
-		};
-
-		// Define entry and exit points
-		locationWaypoints = new Waypoint[] {
-				new Waypoint(8, 8,
-						true, "North West Top Leftonia", false),
-				new Waypoint(8, window.height() - (2 * Y_OFFSET) - 4,
-						true, "100 Acre Woods", false),
-				new Waypoint(window.width() - (2 * X_OFFSET) - 4, 8,
-						true, "City of Rightson", false),
-				new Waypoint(window.width() - (2 * X_OFFSET) - 4,
-						window.height() - (2 * Y_OFFSET) - 4,
-						true, "South Sea", false), airports[0], airports[1]
-		};
-
-		// Define other waypoints
-		airspaceWaypoints = new Waypoint[] {
-				new Waypoint(0.10, 0.18, false, true),
-				new Waypoint(0.10, 0.83, false, true),
-				new Waypoint(0.16, 0.66, false, true),
-				new Waypoint(0.23, 0.90, false, true),
-				new Waypoint(0.26, 0.37, false, true),
-				new Waypoint(0.27, 0.70, false, true),
-				new Waypoint(0.32, 0.12, false, true),
-				
-				new Waypoint(0.63, 0.78, false, true),
-				new Waypoint(0.67, 0.20, false, true),
-				new Waypoint(0.72, 0.43, false, true),
-				new Waypoint(0.72, 0.90, false, true),
-				new Waypoint(0.81, 0.16, false, true),
-				new Waypoint(0.82, 0.80, false, true),
-				new Waypoint(0.92, 0.32, false, true),
-		};
 	}
 
 
@@ -127,6 +84,44 @@ public abstract class Game extends Scene {
 	 */
 	@Override
 	public void start() {
+		// Define airports
+		airports = new Airport[] {
+				new Airport("Mosgrizzly Airport", (1d/7d), (1d/2d)),
+				new Airport("Yolo Airport", (6d/7d), (1d/2d))
+		};
+
+		// Define entry and exit points
+		locationWaypoints = new Waypoint[] {
+				new Waypoint(8, 8,
+						true, "North West Top Leftonia", false),
+						new Waypoint(8, window.height() - (2 * Y_OFFSET) - 4,
+								true, "100 Acre Woods", false),
+								new Waypoint(window.width() - (2 * X_OFFSET) - 4, 8,
+										true, "City of Rightson", false),
+										new Waypoint(window.width() - (2 * X_OFFSET) - 4,
+												window.height() - (2 * Y_OFFSET) - 4,
+												true, "South Sea", false), airports[0], airports[1]
+		};
+
+		// Define other waypoints
+		airspaceWaypoints = new Waypoint[] {
+				new Waypoint(0.10, 0.18, false, true),
+				new Waypoint(0.10, 0.83, false, true),
+				new Waypoint(0.16, 0.66, false, true),
+				new Waypoint(0.23, 0.90, false, true),
+				new Waypoint(0.26, 0.37, false, true),
+				new Waypoint(0.27, 0.70, false, true),
+				new Waypoint(0.32, 0.12, false, true),
+
+				new Waypoint(0.63, 0.78, false, true),
+				new Waypoint(0.67, 0.20, false, true),
+				new Waypoint(0.72, 0.43, false, true),
+				new Waypoint(0.72, 0.90, false, true),
+				new Waypoint(0.81, 0.16, false, true),
+				new Waypoint(0.82, 0.80, false, true),
+				new Waypoint(0.92, 0.32, false, true),
+		};
+
 		if (!Main.testing) {
 			// Load in graphics
 			background = graphics.newImage("gfx" + File.separator
@@ -458,23 +453,6 @@ public abstract class Game extends Scene {
 	}
 
 	/**
-	 * Draws the manual control button.
-	 */
-	protected void drawManualControlButton(Player player) {
-		if (player.getSelectedAircraft() != null) {
-			graphics.setColour(graphics.green);
-			// Display the manual control button
-			graphics.setColour(graphics.black);
-			graphics.rectangle(true, (window.width() - 128 - (2 * X_OFFSET)) / 2,
-					32, 128, 32);
-			graphics.setColour(graphics.green);
-			graphics.rectangle(false, (window.width() - 128 - (2 * X_OFFSET)) / 2,
-					32, 128, 32);
-			manualControlButton.draw();
-		}
-	}
-
-	/**
 	 * Draws a readout of the time the game has been played for, and number of planes
 	 * in the sky.
 	 */
@@ -620,9 +598,7 @@ public abstract class Game extends Scene {
 		}
 
 		if (key == input.MOUSE_LEFT) {
-			if (manualOverridePressed(x, y, player)) {
-				manualControlButton.act();
-			} else if (player.isWaypointClicked() && player.getSelectedAircraft() != null) {
+			if (player.isWaypointClicked() && player.getSelectedAircraft() != null) {
 				Waypoint newWaypoint = findClickedWaypoint(x, y, player);
 				if (newWaypoint != null) {
 					player.getSelectedAircraft().alterPath(player.getSelectedPathpoint(),
@@ -941,11 +917,6 @@ public abstract class Game extends Scene {
 	 * @param player - the player to reset the selected plane attribute for
 	 */
 	protected void deselectAircraft(Aircraft aircraft, Player player) {
-		if (aircraft != null && aircraft.isManuallyControlled()) {
-			aircraft.toggleManualControl();
-			manualControlButton.setText(" Take Control");
-		}
-
 		if (aircraft != null && aircraft.equals(player.getSelectedAircraft())) {
 			player.setSelectedAircraft(null);
 		}
@@ -963,9 +934,6 @@ public abstract class Game extends Scene {
 		if (selectedAircraft == null) return;
 
 		selectedAircraft.toggleManualControl();
-		manualControlButton.setText(
-				(selectedAircraft.isManuallyControlled() ?
-						"Remove" : " Take") + " Control");
 	}
 
 	/**
@@ -1127,18 +1095,6 @@ public abstract class Game extends Scene {
 		return null;
 	}
 
-	/**
-	 * Gets whether the manual control button has been clicked.
-	 * @param x - the mouse's x position
-	 * @param y - the mouse's y position
-	 * @param player - the player to check this for
-	 * @return <code>true</code> if the manual control button has been
-	 * 			pressed, otherwise <code>false</code>
-	 */
-	protected boolean manualOverridePressed(int x, int y, Player player) {
-		return manualControlButton.isMouseOver(x - X_OFFSET, y - Y_OFFSET);
-	}
-
 
 	// Accessors ------------------------------------------------------------------------
 
@@ -1172,6 +1128,22 @@ public abstract class Game extends Scene {
 		} else {
 			return 0;
 		}
+	}
+	
+	/**
+	 * Gets the window's x-offset directly.
+	 * @return the window's x-offset
+	 */
+	public static int getXOffsetDirect() {
+		return X_OFFSET;
+	}
+	
+	/**
+	 * Gets the window's y-offset directly.
+	 * @return the window's y-offset
+	 */
+	public static int getYOffsetDirect() {
+		return Y_OFFSET;
 	}
 
 	/**

@@ -1,6 +1,7 @@
 package net;
 
 import java.io.EOFException;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.ByteArrayOutputStream;
 import java.io.ByteArrayInputStream;
@@ -196,15 +197,17 @@ public abstract class NetworkManager {
 
 			// Set up the input stream
 			try {
-			inputStream = new ObjectInputStream(connection.getInputStream());
-			} catch (IOException e) {
+				inputStream = new ObjectInputStream(connection.getInputStream());
+			} catch (FileNotFoundException e) {
 				print(e);
 			}
 
 			// Get the received data
-			receivedMessages = (String) inputStream.readObject();
+			if (inputStream != null) {
+				receivedMessages = (String) inputStream.readObject();
+			}
 
-			if (!message.equals("NULL")) {
+			if (!message.equals("NULL") && receivedMessages != null) {
 				print("Received response: " + receivedMessages);
 			}
 

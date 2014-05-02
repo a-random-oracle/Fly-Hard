@@ -48,12 +48,6 @@ public class MultiPlayerGame extends Game {
 	/** The instruction to send to the server on ending the game */
 	private static String endGameInstruction;
 
-	/** The y-coordinate at which the middle zone borders begin */
-	private static int yStart = window.height() - getYOffset();
-
-	/** The y-coordinate at which the middle zone borders end */
-	private static int yEnd = getYOffset();
-
 	/** The x-coordinate at which the left middle zone border is located */
 	public static int leftEntryX = (int) (window.width() * (3d/7d));
 
@@ -440,8 +434,10 @@ public class MultiPlayerGame extends Game {
 		graphics.setColour(graphics.green);
 
 		// Draw the two lines
-		graphics.line(leftEntryX, yStart, leftEntryX, yEnd);
-		graphics.line(rightEntryX, yStart, rightEntryX, yEnd);
+		graphics.line(leftEntryX, getYOffset(),
+				leftEntryX, window.height() - getYOffset());
+		graphics.line(rightEntryX, getYOffset(),
+				rightEntryX,  window.height() - getYOffset());
 	}
 
 	/**
@@ -575,12 +571,31 @@ public class MultiPlayerGame extends Game {
 			for (Airport airport : opposingPlayer.getAirports()) {
 				airport.clear();
 			}
+			
+			// Does the player have more lives than the opponent
+			boolean winOnLives = player.getLives() > opposingPlayer.getLives();
+			
+			// Do both players have no lives
+			//boolean noLives = player.getLives() == 0
+			//		&& opposingPlayer.getLives() == 0;
+			
+			// Does the player have a higher score than the opponent
+			//boolean higherScore = player.getScore() > opposingPlayer.getScore();
 
 			if (!override) {
-				endGameInstruction = "GAME_OVER:" + plane1.getName()
-						+ ":" + plane2.getName();
+				if (winOnLives) {
+					endGameInstruction = "GAME_OVER:" + player.getScore() + ":"
+							+ plane1.getName() + ":" + plane2.getName();
+				} else {
+					endGameInstruction = "GAME_OVER:" + plane1.getName()
+							+ ":" + plane2.getName();
+				}
 			} else {
-				endGameInstruction = "NULL";
+				if (winOnLives) {
+					endGameInstruction = "GAME_OVER_RECEIVED:" + player.getScore();
+				} else {
+					endGameInstruction = "GAME_OVER_RECEIVED";
+				}
 			}
 			
 			// TODO <- add back in for release

@@ -36,7 +36,6 @@ public class SinglePlayerGame extends Game {
 	 */
 	private SinglePlayerGame(DifficultySetting difficulty) {
 		super(difficulty);
-		
 		instance = this;
 	}
 

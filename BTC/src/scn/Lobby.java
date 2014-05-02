@@ -1,7 +1,9 @@
 package scn;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
+import java.util.TreeMap;
 
 import net.InstructionHandler;
 import net.NetworkManager;
@@ -25,16 +27,22 @@ public class Lobby extends Scene {
 	private static final int CREATE_BUTTON_H = 32;
 
 	/** Coordinates for the top left of the game selection table */
-	private static final Vector tableTopLeft = new Vector(0.05, 0.2, 0, true);
+	private static final Vector tableTopLeft = new Vector(0.07, 0.25, 0, true);
 
 	/** Coordinates for the top right of the game selection table */
-	private static final Vector tableTopRight = new Vector(0.75, 0.2, 0, true);
+	private static final Vector tableTopRight = new Vector(0.60, 0.25, 0, true);
 
 	/** Coordinates for the bottom right of the game selection table */
-	private static final Vector tableBottomRight = new Vector(0.75, 0.95, 0, true);
+	private static final Vector tableBottomRight = new Vector(0.60, 0.90, 0, true);
+	
+	/** Coordinates for the top left of the high scores table */
+	private static final Vector scoresTopLeft = new Vector(0.65, 0.25, 0, true); //TODO <- JUMPER
+
+	/** Coordinates for the top right of the high scores table */
+	private static final Vector scoresTopRight = new Vector(0.93, 0.25, 0, true);
 
 	/** The coordinates of the input box */
-	private static final Vector nameEntryBoxPos = new Vector(0.5, 0.02, 0, true);
+	private static final Vector nameEntryBoxPos = new Vector(0.50, 0.08, 0, true);
 
 	/** The height to draw table rows */
 	private static final double rowHeight =
@@ -42,6 +50,9 @@ public class Lobby extends Scene {
 	
 	/** The time since the list of available players was last updated */
 	private double timeSincePlayerUpdate = 1;
+	
+	/** The time since the list of high scores was last updated */
+	private double timeSinceScoreUpdate = 8.5;
 
 	/** The time since the players waiting string was last updated */
 	private double timeSinceWaitingUpdate = 0.5;
@@ -51,6 +62,9 @@ public class Lobby extends Scene {
 	
 	/** The map of available players */
 	private LinkedHashMap<Integer, String> availablePlayers;
+	
+	/** The map of high scores */
+	private TreeMap<Long, ArrayList<String>> highScores;
 	
 	/** The input box used for name entry */
 	private static InputBox nameEntryBox = new InputBox(Color.white, Color.darkGray,
@@ -111,6 +125,7 @@ public class Lobby extends Scene {
 	public void update(double timeDifference) {
 		// Increment the time before the next data send
 		timeSincePlayerUpdate += timeDifference;
+		timeSinceScoreUpdate += timeDifference;
 		timeSinceWaitingUpdate += timeDifference;
 		timeSinceStartGameUpdate += timeDifference;
 
@@ -121,6 +136,15 @@ public class Lobby extends Scene {
 
 			// Reset the time
 			timeSincePlayerUpdate = 0;
+		}
+		
+		// Update the list of high scores approximately every 10 seconds
+		if (timeSinceScoreUpdate > 10) {
+			// Update the list of players
+			updateHighScores();
+
+			// Reset the time
+			timeSinceScoreUpdate = 0;
 		}
 
 		// Update dots on strings
@@ -227,6 +251,57 @@ public class Lobby extends Scene {
 			}
 		}
 	}
+	
+	/**
+	 * Checks the server to get any updates to the map of high scores.
+	 */
+	private void updateHighScores() {
+		// Clear the list of high scores
+		highScores = new TreeMap<Long, ArrayList<String>>();
+
+		// Get the collapsed list of high scores from the server
+		String collapsedHighScores = NetworkManager
+				.postMessage("GET_HIGH_SCORES");
+
+		if (collapsedHighScores != null) {
+			String[] highScoresList = collapsedHighScores.split("#");
+
+			// Format the open connections into a hashmap
+			String[] currentEntry;
+			for (int i = 0; i < highScoresList.length; i++) {
+				if (!highScoresList[i].equals("INVALID_CLIENT")
+						&& !highScoresList[i].equals("INVALID_REQUEST")
+						&& !highScoresList[i].contains("NO_HIGH_SCORES")) {
+					currentEntry = highScoresList[i].split("=");
+
+					if (currentEntry != null && currentEntry.length == 2
+							&& currentEntry[0] != null
+							&& currentEntry[1] != null) {
+						try {
+							String name = currentEntry[0];
+							long score = Long.valueOf(currentEntry[1]);
+
+							if (!highScores.containsKey(score)) {
+								// If the score is not already in the list
+								// of high scores, create a new list of names
+								// with that score, add in the specified name,
+								// and add the list and score to the hash map
+								ArrayList<String> newNameList = new ArrayList<String>();
+								newNameList.add(name);
+								highScores.put(score, newNameList);
+							} else {
+								// Otherwise, add the name to the list
+								// of names with the score
+								highScores.get(score).add(name);
+							}
+						} catch (NumberFormatException e) {
+							e.printStackTrace();
+						}
+					}
+				}
+			}
+		}
+	}
 
 	@Override
 	public void draw() {
@@ -279,7 +354,7 @@ public class Lobby extends Scene {
 		graphics.printRight("Action", tableTopRight.getX() + Game.getXOffset() - 5,
 				tableTopLeft.getY() + Game.getYOffset() - 15, 1, 0);
 
-		// Draw the table outside border
+		// Draw the table border //TODO <- JUMPER
 		graphics.rectangle(false,
 				(tableTopLeft.getX() + Game.getXOffset()),
 				(tableTopLeft.getY() + Game.getYOffset()),
@@ -316,10 +391,65 @@ public class Lobby extends Scene {
 								+ ((i + 0.33) * rowHeight)),
 						1, (tableTopRight.getX() - tableTopLeft.getX()));
 			}
-
-			// Draw the play game buttons
+			
+			// Draw the play game buttons //TODO <- JUMPER
 			for (int i = 0; i < joinButtons.size(); i++) {
 				joinButtons.get(i).drawRight();
+			}
+		}
+		
+		// Draw the table in white
+		graphics.setColour(255, 255, 255);
+		
+		// Draw the high scores table heading
+		graphics.printCentred("High Scores",
+				scoresTopLeft.getX() + Game.getXOffset(),
+				nameEntryBoxPos.getY()
+				+ ((scoresTopLeft.getY() - nameEntryBoxPos.getY()) / 2)
+				+ Game.getYOffset(),
+				2, (scoresTopRight.getX() - scoresTopLeft.getX()));
+
+		// Draw the name column label
+		graphics.print("Victor", scoresTopLeft.getX() + Game.getXOffset() + 5,
+				scoresTopLeft.getY() + Game.getYOffset() - 15, 1);
+
+		// Draw the score column label
+		graphics.printRight("Score", scoresTopRight.getX() + Game.getXOffset() - 5,
+				scoresTopLeft.getY() + Game.getYOffset() - 15, 1, 0);
+
+		// Draw the high scores table border
+		graphics.rectangle(false,
+				(scoresTopLeft.getX() + Game.getXOffset()),
+				(scoresTopLeft.getY() + Game.getYOffset()),
+				(scoresTopRight.getX() - scoresTopLeft.getX()),
+				(tableBottomRight.getY() - scoresTopRight.getY()));
+
+		if (highScores != null && highScores.size() > 0) {
+			int i = 0;
+			for (Long score : highScores.descendingKeySet()) {
+				for (String name : highScores.get(score)) {
+					// Draw the player's names
+					graphics.print(name,
+							(scoresTopLeft.getX() + Game.getXOffset()) + 5,
+							(scoresTopLeft.getY() + Game.getYOffset()
+									+ ((i + 0.33) * rowHeight)));
+
+					// Draw the scores
+					graphics.printRight(String.valueOf(score),
+							scoresTopRight.getX() + Game.getXOffset() - 5,
+							(scoresTopLeft.getY() + Game.getYOffset()
+									+ ((i + 0.33) * rowHeight)), 1, 0);
+
+					// Draw vertical lines below each score
+					graphics.line((scoresTopLeft.getX() + Game.getXOffset()),
+							(scoresTopLeft.getY() + Game.getYOffset()
+									+ ((i + 1) * rowHeight)),
+									(scoresTopRight.getX() + Game.getXOffset()),
+									(scoresTopLeft.getY() + Game.getYOffset()
+											+ ((i + 1) * rowHeight)));
+
+					i++;
+				}
 			}
 		}
 	}
