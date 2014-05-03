@@ -911,10 +911,9 @@ public class Aircraft implements Serializable {
 					Game.getInstance().getPlayerFromAirport(
 							airport).getAircraft().add(this);
 					Game.getInstance().getPlayer().getFlightStrips()
-							.add(new FlightStrip(this,
-									FlightStrip.BACKGROUND_COLOURS[
-									  ((MultiPlayerGame) Game.getInstance())
-									  .getPlayer().getID()]));
+							.add(new FlightStrip(this, FlightStrip
+									.BACKGROUND_COLOURS[Game.getInstance()
+									                    .getPlayer().getID()]));
 					return;
 				}
 			}

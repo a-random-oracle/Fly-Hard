@@ -23,7 +23,7 @@ public class FlightStrip implements Serializable {
 	
 	/** The array of background colours */
 	public static final Color[] BACKGROUND_COLOURS =
-			new Color[] {Color.blue, Color.red};
+			new Color[] {graphics.blue, graphics.red};
 	
 	/** The default width */
 	private static final int STANDARD_WIDTH = 160;
@@ -142,6 +142,8 @@ public class FlightStrip implements Serializable {
     	
     	if (isVisible) {
     		graphics.setFont(Main.mainFont);
+    		drawHover();
+    		drawHighlight();
     		drawOutline();
     		drawFlightNumber();
     		drawAirline();
@@ -229,11 +231,25 @@ public class FlightStrip implements Serializable {
     }
     
     private void drawHighlight() {
-    	
+    	if (aircraft.equals(Game.getInstance().getPlayer().getSelectedAircraft())) {
+    		graphics.setColour(Color.white);
+            graphics.rectangle(true, xOffset - 3, yOffset + positionY - 3,
+            		width + 6, height + 6);
+            graphics.setColour(Color.transparent);
+            graphics.rectangle(true, xOffset - 1, yOffset + positionY - 1,
+            		width + 2, height + 2);
+    	}
     }
     
     private void drawHover() {
-    	
+    	if (isActive) {
+    		graphics.setColour(Color.gray);
+            graphics.rectangle(true, xOffset - 3, yOffset + positionY - 3,
+            		width + 6, height + 6);
+            graphics.setColour(Color.transparent);
+            graphics.rectangle(true, xOffset - 1, yOffset + positionY - 1,
+            		width + 2, height + 2);
+    	}
     }
     
     
