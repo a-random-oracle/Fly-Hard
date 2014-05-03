@@ -110,6 +110,7 @@ public class FlightStrip implements Serializable {
     	if (isMouseOver() && Game.getInstance().getPlayer().equals(
     			Game.getInstance().getPlayerFromAircraft(aircraft))) {
     		isActive = true;
+    		System.out.println("TRUE");
     	} else {
     		isActive = false;
     	}
