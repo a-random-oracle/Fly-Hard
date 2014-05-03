@@ -377,6 +377,17 @@ public abstract class NetworkManager {
 	}
 	
 	/**
+	 * Gets the player's name.
+	 * @return the player's name
+	 */
+	public static String getName() {
+		// Obtain a lock on the header fields
+		synchronized (headerMutex) {
+			return name;
+		}
+	}
+	
+	/**
 	 * Sets the player's ID.
 	 * @param name - the player's ID
 	 */

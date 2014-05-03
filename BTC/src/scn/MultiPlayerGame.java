@@ -100,6 +100,7 @@ public class MultiPlayerGame extends Game {
 	 * </p>
 	 * @param difficulty - the difficulty the scene is to be initialised with
 	 * @param playerPosition - the side of the screen the player will control
+	 * @param playerName - the player's name
 	 * @return the multiplayer game instance
 	 */
 	public static MultiPlayerGame createMultiPlayerGame(
@@ -252,6 +253,11 @@ public class MultiPlayerGame extends Game {
 		if (dataUpdateTimeElapsed > 0.01) {
 			// Send current player's data to the server
 			NetworkManager.sendData(System.currentTimeMillis(), player.clone());
+			
+			// If the player's name hasn't been set, set it
+			if (player.getName() == null) {
+				player.setName(NetworkManager.getName());
+			}
 		}
 		
 		// Receive data
@@ -369,6 +375,25 @@ public class MultiPlayerGame extends Game {
 	@Override
 	public void draw() {
 		super.draw();
+		
+		// Draw the player's names
+		graphics.setColour(graphics.blue);
+		
+		if (player.getName() != null) {
+			graphics.printCentred(player.getName(),
+					(((window.width() - (2 * getXOffset()))
+							* (3d/7d)) / 2) + getXOffset(),
+					getYOffset() - 15, 1, 0);
+		}
+		
+		graphics.setColour(graphics.red);
+		
+		if (opposingPlayer.getName() != null) {
+			graphics.printCentred(opposingPlayer.getName(),
+					window.width() - ((((window.width() - (2 * getXOffset()))
+							* (3d/7d)) / 2) + getXOffset()),
+					getYOffset() - 15, 1, 0);
+		}
 
 		// Draw the middle zone
 		drawMiddleZone();

@@ -25,6 +25,9 @@ public class Player implements Serializable {
 	/** The player's unique ID */
 	private int id;
 	
+	/** The player's name */
+	private String name;
+	
 	/** The maximum number of aircraft which this player can control */
 	private int maxAircraft;
 	
@@ -126,6 +129,7 @@ public class Player implements Serializable {
 	@SuppressWarnings("unchecked")
 	private Player(Player player) {
 		this.id = player.id;
+		this.name = player.name;
 		this.airports = (player.airports != null) ? player.airports.clone() : null;
 		this.waypoints = (player.waypoints != null)
 				? player.waypoints.clone() : null;
@@ -157,6 +161,14 @@ public class Player implements Serializable {
 	 */
 	public int getID() {
 		return id;
+	}
+	
+	/**
+	 * Gets the player's name.
+	 * @return the player's name
+	 */
+	public String getName() {
+		return name;
 	}
 	
 	/**
@@ -302,6 +314,14 @@ public class Player implements Serializable {
 		return powerups;
 	}
 	
+	
+	/**
+	 * Sets the player's name.
+	 * @param name - the player's name
+	 */
+	public void setName(String name) {
+		this.name = name;
+	}
 	
 	/**
 	 * Sets the list of aircraft under the player's control.

@@ -4,8 +4,6 @@ import java.io.File;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 
-import org.newdawn.slick.Color;
-
 import lib.SpriteAnimation;
 import lib.jog.audio;
 import lib.jog.graphics;
@@ -349,7 +347,7 @@ public abstract class Game extends Scene {
 		
 		graphics.setViewport();
 		
-		graphics.setColour(Color.green);
+		graphics.setColour(graphics.green_transp);
 
 		// Display the player's score
 		String scoreString = String.format("%6d", player.getScore());
@@ -488,8 +486,7 @@ public abstract class Game extends Scene {
 
 		// Get the time the game has been played for
 		int hours = (int)(timeElapsed / (60 * 60));
-		int minutes = (int)(timeElapsed / 60);
-		minutes %= 60;
+		int minutes = (int)(timeElapsed / 60) % 60;
 		double seconds = timeElapsed % 60;
 
 		// Display this in the form 'hh:mm:ss'
@@ -498,12 +495,13 @@ public abstract class Game extends Scene {
 				+ df.format(seconds);
 
 		// Print this to the screen
-		graphics.print(timePlayed, window.width() - X_OFFSET
-				- (timePlayed.length() * 8 + 32), 32);
+		graphics.printCentred(timePlayed,
+				((window.width() - (2 * X_OFFSET)) / 2) + X_OFFSET,
+				Y_OFFSET - 15, 1, 0);
 
-		// Print the number of aircraft in the airspace to the screen
-		graphics.print(String.valueOf(aircraftCount)
-				+ " aircraft in the airspace.", 32 + X_OFFSET, 32);
+		// Print the number of aircraft in the airspace to the screen //TODO <- check that removing this is OK
+		//graphics.print(String.valueOf(aircraftCount)
+		//		+ " aircraft in the airspace.", 32 + X_OFFSET, 32);
 	}
 
 	/**
