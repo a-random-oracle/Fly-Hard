@@ -41,7 +41,7 @@ public class Main implements input.EventHandler {
 	public static final String VERSION = "Fly-Hard-0.5.6";
 
 	/** The title to display in the game window */
-	private static final String TITLE = "Bear Traffic Controller: GOA Edition";
+	private static final String TITLE = "Fly Hard";
 
 	/** The target window width */
 	public static final int TARGET_WIDTH = 1280;
@@ -50,10 +50,10 @@ public class Main implements input.EventHandler {
 	public static final int TARGET_HEIGHT = 960;
 
 	/** The default size of the gap between the window edge and the left edge of the screen */
-	public static final int WIDTH_GAP = 40;
+	public static final int WIDTH_GAP = 20;
 
 	/** The default size of the gap between the window edge and the top edge of the screen */
-	public static final int HEIGHT_GAP = 50;
+	public static final int HEIGHT_GAP = 20;
 	
 	/** The standard font */
 	public static graphics.Font standardFont;
@@ -193,7 +193,7 @@ public class Main implements input.EventHandler {
 					java.awt.Font.createFont(java.awt.Font.TRUETYPE_FONT,
 							ResourceLoader.getResourceAsStream(
 									"gfx" + File.separator + "fnt" + File.separator
-									+ "Roboto-Medium.ttf")).deriveFont(18F), true);
+									+ "Roboto-Medium.ttf")).deriveFont(16F), true);
 			
 		} catch (FontFormatException | IOException e) {
 			e.printStackTrace();

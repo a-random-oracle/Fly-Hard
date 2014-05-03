@@ -91,8 +91,8 @@ public abstract class Game extends Scene {
 	public void start() {
 		// Define airports
 		airports = new Airport[] {
-				new Airport("Mosgrizzly Airport", (1d/7d), (1d/2d)),
-				new Airport("Yolo Airport", (6d/7d), (1d/2d))
+				new Airport("Babbage International", (1d/7d), (1d/2d)),
+				new Airport("Eboracum Airport", (6d/7d), (1d/2d))
 		};
 
 		// Define entry and exit points
@@ -371,7 +371,7 @@ public abstract class Game extends Scene {
 
 		// Display the player's score
 		String scoreString = String.format("%6d", player.getScore());
-		graphics.print("Score : " + scoreString,
+		graphics.print("Score : ".toUpperCase() + scoreString,
 				getXOffset() + 32,
 				window.height() - getYOffset() + 5, 1);
 
@@ -459,15 +459,15 @@ public abstract class Game extends Scene {
 		graphics.print(locationWaypoints[0].getName().toUpperCase(),
 				locationWaypoints[0].getLocation().getX() + 9,
 				locationWaypoints[0].getLocation().getY() - 6); // TODO Consider more cases
-		graphics.print(locationWaypoints[1].getName(),
+		graphics.print(locationWaypoints[1].getName().toUpperCase(),
 				locationWaypoints[1].getLocation().getX() + 9,
-				locationWaypoints[1].getLocation().getY() - 6);
-		graphics.print(locationWaypoints[2].getName(),
+				locationWaypoints[1].getLocation().getY() - 16);
+		graphics.print(locationWaypoints[2].getName().toUpperCase(),
 				locationWaypoints[2].getLocation().getX() - 141,
 				locationWaypoints[2].getLocation().getY() - 6);
-		graphics.print(locationWaypoints[3].getName(),
+		graphics.print(locationWaypoints[3].getName().toUpperCase(),
 				locationWaypoints[3].getLocation().getX() - 91,
-				locationWaypoints[3].getLocation().getY() - 6);
+				locationWaypoints[3].getLocation().getY() - 16);
 	}
 
 	/**
@@ -489,12 +489,12 @@ public abstract class Game extends Scene {
 		// Draw the airport names
 		graphics.setColour(graphics.green);
 
-		graphics.print(locationWaypoints[4].getName().toUpperCase(),
-				locationWaypoints[4].getLocation().getX() - 20,
-				locationWaypoints[4].getLocation().getY() + 25); // TODO Consider more cases
-		graphics.print(locationWaypoints[5].getName(),
-				locationWaypoints[5].getLocation().getX() - 20,
-				locationWaypoints[5].getLocation().getY() + 25);
+		graphics.printCentred(locationWaypoints[4].getName().toUpperCase(),
+				locationWaypoints[4].getLocation().getX(),
+				locationWaypoints[4].getLocation().getY() + 15, 1, 0); // TODO Consider more cases
+		graphics.printCentred(locationWaypoints[5].getName().toUpperCase(),
+				locationWaypoints[5].getLocation().getX(),
+				locationWaypoints[5].getLocation().getY() + 15, 1, 0);
 	}
 
 	/**
@@ -518,10 +518,10 @@ public abstract class Game extends Scene {
 		graphics.printCentred(timePlayed,
 				((window.width() - (2 * X_OFFSET)) / 2) + X_OFFSET,
 				Y_OFFSET - 15, 1, 0);
-
-		// Print the number of aircraft in the airspace to the screen //TODO <- check that removing this is OK
-		//graphics.print(String.valueOf(aircraftCount)
-		//		+ " aircraft in the airspace.", 32 + X_OFFSET, 32);
+		
+		// Print the number of aircraft in the airspace to the screen
+		graphics.print(String.valueOf(aircraftCount)
+				+ " aircraft in the airspace.".toUpperCase(), 32 + X_OFFSET, 32);
 	}
 
 	/**
