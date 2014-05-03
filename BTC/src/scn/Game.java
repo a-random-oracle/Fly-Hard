@@ -787,7 +787,8 @@ public abstract class Game extends Scene {
 		if (aircraft != null && player != null) {
 			// If the aircraft starts at an airport, add it to that airport
 			for (Airport airport : player.getAirports()) {
-				if (aircraft.getFlightPlan().getOriginName().equals(airport.getName())) {
+				if (aircraft.getFlightPlan()
+						.getOriginName().equals(airport.getName())) {
 					airport.addToHangar(aircraft);
 					return;
 				}
@@ -797,7 +798,8 @@ public abstract class Game extends Scene {
 			player.getAircraft().add(aircraft);
 
 			if (player.equals(this.player)) {
-				player.getFlightStrips().add(new FlightStrip(aircraft));
+				player.getFlightStrips().add(new FlightStrip(aircraft,
+						FlightStrip.BACKGROUND_COLOURS[player.getID()]));
 			}
 		}
 	}

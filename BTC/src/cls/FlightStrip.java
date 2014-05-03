@@ -8,6 +8,8 @@ package cls;
 
 import java.io.Serializable;
 
+import org.newdawn.slick.Color;
+
 import btc.Main;
 import scn.Game;
 import lib.jog.graphics;
@@ -19,6 +21,10 @@ public class FlightStrip implements Serializable {
 	/** Serialisation ID */
 	private static final long serialVersionUID = -7542014798949722639L;
 	
+	/** The array of background colours */
+	public static final Color[] BACKGROUND_COLOURS =
+			new Color[] {Color.blue, Color.red};
+	
 	/** The default width */
 	private static final int STANDARD_WIDTH = 160;
 	
@@ -27,6 +33,9 @@ public class FlightStrip implements Serializable {
 	
 	/** The default separation */
 	private static final int SEPARATION = 10;
+	
+	/** The colour to draw the strip background */
+	private Color background;
 
 	/** Whether the flight strip should be drawn or not */
 	private boolean isVisible;
@@ -56,8 +65,11 @@ public class FlightStrip implements Serializable {
     /**
      * Constructor for flight strips.
      * @param aircraft - the linked aircraft
+     * @param backgroundColour - the colour to draw the background of
+     * 								the flight strip
      */
-    public FlightStrip(Aircraft aircraft) {
+    public FlightStrip(Aircraft aircraft, Color backgroundColour) {
+    	this.background = backgroundColour;
     	this.isVisible = true;
     	this.isActive = false;
     	this.aircraft = aircraft;
@@ -73,9 +85,12 @@ public class FlightStrip implements Serializable {
      * @param width - the width of the strip
      * @param height - the height of the strip
      * @param aircraft - the linked aircraft
+     * @param backgroundColour - the colour to draw the background of
+     * 								the flight strip
      */
     public FlightStrip(double x, double width, double height,
-    		Aircraft aircraft) {
+    		Aircraft aircraft, Color backgroundColour) {
+    	this.background = backgroundColour;
     	this.isVisible = true;
     	this.isActive = false;
     	this.aircraft = aircraft;
@@ -136,6 +151,7 @@ public class FlightStrip implements Serializable {
     		graphics.setFont(Main.standardFont);
     		
     		if (isActive) {
+    			System.out.println("HERE");
     			graphics.setViewport(Game.getXOffset(), Game.getYOffset(),
     					window.width() - (2 * Game.getXOffset()),
     					window.height() - (2 * Game.getYOffset()));
@@ -146,11 +162,7 @@ public class FlightStrip implements Serializable {
     }
 
     private void drawOutline() {
-    	Integer[] playerColour = Game.getInstance()
-    			.getPlayerFromAircraft(aircraft).getAircraftColour();
-        graphics.setColour((int) (playerColour[0] * 0.4),
-        		(int) (playerColour[1] * 0.4),
-        		(int) (playerColour[2] * 0.4));
+        graphics.setColour(background);
         graphics.rectangle(true, xOffset, yOffset + positionY,
         		width, height);
         graphics.setColour(graphics.white);
