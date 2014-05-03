@@ -102,6 +102,7 @@ public class Title extends Scene {
 				Main.setScene(new Credits());
 			}
 		};
+		
 		buttons[2] = new lib.ButtonText("Credits", credits,
 				window.height()/3 - 40, yBorder + 240,
 				window.width() - (2 * window.height()/3) + 80, 40, 40, -12);
@@ -117,6 +118,7 @@ public class Title extends Scene {
 				}
 			}
 		};
+
 		buttons[3] = new lib.ButtonText("Information", help,
 				window.height()/3 - 40, yBorder + 320,
 				window.width() - (2 * window.height()/3) + 80, 40, 40, -12);
@@ -246,6 +248,7 @@ public class Title extends Scene {
 //		graphics.print("Created by:   Team FLR", window.height() + 8, 56);
 //		graphics.print("Extended by:  Team MQV", window.height() + 8, 68);
 //		graphics.print("Perfected by: Team GOA", window.height() + 8, 80);
+
 
 		graphics.setFont(Main.menuTitle);
 		graphics.rectangle(true, window.height()/3 - 40, yBorder - 2, (window.width() - (2*window.height()/3) + 80), 70);
