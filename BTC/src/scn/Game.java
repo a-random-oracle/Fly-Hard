@@ -4,6 +4,9 @@ import java.io.File;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 
+import org.newdawn.slick.Color;
+
+import lib.SpriteAnimation;
 import lib.jog.audio;
 import lib.jog.graphics;
 import lib.jog.input;
@@ -15,18 +18,19 @@ import cls.Aircraft;
 import cls.Airport;
 import cls.FlightStrip;
 import cls.Player;
+import cls.Vector;
 import cls.Player.TurningState;
 import cls.Waypoint;
 import btc.Main;
 
 public abstract class Game extends Scene {
-	
+
 	/** The distance between the left edge of the screen and the map area */
 	private static final int X_OFFSET = 196;
 
 	/** The distance between the top edge of the screen and the map area */
 	private static final int Y_OFFSET = 48;
-	
+
 	/** The image to use for aircraft */
 	public static Image aircraftImage;
 
@@ -35,10 +39,10 @@ public abstract class Game extends Scene {
 
 	/** The unique instance of this class */
 	protected static Game instance = null;
-	
+
 	/** The time since the scene began */
 	protected static double timeElapsed;
-	
+
 	/** The music to play during the game scene */
 	protected static Music music;
 
@@ -53,15 +57,21 @@ public abstract class Game extends Scene {
 
 	/** The waypoints through which aircraft must travel to reach their destination */
 	protected static Waypoint[] airspaceWaypoints;
-	
+
 	/** Difficulty settings: easy, medium and hard */
 	public enum DifficultySetting {EASY, MEDIUM, HARD}
-	
+
 	/** The current player */
 	protected Player player;
-	
+
 	/** The current difficulty setting */
 	protected DifficultySetting difficulty;
+
+	/** A sprite animation to handle the frame by frame drawing of the explosion */
+	private SpriteAnimation explosionAnim;
+
+	/** Timer to allow for explosion and plane to be shown for a period, followed by the text box */
+	private double timer;
 
 
 	// Constructors ---------------------------------------------------------------------
@@ -84,10 +94,12 @@ public abstract class Game extends Scene {
 	 */
 	@Override
 	public void start() {
+		//initialise the timer
+		timer = 0;
 		// Define airports
 		airports = new Airport[] {
-				new Airport("Mosgrizzly Airport", (1d/7d), (1d/2d)),
-				new Airport("Yolo Airport", (6d/7d), (1d/2d))
+				new Airport("Babbage International", (1d/7d), (1d/2d)),
+				new Airport("Eboracum Airport", (6d/7d), (1d/2d))
 		};
 
 		// Define entry and exit points
@@ -156,6 +168,16 @@ public abstract class Game extends Scene {
 		// Update the time the game has run for
 		timeElapsed += timeDifference;
 
+		//update any explosion animations
+		if (explosionAnim != null) {
+
+			if (explosionAnim.hasFinished()){
+				timer += timeDifference;
+			} else {
+				explosionAnim.update(timeDifference);
+			}
+		}
+
 		// Check if any aircraft in the airspace have collided
 		checkCollisions(timeDifference);
 
@@ -173,7 +195,7 @@ public abstract class Game extends Scene {
 			fs.update(timeDifference);
 			player.getFlightStrips().add(fs);
 		}
-		
+
 		// Deselect and remove any aircraft which have completed their routes
 		for (int i = player.getAircraft().size() - 1; i >= 0; i--) {
 			if (player.getAircraft().get(i).isFinished()) {
@@ -195,42 +217,45 @@ public abstract class Game extends Scene {
 		}
 
 		if (player.getSelectedAircraft() != null) {
-			if (player.getSelectedAircraft().isManuallyControlled()) {
-				// Handle directional control for a manually
-				// controlled aircraft
-				if (input.keyPressed(new int[] {input.KEY_LEFT, input.KEY_A})) {
-					// Turn left when 'Left' or 'A' key is pressed
-					player.setTurningState(TurningState.TURNING_LEFT);
-				} else if (input.keyPressed(new int[] {input.KEY_RIGHT,
-						input.KEY_D})) {
-					// Turn right when 'Right' or 'D' key is pressed
-					player.setTurningState(TurningState.TURNING_RIGHT);
-				} else {
-					// Clear the turning state
-					player.setTurningState(TurningState.NOT_TURNING);
+			// Handle directional control
+			if (input.keyPressed(new int[] {input.KEY_LEFT, input.KEY_A})) {
+				// Turn left when 'Left' or 'A' key is pressed
+				player.setTurningState(TurningState.TURNING_LEFT);
+				
+				// Activate manual control if it isn't active already
+				if (!player.getSelectedAircraft().isManuallyControlled()) {
+					player.getSelectedAircraft().toggleManualControl();
 				}
-			} else if (input.keyPressed(new int[] {input.KEY_LEFT, input.KEY_A,
-					input.KEY_RIGHT, input.KEY_D})) {
-				// If any of the directional keys is pressed, set
-				// selected aircraft to manual control
-				toggleManualControl(player);
+			} else if (input.keyPressed(new int[] {input.KEY_RIGHT, input.KEY_D})) {
+				// Turn right when 'Right' or 'D' key is pressed
+				player.setTurningState(TurningState.TURNING_RIGHT);
+
+				// Activate manual control if it isn't active already
+				if (!player.getSelectedAircraft().isManuallyControlled()) {
+					player.getSelectedAircraft().toggleManualControl();
+				}
+			} else {
+				// Clear the turning state
+				player.setTurningState(TurningState.NOT_TURNING);
 			}
 
 			// Handle altitude controls
 			if (input.keyPressed(new int[] {input.KEY_S, input.KEY_DOWN})
 					&& (player.getSelectedAircraft()
 							.getPosition().getZ() > 28000)) {
+				// Descend
 				player.getSelectedAircraft()
 				.setAltitudeState(Aircraft.ALTITUDE_FALL);
 			} else if (input.keyPressed(new int[] {input.KEY_W, input.KEY_UP})
 					&& (player.getSelectedAircraft()
 							.getPosition().getZ() < 30000)) {
+				// Ascend
 				player.getSelectedAircraft()
 				.setAltitudeState(Aircraft.ALTITUDE_CLIMB);
 			}
 		}
 	}
-	
+
 	/**
 	 * Updates a player's attributes.
 	 * <p>
@@ -250,17 +275,6 @@ public abstract class Game extends Scene {
 			airport.update(player.getAircraft());
 		}
 
-		// Deselect any aircraft which are outside the airspace
-		// This ensures that players can't keep controlling aircraft
-		// after they've left the airspace
-		for (Aircraft airc : player.getAircraft()) {
-			if (!(airc.isAtDestination())) {
-				if (airc.isOutOfAirspaceBounds()) {
-					deselectAircraft(airc, player);
-				}
-			}
-		}
-		
 		// Handle turning
 		if (player.getSelectedAircraft() != null
 				&& player.getSelectedAircraft().isManuallyControlled()) {
@@ -276,7 +290,7 @@ public abstract class Game extends Scene {
 		// If the counter has reached 0, then spawn a new aircraft
 		player.setFlightGenerationTimeElapsed(player
 				.getFlightGenerationTimeElapsed() + timeDifference);
-		
+
 		if (player.getFlightGenerationTimeElapsed()
 				>= getFlightGenerationInterval(player)) {
 			player.setFlightGenerationTimeElapsed(
@@ -313,7 +327,7 @@ public abstract class Game extends Scene {
 
 		// Draw individual map features
 		drawMapFeatures();
-		
+
 		// Reset the viewport - these statistics can appear outside the game
 		// area
 		graphics.setViewport();
@@ -328,10 +342,17 @@ public abstract class Game extends Scene {
 		drawWaypoints(player);
 		drawAircraft(player);
 		drawSelectedAircraft();
-		//drawManualControlButton(player);
 		
 		graphics.setViewport();
 		
+		graphics.setColour(Color.green);
+
+		// Display the player's score
+		String scoreString = String.format("%6d", player.getScore());
+		graphics.print("Score : ".toUpperCase() + scoreString,
+				getXOffset() + 32,
+				window.height() - getYOffset() + 5, 1);
+
 		// Draw flight strips
 		for (FlightStrip fs : player.getFlightStrips()) {
 			fs.draw(16, 20);
@@ -358,11 +379,11 @@ public abstract class Game extends Scene {
 			//draw the score of each aircraft
 			aircraft.drawScore();
 			if (aircraft.isMouseOver()) {
-				aircraft.drawFlightPath(false);
+				aircraft.drawFlightPath();
 			}
 		}
 	}
-	
+
 	/**
 	 * Draws additional features around the selected aircraft.
 	 */
@@ -386,7 +407,7 @@ public abstract class Game extends Scene {
 				}
 
 				// Draw the selected aircraft's flight path
-				player.getSelectedAircraft().drawFlightPath(true);
+				player.getSelectedAircraft().drawFlightPath();
 				graphics.setColour(graphics.green);
 			}
 		}
@@ -416,15 +437,15 @@ public abstract class Game extends Scene {
 		graphics.print(locationWaypoints[0].getName().toUpperCase(),
 				locationWaypoints[0].getLocation().getX() + 9,
 				locationWaypoints[0].getLocation().getY() - 6); // TODO Consider more cases
-		graphics.print(locationWaypoints[1].getName(),
+		graphics.print(locationWaypoints[1].getName().toUpperCase(),
 				locationWaypoints[1].getLocation().getX() + 9,
-				locationWaypoints[1].getLocation().getY() - 6);
-		graphics.print(locationWaypoints[2].getName(),
+				locationWaypoints[1].getLocation().getY() - 16);
+		graphics.print(locationWaypoints[2].getName().toUpperCase(),
 				locationWaypoints[2].getLocation().getX() - 141,
 				locationWaypoints[2].getLocation().getY() - 6);
-		graphics.print(locationWaypoints[3].getName(),
+		graphics.print(locationWaypoints[3].getName().toUpperCase(),
 				locationWaypoints[3].getLocation().getX() - 91,
-				locationWaypoints[3].getLocation().getY() - 6);
+				locationWaypoints[3].getLocation().getY() - 16);
 	}
 
 	/**
@@ -446,12 +467,12 @@ public abstract class Game extends Scene {
 		// Draw the airport names
 		graphics.setColour(graphics.green);
 
-		graphics.print(locationWaypoints[4].getName().toUpperCase(),
-				locationWaypoints[4].getLocation().getX() - 20,
-				locationWaypoints[4].getLocation().getY() + 25); // TODO Consider more cases
-		graphics.print(locationWaypoints[5].getName(),
-				locationWaypoints[5].getLocation().getX() - 20,
-				locationWaypoints[5].getLocation().getY() + 25);
+		graphics.printCentred(locationWaypoints[4].getName().toUpperCase(),
+				locationWaypoints[4].getLocation().getX(),
+				locationWaypoints[4].getLocation().getY() + 15, 1, 0); // TODO Consider more cases
+		graphics.printCentred(locationWaypoints[5].getName().toUpperCase(),
+				locationWaypoints[5].getLocation().getX(),
+				locationWaypoints[5].getLocation().getY() + 15, 1, 0);
 	}
 
 	/**
@@ -478,11 +499,7 @@ public abstract class Game extends Scene {
 
 		// Print the number of aircraft in the airspace to the screen
 		graphics.print(String.valueOf(aircraftCount)
-				+ " aircraft in the airspace.", 32 + X_OFFSET, 32);
-		
-		//Print the player's total score
-		graphics.printCentred("Total Score: " + String.valueOf(player.getScore()),
-				Main.TARGET_WIDTH / 3 + X_OFFSET, 32, 1, 150);
+				+ " aircraft in the airspace.".toUpperCase(), 32 + X_OFFSET, 32);
 	}
 
 	/**
@@ -505,20 +522,20 @@ public abstract class Game extends Scene {
 	 */
 	@Override
 	public void mousePressed(int key, int x, int y) {
+		// Send input to flight strips
 		for (FlightStrip fs : player.getFlightStrips()) {
 			fs.mousePressed(key, x, y);
 		}
+		
+		// Select an aircraft (if an aircraft was clicked)
+		if (aircraftClicked(x, y, player)) {
+			deselectAircraft(player);
+			player.setSelectedAircraft(findClickedAircraft(x, y, player));
+		}
 
 		if (key == input.MOUSE_LEFT) {
-			if (aircraftClicked(x, y, player)) {
-				// If an aircraft has been clicked, select it
-				Aircraft clickedAircraft = findClickedAircraft(x, y, player);
-				deselectAircraft(player);
-				player.setSelectedAircraft(clickedAircraft);
-				//flightStrip.show(clickedAircraft);
-			} else if (waypointInFlightplanClicked(x, y,
-					player.getSelectedAircraft(), player)
-					&& !player.getSelectedAircraft().isManuallyControlled()) {
+			if (waypointInFlightplanClicked(x, y, player.getSelectedAircraft(),
+					player) && !aircraftClicked(x, y, player)) {
 				// If a waypoint in the currently selected aircraft's flight
 				// plan has been clicked, save this waypoint to the
 				// clicked waypoint attribute
@@ -535,7 +552,6 @@ public abstract class Game extends Scene {
 						player.setSelectedWaypoint(null);
 					}
 				}
-
 			}
 
 			for (Airport airport : player.getAirports()) {
@@ -561,23 +577,18 @@ public abstract class Game extends Scene {
 				}
 			}
 		} else if (key == input.MOUSE_RIGHT) {
-			if (aircraftClicked(x, y, player)) {
-				deselectAircraft(player);
-				player.setSelectedAircraft(findClickedAircraft(x, y, player));
-			}
-
 			if (player.getSelectedAircraft() != null) {
 				if (compassClicked(x, y, player.getSelectedAircraft())) {
-					player.setCompassClicked(true); // Flag to mouseReleased
+					player.setCompassClicked(true);
 					if (!player.getSelectedAircraft().isManuallyControlled()) {
 						toggleManualControl(player);
 					}
 				} else {
-					if (player.getSelectedAircraft().isManuallyControlled()) {
-						toggleManualControl(player);
-					} else {
-						deselectAircraft(player);
-					}
+					//if (player.getSelectedAircraft().isManuallyControlled()) {
+					//	toggleManualControl(player);
+					//} else {
+						deselectAircraft(player); //TODO <- check that removing this is OK
+					//}
 				}
 			}
 		}
@@ -672,13 +683,45 @@ public abstract class Game extends Scene {
 
 			Aircraft collidedWith = plane.updateCollisions(timeDifference,
 					getAllAircraft());
-			
+
 			if (collidedWith != null) {
 				player.setLives(player.getLives() - 1);
+				player.setScore(player.getScore() - 400);
+				explodePlanes(plane, collidedWith);
 				gameOver(plane, collidedWith, false);
 				return;
 			}
 		}
+	}
+
+	public void explodePlanes(Aircraft plane1, Aircraft plane2) {
+		// The number of frames in each dimension of the animation image
+		int framesAcross = 8;
+		int framesDown = 4;
+
+		Vector origin = new Vector(Game.getXOffset(), Game.getYOffset(), 0);
+
+		/*Vector crash = plane1.getPosition().add(
+				new Vector((plane1.getPosition().getX()
+						- plane2.getPosition().getX()) / 2,
+						(plane1.getPosition().getY()
+								- plane2.getPosition().getY()) / 2, 0))
+								.add(origin);*/
+
+		// Load explosion animation image
+		Image explosion = graphics.newImage("gfx" + File.separator
+				+ "ani" + File.separator + "explosionFrames.png");
+
+		Vector midPoint = plane1.getPosition().add(plane2.getPosition())
+				.scaleBy(0.5).add(origin);
+		Vector explosionPos = midPoint.sub(new Vector(explosion.width()/(framesAcross*2),
+				explosion.height()/(framesDown*2), 0));
+
+		explosionAnim = new SpriteAnimation(explosion,
+				(int)explosionPos.getX(), (int)explosionPos.getY(),
+				6, 16, framesAcross, framesDown, false);
+
+		explosionAnim.draw();
 	}
 
 	/**
@@ -744,7 +787,8 @@ public abstract class Game extends Scene {
 		if (aircraft != null && player != null) {
 			// If the aircraft starts at an airport, add it to that airport
 			for (Airport airport : player.getAirports()) {
-				if (aircraft.getFlightPlan().getOriginName().equals(airport.getName())) {
+				if (aircraft.getFlightPlan()
+						.getOriginName().equals(airport.getName())) {
 					airport.addToHangar(aircraft);
 					return;
 				}
@@ -752,9 +796,10 @@ public abstract class Game extends Scene {
 
 			// Otherwise, add the aircraft to the airspace
 			player.getAircraft().add(aircraft);
-			
+
 			if (player.equals(this.player)) {
-				player.getFlightStrips().add(new FlightStrip(aircraft));
+				player.getFlightStrips().add(new FlightStrip(aircraft,
+						FlightStrip.BACKGROUND_COLOURS[player.getID()]));
 			}
 		}
 	}
@@ -833,43 +878,43 @@ public abstract class Game extends Scene {
 
 		// Assign a random airline to the flight and generate tag for flightName.
 		switch(Main.getRandom().nextInt(8)) {		//Generates random number between 0-5
-			case 0:
-				carrier = "Doge Air";
-				carrierTag = "DG";
-				break;
-			case 1:
-				carrier = "Britaniair";
-				carrierTag = "BA";
-				break;
-			case 2:
-				carrier = "KDT";
-				carrierTag = "KT";
-				break;
-			case 3:
-				carrier = "Canadair";
-				carrierTag = "CA";
-				break;
-			case 4:
-				carrier = "Wandairline";
-				carrierTag = "WZ";
-				break;
-			case 5:
-				carrier = "Wow Such Air";
-				carrierTag = "WW";
-				break;
-			case 6:
-				carrier = "Planet Express";
-				carrierTag = "PX";
-				break;
-			case 7:
-				carrier = "Aerobonia";
-				carrierTag = "AR";
-				break;
-			default:
-				Exception e = new Exception("Invalid carrier: " + carrier
+		case 0:
+			carrier = "Doge Air";
+			carrierTag = "DG";
+			break;
+		case 1:
+			carrier = "Britaniair";
+			carrierTag = "BA";
+			break;
+		case 2:
+			carrier = "KDT";
+			carrierTag = "KT";
+			break;
+		case 3:
+			carrier = "Canadair";
+			carrierTag = "CA";
+			break;
+		case 4:
+			carrier = "Wandairline";
+			carrierTag = "WZ";
+			break;
+		case 5:
+			carrier = "Wow Such Air";
+			carrierTag = "WW";
+			break;
+		case 6:
+			carrier = "Planet Express";
+			carrierTag = "PX";
+			break;
+		case 7:
+			carrier = "Aerobonia";
+			carrierTag = "AR";
+			break;
+		default:
+			Exception e = new Exception("Invalid carrier: " + carrier
 					+ ".");
-					e.printStackTrace();
-					break;
+			e.printStackTrace();
+			break;
 		}
 
 		// Generate a unique, random flight name, using carrierTag as prefix
@@ -877,7 +922,8 @@ public abstract class Game extends Scene {
 		boolean nameTaken = true;
 
 		while (nameTaken) {
-			name = carrierTag + String.format("%03d", (int)(1 + Main.getRandom().nextInt(999)));
+			name = carrierTag + String.format("%03d",
+					(int)(1 + Main.getRandom().nextInt(998) + player.getID()));
 
 			// Check the generated name against every other flight name
 			boolean foundName = false;
@@ -887,7 +933,7 @@ public abstract class Game extends Scene {
 					break;
 				}
 			}
-			
+
 			if (!foundName) {
 				nameTaken = false;
 			}
@@ -900,16 +946,16 @@ public abstract class Game extends Scene {
 				destinationPoint, originPoint, speed,
 				player.getWaypoints(), difficulty, originAirport,
 				destinationAirport);
-		
+
 		return newPlane;
 	}
-	
+
 
 	/**
 	 * Causes deselection of the selected aircraft.
 	 * @param player - the player to reset the selected plane attribute for
 	 */
- 	public void deselectAircraft(Player player) {
+	public void deselectAircraft(Player player) {
 		deselectAircraft(player.getSelectedAircraft(), player);
 	}
 
@@ -920,6 +966,10 @@ public abstract class Game extends Scene {
 	 */
 	protected void deselectAircraft(Aircraft aircraft, Player player) {
 		if (aircraft != null && aircraft.equals(player.getSelectedAircraft())) {
+			if (aircraft.isManuallyControlled()) {
+				aircraft.toggleManualControl();
+			}
+			
 			player.setSelectedAircraft(null);
 		}
 
@@ -931,11 +981,9 @@ public abstract class Game extends Scene {
 	 * Causes a player's selected aircraft to call methods to toggle manual control.
 	 */
 	protected void toggleManualControl(Player player) {
-		Aircraft selectedAircraft = player.getSelectedAircraft();
-
-		if (selectedAircraft == null) return;
-
-		selectedAircraft.toggleManualControl();
+		if (player.getSelectedAircraft() != null) {
+			player.getSelectedAircraft().toggleManualControl();
+		}
 	}
 
 	/**
@@ -958,7 +1006,7 @@ public abstract class Game extends Scene {
 		return locationWaypoints.toArray(
 				new Waypoint[locationWaypoints.size()]);
 	}
-	
+
 	/**
 	 * Returns array of entry points that are fair to be entry points for a plane.
 	 * <p>
@@ -979,7 +1027,7 @@ public abstract class Game extends Scene {
 			// Prevents spawning a plane at a waypoint if:
 			//   - any plane is currently going towards it
 			//   - or any plane is less than 250 from it
-			
+
 			for (Aircraft aircraft : getAllAircraft()) {
 				// Check if any plane is currently going towards the
 				// exit point/chosen originPoint
@@ -995,7 +1043,7 @@ public abstract class Game extends Scene {
 				availableEntryPoints.add(entryPoint);
 			}
 		}
-		
+
 		return availableEntryPoints;
 	}
 
@@ -1107,7 +1155,7 @@ public abstract class Game extends Scene {
 	public static Game getInstance() {
 		return instance;
 	}
-	
+
 	/**
 	 * Gets the window's x-offset.
 	 * @return the window's x-offset
@@ -1119,7 +1167,7 @@ public abstract class Game extends Scene {
 			return 0;
 		}
 	}
-	
+
 	/**
 	 * Gets the window's y-offset.
 	 * @return the window's y-offset
@@ -1131,7 +1179,7 @@ public abstract class Game extends Scene {
 			return 0;
 		}
 	}
-	
+
 	/**
 	 * Gets the window's x-offset directly.
 	 * @return the window's x-offset
@@ -1139,7 +1187,7 @@ public abstract class Game extends Scene {
 	public static int getXOffsetDirect() {
 		return X_OFFSET;
 	}
-	
+
 	/**
 	 * Gets the window's y-offset directly.
 	 * @return the window's y-offset
@@ -1175,7 +1223,7 @@ public abstract class Game extends Scene {
 				return player;
 			}
 		}
-		
+
 		return null;
 	}
 
@@ -1201,7 +1249,7 @@ public abstract class Game extends Scene {
 	public Airport[] getAllAirports() {
 		return player.getAirports();
 	}
-	
+
 	/**
 	 * Gets an aircraft from its name.
 	 * @param name - the aircraft's name
@@ -1213,10 +1261,10 @@ public abstract class Game extends Scene {
 				return a;
 			}
 		}
-	
+
 		return null;
 	}
-	
+
 	/**
 	 * Gets a flight strip from an aircraft.
 	 * @param aircraft - the aircraft who's flight strip should be returned
@@ -1230,7 +1278,7 @@ public abstract class Game extends Scene {
 				}
 			}
 		}
-		
+
 		return null;
 	}
 
@@ -1241,7 +1289,7 @@ public abstract class Game extends Scene {
 	public double getTime() {
 		return timeElapsed;
 	}
-	
+
 
 	// Mutators -------------------------------------------------------------------------
 

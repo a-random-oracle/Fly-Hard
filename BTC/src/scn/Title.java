@@ -8,6 +8,7 @@ import org.newdawn.slick.Color;
 
 import lib.jog.audio;
 import lib.jog.audio.Sound;
+import lib.jog.graphics.Image;
 import lib.jog.graphics;
 import lib.jog.input;
 import lib.jog.window;
@@ -25,7 +26,29 @@ public class Title extends Scene {
 
 	/** Holds the angle to draw the radar sweep at */
 	private double angle;
-
+	
+	/** The base image to provide powerup colours */
+	public static final Image SINGLE_PLAYER =
+			graphics.newImage("gfx" + File.separator + "pup"
+					+ File.separator + "singleplayer_512.png");
+	
+	public static final Image MULTIPLAYER =
+			graphics.newImage("gfx" + File.separator + "pup"
+					+ File.separator + "multiplayer_512.png");
+	
+	public static final Image CREDITS =
+			graphics.newImage("gfx" + File.separator + "pup"
+					+ File.separator + "credits_512.png");
+	
+	public static final Image HELP =
+			graphics.newImage("gfx" + File.separator + "pup"
+					+ File.separator + "help_512.png");
+	
+	public static final Image EXIT =
+			graphics.newImage("gfx" + File.separator + "pup"
+					+ File.separator + "exit_512.png");
+	/** Integer offset to centre the main menu */
+	private int yBorder = (window.height() - 440) / 2 - 20;
 	/**
 	 * Constructor for the Title Scene.
 	 * @param main
@@ -58,8 +81,8 @@ public class Title extends Scene {
 			}
 		};
 		buttons[0] = new lib.ButtonText("Single Player", demo,
-				window.height()/3 , 100,
-				window.width(), 40, 0, -12);
+				window.height()/3 - 40, yBorder + 80,
+				window.width() - (2 * window.height()/3) + 80, 40, 40, -12);
 
 		// Multi player Button
 		lib.ButtonText.Action multiplayer = new lib.ButtonText.Action() {
@@ -69,8 +92,8 @@ public class Title extends Scene {
 			}
 		};
 		buttons[1] = new lib.ButtonText("Multiplayer", multiplayer,
-				window.height(), window.height()/2 + 96,
-				window.width(), 40, 0, -12);
+				window.height()/3 - 40, yBorder + 160,
+				window.width() - (2 * window.height()/3) + 80, 40, 40, -12);
 
 		// Credits Button
 		lib.ButtonText.Action credits = new lib.ButtonText.Action() {
@@ -80,8 +103,8 @@ public class Title extends Scene {
 			}
 		};
 		buttons[2] = new lib.ButtonText("Credits", credits,
-				window.height(), window.height()/2 + 126,
-				window.width(), 40, 0, -12);
+				window.height()/3 - 40, yBorder + 240,
+				window.width() - (2 * window.height()/3) + 80, 40, 40, -12);
 
 		// Help Button
 		lib.ButtonText.Action help = new lib.ButtonText.Action() {
@@ -95,8 +118,8 @@ public class Title extends Scene {
 			}
 		};
 		buttons[3] = new lib.ButtonText("Information", help,
-				window.height(), window.height()/2 + 156,
-				window.width() - window.height(), 24, 8, 6);
+				window.height()/3 - 40, yBorder + 320,
+				window.width() - (2 * window.height()/3) + 80, 40, 40, -12);
 		
 		// Exit Button
 		lib.ButtonText.Action exit = new lib.ButtonText.Action() {
@@ -106,8 +129,8 @@ public class Title extends Scene {
 			}
 		};
 		buttons[4] = new lib.ButtonText("Exit", exit,
-				window.height(), window.height()/2 + 186,
-				window.width() - window.height(), 24, 8, 6);
+				window.height()/3 - 40, yBorder + 400,
+				window.width() - (2 * window.height()/3) + 80, 40, 40, -12);
 
 		angle = 0;
 	}
@@ -225,13 +248,37 @@ public class Title extends Scene {
 //		graphics.print("Perfected by: Team GOA", window.height() + 8, 80);
 
 		graphics.setFont(Main.menuTitle);
-		graphics.print("Fly Hard", 260, 40);
+		graphics.rectangle(true, window.height()/3 - 40, yBorder - 2, (window.width() - (2*window.height()/3) + 80), 70);
+		graphics.setColour(Color.black);
+		graphics.print("Fly Hard", window.height()/3, yBorder);
 		graphics.setFont(Main.transSign);
 		graphics.setColour(Color.white);
-//		graphics.printRight("Avion Héros", window.width() - 200, 40, 100, 20);
-		graphics.printRight("Avion Hèros", window.width() - 200, 40, 200, 20);
-		graphics.printRight("Flugzeug Flugzeug Revolution", window.width() - 200, 60, 200, 20);
-		graphics.printRight("'n Verhaal Van Twee Richards", window.width() - 200, 80, 200, 20);
+		graphics.printRight("Avion Hèros", (window.width() - (window.height()/3) + 40) - 20, yBorder, 0, 0);
+		graphics.printRight("Flugzeug Flugzeug Revolution", (window.width() - (window.height()/3) + 40) - 20, yBorder + 20, 0, 0);
+		graphics.printRight("Tarina ja Kaksi Richards", (window.width() - (window.height()/3) + 40) - 20, yBorder + 40, 0, 0);
+		graphics.printRight("Solo", (window.width() - (window.height()/3) + 20) - 2, yBorder + 70, 0, 0);
+		graphics.printRight("Einzelspieler", (window.width() - (window.height()/3) + 20) - 4, yBorder + 85, 0, 0);
+		graphics.printRight("Yksinpeli", (window.width() - (window.height()/3) + 20) - 4, yBorder + 100, 0, 0);
+		graphics.printRight("Multijouer", (window.width() - (window.height()/3) + 20) - 4, yBorder + 150, 0, 0);
+		graphics.printRight("Mehrspieler", (window.width() - (window.height()/3) + 20) - 4, yBorder + 165, 0, 0);
+		graphics.printRight("Moninpeli", (window.width() - (window.height()/3) + 20) - 4, yBorder + 180, 0, 0);
+		graphics.printRight("Crédits", (window.width() - (window.height()/3) + 20) - 4, yBorder + 230, 0, 0);
+		graphics.printRight("Credits", (window.width() - (window.height()/3) + 20) - 4, yBorder + 245, 0, 0);
+		graphics.printRight("Ov", (window.width() - (window.height()/3) + 20) - 4, yBorder + 260, 0, 0);
+		graphics.printRight("Aider", (window.width() - (window.height()/3) + 20) - 4, yBorder + 310, 0, 0);
+		graphics.printRight("Hilfe", (window.width() - (window.height()/3) + 20) - 4, yBorder + 325, 0, 0);
+		graphics.printRight("Auttaa", (window.width() - (window.height()/3) + 20) - 4, yBorder + 340, 0, 0);
+		graphics.printRight("Sortie", (window.width() - (window.height()/3) + 20) - 4, yBorder + 390, 0, 0);
+		graphics.printRight("Ausfahrt", (window.width() - (window.height()/3) + 20) - 4, yBorder + 405, 0, 0);
+		graphics.printRight("Postuminen", (window.width() - (window.height()/3) + 20) - 4, yBorder + 420, 0, 0);
+		graphics.setColour(graphics.safetyOrange);
+		graphics.drawScaled(SINGLE_PLAYER, window.height()/3 - 40, yBorder + 80, 0.0625);
+		graphics.drawScaled(MULTIPLAYER, window.height()/3 - 40, yBorder + 160, 0.0625);
+		graphics.drawScaled(CREDITS, window.height()/3 - 40, yBorder + 240, 0.0625);
+		graphics.drawScaled(HELP, window.height()/3 - 40, yBorder + 320, 0.0625);
+		graphics.drawScaled(EXIT, window.height()/3 - 40, yBorder + 400, 0.0625);
+		
+		
 		// Draw Buttons
 		for (lib.ButtonText b : buttons) b.draw();
 //		graphics.setColour(graphics.safetyOrange);

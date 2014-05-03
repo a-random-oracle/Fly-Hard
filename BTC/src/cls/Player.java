@@ -3,6 +3,8 @@ package cls;
 import java.io.Serializable;
 import java.util.ArrayList;
 
+import scn.MultiPlayerGame;
+
 public class Player implements Serializable {
 	
 	/** Serialisation ID */
@@ -15,7 +17,7 @@ public class Player implements Serializable {
 	};
 	
 	/** The default maximum number of aircraft */
-	private static final int DEFAULT_MAX_AIRCRAFT = 4;
+	private static final int DEFAULT_MAX_AIRCRAFT = 5;
 	
 	/** The possible turning states - not turning, turning left and turning right */
 	public enum TurningState {NOT_TURNING, TURNING_LEFT, TURNING_RIGHT};
@@ -386,6 +388,9 @@ public class Player implements Serializable {
 	 * @param powerup - the powerup to add
 	 */
 	public void addPowerup(Powerup powerup) {
+		// Play powerup sound
+		MultiPlayerGame.POWERUP_SOUND.play();
+		
 		powerups.add(powerup);
 	}
 	
