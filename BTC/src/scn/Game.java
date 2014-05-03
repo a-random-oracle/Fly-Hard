@@ -183,11 +183,11 @@ public abstract class Game extends Scene {
 
 		// Update the player
 		updatePlayer(timeDifference, player);
-
+		
 		// Copy flight strip array
 		@SuppressWarnings("unchecked")
 		ArrayList<FlightStrip> shuffledFlightStrips =
-				(ArrayList<FlightStrip>) player.getFlightStrips().clone();
+		(ArrayList<FlightStrip>) player.getFlightStrips().clone();
 		player.getFlightStrips().clear();
 
 		// Update flight strips

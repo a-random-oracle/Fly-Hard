@@ -59,7 +59,10 @@ public class Main implements input.EventHandler {
 	public static graphics.Font standardFont;
 	
 	/** The font to use for flight strips */
-	public static TrueTypeFont flightstripFont;
+	public static TrueTypeFont mainFont;
+	public static TrueTypeFont flightstripFontWarn;
+	public static TrueTypeFont flightstripFontMid;
+	public static TrueTypeFont flightstripFontSuper;
 
 	/** The scale the game has been resized to in the horizontal plane */
 	private static double xScale = 1;
@@ -153,11 +156,27 @@ public class Main implements input.EventHandler {
 						"1234567890.,_-!?()[]><#~:;/\\^'\"{}+=@@@@@@@@`"));
 
 		try {
-			flightstripFont = new TrueTypeFont(
+			mainFont = new TrueTypeFont(
 					java.awt.Font.createFont(java.awt.Font.TRUETYPE_FONT,
 							ResourceLoader.getResourceAsStream(
 									"gfx" + File.separator + "fnt" + File.separator
-									+ "Roboto-Black.ttf")).deriveFont(12F), false);
+									+ "Roboto-Medium.ttf")).deriveFont(12F), true);
+			flightstripFontWarn = new TrueTypeFont(
+					java.awt.Font.createFont(java.awt.Font.TRUETYPE_FONT,
+							ResourceLoader.getResourceAsStream(
+									"gfx" + File.separator + "fnt" + File.separator
+									+ "Roboto-Black.ttf")).deriveFont(12F), true);
+			flightstripFontSuper = new TrueTypeFont(
+					java.awt.Font.createFont(java.awt.Font.TRUETYPE_FONT,
+							ResourceLoader.getResourceAsStream(
+									"gfx" + File.separator + "fnt" + File.separator
+									+ "Roboto-Black.ttf")).deriveFont(20F), true);
+			flightstripFontMid = new TrueTypeFont(
+					java.awt.Font.createFont(java.awt.Font.TRUETYPE_FONT,
+							ResourceLoader.getResourceAsStream(
+									"gfx" + File.separator + "fnt" + File.separator
+									+ "Roboto-Black.ttf")).deriveFont(16F), true);
+			
 		} catch (FontFormatException | IOException e) {
 			e.printStackTrace();
 		}

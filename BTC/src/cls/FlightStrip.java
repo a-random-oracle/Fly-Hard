@@ -38,7 +38,7 @@ public class FlightStrip implements Serializable {
     private Aircraft aircraft;
 
     /** The flight strip's vertical position */
-    private double verticalPos;
+    private double positionY;
 
     /** The flight strip's width */
     private double width;
@@ -61,7 +61,7 @@ public class FlightStrip implements Serializable {
     	this.isVisible = true;
     	this.isActive = false;
     	this.aircraft = aircraft;
-    	this.verticalPos = getNextSlot();
+    	this.positionY = getNextSlot();
     	this.width = STANDARD_WIDTH;
     	this.height = STANDARD_HEIGHT;
     	this.xOffset = 0;
@@ -79,7 +79,7 @@ public class FlightStrip implements Serializable {
     	this.isVisible = true;
     	this.isActive = false;
     	this.aircraft = aircraft;
-    	this.verticalPos = getNextSlot();
+    	this.positionY = getNextSlot();
     	this.width = width;
     	this.height = height;
     	this.xOffset = Double.NaN;
@@ -94,7 +94,7 @@ public class FlightStrip implements Serializable {
     	isVisible = flightStrip.isVisible;
         aircraft = (flightStrip.aircraft != null)
         		? flightStrip.aircraft.clone() : null;
-        verticalPos = flightStrip.verticalPos;
+        positionY = flightStrip.positionY;
         width = flightStrip.width;
         height = flightStrip.height;
     }
@@ -104,7 +104,7 @@ public class FlightStrip implements Serializable {
      * Updates the flight strip.
      */
     public void update(double dt) {
-    	this.verticalPos = getNextSlot();
+    	this.positionY = getNextSlot();
     	
     	// If the mouse is hovering over the flight strip
     	if (isMouseOver()) {
@@ -124,7 +124,7 @@ public class FlightStrip implements Serializable {
     	this.yOffset = yOffset;
     	
     	if (isVisible) {
-    		graphics.setFont(Main.flightstripFont);
+    		graphics.setFont(Main.mainFont);
     		drawOutline();
     		drawFlightNumber();
     		drawAirline();
@@ -144,65 +144,82 @@ public class FlightStrip implements Serializable {
     }
 
     private void drawOutline() {
-    	// TODO mouseover/click highlight (plane/strip sync)
-        graphics.setColour(graphics.blue);
-        graphics.rectangle(true, xOffset, yOffset + verticalPos,
+    	Integer[] playerColour = Game.getInstance()
+    			.getPlayerFromAircraft(aircraft).getAircraftColour();
+        graphics.setColour((int) (playerColour[0] * 0.4),
+        		(int) (playerColour[1] * 0.4),
+        		(int) (playerColour[2] * 0.4));
+        graphics.rectangle(true, xOffset, yOffset + positionY,
         		width, height);
         graphics.setColour(graphics.white);
-        graphics.rectangle(true, xOffset + 2, yOffset + verticalPos + 2,
+        graphics.rectangle(true, xOffset + 2, yOffset + positionY + 2,
         		40, height - 4);
     }
 
     private void drawFlightNumber() {
     	graphics.setColour(graphics.black);
-    	graphics.print(aircraft.getName().substring(0,2),
-    			(xOffset + 2), (yOffset + verticalPos + 2));
-    	graphics.print(aircraft.getName().substring(2,5),
-    			(xOffset + 2), (yOffset + verticalPos + 30));
+    	graphics.setFont(Main.flightstripFontSuper);
+    	graphics.printCentred(aircraft.getName().substring(0,2),
+    			(xOffset + 22), (yOffset + positionY + 2), 1, 1);
+    	graphics.setFont(Main.flightstripFontMid);
+    	graphics.printCentred(aircraft.getName().substring(2,5),
+    			(xOffset + 22), (yOffset + positionY + 30), 1, 1);
+    	graphics.setFont(Main.mainFont);
     }
 
     private void drawAirline() {
     	graphics.setColour(graphics.white);
-        graphics.print(aircraft.getAirline(),
-        		(xOffset + 2 + 40), (yOffset + verticalPos + 2));
-
+        graphics.print(aircraft.getAirline().toUpperCase(),
+        		(xOffset + 4 + 40), (yOffset + positionY + 2));
     }
 
     private void drawAltitude() {
-        graphics.print(String.format("%,d", (int) aircraft.getPosition().getZ()) + "ft",
-        		(xOffset + (width/2)), ((yOffset + verticalPos + height) - 24));
+    	graphics.print(String.format("%,dFT", (int) (aircraft.getPosition().getZ())),
+    			(xOffset + 4 + 40), ((yOffset + positionY + height) - 30));
     }
     
     private void drawRoute() {
-    	String routeText = aircraft.getFlightPlan().getOriginName().substring(0, 3)
+    	graphics.print(aircraft.getFlightPlan()
+    			.getOriginName().substring(0, 3).toUpperCase()
     			+ " TO "
-    			+ aircraft.getFlightPlan().getDestinationName().substring(0, 3);
-    	
-    	graphics.print(routeText,
-    			(xOffset + (width/2) - 20), (yOffset + verticalPos + height - 36));
+    			+ aircraft.getFlightPlan()
+    			.getDestinationName().substring(0, 3).toUpperCase(),
+    			(xOffset + (width/2) + 8), (yOffset + positionY + height - 45));
     }
     
     private void drawStatus() {
+    	graphics.setFont(Main.flightstripFontWarn);
     	if (aircraft.isInDanger()) {
     		graphics.setColour(graphics.red);
     		graphics.rectangle(true, (xOffset + 42),
-    				(yOffset + verticalPos + height - 14),
+    				(yOffset + positionY + height - 14),
     				116, 12);
+    		
     		graphics.setColour(graphics.white);
-            graphics.printCentred("SHIIIIIIIIT", (xOffset + 100),
-            		(yOffset + verticalPos + height - 14),
-            		1, 1);
+            graphics.printCentred("WARNING", (xOffset + 100),
+            		(yOffset + positionY + height - 17), 1, 1);
 
     	} else {
     		graphics.setColour(graphics.green);
     		graphics.rectangle(true, (xOffset + 42),
-    				(yOffset + verticalPos + height - 14),
+    				(yOffset + positionY + height - 14),
     				116, 12);
-    		graphics.setColour(graphics.white);
-            graphics.printCentred("AWW YISS", (xOffset + 100),
-            		(yOffset + verticalPos + height - 14),
-            		1, 1);
+    		
+    		graphics.setColour(graphics.black);
+            graphics.printCentred("ON COURSE", (xOffset + 100),
+            		(yOffset + positionY + height - 17), 1, 1);
     	}
+    	
+    	graphics.setFont(Main.mainFont);
+    	graphics.setColour(graphics.white);
+    }
+    
+    private void drawHighlight() {
+    	
+    }
+    
+    private void drawHover() {
+    	
     }
     
     
@@ -214,7 +231,7 @@ public class FlightStrip implements Serializable {
      */
     public void mousePressed(int key, int x, int y) {
     	if (isMouseOver()) {
-    		Game.getInstance().getPlayer().setSelectedAircraft(aircraft);
+    		 Game.getInstance().getPlayer().setSelectedAircraft(aircraft);
     	}
     }
     
@@ -237,7 +254,7 @@ public class FlightStrip implements Serializable {
     private boolean isMouseOver() {
     	if (xOffset != Double.NaN || yOffset != Double.NaN) {
     		return input.isMouseInRect((int) xOffset,
-    				(int) (verticalPos + yOffset),
+    				(int) (positionY + yOffset),
     				(int) width, (int) height);
     	} else {
     		return false;
@@ -261,7 +278,7 @@ public class FlightStrip implements Serializable {
     	double nextSlot = 0;
     	
     	if (Game.getInstance() != null
-    			&& Game.getInstance().getPlayer() != null
+    			&&  Game.getInstance().getPlayer() != null
     			&& Game.getInstance().getPlayer().getFlightStrips() != null) {
     		for (FlightStrip fs : Game.getInstance()
     				.getPlayer().getFlightStrips()) {
