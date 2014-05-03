@@ -4,6 +4,8 @@ import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
 
+import org.newdawn.slick.Color;
+
 import lib.jog.audio;
 import lib.jog.audio.Sound;
 import lib.jog.graphics;
@@ -41,6 +43,8 @@ public class Title extends Scene {
 	 */
 	@Override
 	public void start() {
+		graphics.setFont(Main.engSign);
+		graphics.setColour(graphics.safetyOrange);
 		beep = audio.newSoundEffect("sfx" + File.separator + "beep.ogg");
 		beep.setVolume(0.2f);
 
@@ -53,9 +57,9 @@ public class Title extends Scene {
 				Main.setScene(new DifficultySelect(DifficultySelect.CREATE_DEMO));
 			}
 		};
-		buttons[0] = new lib.ButtonText("Play Single Player Game", demo,
-				window.height(), window.height()/2 + 66,
-				window.width() - window.height(), 24, 8, 6);
+		buttons[0] = new lib.ButtonText("Single Player", demo,
+				window.height()/3 , 100,
+				window.width(), 40, 0, -12);
 
 		// Multi player Button
 		lib.ButtonText.Action multiplayer = new lib.ButtonText.Action() {
@@ -64,9 +68,9 @@ public class Title extends Scene {
 				Main.setScene(new Lobby());
 			}
 		};
-		buttons[1] = new lib.ButtonText("Play Multiplayer Game", multiplayer,
+		buttons[1] = new lib.ButtonText("Multiplayer", multiplayer,
 				window.height(), window.height()/2 + 96,
-				window.width() - window.height(), 24, 8, 6);
+				window.width(), 40, 0, -12);
 
 		// Credits Button
 		lib.ButtonText.Action credits = new lib.ButtonText.Action() {
@@ -77,7 +81,7 @@ public class Title extends Scene {
 		};
 		buttons[2] = new lib.ButtonText("Credits", credits,
 				window.height(), window.height()/2 + 126,
-				window.width() - window.height(), 24, 8, 6);
+				window.width(), 40, 0, -12);
 
 		// Help Button
 		lib.ButtonText.Action help = new lib.ButtonText.Action() {
@@ -90,7 +94,7 @@ public class Title extends Scene {
 				}
 			}
 		};
-		buttons[3] = new lib.ButtonText("Help        (Opens user manual PDF)", help,
+		buttons[3] = new lib.ButtonText("Information", help,
 				window.height(), window.height()/2 + 156,
 				window.width() - window.height(), 24, 8, 6);
 		
@@ -135,7 +139,7 @@ public class Title extends Scene {
 	 */
 	@Override
 	public void draw() {
-		drawRadar();
+		//drawRadar();
 		drawMenu();
 	}
 	
@@ -145,14 +149,14 @@ public class Title extends Scene {
 	private void drawRadar() {
 		// Radar
 		// set of circles for radar 'screen'
-		graphics.setColour(graphics.green);
+		graphics.setColour(graphics.safetyOrange);
 		graphics.circle(false, window.height()/2, window.height()/2, window.height()/2 - 32, 100);
 		graphics.setColour(0, 128, 0, 32);
 		graphics.circle(false, window.height()/2, window.height()/2, window.height()/3, 100);
 		graphics.circle(false, window.height()/2, window.height()/2, window.height()/4 - 16, 100);
 		graphics.circle(false, window.height()/2, window.height()/2, window.height()/9, 100);
 		graphics.circle(false, window.height()/2, window.height()/2, 2, 100);
-		graphics.setColour(graphics.green);
+		graphics.setColour(graphics.safetyOrange);
 		// sweep of radar
 		double radarAngle = (angle * 4) % (2 * Math.PI);
 		int w = (int)( Math.cos(radarAngle) * (window.height()/2 - 32) );
@@ -168,7 +172,7 @@ public class Title extends Scene {
 		graphics.arc(true, window.height()/2, window.height()/2, window.height()/2 - 32, radarAngle, -2 * Math.PI / 8);
 		graphics.arc(true, window.height()/2, window.height()/2, window.height()/2 - 32, radarAngle, -1 * Math.PI / 8);
 		// Title
-		String title = "Bear Traffic Controller";
+		String title = "Fly-Hard";
 		int titleLength = title.length();
 		// fades title string's characters over time
 		// characters brighten when the sweep passes over them
@@ -185,7 +189,7 @@ public class Title extends Scene {
 			graphics.print(title.substring(i, i+1), xPos + i * 14, yPos, 1.8);
 		}
 		
-		String subtitle = "GOA Edition";
+		String subtitle = "#goahardorgoahome";
 		int subtitleLength = subtitle.length();
 		a = radarAngle + (Math.PI * 2 / 3);
 		for (int i = 0; i < subtitleLength; i++) {
@@ -194,7 +198,8 @@ public class Title extends Scene {
 			opacity *= 256 / (2 * Math.PI);
 			opacity = 256 - opacity;
 			opacity %= 256;
-			graphics.setColour(0, 128, 0, opacity);
+			graphics.setColour(graphics.safetyOrange);
+			graphics.setFont(Main.menuTitle);
 			int xPos = (window.height() / 2) - ((subtitleLength * 14) / 2);
 			int yPos = (window.height() / 3) + 20;
 			graphics.print(subtitle.substring(i, i+1), xPos + i * 14, yPos, 1.8);
@@ -206,27 +211,36 @@ public class Title extends Scene {
 	 */
 	private void drawMenu() {
 		// Draw Extras e.g. Date, Time, Credits
-		graphics.setColour(graphics.green);
-		graphics.line(window.height(), 16, window.height(), window.height() - 16);
-		java.text.DateFormat dateFormat = new java.text.SimpleDateFormat("yyyy/MM/dd");
-		java.text.DateFormat timeFormat = new java.text.SimpleDateFormat("HH:mm:ss");
-		java.util.Date date = new java.util.Date();
-		graphics.print(dateFormat.format(date), window.height() + 8, 20);
-		graphics.print(timeFormat.format(date), window.height() + 8, 36);
-		graphics.line(window.height(), 48, window.width() - 16, 48);
-		graphics.print("Created by:   Team FLR", window.height() + 8, 56);
-		graphics.print("Extended by:  Team MQV", window.height() + 8, 68);
-		graphics.print("Finalised by: Team GOA", window.height() + 8, 80);
+		graphics.setColour(graphics.safetyOrange);
+//		graphics.line(window.height(), 16, window.height(), window.height() - 16);
+//		java.text.DateFormat dateFormat = new java.text.SimpleDateFormat("yyyy/MM/dd");
+//		java.text.DateFormat timeFormat = new java.text.SimpleDateFormat("HH:mm:ss");
+//		java.util.Date date = new java.util.Date();
+//		graphics.setFont(Main.mainFont);
+//		graphics.print(dateFormat.format(date), window.height() + 8, 20);
+//		graphics.print(timeFormat.format(date), window.height() + 8, 36);
+//		graphics.line(window.height(), 48, window.width() - 16, 48);
+//		graphics.print("Created by:   Team FLR", window.height() + 8, 56);
+//		graphics.print("Extended by:  Team MQV", window.height() + 8, 68);
+//		graphics.print("Perfected by: Team GOA", window.height() + 8, 80);
 
+		graphics.setFont(Main.menuTitle);
+		graphics.print("Fly Hard", 260, 40);
+		graphics.setFont(Main.transSign);
+		graphics.setColour(Color.white);
+//		graphics.printRight("Avion Héros", window.width() - 200, 40, 100, 20);
+		graphics.printRight("Avion Hèros", window.width() - 200, 40, 200, 20);
+		graphics.printRight("Flugzeug Flugzeug Revolution", window.width() - 200, 60, 200, 20);
+		graphics.printRight("'n Verhaal Van Twee Richards", window.width() - 200, 80, 200, 20);
 		// Draw Buttons
 		for (lib.ButtonText b : buttons) b.draw();
-		graphics.setColour(graphics.green);
-		graphics.line(window.height(), window.height()/2 + 60, window.width() - 16, window.height()/2 + 60);
-		graphics.line(window.height(), window.height()/2 + 90, window.width() - 16, window.height()/2 + 90);
-		graphics.line(window.height(), window.height()/2 + 120, window.width() - 16, window.height()/2 + 120);
-		graphics.line(window.height(), window.height()/2 + 150, window.width() - 16, window.height()/2 + 150);
-		graphics.line(window.height(), window.height()/2 + 180, window.width() - 16, window.height()/2 + 180);
-		graphics.line(window.height(), window.height()/2 + 210, window.width() - 16, window.height()/2 + 210);
+//		graphics.setColour(graphics.safetyOrange);
+//		graphics.line(window.height(), window.height()/2 + 60, window.width() - 16, window.height()/2 + 60);
+//		graphics.line(window.height(), window.height()/2 + 90, window.width() - 16, window.height()/2 + 90);
+//		graphics.line(window.height(), window.height()/2 + 120, window.width() - 16, window.height()/2 + 120);
+//		graphics.line(window.height(), window.height()/2 + 150, window.width() - 16, window.height()/2 + 150);
+//		graphics.line(window.height(), window.height()/2 + 180, window.width() - 16, window.height()/2 + 180);
+//		graphics.line(window.height(), window.height()/2 + 210, window.width() - 16, window.height()/2 + 210);
 	}
 
 	/**
