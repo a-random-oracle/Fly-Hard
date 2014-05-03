@@ -2,6 +2,7 @@ package lib;
 
 import lib.jog.graphics;
 import lib.jog.input;
+import btc.Main;
 
 public class ButtonText {
 
@@ -25,8 +26,8 @@ public class ButtonText {
 		this.ox = ox;
 		this.oy = oy;
 		this.size = 1;
-		colourDefault = new org.newdawn.slick.Color(0, 128, 0);
-		colourHover = new org.newdawn.slick.Color(128, 128, 128);
+		colourDefault = graphics.safetyOrange;
+		colourHover = new org.newdawn.slick.Color(256, 256, 256);
 		colourUnavailable = new org.newdawn.slick.Color(64, 64, 64);
 		available = true;
 	}
@@ -41,7 +42,7 @@ public class ButtonText {
 		this.ox = (w - (text.length() * 8)) / 2;
 		this.oy = (h - 8) / 2;
 		this.size = 1;
-		colourDefault = new org.newdawn.slick.Color(0, 128, 0);
+		colourDefault = graphics.safetyOrange;
 		colourHover = new org.newdawn.slick.Color(128, 128, 128);
 		colourUnavailable = new org.newdawn.slick.Color(64, 64, 64);
 		available = true;
@@ -57,7 +58,7 @@ public class ButtonText {
 		this.ox = ox;
 		this.oy = oy;
 		this.size = size;
-		colourDefault = new org.newdawn.slick.Color(0, 128, 0);
+		colourDefault = graphics.safetyOrange;
 		colourHover = new org.newdawn.slick.Color(128, 128, 128);
 		colourUnavailable = new org.newdawn.slick.Color(64, 64, 64);
 		available = true;
@@ -73,7 +74,7 @@ public class ButtonText {
 		this.ox = (w - (text.length() * 8)) / 2;
 		this.oy = (h - 8) / 2;
 		this.size = size;
-		colourDefault = new org.newdawn.slick.Color(0, 128, 0);
+		colourDefault = graphics.safetyOrange;
 		colourHover = new org.newdawn.slick.Color(128, 128, 128);
 		colourUnavailable = new org.newdawn.slick.Color(64, 64, 64);
 		available = true;
@@ -128,7 +129,7 @@ public class ButtonText {
 		} else {
 			graphics.setColour(colourDefault);
 		}
-		
+		graphics.setFont(Main.menuTitle);
 		graphics.print(text, x + ox, y + oy, size);
 	}
 	
@@ -147,8 +148,8 @@ public class ButtonText {
 		} else {
 			graphics.setColour(colourDefault);
 		}
-		
-		graphics.printRight(text, x + ox, y + oy, size, 0);
+		graphics.setFont(Main.engSign);
+		graphics.printRight(text, x + ox, y + oy - 12, size, 0);
 	}
 
 }
