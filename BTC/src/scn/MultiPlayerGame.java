@@ -237,6 +237,7 @@ public class MultiPlayerGame extends Game {
 			if (!player.getPowerups().get(i).isActive()) {
 				// Activate it
 				player.getPowerups().get(i).activateEffect();
+				
 			} else {
 				// If the powerup has finished
 				if (player.getPowerups().get(i).getEndTime()
@@ -290,7 +291,7 @@ public class MultiPlayerGame extends Game {
 									powerupPoints[i].getPowerup())) {
 						powerupPoints[i].setPowerup(null);
 					}
-				}
+				}					
 
 				// Check if any aircraft under transfer are in the list
 				if (aircraftUnderTransfer.size() > 0) {

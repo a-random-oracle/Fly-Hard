@@ -1,11 +1,16 @@
 package scn;
 
+import cls.Player;
+
 public class GameOverMulti {
 	
-	private int score;
+	private Player hostPlayer;
 	
-	public GameOverMulti(int score) {
-		this.score = score;
+	private Player opposingPlayer;
+	
+	public GameOverMulti(Player hostPlayer, Player opposingPlayer) {
+		this.hostPlayer = hostPlayer;
+		this.opposingPlayer = opposingPlayer;
 	}
 
 }

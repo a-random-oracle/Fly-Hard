@@ -79,6 +79,21 @@ public class Player implements Serializable {
 	/** The player's remaining lives */
 	private int lives;
 	
+	/** The number of planes that collided during play */
+	private int planesCollided = 0;
+	
+	/** The number of power-ups the player collected during play */
+	private int powerUpsCollected = 0;
+	
+	/** The number of planes landed during play */
+	private int planesLanded = 0;
+	
+	/** The number of planes taken off during play */
+	private int planesTakenOff = 0;
+	
+	/** The number of planes that reached their destinations */
+	private int planesCleared = 0;
+	
 	
 	// Constructor: ---------------------------------------------------------------------
 	
@@ -450,6 +465,7 @@ public class Player implements Serializable {
 	}
 	
 	
+	
 	@Override
 	public String toString() {
 		return "Player [id=" + id
@@ -467,6 +483,86 @@ public class Player implements Serializable {
 	 */
 	public Player clone() {
 		return new Player(this);
+	}
+
+	/**
+	 * Allows access to the number of collided planes.
+	 * @return - the number of collided planes
+	 */
+	public int getPlanesCollided() {
+		return planesCollided;
+	}
+
+	/**
+	 * Sets the player's number of collided planes.
+	 * @param count - the new amount of collided planes
+	 */
+	public void setPlanesCollided(int planesCollided) {
+		this.planesCollided = planesCollided;
+	}
+
+	/**
+	 * Allows access to the number of collected power-ups.
+	 * @return - the number of collected power-ups
+	 */
+	public int getPowerUpsCollected() {
+		return powerUpsCollected;
+	}
+
+	/**
+	 * Sets the player's number of collected power-ups.
+	 * @param count - the new amount of collided planes
+	 */
+	public void setPowerUpsCollected(int powerUpsCollected) {
+		this.powerUpsCollected = powerUpsCollected;
+	}
+
+	/**
+	 * Allows access to the number of planes landed.
+	 * @return - the number of planes landed
+	 */
+	public int getPlanesLanded() {
+		return planesLanded;
+	}
+
+	/**
+	 * Sets the player's number of planes landed.
+	 * @param count - the new amount of planes that have taken off
+	 */
+	public void setPlanesLanded(int planesLanded) {
+		this.planesLanded = planesLanded;
+	}
+
+	/**
+	 * Allows access to the number of planes taken off.
+	 * @return - the number of planes taken off
+	 */
+	public int getPlanesTakenOff() {
+		return planesTakenOff;
+	}
+
+	/**
+	 * Sets the player's number of planes taken off.
+	 * @param count - the new amount of planes taken off
+	 */
+	public void setPlanesTakenOff(int planesTakenOff) {
+		this.planesTakenOff = planesTakenOff;
+	}
+
+	/**
+	 * Allows access to the number of cleared planes.
+	 * @return - the number of cleared planes
+	 */
+	public int getPlanesCleared() {
+		return planesCleared;
+	}
+
+	/**
+	 * Sets the player's number of cleared planes.
+	 * @param planesCleared - the number of cleared planes
+	 */
+	public void setPlanesCleared(int planesCleared) {
+		this.planesCleared = planesCleared;
 	}
 	
 }
