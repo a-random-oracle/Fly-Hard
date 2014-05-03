@@ -468,8 +468,6 @@ public class Aircraft implements Serializable {
 		if (flightPlan.getDestinationAirport() != null) { // At airport
 			return flightPlan.getDestinationAirport().isWithinArrivals(position, false);
 		} else {
-			//System.out.println(this.airline);
-			//System.out.println(this.flightName);
 			return isAt(flightPlan.getDestination());
 		}
 	}
@@ -533,6 +531,9 @@ public class Aircraft implements Serializable {
 		double angleMagnitude = Math.min(
 				Math.abs((timeDifference * turnSpeed)),
 				Math.abs(angleDifference));
+		
+		// Check that angle is not zero
+		angleMagnitude = (angleMagnitude == 0) ? 0.001 : angleMagnitude;
 
 		// Scale if the angle is greater than 90 degrees
 		// This allows aircraft to break out of loops around waypoints
@@ -1029,6 +1030,8 @@ public class Aircraft implements Serializable {
 				}
 			}
 		}
+		
+		System.out.println("speed-scale=" + speedScale);
 		
 		return speedScale;
 	}

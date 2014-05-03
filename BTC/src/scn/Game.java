@@ -584,11 +584,11 @@ public abstract class Game extends Scene {
 						toggleManualControl(player);
 					}
 				} else {
-					if (player.getSelectedAircraft().isManuallyControlled()) {
-						toggleManualControl(player);
-					} else {
-						deselectAircraft(player);
-					}
+					//if (player.getSelectedAircraft().isManuallyControlled()) {
+					//	toggleManualControl(player);
+					//} else {
+						deselectAircraft(player); //TODO <- check that removing this is OK
+					//}
 				}
 			}
 		}
@@ -922,7 +922,8 @@ public abstract class Game extends Scene {
 		boolean nameTaken = true;
 
 		while (nameTaken) {
-			name = carrierTag + String.format("%03d", (int)(1 + Main.getRandom().nextInt(999)));
+			name = carrierTag + String.format("%03d",
+					(int)(1 + Main.getRandom().nextInt(998) + player.getID()));
 
 			// Check the generated name against every other flight name
 			boolean foundName = false;
