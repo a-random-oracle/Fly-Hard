@@ -256,7 +256,7 @@ public class Title extends Scene {
 		graphics.print("Fly Hard", window.height()/3, yBorder);
 		graphics.setFont(Main.transSign);
 		graphics.setColour(Color.white);
-		graphics.printRight("Avion Hèros", (window.width() - (window.height()/3) + 40) - 20, yBorder, 0, 0);
+		graphics.printRight("H\u00E9ros de l'avion", (window.width() - (window.height()/3) + 40) - 20, yBorder, 0, 0);
 		graphics.printRight("Flugzeug Flugzeug Revolution", (window.width() - (window.height()/3) + 40) - 20, yBorder + 20, 0, 0);
 		graphics.printRight("Tarina ja Kaksi Richards", (window.width() - (window.height()/3) + 40) - 20, yBorder + 40, 0, 0);
 		graphics.printRight("Solo", (window.width() - (window.height()/3) + 20) - 2, yBorder + 70, 0, 0);
@@ -265,7 +265,7 @@ public class Title extends Scene {
 		graphics.printRight("Multijouer", (window.width() - (window.height()/3) + 20) - 4, yBorder + 150, 0, 0);
 		graphics.printRight("Mehrspieler", (window.width() - (window.height()/3) + 20) - 4, yBorder + 165, 0, 0);
 		graphics.printRight("Moninpeli", (window.width() - (window.height()/3) + 20) - 4, yBorder + 180, 0, 0);
-		graphics.printRight("Crédits", (window.width() - (window.height()/3) + 20) - 4, yBorder + 230, 0, 0);
+		graphics.printRight("Cr\u00E9dits", (window.width() - (window.height()/3) + 20) - 4, yBorder + 230, 0, 0);
 		graphics.printRight("Credits", (window.width() - (window.height()/3) + 20) - 4, yBorder + 245, 0, 0);
 		graphics.printRight("Ov", (window.width() - (window.height()/3) + 20) - 4, yBorder + 260, 0, 0);
 		graphics.printRight("Aider", (window.width() - (window.height()/3) + 20) - 4, yBorder + 310, 0, 0);
