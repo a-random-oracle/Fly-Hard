@@ -678,7 +678,7 @@ public class MultiPlayerGame extends Game {
 			//playSound(audio.newSoundEffect("sfx" + File.separator + "crash.ogg"));
 			
 			Main.closeScene();
-			Main.setScene(new GameOver(plane1, plane2, player.getScore()));
+			Main.setScene(new GameOverMulti(player, opposingPlayer));
 		}
 	}
 
