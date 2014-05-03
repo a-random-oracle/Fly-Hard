@@ -142,7 +142,7 @@ public abstract class Game extends Scene {
 
 			// Start the music
 			//music.play(); TODO <- add this back in for release
-			
+
 			explosionAnimations = new ArrayList<SpriteAnimation>();
 		}
 
@@ -179,7 +179,7 @@ public abstract class Game extends Scene {
 
 		// Update the player
 		updatePlayer(timeDifference, player);
-		
+
 		// Copy flight strip array
 		@SuppressWarnings("unchecked")
 		ArrayList<FlightStrip> shuffledFlightStrips =
@@ -205,6 +205,26 @@ public abstract class Game extends Scene {
 							+ player.getAircraft().get(i).getScore());
 				}
 
+				if (player.getAircraft().get(i).isCrashed()) {
+					//add to the players collided aircraft
+					player.setPlanesCollided(player.getPlanesCollided() + 1);
+					System.out.println("planes collided: " + player.getPlanesCollided());
+				}
+
+				if (player.getAircraft().get(i).isAtDestination()) {
+					if (player.getAircraft().get(i).getFlightPlan()
+							.getDestinationAirport() != null) {
+					//Add to the players landed plane count
+					player.setPlanesLanded(player.getPlanesLanded() + 1);
+					System.out.println("planes landed : " + player.getPlanesLanded());
+					} else {
+						//cleared
+						player.setPlanesCleared(player.getPlanesCleared() + 1);
+						System.out.println("planes cleared: " + player.getPlanesCleared());
+					}
+
+				}
+
 				player.getFlightStrips().remove(getFlightStripFromAircraft(
 						player.getAircraft().get(i)));
 
@@ -217,7 +237,7 @@ public abstract class Game extends Scene {
 			if (input.keyPressed(new int[] {input.KEY_LEFT, input.KEY_A})) {
 				// Turn left when 'Left' or 'A' key is pressed
 				player.setTurningState(TurningState.TURNING_LEFT);
-				
+
 				// Activate manual control if it isn't active already
 				if (!player.getSelectedAircraft().isManuallyControlled()) {
 					player.getSelectedAircraft().toggleManualControl();
@@ -338,15 +358,15 @@ public abstract class Game extends Scene {
 		drawWaypoints(player);
 		drawAircraft(player);
 		drawSelectedAircraft();
-		
+
 		// Draw any explosions
 		graphics.setColour(graphics.red);
 		for (SpriteAnimation explosion : explosionAnimations) {
 			explosion.draw();
 		}
-		
+
 		graphics.setViewport();
-		
+
 		graphics.setColour(graphics.green_transp);
 
 		// Display the player's score
@@ -528,7 +548,7 @@ public abstract class Game extends Scene {
 		for (FlightStrip fs : player.getFlightStrips()) {
 			fs.mousePressed(key, x, y);
 		}
-		
+
 		// Select an aircraft (if an aircraft was clicked)
 		if (aircraftClicked(x, y, player)) {
 			deselectAircraft(player);
@@ -589,7 +609,7 @@ public abstract class Game extends Scene {
 					//if (player.getSelectedAircraft().isManuallyControlled()) {
 					//	toggleManualControl(player);
 					//} else {
-						deselectAircraft(player); //TODO <- check that removing this is OK
+					deselectAircraft(player); //TODO <- check that removing this is OK
 					//}
 				}
 			}
@@ -716,7 +736,7 @@ public abstract class Game extends Scene {
 				.scaleBy(0.5);
 		Vector explosionPos = midPoint.sub(new Vector(explosion.width()/(framesAcross*2),
 				explosion.height()/(framesDown*2), 0));
-		
+
 		explosionAnimations.add(new SpriteAnimation(explosion,
 				(int)explosionPos.getX(), (int)explosionPos.getY(),
 				6, 16, framesAcross, framesDown, false));
@@ -967,7 +987,7 @@ public abstract class Game extends Scene {
 			if (aircraft.isManuallyControlled()) {
 				aircraft.toggleManualControl();
 			}
-			
+
 			player.setSelectedAircraft(null);
 		}
 

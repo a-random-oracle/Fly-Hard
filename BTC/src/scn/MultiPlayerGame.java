@@ -237,6 +237,8 @@ public class MultiPlayerGame extends Game {
 			if (!player.getPowerups().get(i).isActive()) {
 				// Activate it
 				player.getPowerups().get(i).activateEffect();
+				//add to players powerup count
+				player.setPowerUpsCollected(player.getPowerUpsCollected() + 1);
 				
 			} else {
 				// If the powerup has finished

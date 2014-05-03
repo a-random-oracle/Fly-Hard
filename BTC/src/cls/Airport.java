@@ -386,6 +386,11 @@ public class Airport extends Waypoint implements EventHandler, Serializable {
 			Aircraft aircraft = aircraftHangar.remove(0);
 			timeEntered.remove(0);
 			aircraft.takeOff();
+			
+			// Increment the player's number of planes taken off
+			Player player = Game.getInstance().getPlayerFromAirport(this);
+			player.setPlanesTakenOff(player.getPlanesTakenOff() + 1);
+			System.out.println("planes taken off: " + player.getPlanesTakenOff());
 		}	
 	}
 	
