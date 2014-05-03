@@ -183,11 +183,11 @@ public abstract class Game extends Scene {
 
 		// Update the player
 		updatePlayer(timeDifference, player);
-
+		
 		// Copy flight strip array
 		@SuppressWarnings("unchecked")
 		ArrayList<FlightStrip> shuffledFlightStrips =
-				(ArrayList<FlightStrip>) player.getFlightStrips().clone();
+		(ArrayList<FlightStrip>) player.getFlightStrips().clone();
 		player.getFlightStrips().clear();
 
 		// Update flight strips
@@ -379,7 +379,7 @@ public abstract class Game extends Scene {
 			//draw the score of each aircraft
 			aircraft.drawScore();
 			if (aircraft.isMouseOver()) {
-				aircraft.drawFlightPath(false);
+				aircraft.drawFlightPath();
 			}
 		}
 	}
@@ -407,7 +407,7 @@ public abstract class Game extends Scene {
 				}
 
 				// Draw the selected aircraft's flight path
-				player.getSelectedAircraft().drawFlightPath(true);
+				player.getSelectedAircraft().drawFlightPath();
 				graphics.setColour(graphics.green);
 			}
 		}
@@ -584,11 +584,11 @@ public abstract class Game extends Scene {
 						toggleManualControl(player);
 					}
 				} else {
-					if (player.getSelectedAircraft().isManuallyControlled()) {
-						toggleManualControl(player);
-					} else {
-						deselectAircraft(player);
-					}
+					//if (player.getSelectedAircraft().isManuallyControlled()) {
+					//	toggleManualControl(player);
+					//} else {
+						deselectAircraft(player); //TODO <- check that removing this is OK
+					//}
 				}
 			}
 		}
@@ -787,7 +787,8 @@ public abstract class Game extends Scene {
 		if (aircraft != null && player != null) {
 			// If the aircraft starts at an airport, add it to that airport
 			for (Airport airport : player.getAirports()) {
-				if (aircraft.getFlightPlan().getOriginName().equals(airport.getName())) {
+				if (aircraft.getFlightPlan()
+						.getOriginName().equals(airport.getName())) {
 					airport.addToHangar(aircraft);
 					return;
 				}
@@ -797,7 +798,8 @@ public abstract class Game extends Scene {
 			player.getAircraft().add(aircraft);
 
 			if (player.equals(this.player)) {
-				player.getFlightStrips().add(new FlightStrip(aircraft));
+				player.getFlightStrips().add(new FlightStrip(aircraft,
+						FlightStrip.BACKGROUND_COLOURS[player.getID()]));
 			}
 		}
 	}
@@ -920,7 +922,8 @@ public abstract class Game extends Scene {
 		boolean nameTaken = true;
 
 		while (nameTaken) {
-			name = carrierTag + String.format("%03d", (int)(1 + Main.getRandom().nextInt(999)));
+			name = carrierTag + String.format("%03d",
+					(int)(1 + Main.getRandom().nextInt(998) + player.getID()));
 
 			// Check the generated name against every other flight name
 			boolean foundName = false;
@@ -963,6 +966,10 @@ public abstract class Game extends Scene {
 	 */
 	protected void deselectAircraft(Aircraft aircraft, Player player) {
 		if (aircraft != null && aircraft.equals(player.getSelectedAircraft())) {
+			if (aircraft.isManuallyControlled()) {
+				aircraft.toggleManualControl();
+			}
+			
 			player.setSelectedAircraft(null);
 		}
 

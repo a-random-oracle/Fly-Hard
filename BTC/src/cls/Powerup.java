@@ -318,7 +318,9 @@ public class Powerup implements Serializable {
 					gameInstance.getOpposingPlayer().getWaypoints(),
 					destinationName, destinationPoint, destinationAirport);
 			
-			aircraft.resetBearing();
+			if (aircraft.isManuallyControlled()) {
+				aircraft.toggleManualControl();
+			}
 			
 			// Add the aircraft to the list of aircraft under transfer
 			gameInstance.getAircraftUnderTransfer().add(aircraft);
@@ -326,7 +328,9 @@ public class Powerup implements Serializable {
 			// Add the aircraft to the opposing player's list of aircraft
 			gameInstance.getOpposingPlayer().getAircraft().add(aircraft);
 			gameInstance.getOpposingPlayer().getFlightStrips()
-					.add(new FlightStrip(aircraft));
+					.add(new FlightStrip(aircraft,
+							FlightStrip.BACKGROUND_COLOURS[
+							gameInstance.getOpposingPlayer().getID()]));
 			
 			// Remove the aircraft from the current player's control
 			gameInstance.getPlayer().getAircraft().remove(aircraft);

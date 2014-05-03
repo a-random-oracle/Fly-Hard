@@ -50,16 +50,19 @@ public class Main implements input.EventHandler {
 	public static final int TARGET_HEIGHT = 960;
 
 	/** The default size of the gap between the window edge and the left edge of the screen */
-	public static final int WIDTH_GAP = 20;
+	public static final int WIDTH_GAP = 40;
 
 	/** The default size of the gap between the window edge and the top edge of the screen */
-	public static final int HEIGHT_GAP = 20;
+	public static final int HEIGHT_GAP = 50;
 	
 	/** The standard font */
 	public static graphics.Font standardFont;
 	
 	/** The font to use for flight strips */
-	public static TrueTypeFont flightstripFont;
+	public static TrueTypeFont mainFont;
+	public static TrueTypeFont flightstripFontWarn;
+	public static TrueTypeFont flightstripFontMid;
+	public static TrueTypeFont flightstripFontSuper;
 
 	/** The scale the game has been resized to in the horizontal plane */
 	private static double xScale = 1;
@@ -153,11 +156,27 @@ public class Main implements input.EventHandler {
 						"1234567890.,_-!?()[]><#~:;/\\^'\"{}+=@@@@@@@@`"));
 
 		try {
-			flightstripFont = new TrueTypeFont(
+			mainFont = new TrueTypeFont(
 					java.awt.Font.createFont(java.awt.Font.TRUETYPE_FONT,
 							ResourceLoader.getResourceAsStream(
 									"gfx" + File.separator + "fnt" + File.separator
-									+ "Roboto-Black.ttf")).deriveFont(12F), false);
+									+ "Roboto-Medium.ttf")).deriveFont(12F), true);
+			flightstripFontWarn = new TrueTypeFont(
+					java.awt.Font.createFont(java.awt.Font.TRUETYPE_FONT,
+							ResourceLoader.getResourceAsStream(
+									"gfx" + File.separator + "fnt" + File.separator
+									+ "Roboto-Black.ttf")).deriveFont(12F), true);
+			flightstripFontSuper = new TrueTypeFont(
+					java.awt.Font.createFont(java.awt.Font.TRUETYPE_FONT,
+							ResourceLoader.getResourceAsStream(
+									"gfx" + File.separator + "fnt" + File.separator
+									+ "Roboto-Black.ttf")).deriveFont(20F), true);
+			flightstripFontMid = new TrueTypeFont(
+					java.awt.Font.createFont(java.awt.Font.TRUETYPE_FONT,
+							ResourceLoader.getResourceAsStream(
+									"gfx" + File.separator + "fnt" + File.separator
+									+ "Roboto-Black.ttf")).deriveFont(16F), true);
+			
 		} catch (FontFormatException | IOException e) {
 			e.printStackTrace();
 		}
