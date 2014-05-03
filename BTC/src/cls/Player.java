@@ -80,19 +80,19 @@ public class Player implements Serializable {
 	private int lives;
 	
 	/** The number of planes that collided during play */
-	private int planesCollided = 0;
+	private int planesCollided;
 	
 	/** The number of power-ups the player collected during play */
-	private int powerUpsCollected = 0;
+	private int powerUpsCollected;
 	
 	/** The number of planes landed during play */
-	private int planesLanded = 0;
+	private int planesLanded;
 	
 	/** The number of planes taken off during play */
-	private int planesTakenOff = 0;
+	private int planesTakenOff;
 	
 	/** The number of planes that reached their destinations */
-	private int planesCleared = 0;
+	private int planesCleared;
 	
 	
 	// Constructor: ---------------------------------------------------------------------
@@ -129,6 +129,11 @@ public class Player implements Serializable {
 		this.aircraft = new ArrayList<Aircraft>();
 		this.flightStrips = new ArrayList<FlightStrip>();
 		this.powerups = new ArrayList<Powerup>();
+		this.planesCollided = 0;
+		this.powerUpsCollected = 0;
+		this.planesLanded = 0;
+		this.planesTakenOff = 0;
+		this.planesCleared = 0;
 		
 		
 		// Set aircraft colour
@@ -167,6 +172,11 @@ public class Player implements Serializable {
 		this.powerups = (player.powerups != null)
 				? (ArrayList<Powerup>) player.powerups.clone() : null;
 		this.aircraftColour = player.aircraftColour.clone();
+		this.planesCollided = player.planesCollided;
+		this.powerUpsCollected = player.planesCollided;
+		this.planesLanded = player.planesCollided;
+		this.planesTakenOff = player.planesCollided;
+		this.planesCleared = player.planesCollided;
 	}
 	
 	
