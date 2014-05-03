@@ -1025,6 +1025,8 @@ public abstract class graphics {
 	// Static colours used within project
 	public final static Color red = new Color(128, 0, 0, 255);
 	public final static Color red_transp = new Color(128, 0, 0, 128);
+	public final static Color safetyOrange = new Color(238, 193, 0, 255);
+	public final static Color safetyOrange_transp = new Color(238, 193, 0, 128);
 	public final static Color green = new Color(0, 128, 0, 255);
 	public final static Color green_transp = new Color(0, 128, 0, 128);
 	public final static Color blue = new Color(0, 0, 128, 255);
