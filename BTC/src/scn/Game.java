@@ -68,10 +68,7 @@ public abstract class Game extends Scene {
 	protected DifficultySetting difficulty;
 
 	/** A sprite animation to handle the frame by frame drawing of the explosion */
-	private SpriteAnimation explosionAnim;
-
-	/** Timer to allow for explosion and plane to be shown for a period, followed by the text box */
-	private double timer;
+	protected ArrayList<SpriteAnimation> explosionAnimations;
 
 
 	// Constructors ---------------------------------------------------------------------
@@ -94,8 +91,6 @@ public abstract class Game extends Scene {
 	 */
 	@Override
 	public void start() {
-		//initialise the timer
-		timer = 0;
 		// Define airports
 		airports = new Airport[] {
 				new Airport("Mosgrizzly Airport", (1d/7d), (1d/2d)),
@@ -149,6 +144,8 @@ public abstract class Game extends Scene {
 
 			// Start the music
 			//music.play(); TODO <- add this back in for release
+			
+			explosionAnimations = new ArrayList<SpriteAnimation>();
 		}
 
 		// Reset game attributes
@@ -168,13 +165,14 @@ public abstract class Game extends Scene {
 		// Update the time the game has run for
 		timeElapsed += timeDifference;
 
-		//update any explosion animations
-		if (explosionAnim != null) {
-
-			if (explosionAnim.hasFinished()){
-				timer += timeDifference;
-			} else {
-				explosionAnim.update(timeDifference);
+		// Update any explosion animations
+		if (explosionAnimations.size() > 0) {
+			for (int i = explosionAnimations.size() - 1; i >= 0; i--) {
+				if (!explosionAnimations.get(i).hasFinished()) {
+					explosionAnimations.get(i).update(timeDifference);
+				} else {
+					explosionAnimations.remove(i);
+				}
 			}
 		}
 
@@ -342,6 +340,12 @@ public abstract class Game extends Scene {
 		drawWaypoints(player);
 		drawAircraft(player);
 		drawSelectedAircraft();
+		
+		// Draw any explosions
+		graphics.setColour(graphics.red);
+		for (SpriteAnimation explosion : explosionAnimations) {
+			explosion.draw();
+		}
 		
 		graphics.setViewport();
 		
@@ -699,8 +703,6 @@ public abstract class Game extends Scene {
 		int framesAcross = 8;
 		int framesDown = 4;
 
-		Vector origin = new Vector(Game.getXOffset(), Game.getYOffset(), 0);
-
 		/*Vector crash = plane1.getPosition().add(
 				new Vector((plane1.getPosition().getX()
 						- plane2.getPosition().getX()) / 2,
@@ -713,15 +715,13 @@ public abstract class Game extends Scene {
 				+ "ani" + File.separator + "explosionFrames.png");
 
 		Vector midPoint = plane1.getPosition().add(plane2.getPosition())
-				.scaleBy(0.5).add(origin);
+				.scaleBy(0.5);
 		Vector explosionPos = midPoint.sub(new Vector(explosion.width()/(framesAcross*2),
 				explosion.height()/(framesDown*2), 0));
-
-		explosionAnim = new SpriteAnimation(explosion,
+		
+		explosionAnimations.add(new SpriteAnimation(explosion,
 				(int)explosionPos.getX(), (int)explosionPos.getY(),
-				6, 16, framesAcross, framesDown, false);
-
-		explosionAnim.draw();
+				6, 16, framesAcross, framesDown, false));
 	}
 
 	/**

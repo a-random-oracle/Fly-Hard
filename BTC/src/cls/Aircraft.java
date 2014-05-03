@@ -1031,7 +1031,7 @@ public class Aircraft implements Serializable {
 			}
 		}
 		
-		System.out.println("speed-scale=" + speedScale);
+		//System.out.println("speed-scale=" + speedScale);
 		
 		return speedScale;
 	}

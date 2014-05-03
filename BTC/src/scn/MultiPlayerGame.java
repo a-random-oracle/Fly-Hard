@@ -7,6 +7,7 @@ import org.newdawn.slick.Color;
 
 import btc.Main;
 import net.NetworkManager;
+import lib.SpriteAnimation;
 import lib.jog.audio;
 import lib.jog.graphics;
 import lib.jog.input;
@@ -387,6 +388,12 @@ public class MultiPlayerGame extends Game {
 		drawSelectedAircraft();
 
 		drawPowerupPoints();
+		
+		// Draw any explosions
+		graphics.setColour(graphics.red);
+		for (SpriteAnimation explosion : explosionAnimations) {
+			explosion.draw();
+		}
 		
 		graphics.setViewport();
 
