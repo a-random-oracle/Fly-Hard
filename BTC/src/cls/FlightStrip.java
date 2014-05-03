@@ -107,7 +107,8 @@ public class FlightStrip implements Serializable {
     	this.positionY = getNextSlot();
     	
     	// If the mouse is hovering over the flight strip
-    	if (isMouseOver()) {
+    	if (isMouseOver() && Game.getInstance().getPlayer().equals(
+    			Game.getInstance().getPlayerFromAircraft(aircraft))) {
     		isActive = true;
     	} else {
     		isActive = false;
