@@ -140,13 +140,8 @@ public class FlightStrip implements Serializable {
     	
     	if (isVisible) {
     		graphics.setFont(Main.mainFont);
-    		
-    		if (isActive && Game.getInstance().getPlayer().equals(
-        			Game.getInstance().getPlayerFromAircraft(aircraft))) {
-    			drawHover();
-    			drawHighlight();
-    		}
-    		
+    		drawHover();
+    		drawHighlight();
     		drawOutline();
     		drawFlightNumber();
     		drawAirline();
