@@ -413,9 +413,9 @@ public abstract class Game extends Scene {
 		// Draw entry/exit points
 		graphics.setColour(graphics.green);
 
-		graphics.print(locationWaypoints[0].getName(),
+		graphics.print(locationWaypoints[0].getName().toUpperCase(),
 				locationWaypoints[0].getLocation().getX() + 9,
-				locationWaypoints[0].getLocation().getY() - 6);
+				locationWaypoints[0].getLocation().getY() - 6); // TODO Consider more cases
 		graphics.print(locationWaypoints[1].getName(),
 				locationWaypoints[1].getLocation().getX() + 9,
 				locationWaypoints[1].getLocation().getY() - 6);
@@ -446,9 +446,9 @@ public abstract class Game extends Scene {
 		// Draw the airport names
 		graphics.setColour(graphics.green);
 
-		graphics.print(locationWaypoints[4].getName(),
+		graphics.print(locationWaypoints[4].getName().toUpperCase(),
 				locationWaypoints[4].getLocation().getX() - 20,
-				locationWaypoints[4].getLocation().getY() + 25);
+				locationWaypoints[4].getLocation().getY() + 25); // TODO Consider more cases
 		graphics.print(locationWaypoints[5].getName(),
 				locationWaypoints[5].getLocation().getX() - 20,
 				locationWaypoints[5].getLocation().getY() + 25);

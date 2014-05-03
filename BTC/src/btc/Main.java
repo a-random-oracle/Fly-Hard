@@ -63,6 +63,9 @@ public class Main implements input.EventHandler {
 	public static TrueTypeFont flightstripFontWarn;
 	public static TrueTypeFont flightstripFontMid;
 	public static TrueTypeFont flightstripFontSuper;
+	public static TrueTypeFont menuTitle;
+	public static TrueTypeFont engSign;
+	public static TrueTypeFont transSign;
 
 	/** The scale the game has been resized to in the horizontal plane */
 	private static double xScale = 1;
@@ -176,12 +179,27 @@ public class Main implements input.EventHandler {
 							ResourceLoader.getResourceAsStream(
 									"gfx" + File.separator + "fnt" + File.separator
 									+ "Roboto-Black.ttf")).deriveFont(16F), true);
+			menuTitle = new TrueTypeFont(
+					java.awt.Font.createFont(java.awt.Font.TRUETYPE_FONT,
+							ResourceLoader.getResourceAsStream(
+									"gfx" + File.separator + "fnt" + File.separator
+									+ "Roboto-Black.ttf")).deriveFont(42F), true);
+			engSign = new TrueTypeFont(
+					java.awt.Font.createFont(java.awt.Font.TRUETYPE_FONT,
+							ResourceLoader.getResourceAsStream(
+									"gfx" + File.separator + "fnt" + File.separator
+									+ "Roboto-Black.ttf")).deriveFont(32F), true);
+			transSign = new TrueTypeFont(
+					java.awt.Font.createFont(java.awt.Font.TRUETYPE_FONT,
+							ResourceLoader.getResourceAsStream(
+									"gfx" + File.separator + "fnt" + File.separator
+									+ "Roboto-Medium.ttf")).deriveFont(18F), true);
 			
 		} catch (FontFormatException | IOException e) {
 			e.printStackTrace();
 		}
 		
-		graphics.setFont(standardFont);
+		graphics.setFont(mainFont);
 
 		sceneStack = new Stack<Scene>();
 		setScene(new Title());

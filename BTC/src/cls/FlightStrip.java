@@ -156,7 +156,7 @@ public class FlightStrip implements Serializable {
     		drawAltitude(xOffset, yOffset);
     		drawRoute(xOffset, yOffset);
     		drawStatus(xOffset, yOffset);
-    		graphics.setFont(Main.standardFont);
+    		graphics.setFont(Main.mainFont);
     	}
     }
 
