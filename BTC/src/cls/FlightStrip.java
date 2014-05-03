@@ -148,7 +148,7 @@ public class FlightStrip implements Serializable {
     		drawAltitude();
     		drawRoute();
     		drawStatus();
-    		graphics.setFont(Main.standardFont);
+    		graphics.setFont(Main.mainFont);
     		
     		if (isActive && Game.getInstance().getPlayer().equals(
         			Game.getInstance().getPlayerFromAircraft(aircraft))) {
