@@ -847,9 +847,9 @@ public class Aircraft implements Serializable {
 	 * the new target.
 	 */
 	public void resetBearing() {
-		try {
-			if (currentRouteStage < flightPlan.getRoute().length - 1
-					& flightPlan.getRoute()[currentRouteStage] != null) {
+		try { //FIXME
+			if (currentRouteStage < flightPlan.getRoute().length
+					&& flightPlan.getRoute()[currentRouteStage] != null) {
 				currentTarget = flightPlan.getRoute()[currentRouteStage]
 						.getLocation();
 			}

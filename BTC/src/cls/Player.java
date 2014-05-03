@@ -173,10 +173,10 @@ public class Player implements Serializable {
 				? (ArrayList<Powerup>) player.powerups.clone() : null;
 		this.aircraftColour = player.aircraftColour.clone();
 		this.planesCollided = player.planesCollided;
-		this.powerUpsCollected = player.planesCollided;
-		this.planesLanded = player.planesCollided;
-		this.planesTakenOff = player.planesCollided;
-		this.planesCleared = player.planesCollided;
+		this.powerUpsCollected = player.powerUpsCollected;
+		this.planesLanded = player.planesLanded;
+		this.planesTakenOff = player.planesTakenOff;
+		this.planesCleared = player.planesCleared;
 	}
 	
 	
