@@ -122,10 +122,8 @@ public class FlightStrip implements Serializable {
     	this.positionY = getNextSlot();
     	
     	// If the mouse is hovering over the flight strip
-    	if (isMouseOver() && Game.getInstance().getPlayer().equals(
-    			Game.getInstance().getPlayerFromAircraft(aircraft))) {
+    	if (isMouseOver()) {
     		isActive = true;
-    		System.out.println("TRUE");
     	} else {
     		isActive = false;
     	}
@@ -142,8 +140,13 @@ public class FlightStrip implements Serializable {
     	
     	if (isVisible) {
     		graphics.setFont(Main.mainFont);
-    		drawHover();
-    		drawHighlight();
+    		
+    		if (isActive && Game.getInstance().getPlayer().equals(
+        			Game.getInstance().getPlayerFromAircraft(aircraft))) {
+    			drawHover();
+    			drawHighlight();
+    		}
+    		
     		drawOutline();
     		drawFlightNumber();
     		drawAirline();
@@ -152,8 +155,8 @@ public class FlightStrip implements Serializable {
     		drawStatus();
     		graphics.setFont(Main.standardFont);
     		
-    		if (isActive) {
-    			System.out.println("HERE");
+    		if (isActive && Game.getInstance().getPlayer().equals(
+        			Game.getInstance().getPlayerFromAircraft(aircraft))) {
     			graphics.setViewport(Game.getXOffset(), Game.getYOffset(),
     					window.width() - (2 * Game.getXOffset()),
     					window.height() - (2 * Game.getYOffset()));
