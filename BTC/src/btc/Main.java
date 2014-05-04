@@ -38,7 +38,7 @@ public class Main implements input.EventHandler {
 	
 	
 	/** The game's version number */
-	public static final String VERSION = "Fly-Hard-0.5.8";
+	public static final String VERSION = "Fly-Hard-0.6";
 
 	/** The title to display in the game window */
 	private static final String TITLE = "Fly Hard";
