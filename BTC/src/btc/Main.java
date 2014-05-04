@@ -50,10 +50,10 @@ public class Main implements input.EventHandler {
 	public static final int TARGET_HEIGHT = 960;
 
 	/** The default size of the gap between the window edge and the left edge of the screen */
-	public static final int WIDTH_GAP = 100;
+	public static final int WIDTH_GAP = 30;
 
 	/** The default size of the gap between the window edge and the top edge of the screen */
-	public static final int HEIGHT_GAP = 100;
+	public static final int HEIGHT_GAP = 30;
 	
 	/** The standard font */
 	public static graphics.Font standardFont;

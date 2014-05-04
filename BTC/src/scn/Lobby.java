@@ -200,7 +200,7 @@ public class Lobby extends Scene {
 				if (!openConnections[i].equals("INVALID_CLIENT")
 						&& !openConnections[i].equals("INVALID_REQUEST")
 						&& !openConnections[i].contains("NO_CONNECTIONS")) {
-					currentEntry = openConnections[i].split(":");
+					currentEntry = openConnections[i].split("=");
 
 					if (currentEntry != null && currentEntry[0] != null) {
 						try {

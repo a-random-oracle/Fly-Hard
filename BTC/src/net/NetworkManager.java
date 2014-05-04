@@ -15,6 +15,7 @@ import java.net.URL;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 
+import scn.Game;
 import btc.Main;
 
 public abstract class NetworkManager {
@@ -150,6 +151,17 @@ public abstract class NetworkManager {
 						name);
 				connection.setRequestProperty("fh-client-host",
 						String.valueOf(isHost));
+			}
+			
+			if (Game.getInstance() != null
+					&& Game.getInstance().getPlayer() != null) {
+				connection.setRequestProperty("fh-client-lives",
+						String.valueOf(Game.getInstance().getPlayer().getLives()));
+				connection.setRequestProperty("fh-client-score",
+						String.valueOf(Game.getInstance().getPlayer().getScore()));
+			} else {
+				connection.setRequestProperty("fh-client-lives", "0");
+				connection.setRequestProperty("fh-client-score", "0");
 			}
 			
 		} catch (ProtocolException e) {

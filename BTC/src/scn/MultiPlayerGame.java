@@ -687,27 +687,12 @@ public class MultiPlayerGame extends Game {
 			for (Airport airport : opposingPlayer.getAirports()) {
 				airport.clear();
 			}
-			
-			// Does the player have more lives than the opponent
-			boolean winOnLives = player.getLives() > opposingPlayer.getLives();
-			
-			// Does the player have a higher score than the opponent
-			boolean higherScore = player.getScore() > opposingPlayer.getScore();
 
 			if (!override) {
-				if (winOnLives && higherScore) {
-					endGameInstruction = "GAME_OVER:" + player.getScore() + ":"
-							+ plane1.getName() + ":" + plane2.getName();
-				} else {
-					endGameInstruction = "GAME_OVER:" + plane1.getName()
-							+ ":" + plane2.getName();
-				}
+				endGameInstruction = "GAME_OVER:" + plane1.getName()
+						+ ":" + plane2.getName();
 			} else {
-				if (winOnLives && higherScore) {
-					endGameInstruction = "GAME_OVER_RECEIVED:" + player.getScore();
-				} else {
-					endGameInstruction = "GAME_OVER_RECEIVED";
-				}
+				endGameInstruction = "GAME_OVER_RECEIVED";
 			}
 			
 			// TODO <- add back in for release
