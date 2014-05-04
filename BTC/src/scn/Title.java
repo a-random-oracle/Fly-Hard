@@ -83,7 +83,8 @@ public class Title extends Scene {
 		buttons[0] = new lib.ButtonText("Single Player", demo,
 				window.height()/3 - 40, yBorder + 80,
 				window.width() - (2 * window.height()/3) + 80, 40, 40, -12);
-
+		buttons[0].setInset(true);
+		
 		// Multi player Button
 		lib.ButtonText.Action multiplayer = new lib.ButtonText.Action() {
 			@Override
@@ -94,6 +95,7 @@ public class Title extends Scene {
 		buttons[1] = new lib.ButtonText("Multiplayer", multiplayer,
 				window.height()/3 - 40, yBorder + 160,
 				window.width() - (2 * window.height()/3) + 80, 40, 40, -12);
+		buttons[1].setInset(true);
 
 		// Credits Button
 		lib.ButtonText.Action credits = new lib.ButtonText.Action() {
@@ -106,6 +108,7 @@ public class Title extends Scene {
 		buttons[2] = new lib.ButtonText("Credits", credits,
 				window.height()/3 - 40, yBorder + 240,
 				window.width() - (2 * window.height()/3) + 80, 40, 40, -12);
+		buttons[2].setInset(true);
 
 		// Help Button
 		lib.ButtonText.Action help = new lib.ButtonText.Action() {
@@ -122,6 +125,7 @@ public class Title extends Scene {
 		buttons[3] = new lib.ButtonText("Information", help,
 				window.height()/3 - 40, yBorder + 320,
 				window.width() - (2 * window.height()/3) + 80, 40, 40, -12);
+		buttons[3].setInset(true);
 		
 		// Exit Button
 		lib.ButtonText.Action exit = new lib.ButtonText.Action() {
@@ -133,6 +137,7 @@ public class Title extends Scene {
 		buttons[4] = new lib.ButtonText("Exit", exit,
 				window.height()/3 - 40, yBorder + 400,
 				window.width() - (2 * window.height()/3) + 80, 40, 40, -12);
+		buttons[4].setInset(true);
 
 		angle = 0;
 	}

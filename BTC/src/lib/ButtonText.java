@@ -15,7 +15,10 @@ public class ButtonText {
 	private org.newdawn.slick.Color colourDefault, colourHover, colourUnavailable;
 	private Action action;
 	private boolean available;
-
+	
+	private float hover = 0;
+	private boolean inset = false;
+	
 	public ButtonText(String text, Action action, int x, int y, int w, int h, int ox, int oy) {
 		this.text = text;
 		this.action = action;
@@ -103,6 +106,14 @@ public class ButtonText {
 	public void setText(String newText) {
 		text = newText;
 	}
+	
+	/**
+	 * Allows the button to have an animating effect on MouseOver
+	 * @param anim - Boolean if button should animated
+	 */
+	public void setInset(boolean anim) {
+		inset = anim;
+	}
 
 	/**
 	 * Sets the button text to available - Changing the color to the one specified in ButtonText()
@@ -126,11 +137,20 @@ public class ButtonText {
 		}
 		else if (isMouseOver()) {
 			graphics.setColour(colourHover);
+			hover = hover + ( 1 - hover ) / 5;
 		} else {
 			graphics.setColour(colourDefault);
+			hover -= hover / 5;
 		}
+		graphics.setColour( new org.newdawn.slick.Color(
+			colourDefault.r * ( 1 - hover ) + colourHover.r * hover,
+			colourDefault.g * ( 1 - hover ) + colourHover.g * hover,
+			colourDefault.b * ( 1 - hover ) + colourHover.b * hover
+			
+		) );
+		System.out.println( hover );
 		graphics.setFont(Main.menuTitle);
-		graphics.print(text, x + ox, y + oy, size);
+		graphics.print(text, x + ox + (inset ? hover * 20 : 0), y + oy, size);
 	}
 	
 	/**
