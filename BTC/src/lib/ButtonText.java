@@ -15,10 +15,10 @@ public class ButtonText {
 	private org.newdawn.slick.Color colourDefault, colourHover, colourUnavailable;
 	private Action action;
 	private boolean available;
-	
+
 	private float hover = 0;
 	private boolean inset = false;
-	
+
 	public ButtonText(String text, Action action, int x, int y, int w, int h, int ox, int oy) {
 		this.text = text;
 		this.action = action;
@@ -50,7 +50,7 @@ public class ButtonText {
 		colourUnavailable = new org.newdawn.slick.Color(64, 64, 64);
 		available = true;
 	}
-	
+
 	public ButtonText(String text, Action action, int x, int y, int w, int h, int ox, int oy, int size) {
 		this.text = text;
 		this.action = action;
@@ -66,7 +66,7 @@ public class ButtonText {
 		colourUnavailable = new org.newdawn.slick.Color(64, 64, 64);
 		available = true;
 	}
-	
+
 	public ButtonText(String text, Action action, int x, int y, int w, int h, int size) {
 		this.text = text;
 		this.action = action;
@@ -87,18 +87,18 @@ public class ButtonText {
 		return (mx >= x && mx <= x + width && my >= y && my <= y + height);
 	}
 
-	public boolean isMouseOver() { 
-		return isMouseOver(input.mouseX(), input.mouseY()); 
+	public boolean isMouseOver() {
+		return isMouseOver(input.mouseX(), input.mouseY());
 	}
-	
-	public boolean isMouseOverRight(int mx, int my) { 
+
+	public boolean isMouseOverRight(int mx, int my) {
 		return (mx >= (x - width) && mx <= x && my >= y && my <= y + height);
 	}
-	
-	public boolean isMouseOverRight() { 
-		return isMouseOverRight(input.mouseX(), input.mouseY()); 
+
+	public boolean isMouseOverRight() {
+		return isMouseOverRight(input.mouseX(), input.mouseY());
 	}
-	
+
 	/**
 	 * Sets the string of text used
 	 * @param newText - The string to be used
@@ -106,7 +106,7 @@ public class ButtonText {
 	public void setText(String newText) {
 		text = newText;
 	}
-	
+
 	/**
 	 * Allows the button to have an animating effect on MouseOver
 	 * @param anim - Boolean if button should animated
@@ -127,9 +127,9 @@ public class ButtonText {
 		if (!available) return;
 		action.action();
 	}
-	
+
 	/**
-	 * Draws the button text which reacts to mouse interactions 
+	 * Draws the button text which reacts to mouse interactions
 	 */
 	public void draw() {
 		if (!available) {
@@ -146,13 +146,13 @@ public class ButtonText {
 			colourDefault.r * ( 1 - hover ) + colourHover.r * hover,
 			colourDefault.g * ( 1 - hover ) + colourHover.g * hover,
 			colourDefault.b * ( 1 - hover ) + colourHover.b * hover
-			
+
 		) );
 		System.out.println( hover );
 		graphics.setFont(Main.menuTitle);
-		graphics.print(text, x + ox + (inset ? hover * 20 : 0), y + oy, size);
+		graphics.print(text, x + ox + (inset ? hover * 10 : 0), y + oy, size);
 	}
-	
+
 	/**
 	 * Draws the button text which reacts to mouse interactions
 	 * <p>
