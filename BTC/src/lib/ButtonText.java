@@ -1,5 +1,7 @@
 package lib;
 
+import org.newdawn.slick.TrueTypeFont;
+
 import lib.jog.graphics;
 import lib.jog.input;
 import btc.Main;
@@ -11,7 +13,7 @@ public class ButtonText {
 	}
 
 	private int x, y, width, height, ox, oy, size;
-	// private TrueTypeFont = Main.;
+	private TrueTypeFont font = Main.menuTitleFont;
 	private String text;
 	private org.newdawn.slick.Color colourDefault, colourHover, colourUnavailable;
 	private Action action;
@@ -34,6 +36,24 @@ public class ButtonText {
 		colourHover = new org.newdawn.slick.Color(256, 256, 256);
 		colourUnavailable = new org.newdawn.slick.Color(64, 64, 64);
 		available = true;
+		this.font = Main.menuTitleFont;
+	}
+
+	public ButtonText(String text, TrueTypeFont font, Action action, int x, int y, int w, int h, int ox, int oy) {
+		this.text = text;
+		this.action = action;
+		this.x = x;
+		this.y = y;
+		width = w;
+		height = h;
+		this.ox = ox;
+		this.oy = oy;
+		this.size = 1;
+		colourDefault = graphics.safetyOrange;
+		colourHover = new org.newdawn.slick.Color(256, 256, 256);
+		colourUnavailable = new org.newdawn.slick.Color(64, 64, 64);
+		available = true;
+		this.font = font;
 	}
 
 	public ButtonText(String text, Action action, int x, int y, int w, int h) {
@@ -50,6 +70,24 @@ public class ButtonText {
 		colourHover = new org.newdawn.slick.Color(128, 128, 128);
 		colourUnavailable = new org.newdawn.slick.Color(64, 64, 64);
 		available = true;
+		this.font = Main.menuTitleFont;
+	}
+
+	public ButtonText(String text, TrueTypeFont font, Action action, int x, int y, int w, int h) {
+		this.text = text;
+		this.action = action;
+		this.x = x;
+		this.y = y;
+		width = w;
+		height = h;
+		this.ox = (w - (text.length() * 8)) / 2;
+		this.oy = (h - 8) / 2;
+		this.size = 1;
+		colourDefault = graphics.safetyOrange;
+		colourHover = new org.newdawn.slick.Color(128, 128, 128);
+		colourUnavailable = new org.newdawn.slick.Color(64, 64, 64);
+		available = true;
+		this.font = font;
 	}
 
 	public ButtonText(String text, Action action, int x, int y, int w, int h, int ox, int oy, int size) {
@@ -66,6 +104,24 @@ public class ButtonText {
 		colourHover = new org.newdawn.slick.Color(128, 128, 128);
 		colourUnavailable = new org.newdawn.slick.Color(64, 64, 64);
 		available = true;
+		this.font = Main.menuTitleFont;
+	}
+
+	public ButtonText(String text, TrueTypeFont font, Action action, int x, int y, int w, int h, int ox, int oy, int size) {
+		this.text = text;
+		this.action = action;
+		this.x = x;
+		this.y = y;
+		width = w;
+		height = h;
+		this.ox = ox;
+		this.oy = oy;
+		this.size = size;
+		colourDefault = graphics.safetyOrange;
+		colourHover = new org.newdawn.slick.Color(128, 128, 128);
+		colourUnavailable = new org.newdawn.slick.Color(64, 64, 64);
+		available = true;
+		this.font = font;
 	}
 
 	public ButtonText(String text, Action action, int x, int y, int w, int h, int size) {
@@ -82,7 +138,26 @@ public class ButtonText {
 		colourHover = new org.newdawn.slick.Color(128, 128, 128);
 		colourUnavailable = new org.newdawn.slick.Color(64, 64, 64);
 		available = true;
+		this.font = Main.menuTitleFont;
 	}
+
+	public ButtonText(String text, TrueTypeFont font, Action action, int x, int y, int w, int h, int size) {
+		this.text = text;
+		this.action = action;
+		this.x = x;
+		this.y = y;
+		width = w;
+		height = h;
+		this.ox = (w - (text.length() * 8)) / 2;
+		this.oy = (h - 8) / 2;
+		this.size = size;
+		colourDefault = graphics.safetyOrange;
+		colourHover = new org.newdawn.slick.Color(128, 128, 128);
+		colourUnavailable = new org.newdawn.slick.Color(64, 64, 64);
+		available = true;
+		this.font = font;
+	}
+
 
 	public boolean isMouseOver(int mx, int my) {
 		return (mx >= x && mx <= x + width && my >= y && my <= y + height);
@@ -150,7 +225,7 @@ public class ButtonText {
 
 		) );
 		System.out.println( hover );
-		graphics.setFont(Main.menuTitle);
+		graphics.setFont(font);
 		graphics.print(text, x + ox + (inset ? hover * 10 : 0), y + oy, size);
 	}
 
@@ -169,7 +244,7 @@ public class ButtonText {
 		} else {
 			graphics.setColour(colourDefault);
 		}
-		graphics.setFont(Main.engSign);
+		graphics.setFont(font);
 		graphics.printRight(text, x + ox, y + oy - 12, size, 0);
 	}
 

@@ -129,33 +129,6 @@ public class DifficultySelect extends Scene {
 		buttons[2] = new lib.ButtonText("Hard", hard,
 				HARD_BUTTON_X, HARD_BUTTON_Y, HARD_BUTTON_W, HARD_BUTTON_H, 40, -12);
 
-		// textBox = new lib.TextBox(Color.green, 128, 96,
-		// 		window.width() - 256, window.height() - 96, 32);
-		//
-		// textBox.addText("You are a 500 kilogram ferocious Grizzly Bear."
-		// 		+ TextBox.DELAY_START
-		// 		+ "0.5" + TextBox.DELAY_END + " The Humans are not aware of"
-		// 		+ "your hidden identity.");
-		// textBox.delay(0.5);
-		// textBox.addText("You have become an air traffic controller at "
-		// 		+ DifficultySelect.placeName
-		// 		+ " international in order to provide for your family "
-		// 		+ "during the harsh winters ahead.");
-		// textBox.delay(0.5);
-		// textBox.newline();
-		// textBox.addText("Somehow, miraculously, your true nature has not"
-		// + "yet been discovered.");
-		// textBox.newline();
-		// textBox.newline();
-		// textBox.newline();
-		// textBox.delay(1);
-		// textBox.addText("Guide planes to their destination successfully and"
-		// 		+ "you will be rewarded." + TextBox.DELAY_START + "0.5"
-		// 		+ TextBox.DELAY_END +
-		// 		" Fail," + TextBox.DELAY_START + "0.5" + TextBox.DELAY_END
-		// 		+ " and the humans may discover your secret identity and"
-		// 		+ "put you in a zoo." + TextBox.DELAY_START + "1"
-		// 		+ TextBox.DELAY_END + " Or worse.");
 	}
 
 	@Override
@@ -163,7 +136,6 @@ public class DifficultySelect extends Scene {
 	 * Updates text box
 	 */
 	public void update(double timeDifference) {
-		//textBox.update(timeDifference);
 	}
 
 	/**
@@ -171,7 +143,7 @@ public class DifficultySelect extends Scene {
 	 */
 	@Override
 	public void draw() {
-		graphics.setFont(Main.menuTitle);
+		graphics.setFont(Main.menuTitleFont);
 		graphics.setColour(graphics.safetyOrange);
 		graphics.rectangle(true, window.height()/3 - 40, yBorder - 2,
 			(window.width() - (2 * window.height()/3 - 80)), 70);
@@ -193,19 +165,11 @@ public class DifficultySelect extends Scene {
 		graphics.printRight("Difficile", (window.width() - (window.height()/3) + 20), HARD_BUTTON_Y - 10, 0, 0);
 		graphics.printRight("Schwer", (window.width() - (window.height()/3) + 20), HARD_BUTTON_Y + 5, 0, 0);
 		graphics.printRight("Vaikea", (window.width() - (window.height()/3) + 20), HARD_BUTTON_Y + 20, 0, 0);
-		
-		// graphics.rectangle(false, EASY_BUTTON_X, EASY_BUTTON_Y,
-		// 		EASY_BUTTON_W, EASY_BUTTON_H);
-		// graphics.rectangle(false, MEDIUM_BUTTON_X, MEDIUM_BUTTON_Y,
-		// 		MEDIUM_BUTTON_W, MEDIUM_BUTTON_H);
-		// graphics.rectangle(false, HARD_BUTTON_X, HARD_BUTTON_Y,
-		// 		HARD_BUTTON_W, HARD_BUTTON_H);
 
 		for (lib.ButtonText b : buttons) {
 			b.draw();
 		}
 
-		//textBox.draw();
 	}
 
 	@Override

@@ -35,8 +35,8 @@ public class Main implements input.EventHandler {
 		Main.testing = false;
 		new Main(false);
 	}
-	
-	
+
+
 	/** The game's version number */
 	public static final String VERSION = "Fly-Hard-0.6";
 
@@ -54,17 +54,18 @@ public class Main implements input.EventHandler {
 
 	/** The default size of the gap between the window edge and the top edge of the screen */
 	public static final int HEIGHT_GAP = 30;
-	
+
 	/** The standard font */
 	public static graphics.Font standardFont;
-	
+
 	/** The font to use for flight strips */
 	public static TrueTypeFont mainFont;
 	public static TrueTypeFont flightstripFontWarn;
 	public static TrueTypeFont flightstripFontMid;
 	public static TrueTypeFont flightstripFontSuper;
-	public static TrueTypeFont menuTitle;
-	public static TrueTypeFont engSign;
+	public static TrueTypeFont menuTitleFont;
+  public static TrueTypeFont menuMainFont;
+	public static TrueTypeFont engSignFont;
 	public static TrueTypeFont transSign;
 
 	/** The scale the game has been resized to in the horizontal plane */
@@ -152,7 +153,7 @@ public class Main implements input.EventHandler {
 		window.initialise(TITLE, (int)(width),(int)(height),
 				(int)(xOffset), (int)(yOffset), fullscreen);
 		graphics.initialise();
-		
+
 		standardFont = graphics.newBitmapFont("gfx" + File.separator + "fnt"
 				+ File.separator + "font.png",
 				("ABCDEFGHIJKLMNOPQRSTUVWXYZ abcdefghijklmnopqrstuvwxyz" +
@@ -179,12 +180,12 @@ public class Main implements input.EventHandler {
 							ResourceLoader.getResourceAsStream(
 									"gfx" + File.separator + "fnt" + File.separator
 									+ "Roboto-Black.ttf")).deriveFont(16F), true);
-			menuTitle = new TrueTypeFont(
+			menuTitleFont = new TrueTypeFont(
 					java.awt.Font.createFont(java.awt.Font.TRUETYPE_FONT,
 							ResourceLoader.getResourceAsStream(
 									"gfx" + File.separator + "fnt" + File.separator
 									+ "Roboto-Black.ttf")).deriveFont(42F), true);
-			engSign = new TrueTypeFont(
+			engSignFont = new TrueTypeFont(
 					java.awt.Font.createFont(java.awt.Font.TRUETYPE_FONT,
 							ResourceLoader.getResourceAsStream(
 									"gfx" + File.separator + "fnt" + File.separator
@@ -194,11 +195,11 @@ public class Main implements input.EventHandler {
 							ResourceLoader.getResourceAsStream(
 									"gfx" + File.separator + "fnt" + File.separator
 									+ "Roboto-Medium.ttf")).deriveFont(16F), true);
-			
+
 		} catch (FontFormatException | IOException e) {
 			e.printStackTrace();
 		}
-		
+
 		graphics.setFont(mainFont);
 
 		sceneStack = new Stack<Scene>();

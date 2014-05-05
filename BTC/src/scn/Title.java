@@ -66,7 +66,7 @@ public class Title extends Scene {
 	 */
 	@Override
 	public void start() {
-		graphics.setFont(Main.engSign);
+		graphics.setFont(Main.engSignFont);
 		graphics.setColour(graphics.safetyOrange);
 		beep = audio.newSoundEffect("sfx" + File.separator + "beep.ogg");
 		beep.setVolume(0.2f);
@@ -177,7 +177,7 @@ public class Title extends Scene {
 	 */
 	private void drawMenu() {
 		graphics.setColour(graphics.safetyOrange);
-		graphics.setFont(Main.menuTitle);
+		graphics.setFont(Main.menuTitleFont);
 		graphics.rectangle(true, window.height()/3 - 40, yBorder - 2, (window.width() - (2 * window.height()/3) + 80), 70);
 		graphics.setColour(Color.black);
 		graphics.print("Fly Hard", window.height()/3, yBorder);

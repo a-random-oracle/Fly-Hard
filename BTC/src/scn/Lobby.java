@@ -114,7 +114,7 @@ public class Lobby extends Scene {
 			}
 		};
 
-		createGameButton = new ButtonText("Create Game", createGame,
+		createGameButton = new ButtonText("Create Game", Main.mainFont, createGame,
 				(int) (nameEntryBoxPos.getX()
 						+ (nameEntryBox.getWidth() / 2) + Game.getXOffset() + 50),
 				(int) (nameEntryBoxPos.getY() + Game.getYOffset() + 3),
