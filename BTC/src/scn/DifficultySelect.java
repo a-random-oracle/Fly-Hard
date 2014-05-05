@@ -164,6 +164,7 @@ public class DifficultySelect extends Scene {
 	 */
 	@Override
 	public void draw() {
+		graphics.setFont(Main.mainFont);
 		String chooseDifficulty = "Select the difficulty";
 		
 		graphics.setColour(0,128,0);

@@ -283,6 +283,7 @@ public class Title extends Scene {
 
 		// Draw Buttons
 		for (lib.ButtonText b : buttons) b.draw();
+		graphics.setFont(Main.mainFont);
 //		graphics.setColour(graphics.safetyOrange);
 //		graphics.line(window.height(), window.height()/2 + 60, window.width() - 16, window.height()/2 + 60);
 //		graphics.line(window.height(), window.height()/2 + 90, window.width() - 16, window.height()/2 + 90);

@@ -329,6 +329,7 @@ public abstract class Game extends Scene {
 	public void draw() {
 		// Draw the rectangle surrounding the map area
 		graphics.setColour(graphics.green);
+		graphics.setFont(Main.mainFont);
 		graphics.rectangle(false, X_OFFSET, Y_OFFSET, window.width() - (2 * X_OFFSET),
 				window.height() - (2 * Y_OFFSET));
 

@@ -305,6 +305,7 @@ public class Lobby extends Scene {
 
 	@Override
 	public void draw() {
+		graphics.setFont(Main.mainFont);
 		// Draw the name entry label
 		graphics.printRight("Enter Name: ", (nameEntryBoxPos.getX()
 				- (nameEntryBox.getWidth() / 2) + Game.getXOffset()),
