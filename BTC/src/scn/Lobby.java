@@ -114,7 +114,7 @@ public class Lobby extends Scene {
 			}
 		};
 
-		createGameButton = new ButtonText("Create Game", Main.mainFont, createGame,
+		createGameButton = new ButtonText("Create Game", Main.menuMainFont, createGame,
 				(int) (nameEntryBoxPos.getX()
 						+ (nameEntryBox.getWidth() / 2) + Game.getXOffset() + 50),
 				(int) (nameEntryBoxPos.getY() + Game.getYOffset() + 3),
@@ -232,11 +232,11 @@ public class Lobby extends Scene {
 						createPlayerButtonAction(clientIDs[i]);
 				
 				// Create a new join button for the available connection
-				ButtonText joinButton = new ButtonText("Join Game",
+				ButtonText joinButton = new ButtonText("Join Game", Main.menuMainFont,
 						currentAction,
 						(int) (tableTopRight.getX() - 5 + Game.getXOffset()),
 						(int) (tableTopLeft.getY()
-								+ Game.getYOffset() + ((i + 0.33) * rowHeight)),
+								+ Game.getYOffset() + ((i + 0.33) * rowHeight) + 4),
 						(int) ((tableTopRight.getX() - tableTopLeft.getX())
 								* (1d/8d)),
 						(int) (rowHeight * (3d/4d)), 0, 0);
@@ -305,7 +305,7 @@ public class Lobby extends Scene {
 
 	@Override
 	public void draw() {
-		graphics.setFont(Main.mainFont);
+		graphics.setFont(Main.menuMainFont);
 		// Draw the name entry label
 		graphics.printRight("Enter Name: ", (nameEntryBoxPos.getX()
 				- (nameEntryBox.getWidth() / 2) + Game.getXOffset()),
@@ -327,7 +327,7 @@ public class Lobby extends Scene {
 					tableTopLeft.getX() + Game.getXOffset(),
 					nameEntryBoxPos.getY()
 					+ ((tableTopLeft.getY() - nameEntryBoxPos.getY()) / 2)
-					+ Game.getYOffset(),
+					+ Game.getYOffset() - 10,
 					2, (tableTopRight.getX() - tableTopLeft.getX()));
 		}
 
@@ -344,16 +344,16 @@ public class Lobby extends Scene {
 
 		// Draw the host name column label
 		graphics.print("Host Name", tableTopLeft.getX() + Game.getXOffset() + 5,
-				tableTopLeft.getY() + Game.getYOffset() - 15, 1);
+				tableTopLeft.getY() + Game.getYOffset() - 30, 1);
 
 		// Draw the description column label
 		graphics.printCentred("Status", tableTopLeft.getX() + Game.getXOffset(),
-				tableTopLeft.getY() + Game.getYOffset() - 15,
+				tableTopLeft.getY() + Game.getYOffset() - 30,
 				1, (tableTopRight.getX() - tableTopLeft.getX()));
 		
 		// Draw the action column label
 		graphics.printRight("Action", tableTopRight.getX() + Game.getXOffset() - 5,
-				tableTopLeft.getY() + Game.getYOffset() - 15, 1, 0);
+				tableTopLeft.getY() + Game.getYOffset() - 30, 1, 0);
 
 		// Draw the table border
 		graphics.rectangle(false,
@@ -380,7 +380,7 @@ public class Lobby extends Scene {
 				graphics.print(availablePlayers.get(playerIDs[i]),
 						(tableTopLeft.getX() + Game.getXOffset()) + 5,
 						(tableTopLeft.getY() + Game.getYOffset()
-								+ ((i + 0.33) * rowHeight)));
+								+ ((i + 0.33) * rowHeight)) - 10);
 			}
 
 			// Draw the player's descriptions
@@ -389,7 +389,7 @@ public class Lobby extends Scene {
 						+ " Waiting for an opponent " + waitingForOpponentDots,
 						tableTopLeft.getX() + Game.getXOffset(),
 						(tableTopLeft.getY() + Game.getYOffset()
-								+ ((i + 0.33) * rowHeight)),
+								+ ((i + 0.33) * rowHeight) - 10),
 						1, (tableTopRight.getX() - tableTopLeft.getX()));
 			}
 			
@@ -412,15 +412,15 @@ public class Lobby extends Scene {
 
 		// Draw the rank column label
 		graphics.print("Rank", scoresTopLeft.getX() + Game.getXOffset() + 5,
-				scoresTopLeft.getY() + Game.getYOffset() - 15, 1);
+				scoresTopLeft.getY() + Game.getYOffset() - 30, 1);
 
 		// Draw the name column label
 		graphics.print("Name", scoresTopLeft.getX() + Game.getXOffset() + 50,
-				scoresTopLeft.getY() + Game.getYOffset() - 15, 1);
+				scoresTopLeft.getY() + Game.getYOffset() - 30, 1);
 
 		// Draw the score column label
 		graphics.printRight("Score", scoresTopRight.getX() + Game.getXOffset() - 5,
-				scoresTopLeft.getY() + Game.getYOffset() - 15, 1, 0);
+				scoresTopLeft.getY() + Game.getYOffset() - 30, 1, 0);
 
 		// Draw the high scores table border
 		graphics.rectangle(false,
@@ -437,19 +437,19 @@ public class Lobby extends Scene {
 					graphics.printRight(String.valueOf(i + 1),
 							(scoresTopLeft.getX() + Game.getXOffset()) + 35,
 							(scoresTopLeft.getY() + Game.getYOffset()
-									+ ((i + 0.33) * rowHeight)), 1, 0);
+									+ ((i + 0.33) * rowHeight)) - 10, 1, 0);
 					
 					// Draw the player's names
 					graphics.print(name,
 							(scoresTopLeft.getX() + Game.getXOffset()) + 50,
 							(scoresTopLeft.getY() + Game.getYOffset()
-									+ ((i + 0.33) * rowHeight)));
+									+ ((i + 0.33) * rowHeight)) - 10);
 
 					// Draw the scores
 					graphics.printRight(String.valueOf(score),
 							scoresTopRight.getX() + Game.getXOffset() - 5,
 							(scoresTopLeft.getY() + Game.getYOffset()
-									+ ((i + 0.33) * rowHeight)), 1, 0);
+									+ ((i + 0.33) * rowHeight)) - 10, 1, 0);
 
 					// Draw vertical lines below each score
 					graphics.line((scoresTopLeft.getX() + Game.getXOffset()),

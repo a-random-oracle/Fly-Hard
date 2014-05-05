@@ -224,12 +224,8 @@ public class ButtonText {
 			colourDefault.b * ( 1 - hover ) + colourHover.b * hover
 
 		) );
-<<<<<<< HEAD
 		System.out.println( hover );
 		graphics.setFont(font);
-=======
-		graphics.setFont(Main.menuTitle);
->>>>>>> 50b746ad7a204c06ddd645a66916ba2814eb9c93
 		graphics.print(text, x + ox + (inset ? hover * 10 : 0), y + oy, size);
 	}
 

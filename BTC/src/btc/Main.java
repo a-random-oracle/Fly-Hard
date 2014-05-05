@@ -165,6 +165,11 @@ public class Main implements input.EventHandler {
 							ResourceLoader.getResourceAsStream(
 									"gfx" + File.separator + "fnt" + File.separator
 									+ "Roboto-Medium.ttf")).deriveFont(12F), true);
+      menuMainFont = new TrueTypeFont(
+          java.awt.Font.createFont(java.awt.Font.TRUETYPE_FONT,
+              ResourceLoader.getResourceAsStream(
+                  "gfx" + File.separator + "fnt" + File.separator
+                  + "Roboto-Medium.ttf")).deriveFont(18F), true);
 			flightstripFontWarn = new TrueTypeFont(
 					java.awt.Font.createFont(java.awt.Font.TRUETYPE_FONT,
 							ResourceLoader.getResourceAsStream(

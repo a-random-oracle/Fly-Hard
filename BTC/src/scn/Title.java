@@ -27,11 +27,6 @@ public class Title extends Scene {
 	/** Holds the angle to draw the radar sweep at */
 	private double angle;
 
-	/** The base image to provide powerup colours */
-	public static final Image LOGO =
-			graphics.newImage("gfx" + File.separator + "gui"
-					+ File.separator + "logo.png");
-
 	public static final Image SINGLE_PLAYER =
 			graphics.newImage("gfx" + File.separator + "pup"
 					+ File.separator + "singleplayer_512.png");
@@ -206,7 +201,6 @@ public class Title extends Scene {
 		graphics.printRight("Ausfahrt", (window.width() - (window.height()/3) + 20) - 4, yBorder + 405, 0, 0);
 		graphics.printRight("Postuminen", (window.width() - (window.height()/3) + 20) - 4, yBorder + 420, 0, 0);
 		graphics.setColour(graphics.safetyOrange);
-		graphics.drawScaled(LOGO, window.width()/2 - 1556 / 2 * 0.4, 40, 0.4);
 		graphics.drawScaled(SINGLE_PLAYER, window.height()/3 - 40, yBorder + 80, 0.0625);
 		graphics.drawScaled(MULTIPLAYER, window.height()/3 - 40, yBorder + 160, 0.0625);
 		graphics.drawScaled(CREDITS, window.height()/3 - 40, yBorder + 240, 0.0625);
@@ -216,13 +210,6 @@ public class Title extends Scene {
 		// Draw Buttons
 		for (lib.ButtonText b : buttons) b.draw();
 		graphics.setFont(Main.mainFont);
-//		graphics.setColour(graphics.safetyOrange);
-//		graphics.line(window.height(), window.height()/2 + 60, window.width() - 16, window.height()/2 + 60);
-//		graphics.line(window.height(), window.height()/2 + 90, window.width() - 16, window.height()/2 + 90);
-//		graphics.line(window.height(), window.height()/2 + 120, window.width() - 16, window.height()/2 + 120);
-//		graphics.line(window.height(), window.height()/2 + 150, window.width() - 16, window.height()/2 + 150);
-//		graphics.line(window.height(), window.height()/2 + 180, window.width() - 16, window.height()/2 + 180);
-//		graphics.line(window.height(), window.height()/2 + 210, window.width() - 16, window.height()/2 + 210);
 	}
 
 	/**

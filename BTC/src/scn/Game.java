@@ -4,6 +4,8 @@ import java.io.File;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 
+import org.newdawn.slick.Color;
+
 import lib.SpriteAnimation;
 import lib.jog.audio;
 import lib.jog.graphics;
@@ -326,7 +328,7 @@ public abstract class Game extends Scene {
 	@Override
 	public void draw() {
 		// Draw the rectangle surrounding the map area
-		graphics.setColour(graphics.green);
+		graphics.setColour(graphics.white);
 		graphics.setFont(Main.mainFont);
 		graphics.rectangle(false, X_OFFSET, Y_OFFSET, window.width() - (2 * X_OFFSET),
 				window.height() - (2 * Y_OFFSET));
@@ -336,7 +338,7 @@ public abstract class Game extends Scene {
 				window.height() - (2 * Y_OFFSET));
 
 		// Draw the map background
-		graphics.setColour(255, 255, 255, 48);
+		graphics.setColour(255, 255, 255, 80);
 		graphics.drawScaled(background, 0, 0,
 				Math.max(Main.getXScale(), Main.getYScale()));
 
@@ -366,7 +368,7 @@ public abstract class Game extends Scene {
 
 		graphics.setViewport();
 
-		graphics.setColour(graphics.green_transp);
+		graphics.setColour(Color.white);
 
 		// Display the player's score
 		String scoreString = String.format("%6d", player.getScore());
@@ -429,7 +431,7 @@ public abstract class Game extends Scene {
 
 				// Draw the selected aircraft's flight path
 				player.getSelectedAircraft().drawFlightPath();
-				graphics.setColour(graphics.green);
+				graphics.setColour(Color.white);
 			}
 		}
 	}
@@ -453,7 +455,7 @@ public abstract class Game extends Scene {
 		}
 
 		// Draw entry/exit points
-		graphics.setColour(graphics.green);
+		graphics.setColour(Color.white);
 
 		graphics.print(locationWaypoints[0].getName().toUpperCase(),
 				locationWaypoints[0].getLocation().getX() + 9,
@@ -486,7 +488,7 @@ public abstract class Game extends Scene {
 		}
 
 		// Draw the airport names
-		graphics.setColour(graphics.green);
+		graphics.setColour(Color.white);
 
 		graphics.printCentred(locationWaypoints[4].getName().toUpperCase(),
 				locationWaypoints[4].getLocation().getX(),
