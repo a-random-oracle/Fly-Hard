@@ -7,6 +7,7 @@ import org.junit.Test;
 import org.junit.Before;
 
 import scn.Game.DifficultySetting;
+import scn.SinglePlayerGame;
 
 import cls.Aircraft;
 import cls.Airport;
@@ -21,7 +22,7 @@ public class AirportTest {
 	@Before
 	public void setUp() {
 		test_airport = new Airport("", window.width(), window.height());
-		
+		SinglePlayerGame.createSinglePlayerGame(DifficultySetting.EASY);
 		Waypoint[] waypointList = new Waypoint[] {
 				new Waypoint(0, 0, true, false),
 				new Waypoint(100, 100, true, false),
