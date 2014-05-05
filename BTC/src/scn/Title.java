@@ -28,6 +28,10 @@ public class Title extends Scene {
 	private double angle;
 
 	/** The base image to provide powerup colours */
+	public static final Image LOGO =
+			graphics.newImage("gfx" + File.separator + "gui"
+					+ File.separator + "logo.png");
+
 	public static final Image SINGLE_PLAYER =
 			graphics.newImage("gfx" + File.separator + "pup"
 					+ File.separator + "singleplayer_512.png");
@@ -192,7 +196,7 @@ public class Title extends Scene {
 		graphics.printRight("Multijouer", (window.width() - (window.height()/3) + 20) - 4, yBorder + 150, 0, 0);
 		graphics.printRight("Mehrspieler", (window.width() - (window.height()/3) + 20) - 4, yBorder + 165, 0, 0);
 		graphics.printRight("Moninpeli", (window.width() - (window.height()/3) + 20) - 4, yBorder + 180, 0, 0);
-		graphics.printRight("Cr\u00E9dits", (window.width() - (window.height()/3) + 20) - 4, yBorder + 230, 0, 0);
+		graphics.printRight("Crédits", (window.width() - (window.height()/3) + 20) - 4, yBorder + 230, 0, 0);
 		graphics.printRight("Credits", (window.width() - (window.height()/3) + 20) - 4, yBorder + 245, 0, 0);
 		graphics.printRight("Ov", (window.width() - (window.height()/3) + 20) - 4, yBorder + 260, 0, 0);
 		graphics.printRight("Aider", (window.width() - (window.height()/3) + 20) - 4, yBorder + 310, 0, 0);
@@ -202,6 +206,7 @@ public class Title extends Scene {
 		graphics.printRight("Ausfahrt", (window.width() - (window.height()/3) + 20) - 4, yBorder + 405, 0, 0);
 		graphics.printRight("Postuminen", (window.width() - (window.height()/3) + 20) - 4, yBorder + 420, 0, 0);
 		graphics.setColour(graphics.safetyOrange);
+		graphics.drawScaled(LOGO, window.width()/2 - 1556 / 2 * 0.4, 40, 0.4);
 		graphics.drawScaled(SINGLE_PLAYER, window.height()/3 - 40, yBorder + 80, 0.0625);
 		graphics.drawScaled(MULTIPLAYER, window.height()/3 - 40, yBorder + 160, 0.0625);
 		graphics.drawScaled(CREDITS, window.height()/3 - 40, yBorder + 240, 0.0625);
