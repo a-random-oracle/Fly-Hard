@@ -459,11 +459,19 @@ public class Player implements Serializable {
 	}
 	
 	/**
-	 * Sets the player's score.
-	 * @param score - the new score
+	 * Increases the player's score.
+	 * @param score - the amount to increase by
 	 */
-	public void setScore(int score) {
-		this.score = score;
+	public void increaseScore(int score) {
+		this.score += score;
+	}
+	
+	/**
+	 * Decreases the player's score.
+	 * @param score - the amount to decrease by
+	 */
+	public void decreaseScore(int score) {
+		this.score -= score;
 	}
 	
 	/**

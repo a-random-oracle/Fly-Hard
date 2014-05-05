@@ -201,8 +201,7 @@ public abstract class Game extends Scene {
 				}
 
 				if (!player.getAircraft().get(i).isCrashed()) {
-					player.setScore(player.getScore()
-							+ player.getAircraft().get(i).getScore());
+					player.increaseScore(player.getAircraft().get(i).getScore());
 				}
 
 				if (player.getAircraft().get(i).isCrashed()) {
@@ -702,10 +701,19 @@ public abstract class Game extends Scene {
 					getAllAircraft());
 
 			if (collidedWith != null) {
+				// Remove a life
 				player.setLives(player.getLives() - 1);
-				player.setScore(player.getScore() - 400);
+				
+				// Apply a score penalty
+				player.decreaseScore(400);
+				
+				// Draw the exploson animation
 				explodePlanes(plane, collidedWith);
+				
+				// Go to the game over check
 				gameOver(plane, collidedWith, false);
+				
+				// Break the loop
 				return;
 			}
 		}

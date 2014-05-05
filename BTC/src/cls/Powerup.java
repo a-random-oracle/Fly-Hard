@@ -204,15 +204,23 @@ public class Powerup implements Serializable {
 		switch (player) {
 		case 0:
 			if (PLAYER_AFFECTED_MAP.get(effect) == 0) {
+				// If we're the 'first' player, and we get a powerup which
+				// affects us, add the powerup to our list
 				gameInstance.getPlayer().addPowerup(this);
 			} else if (PLAYER_AFFECTED_MAP.get(effect) == 1) {
+				// If we're the 'first' player, and we get a powerup which
+				// affects the opposing player, send them the powerup
 				NetworkManager.sendData(-1, clone());
 			}
 			break;
 		case 1:
 			if (PLAYER_AFFECTED_MAP.get(effect) == 0) {
+				// If we're the 'second' player, and we get a powerup which
+				// affects the opposing player, send them the powerup
 				NetworkManager.sendData(-1, clone());
 			} else if (PLAYER_AFFECTED_MAP.get(effect) == 1) {
+				// If we're the 'second' player, and we get a powerup which
+				// affects us, add the powerup to our list
 				gameInstance.getPlayer().addPowerup(this);
 			}
 			break;
@@ -345,6 +353,9 @@ public class Powerup implements Serializable {
 			
 			// Reset the selected aircraft
 			gameInstance.deselectAircraft(gameInstance.getPlayer());
+			
+			// Apply a score bonus for transferring an aircraft
+			gameInstance.getPlayer().increaseScore(300);
 		}
 	}
 	
