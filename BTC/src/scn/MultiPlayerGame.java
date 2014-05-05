@@ -237,8 +237,6 @@ public class MultiPlayerGame extends Game {
 			if (!player.getPowerups().get(i).isActive()) {
 				// Activate it
 				player.getPowerups().get(i).activateEffect();
-				//add to players powerup count
-				player.setPowerUpsCollected(player.getPowerUpsCollected() + 1);
 				
 			} else {
 				// If the powerup has finished
@@ -246,6 +244,9 @@ public class MultiPlayerGame extends Game {
 						<= System.currentTimeMillis()) {
 					// Deactivate it
 					player.getPowerups().get(i).deactivateEffect();
+
+					// Add to players powerup count
+					player.setPowerUpsCollected(player.getPowerUpsCollected() + 1);
 				}
 			}
 		}
@@ -378,25 +379,6 @@ public class MultiPlayerGame extends Game {
 	@Override
 	public void draw() {
 		super.draw();
-		
-		// Draw the player's names
-		graphics.setColour(graphics.blue);
-		
-		if (player.getName() != null) {
-			graphics.printCentred(player.getName(),
-					(((window.width() - (2 * getXOffset()))
-							* (3d/7d)) / 2) + getXOffset(),
-					getYOffset() - 15, 1, 0);
-		}
-		
-		graphics.setColour(graphics.red);
-		
-		if (opposingPlayer.getName() != null) {
-			graphics.printCentred(opposingPlayer.getName(),
-					window.width() - ((((window.width() - (2 * getXOffset()))
-							* (3d/7d)) / 2) + getXOffset()),
-					getYOffset() - 15, 1, 0);
-		}
 
 		// Draw the middle zone
 		drawMiddleZone();
@@ -428,6 +410,7 @@ public class MultiPlayerGame extends Game {
 		drawLives();
 		drawScore();
 		drawFlightStrips();
+		drawPlayerNames();
 	}
 
 	/**
@@ -568,6 +551,59 @@ public class MultiPlayerGame extends Game {
 			break;
 		}
 	}
+	
+	/**
+	 * Draw the player's names.
+	 */
+	private void drawPlayerNames() {
+		if (player.getName() != null && opposingPlayer.getName() != null) {
+			switch (playerPosition) {
+			case 0:
+				graphics.setColour(graphics.blue);
+
+				if (player.getName() != null) {
+					graphics.printCentred(player.getName(),
+							(((window.width() - (2 * getXOffset()))
+									* (3d/7d)) / 2) + getXOffset(),
+									getYOffset() - 15, 1, 0);
+				}
+
+				graphics.setColour(graphics.red);
+
+				if (opposingPlayer.getName() != null) {
+					graphics.printCentred(opposingPlayer.getName(),
+							window.width() - ((((window.width()
+									- (2 * getXOffset()))
+									* (3d/7d)) / 2) + getXOffset()),
+									getYOffset() - 15, 1, 0);
+				}
+
+				break;
+			case 1:
+				graphics.setColour(graphics.blue);
+
+				if (opposingPlayer.getName() != null) {
+					graphics.printCentred(player.getName(),
+							window.width() - ((((window.width()
+									- (2 * getXOffset()))
+									* (3d/7d)) / 2) + getXOffset()),
+									getYOffset() - 15, 1, 0);
+				}
+
+				graphics.setColour(graphics.red);
+
+				if (player.getName() != null) {
+					graphics.printCentred(opposingPlayer.getName(),
+							(((window.width() - (2 * getXOffset()))
+									* (3d/7d)) / 2) + getXOffset(),
+									getYOffset() - 15, 1, 0);
+				}
+
+				break;
+			}
+		}
+	}
+	
 
 	public void keyReleased(int key) {
 		super.keyReleased(key);
@@ -651,31 +687,27 @@ public class MultiPlayerGame extends Game {
 			for (Airport airport : opposingPlayer.getAirports()) {
 				airport.clear();
 			}
-			
-			// Does the player have more lives than the opponent
-			boolean winOnLives = player.getLives() > opposingPlayer.getLives();
-			
-			// Does the player have a higher score than the opponent
-			boolean higherScore = player.getScore() > opposingPlayer.getScore();
 
 			if (!override) {
-				if (winOnLives && higherScore) {
-					endGameInstruction = "GAME_OVER:" + player.getScore() + ":"
-							+ plane1.getName() + ":" + plane2.getName();
-				} else {
-					endGameInstruction = "GAME_OVER:" + plane1.getName()
-							+ ":" + plane2.getName();
-				}
+				endGameInstruction = "GAME_OVER:" + plane1.getName()
+						+ ":" + plane2.getName();
 			} else {
-				if (winOnLives && higherScore) {
-					endGameInstruction = "GAME_OVER_RECEIVED:" + player.getScore();
-				} else {
-					endGameInstruction = "GAME_OVER_RECEIVED";
-				}
+				endGameInstruction = "GAME_OVER_RECEIVED";
 			}
 			
 			// TODO <- add back in for release
 			//playSound(audio.newSoundEffect("sfx" + File.separator + "crash.ogg"));
+			
+			// Perform a final update
+			NetworkManager.sendData(-1, player.clone());
+			
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			
+			updateData();
 			
 			Main.closeScene();
 			Main.setScene(new GameOverMulti(player, opposingPlayer));

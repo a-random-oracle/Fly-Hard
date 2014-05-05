@@ -83,7 +83,8 @@ public class Title extends Scene {
 		buttons[0] = new lib.ButtonText("Single Player", demo,
 				window.height()/3 - 40, yBorder + 80,
 				window.width() - (2 * window.height()/3) + 80, 40, 40, -12);
-
+		buttons[0].setInset(true);
+		
 		// Multi player Button
 		lib.ButtonText.Action multiplayer = new lib.ButtonText.Action() {
 			@Override
@@ -94,6 +95,7 @@ public class Title extends Scene {
 		buttons[1] = new lib.ButtonText("Multiplayer", multiplayer,
 				window.height()/3 - 40, yBorder + 160,
 				window.width() - (2 * window.height()/3) + 80, 40, 40, -12);
+		buttons[1].setInset(true);
 
 		// Credits Button
 		lib.ButtonText.Action credits = new lib.ButtonText.Action() {
@@ -106,6 +108,7 @@ public class Title extends Scene {
 		buttons[2] = new lib.ButtonText("Credits", credits,
 				window.height()/3 - 40, yBorder + 240,
 				window.width() - (2 * window.height()/3) + 80, 40, 40, -12);
+		buttons[2].setInset(true);
 
 		// Help Button
 		lib.ButtonText.Action help = new lib.ButtonText.Action() {
@@ -122,6 +125,7 @@ public class Title extends Scene {
 		buttons[3] = new lib.ButtonText("Information", help,
 				window.height()/3 - 40, yBorder + 320,
 				window.width() - (2 * window.height()/3) + 80, 40, 40, -12);
+		buttons[3].setInset(true);
 		
 		// Exit Button
 		lib.ButtonText.Action exit = new lib.ButtonText.Action() {
@@ -133,6 +137,7 @@ public class Title extends Scene {
 		buttons[4] = new lib.ButtonText("Exit", exit,
 				window.height()/3 - 40, yBorder + 400,
 				window.width() - (2 * window.height()/3) + 80, 40, 40, -12);
+		buttons[4].setInset(true);
 
 		angle = 0;
 	}
@@ -256,7 +261,7 @@ public class Title extends Scene {
 		graphics.print("Fly Hard", window.height()/3, yBorder);
 		graphics.setFont(Main.transSign);
 		graphics.setColour(Color.white);
-		graphics.printRight("Avion Hèros", (window.width() - (window.height()/3) + 40) - 20, yBorder, 0, 0);
+		graphics.printRight("H\u00E9ros de l'avion", (window.width() - (window.height()/3) + 40) - 20, yBorder, 0, 0);
 		graphics.printRight("Flugzeug Flugzeug Revolution", (window.width() - (window.height()/3) + 40) - 20, yBorder + 20, 0, 0);
 		graphics.printRight("Tarina ja Kaksi Richards", (window.width() - (window.height()/3) + 40) - 20, yBorder + 40, 0, 0);
 		graphics.printRight("Solo", (window.width() - (window.height()/3) + 20) - 2, yBorder + 70, 0, 0);
@@ -265,7 +270,7 @@ public class Title extends Scene {
 		graphics.printRight("Multijouer", (window.width() - (window.height()/3) + 20) - 4, yBorder + 150, 0, 0);
 		graphics.printRight("Mehrspieler", (window.width() - (window.height()/3) + 20) - 4, yBorder + 165, 0, 0);
 		graphics.printRight("Moninpeli", (window.width() - (window.height()/3) + 20) - 4, yBorder + 180, 0, 0);
-		graphics.printRight("Crédits", (window.width() - (window.height()/3) + 20) - 4, yBorder + 230, 0, 0);
+		graphics.printRight("Cr\u00E9dits", (window.width() - (window.height()/3) + 20) - 4, yBorder + 230, 0, 0);
 		graphics.printRight("Credits", (window.width() - (window.height()/3) + 20) - 4, yBorder + 245, 0, 0);
 		graphics.printRight("Ov", (window.width() - (window.height()/3) + 20) - 4, yBorder + 260, 0, 0);
 		graphics.printRight("Aider", (window.width() - (window.height()/3) + 20) - 4, yBorder + 310, 0, 0);

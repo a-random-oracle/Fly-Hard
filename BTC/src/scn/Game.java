@@ -201,28 +201,26 @@ public abstract class Game extends Scene {
 				}
 
 				if (!player.getAircraft().get(i).isCrashed()) {
-					player.setScore(player.getScore()
-							+ player.getAircraft().get(i).getScore());
+					player.increaseScore(player.getAircraft().get(i).getScore());
 				}
 
 				if (player.getAircraft().get(i).isCrashed()) {
-					//add to the players collided aircraft
+					// Add to the players collided aircraft
 					player.setPlanesCollided(player.getPlanesCollided() + 1);
-					System.out.println("planes collided: " + player.getPlanesCollided());
+					System.out.println(player.getID() + " : planes collided: " + player.getPlanesCollided());
 				}
 
 				if (player.getAircraft().get(i).isAtDestination()) {
 					if (player.getAircraft().get(i).getFlightPlan()
 							.getDestinationAirport() != null) {
-					//Add to the players landed plane count
-					player.setPlanesLanded(player.getPlanesLanded() + 1);
-					System.out.println("planes landed : " + player.getPlanesLanded());
+						// Add to the players landed plane count
+						player.setPlanesLanded(player.getPlanesLanded() + 1);
+						System.out.println(player.getID() + " : planes landed : " + player.getPlanesLanded());
 					} else {
-						//cleared
+						// Cleared
 						player.setPlanesCleared(player.getPlanesCleared() + 1);
-						System.out.println("planes cleared: " + player.getPlanesCleared());
+						System.out.println(player.getID() + " : planes cleared: " + player.getPlanesCleared());
 					}
-
 				}
 
 				player.getFlightStrips().remove(getFlightStripFromAircraft(
@@ -519,10 +517,6 @@ public abstract class Game extends Scene {
 		graphics.printCentred(timePlayed,
 				((window.width() - (2 * X_OFFSET)) / 2) + X_OFFSET,
 				Y_OFFSET - 15, 1, 0);
-		
-		// Print the number of aircraft in the airspace to the screen
-		graphics.print(String.valueOf(aircraftCount)
-				+ " aircraft in the airspace.".toUpperCase(), 32 + X_OFFSET, 32);
 	}
 
 	/**
@@ -708,10 +702,19 @@ public abstract class Game extends Scene {
 					getAllAircraft());
 
 			if (collidedWith != null) {
+				// Remove a life
 				player.setLives(player.getLives() - 1);
-				player.setScore(player.getScore() - 400);
+				
+				// Apply a score penalty
+				player.decreaseScore(400);
+				
+				// Draw the exploson animation
 				explodePlanes(plane, collidedWith);
+				
+				// Go to the game over check
 				gameOver(plane, collidedWith, false);
+				
+				// Break the loop
 				return;
 			}
 		}
