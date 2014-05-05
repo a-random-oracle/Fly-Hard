@@ -1013,33 +1013,36 @@ public class Aircraft implements Serializable {
 	 * @return the amount to scale the aircraft's speed by
 	 */
 	public double getSpeedScale() {
-		// Check if the player has an active velocity-affecting powerup
-		Player player = null;
-		if (Game.getInstance() != null) {
-			player = Game.getInstance().getPlayerFromAircraft(this);
-		}
-		
-		double speedScale = 1;
-		if (player != null && player.getPowerups() != null) {
-			for (Powerup powerup : player.getPowerups()) {
-				if (powerup.isActive()) {
-					switch (powerup.getEffect()) {
-					case SPEED_UP:
-						speedScale *= 2;
-						break;
-					case SLOW_DOWN:
-						speedScale /= 2;
-						break;
-					default:
-						break;
+		// Check if this is a multiplayer game
+		if (Game.getInstance() instanceof MultiPlayerGame) {
+			// Check if the player has an active velocity-affecting powerup
+			Player player = null;
+			if (Game.getInstance() != null) {
+				player = Game.getInstance().getPlayerFromAircraft(this);
+			}
+
+			double speedScale = 1;
+			if (player != null && player.getPowerups() != null) {
+				for (Powerup powerup : player.getPowerups()) {
+					if (powerup.isActive()) {
+						switch (powerup.getEffect()) {
+						case SPEED_UP:
+							speedScale *= 2;
+							break;
+						case SLOW_DOWN:
+							speedScale /= 2;
+							break;
+						default:
+							break;
+						}
 					}
 				}
 			}
+
+			return speedScale;
+		} else {
+			return 1;
 		}
-		
-		//System.out.println("speed-scale=" + speedScale);
-		
-		return speedScale;
 	}
 
 	/**
