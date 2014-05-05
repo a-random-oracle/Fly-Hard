@@ -64,9 +64,10 @@ public class Credits extends Scene {
 	 * Print the credits based on the current scroll position
 	 */
 	public void draw() {
+		graphics.setFont(Main.flightstripFontSuper);
 		int gap = 64;
 		int currentHeight = 0;
-		graphics.setColour(graphics.green);
+		graphics.setColour(graphics.safetyOrange);
 		graphics.push();
 		graphics.translate(0, scrollPosition);
 		currentHeight += gap;
@@ -107,7 +108,7 @@ public class Credits extends Scene {
 		
 		currentHeight += gap * 2;
 		
-		graphics.printCentred("Presented by", 0, currentHeight, 2, window.width());
+		graphics.printCentred("Finalised by", 0, currentHeight, 2, window.width());
 		graphics.printCentred("___________", 0, currentHeight + 8, 2, window.width());
 		graphics.printCentred("__________", 4, currentHeight + 8, 2, window.width());
 		currentHeight += gap;
