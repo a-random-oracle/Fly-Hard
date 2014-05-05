@@ -162,16 +162,16 @@ public class FlightStrip implements Serializable {
     }
 
     private void drawOutline() {
-        graphics.setColour(background);
+        graphics.setColour(graphics.white);
         graphics.rectangle(true, xOffset, yOffset + positionY,
         		width, height);
-        graphics.setColour(graphics.white);
+        graphics.setColour(background);
         graphics.rectangle(true, xOffset + 2, yOffset + positionY + 2,
         		40, height - 4);
     }
 
     private void drawFlightNumber() {
-    	graphics.setColour(graphics.black);
+    	graphics.setColour(graphics.white);
     	graphics.setFont(Main.flightstripFontSuper);
     	graphics.printCentred(aircraft.getName().substring(0,2),
     			(xOffset + 22), (yOffset + positionY + 2), 1, 1);
@@ -182,7 +182,7 @@ public class FlightStrip implements Serializable {
     }
 
     private void drawAirline() {
-    	graphics.setColour(graphics.white);
+    	graphics.setColour(graphics.black);
         graphics.print(aircraft.getAirline().toUpperCase(),
         		(xOffset + 4 + 40), (yOffset + positionY + 2));
     }
@@ -225,12 +225,12 @@ public class FlightStrip implements Serializable {
     	}
     	
     	graphics.setFont(Main.mainFont);
-    	graphics.setColour(graphics.white);
+    	graphics.setColour(graphics.black);
     }
     
     private void drawHighlight() {
     	if (aircraft.equals(Game.getInstance().getPlayer().getSelectedAircraft())) {
-    		graphics.setColour(Color.white);
+    		graphics.setColour(background);
             graphics.rectangle(true, xOffset - 3, yOffset + positionY - 3,
             		width + 6, height + 6);
             graphics.setColour(Color.transparent);

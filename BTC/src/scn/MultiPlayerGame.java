@@ -427,7 +427,7 @@ public class MultiPlayerGame extends Game {
 	 * </p>
 	 */
 	protected void drawMiddleZone() {
-		graphics.setColour(graphics.green);
+		graphics.setColour(graphics.white);
 
 		// Draw the two lines
 		graphics.line(leftEntryX, getYOffset(),

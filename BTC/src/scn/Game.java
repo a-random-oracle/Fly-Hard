@@ -503,7 +503,7 @@ public abstract class Game extends Scene {
 	 * in the sky.
 	 */
 	protected void drawAdditional(int aircraftCount) {
-		graphics.setColour(graphics.green);
+		graphics.setColour(Color.white);
 
 		// Get the time the game has been played for
 		int hours = (int)(timeElapsed / (60 * 60));
