@@ -11,6 +11,7 @@ public class ButtonText {
 	}
 
 	private int x, y, width, height, ox, oy, size;
+	// private TrueTypeFont = Main.;
 	private String text;
 	private org.newdawn.slick.Color colourDefault, colourHover, colourUnavailable;
 	private Action action;

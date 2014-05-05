@@ -26,24 +26,24 @@ public class Title extends Scene {
 
 	/** Holds the angle to draw the radar sweep at */
 	private double angle;
-	
+
 	/** The base image to provide powerup colours */
 	public static final Image SINGLE_PLAYER =
 			graphics.newImage("gfx" + File.separator + "pup"
 					+ File.separator + "singleplayer_512.png");
-	
+
 	public static final Image MULTIPLAYER =
 			graphics.newImage("gfx" + File.separator + "pup"
 					+ File.separator + "multiplayer_512.png");
-	
+
 	public static final Image CREDITS =
 			graphics.newImage("gfx" + File.separator + "pup"
 					+ File.separator + "credits_512.png");
-	
+
 	public static final Image HELP =
 			graphics.newImage("gfx" + File.separator + "pup"
 					+ File.separator + "help_512.png");
-	
+
 	public static final Image EXIT =
 			graphics.newImage("gfx" + File.separator + "pup"
 					+ File.separator + "exit_512.png");
@@ -84,7 +84,7 @@ public class Title extends Scene {
 				window.height()/3 - 40, yBorder + 80,
 				window.width() - (2 * window.height()/3) + 80, 40, 40, -12);
 		buttons[0].setInset(true);
-		
+
 		// Multi player Button
 		lib.ButtonText.Action multiplayer = new lib.ButtonText.Action() {
 			@Override
@@ -104,7 +104,7 @@ public class Title extends Scene {
 				Main.setScene(new Credits());
 			}
 		};
-		
+
 		buttons[2] = new lib.ButtonText("Credits", credits,
 				window.height()/3 - 40, yBorder + 240,
 				window.width() - (2 * window.height()/3) + 80, 40, 40, -12);
@@ -126,7 +126,7 @@ public class Title extends Scene {
 				window.height()/3 - 40, yBorder + 320,
 				window.width() - (2 * window.height()/3) + 80, 40, 40, -12);
 		buttons[3].setInset(true);
-		
+
 		// Exit Button
 		lib.ButtonText.Action exit = new lib.ButtonText.Action() {
 			@Override
@@ -153,7 +153,7 @@ public class Title extends Scene {
 
 		//Check the angle of the radar sweep;
 		//If approaching the BTC title string, play the beep
-		double beepTimer = (angle * 4) + (Math.PI * 4 / 5); 
+		double beepTimer = (angle * 4) + (Math.PI * 4 / 5);
 		beepTimer %= (2 * Math.PI);
 		if ( beepTimer <= 0.1 ) {
 			//playSound(beep); <- Driving me absolutely crazy so it can go for now.
@@ -169,101 +169,23 @@ public class Title extends Scene {
 	 */
 	@Override
 	public void draw() {
-		//drawRadar();
 		drawMenu();
-	}
-	
-	/**
-	 * Draws the radar arc and title string.
-	 */
-	private void drawRadar() {
-		// Radar
-		// set of circles for radar 'screen'
-		graphics.setColour(graphics.safetyOrange);
-		graphics.circle(false, window.height()/2, window.height()/2, window.height()/2 - 32, 100);
-		graphics.setColour(0, 128, 0, 32);
-		graphics.circle(false, window.height()/2, window.height()/2, window.height()/3, 100);
-		graphics.circle(false, window.height()/2, window.height()/2, window.height()/4 - 16, 100);
-		graphics.circle(false, window.height()/2, window.height()/2, window.height()/9, 100);
-		graphics.circle(false, window.height()/2, window.height()/2, 2, 100);
-		graphics.setColour(graphics.safetyOrange);
-		// sweep of radar
-		double radarAngle = (angle * 4) % (2 * Math.PI);
-		int w = (int)( Math.cos(radarAngle) * (window.height()/2 - 32) );
-		int h = (int)( Math.sin(radarAngle) * (window.height()/2 - 32) );
-		graphics.line(window.height()/2, window.height()/2, window.height()/2 + w, window.height()/2 + h);
-		graphics.setColour(0, 128, 0, 8);
-		graphics.arc(true, window.height()/2, window.height()/2, window.height()/2 - 32, radarAngle, -8 * Math.PI / 8);
-		graphics.arc(true, window.height()/2, window.height()/2, window.height()/2 - 32, radarAngle, -7 * Math.PI / 8);
-		graphics.arc(true, window.height()/2, window.height()/2, window.height()/2 - 32, radarAngle, -6 * Math.PI / 8);
-		graphics.arc(true, window.height()/2, window.height()/2, window.height()/2 - 32, radarAngle, -5 * Math.PI / 8);
-		graphics.arc(true, window.height()/2, window.height()/2, window.height()/2 - 32, radarAngle, -4 * Math.PI / 8);
-		graphics.arc(true, window.height()/2, window.height()/2, window.height()/2 - 32, radarAngle, -3 * Math.PI / 8);
-		graphics.arc(true, window.height()/2, window.height()/2, window.height()/2 - 32, radarAngle, -2 * Math.PI / 8);
-		graphics.arc(true, window.height()/2, window.height()/2, window.height()/2 - 32, radarAngle, -1 * Math.PI / 8);
-		// Title
-		String title = "Fly-Hard";
-		int titleLength = title.length();
-		// fades title string's characters over time
-		// characters brighten when the sweep passes over them
-		double a = radarAngle + (Math.PI * 6 / 7);
-		for (int i = 0; i < titleLength; i++) {
-			a -= Math.PI / 32;
-			double opacity = a %= (2 * Math.PI);
-			opacity *= 256 / (2 * Math.PI);
-			opacity = 256 - opacity;
-			opacity %= 256;
-			graphics.setColour(0, 128, 0, opacity);
-			int xPos = (window.height() / 2) - ((titleLength * 14) / 2);
-			int yPos = (window.height() / 3);
-			graphics.print(title.substring(i, i+1), xPos + i * 14, yPos, 1.8);
-		}
-		
-		String subtitle = "#goahardorgoahome";
-		int subtitleLength = subtitle.length();
-		a = radarAngle + (Math.PI * 2 / 3);
-		for (int i = 0; i < subtitleLength; i++) {
-			a -= Math.PI / 32;
-			double opacity = a %= (2 * Math.PI);
-			opacity *= 256 / (2 * Math.PI);
-			opacity = 256 - opacity;
-			opacity %= 256;
-			graphics.setColour(graphics.safetyOrange);
-			graphics.setFont(Main.menuTitle);
-			int xPos = (window.height() / 2) - ((subtitleLength * 14) / 2);
-			int yPos = (window.height() / 3) + 20;
-			graphics.print(subtitle.substring(i, i+1), xPos + i * 14, yPos, 1.8);
-		}
 	}
 
 	/**
 	 * Draws menu boxes, boxes around buttons, and strings.
 	 */
 	private void drawMenu() {
-		// Draw Extras e.g. Date, Time, Credits
 		graphics.setColour(graphics.safetyOrange);
-//		graphics.line(window.height(), 16, window.height(), window.height() - 16);
-//		java.text.DateFormat dateFormat = new java.text.SimpleDateFormat("yyyy/MM/dd");
-//		java.text.DateFormat timeFormat = new java.text.SimpleDateFormat("HH:mm:ss");
-//		java.util.Date date = new java.util.Date();
-//		graphics.setFont(Main.mainFont);
-//		graphics.print(dateFormat.format(date), window.height() + 8, 20);
-//		graphics.print(timeFormat.format(date), window.height() + 8, 36);
-//		graphics.line(window.height(), 48, window.width() - 16, 48);
-//		graphics.print("Created by:   Team FLR", window.height() + 8, 56);
-//		graphics.print("Extended by:  Team MQV", window.height() + 8, 68);
-//		graphics.print("Perfected by: Team GOA", window.height() + 8, 80);
-
-
 		graphics.setFont(Main.menuTitle);
-		graphics.rectangle(true, window.height()/3 - 40, yBorder - 2, (window.width() - (2*window.height()/3) + 80), 70);
+		graphics.rectangle(true, window.height()/3 - 40, yBorder - 2, (window.width() - (2 * window.height()/3) + 80), 70);
 		graphics.setColour(Color.black);
 		graphics.print("Fly Hard", window.height()/3, yBorder);
 		graphics.setFont(Main.transSign);
 		graphics.setColour(Color.white);
-		graphics.printRight("H\u00E9ros de l'avion", (window.width() - (window.height()/3) + 40) - 20, yBorder, 0, 0);
-		graphics.printRight("Flugzeug Flugzeug Revolution", (window.width() - (window.height()/3) + 40) - 20, yBorder + 20, 0, 0);
-		graphics.printRight("Tarina ja Kaksi Richards", (window.width() - (window.height()/3) + 40) - 20, yBorder + 40, 0, 0);
+		graphics.printRight("Héros de l'avion", (window.width() - (window.height()/3) + 20), yBorder, 0, 0);
+		graphics.printRight("Flugzeug Flugzeug Revolution", (window.width() - (window.height()/3) + 20), yBorder + 20, 0, 0);
+		graphics.printRight("Tarina ja Kaksi Richards", (window.width() - (window.height()/3) + 20), yBorder + 40, 0, 0);
 		graphics.printRight("Solo", (window.width() - (window.height()/3) + 20) - 2, yBorder + 70, 0, 0);
 		graphics.printRight("Einzelspieler", (window.width() - (window.height()/3) + 20) - 4, yBorder + 85, 0, 0);
 		graphics.printRight("Yksinpeli", (window.width() - (window.height()/3) + 20) - 4, yBorder + 100, 0, 0);
@@ -303,7 +225,7 @@ public class Title extends Scene {
 	 */
 	@Override
 	public void mousePressed(int key, int x, int y) {}
-	
+
 	/**
 	 * {@inheritDoc}
 	 * <p>
@@ -336,7 +258,7 @@ public class Title extends Scene {
 			Main.quit();
 		}
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
