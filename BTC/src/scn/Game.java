@@ -1242,6 +1242,8 @@ public abstract class Game extends Scene {
 	 * @return the player controlling the specified aircraft
 	 */
 	public Player getPlayerFromAircraft(Aircraft aircraft) {
+		System.out.println(player.getAircraft());
+		
 		for (Aircraft a : player.getAircraft()) {
 			if (a.equals(aircraft)) {
 				return player;
