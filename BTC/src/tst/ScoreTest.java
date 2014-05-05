@@ -5,6 +5,7 @@ import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 
+import scn.Game;
 import scn.SinglePlayerGame;
 import scn.Game.DifficultySetting;
 import cls.Aircraft;
@@ -36,6 +37,11 @@ public class ScoreTest {
 	@Before
 	public void setUp() {
 		testScore = 0;
+		
+		if (Game.getInstance() != null) {
+			Game.getInstance().close();
+		}
+		
 		SinglePlayerGame.createSinglePlayerGame(DifficultySetting.EASY);
 		
 		Waypoint[] waypointList = new Waypoint[] {
@@ -70,6 +76,15 @@ public class ScoreTest {
 		assertTrue("Score does not start at correct value", testPlayer.getScore() == 0);
 	}
 	
+	/**
+	 * Tests that score is decremented when an aircraft's flight path is altered.
+	 */
+	@Test
+	public void testScoreDecrementAlterPath() {
+		testAircraft.alterPath(1, new Waypoint(25, 75, false, false));
+		assertTrue("Score not decremented successfully", testAircraft.getScore()==90);
+	}
+
 	@Test
 	public void testAddScoreToPlayer() {
 		testPlayer.increaseScore(testAircraft.getScore());

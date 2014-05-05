@@ -775,7 +775,10 @@ public abstract class Game extends Scene {
 	 */
 	@Override
 	public void close() {
-		music.stop();
+		if (!Main.testing) {
+			music.stop();
+		}
+		
 		instance = null;
 	}
 
