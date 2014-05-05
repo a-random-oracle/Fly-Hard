@@ -28,6 +28,10 @@ public class Title extends Scene {
 	private double angle;
 	
 	/** The base image to provide powerup colours */
+	public static final Image LOGO =
+			graphics.newImage("gfx" + File.separator + "gui"
+					+ File.separator + "logo.png");
+	
 	public static final Image SINGLE_PLAYER =
 			graphics.newImage("gfx" + File.separator + "pup"
 					+ File.separator + "singleplayer_512.png");
@@ -254,32 +258,34 @@ public class Title extends Scene {
 //		graphics.print("Extended by:  Team MQV", window.height() + 8, 68);
 //		graphics.print("Perfected by: Team GOA", window.height() + 8, 80);
 
-
-		graphics.setFont(Main.menuTitle);
-		graphics.rectangle(true, window.height()/3 - 40, yBorder - 2, (window.width() - (2*window.height()/3) + 80), 70);
-		graphics.setColour(Color.black);
-		graphics.print("Fly Hard", window.height()/3, yBorder);
-		graphics.setFont(Main.transSign);
-		graphics.setColour(Color.white);
-		graphics.printRight("H\u00E9ros de l'avion", (window.width() - (window.height()/3) + 40) - 20, yBorder, 0, 0);
-		graphics.printRight("Flugzeug Flugzeug Revolution", (window.width() - (window.height()/3) + 40) - 20, yBorder + 20, 0, 0);
-		graphics.printRight("Tarina ja Kaksi Richards", (window.width() - (window.height()/3) + 40) - 20, yBorder + 40, 0, 0);
-		graphics.printRight("Solo", (window.width() - (window.height()/3) + 20) - 2, yBorder + 70, 0, 0);
-		graphics.printRight("Einzelspieler", (window.width() - (window.height()/3) + 20) - 4, yBorder + 85, 0, 0);
-		graphics.printRight("Yksinpeli", (window.width() - (window.height()/3) + 20) - 4, yBorder + 100, 0, 0);
-		graphics.printRight("Multijouer", (window.width() - (window.height()/3) + 20) - 4, yBorder + 150, 0, 0);
-		graphics.printRight("Mehrspieler", (window.width() - (window.height()/3) + 20) - 4, yBorder + 165, 0, 0);
-		graphics.printRight("Moninpeli", (window.width() - (window.height()/3) + 20) - 4, yBorder + 180, 0, 0);
-		graphics.printRight("Cr\u00E9dits", (window.width() - (window.height()/3) + 20) - 4, yBorder + 230, 0, 0);
-		graphics.printRight("Credits", (window.width() - (window.height()/3) + 20) - 4, yBorder + 245, 0, 0);
-		graphics.printRight("Ov", (window.width() - (window.height()/3) + 20) - 4, yBorder + 260, 0, 0);
-		graphics.printRight("Aider", (window.width() - (window.height()/3) + 20) - 4, yBorder + 310, 0, 0);
-		graphics.printRight("Hilfe", (window.width() - (window.height()/3) + 20) - 4, yBorder + 325, 0, 0);
-		graphics.printRight("Auttaa", (window.width() - (window.height()/3) + 20) - 4, yBorder + 340, 0, 0);
-		graphics.printRight("Sortie", (window.width() - (window.height()/3) + 20) - 4, yBorder + 390, 0, 0);
-		graphics.printRight("Ausfahrt", (window.width() - (window.height()/3) + 20) - 4, yBorder + 405, 0, 0);
-		graphics.printRight("Postuminen", (window.width() - (window.height()/3) + 20) - 4, yBorder + 420, 0, 0);
+		
+//		graphics.setFont(Main.menuTitle);
+//		graphics.rectangle(true, window.height()/3 - 40, yBorder - 2, (window.width() - (2*window.height()/3) + 80), 70);
+//		graphics.setColour(Color.black);
+//		graphics.print("Fly Hard", window.height()/3, yBorder);
+//		graphics.setFont(Main.transSign);
+//		graphics.setColour(Color.white);
+//		graphics.printRight("H\u00E9ros de l'avion", (window.width() - (window.height()/3) + 40) - 20, yBorder, 0, 0);
+//		graphics.printRight("Flugzeug Flugzeug Revolution", (window.width() - (window.height()/3) + 40) - 20, yBorder + 20, 0, 0);
+//		graphics.printRight("Tarina ja Kaksi Richards", (window.width() - (window.height()/3) + 40) - 20, yBorder + 40, 0, 0);
+		
+//		graphics.printRight("Solo", (window.width() - (window.height()/3) + 20) - 2, yBorder + 70, 0, 0);
+//		graphics.printRight("Einzelspieler", (window.width() - (window.height()/3) + 20) - 4, yBorder + 85, 0, 0);
+//		graphics.printRight("Yksinpeli", (window.width() - (window.height()/3) + 20) - 4, yBorder + 100, 0, 0);
+//		graphics.printRight("Multijouer", (window.width() - (window.height()/3) + 20) - 4, yBorder + 150, 0, 0);
+//		graphics.printRight("Mehrspieler", (window.width() - (window.height()/3) + 20) - 4, yBorder + 165, 0, 0);
+//		graphics.printRight("Moninpeli", (window.width() - (window.height()/3) + 20) - 4, yBorder + 180, 0, 0);
+//		graphics.printRight("Cr\u00E9dits", (window.width() - (window.height()/3) + 20) - 4, yBorder + 230, 0, 0);
+//		graphics.printRight("Credits", (window.width() - (window.height()/3) + 20) - 4, yBorder + 245, 0, 0);
+//		graphics.printRight("Ov", (window.width() - (window.height()/3) + 20) - 4, yBorder + 260, 0, 0);
+//		graphics.printRight("Aider", (window.width() - (window.height()/3) + 20) - 4, yBorder + 310, 0, 0);
+//		graphics.printRight("Hilfe", (window.width() - (window.height()/3) + 20) - 4, yBorder + 325, 0, 0);
+//		graphics.printRight("Auttaa", (window.width() - (window.height()/3) + 20) - 4, yBorder + 340, 0, 0);
+//		graphics.printRight("Sortie", (window.width() - (window.height()/3) + 20) - 4, yBorder + 390, 0, 0);
+//		graphics.printRight("Ausfahrt", (window.width() - (window.height()/3) + 20) - 4, yBorder + 405, 0, 0);
+//		graphics.printRight("Postuminen", (window.width() - (window.height()/3) + 20) - 4, yBorder + 420, 0, 0);
 		graphics.setColour(graphics.safetyOrange);
+		graphics.drawScaled(LOGO, window.width()/2 - 1556 / 2 * 0.4, 40, 0.4);
 		graphics.drawScaled(SINGLE_PLAYER, window.height()/3 - 40, yBorder + 80, 0.0625);
 		graphics.drawScaled(MULTIPLAYER, window.height()/3 - 40, yBorder + 160, 0.0625);
 		graphics.drawScaled(CREDITS, window.height()/3 - 40, yBorder + 240, 0.0625);
