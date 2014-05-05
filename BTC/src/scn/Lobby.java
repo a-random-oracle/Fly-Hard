@@ -70,7 +70,7 @@ public class Lobby extends Scene {
 	private static InputBox nameEntryBox = new InputBox(Color.white, Color.darkGray,
 			(int) nameEntryBoxPos.getX() + Game.getXOffset(),
 			(int) nameEntryBoxPos.getY() + Game.getYOffset(),
-			200, 23, true);
+			200, 30, true);
 
 	/** The button used to create a new game. The player then becomes a host. */
 	private ButtonText createGameButton;
