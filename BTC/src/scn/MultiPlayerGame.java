@@ -220,8 +220,19 @@ public class MultiPlayerGame extends Game {
 		// to the game over scene
 		if (exitingToGameOver) {
 			exitingToGameOver = false;
+			
+			FlightStrip fs1 = null, fs2 = null;
+			for (FlightStrip fs : player.getFlightStrips()) {
+				if (passedCollidingAircraft[0].equals(fs.getAircraft())) {
+					fs1 = fs;
+				} else if (passedCollidingAircraft[1].equals(fs.getAircraft())) {
+					fs2 = fs;
+				}
+			}
+			
+			
 			gameOver(passedCollidingAircraft[0],
-					passedCollidingAircraft[1], true);
+					passedCollidingAircraft[1], fs1, fs2, true);
 		}
 		
 		// Update powerups
@@ -675,7 +686,7 @@ public class MultiPlayerGame extends Game {
 	}
 
 	@Override
-	public void gameOver(Aircraft plane1, Aircraft plane2, boolean override) {
+	public void gameOver(Aircraft plane1, Aircraft plane2, FlightStrip fs1, FlightStrip fs2, boolean override) {
 		if (override || player.getLives() == 0 || opposingPlayer.getLives() == 0) {
 			player.getAircraft().clear();
 			opposingPlayer.getAircraft().clear();

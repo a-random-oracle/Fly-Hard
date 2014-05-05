@@ -64,7 +64,7 @@ public class Main implements input.EventHandler {
 	public static TrueTypeFont flightstripFontMid;
 	public static TrueTypeFont flightstripFontSuper;
 	public static TrueTypeFont menuTitleFont;
-  public static TrueTypeFont menuMainFont;
+	public static TrueTypeFont menuMainFont;
 	public static TrueTypeFont engSignFont;
 	public static TrueTypeFont transSign;
 
