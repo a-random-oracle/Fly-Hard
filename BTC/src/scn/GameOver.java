@@ -197,23 +197,29 @@ public class GameOver extends Scene {
 	 * If explosion has finished, draw the textbox; otherwise, draw the planes and explosion.
 	 */
 	public void draw() {
-		graphics.setColour(graphics.safetyOrange);
-		graphics.rectangle(true, window.height()/3 - 40, yBorder,
-				(window.width() - (2 * window.height()/3 - 80)), 70);
-		graphics.setFont(Main.flightstripFontMid);
-		if (aircraft1 != null && aircraft2 != null) {
-			graphics.printCentred(aircraft1.getName() + " crashed into " + aircraft2.getName()
-					+ ".", window.width()/2, window.height()/4, 2, 0);
-		}
-
-		graphics.printCentred("Total score: " + String.valueOf(score), window.width()/2, window.height()/3, 4, 0);
-
+		
 		if (aircraft1 != null && aircraft2 != null) {
 			if (explosionAnim.hasFinished()) {
 				//textBox.draw();
 //				for (FlightStrip fs : player.getFlightStrips()) {
 //					fs.draw(16, 20, true);
 //				}
+				
+				graphics.setColour(graphics.safetyOrange);
+				graphics.rectangle(true, window.height()/3 - 40, yBorder - 2,
+						(window.width() - (2 * window.height()/3 - 80)), 70);
+				graphics.setColour(Color.black);
+				graphics.setFont(Main.menuTitleFont);
+				graphics.print("Game Over", window.height()/3,  yBorder);
+				graphics.setColour(graphics.safetyOrange);
+				graphics.setFont(Main.flightstripFontMid);
+				if (aircraft1 != null && aircraft2 != null) {
+					graphics.printCentred(aircraft1.getName() + " crashed into " + aircraft2.getName()
+							+ ".", window.width()/2, window.height()/4, 2, 0);
+				}
+
+				graphics.printCentred("Total score: " + String.valueOf(score), window.width()/2, window.height()/3, 4, 0);
+
 				
 				flightStrip1.draw(window.width()/2 - 180, window.height()/2, true);
 				flightStrip2.draw(window.width()/2 + 20, window.height()/2, true);
