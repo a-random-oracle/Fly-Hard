@@ -22,7 +22,7 @@ public class Powerup implements Serializable {
 			setUpPlayerAffectedMap();
 	
 	/** The mapping between powerup effects and their durations */
-	private static HashMap<PowerupEffect, Integer> EFFECT_DURATIONS_MAP =
+	public static HashMap<PowerupEffect, Integer> EFFECT_DURATIONS_MAP =
 			setUpEffectDurationsMap();
 	
 	/**
@@ -80,6 +80,17 @@ public class Powerup implements Serializable {
 	 */
 	public Powerup() {
 		this.effect = PowerupEffect.randomEffect();
+		this.timeActivated = -1;
+	}
+	
+	/**
+	 * Constructor for specific powerups. Used in testing.
+	 * <p>
+	 * The constructed powerup will be assigned a random effect.
+	 * </p>
+	 */
+	public Powerup(PowerupEffect powerupEffect) {
+		this.effect = powerupEffect;
 		this.timeActivated = -1;
 	}
 	
@@ -274,7 +285,7 @@ public class Powerup implements Serializable {
 	/**
 	 * Stops planes from taking off/landing.
 	 */
-	private void handleFog() {
+	public void handleFog() {
 		MultiPlayerGame gameInstance = ((MultiPlayerGame) Game.getInstance());
 		
 		for (Airport a : gameInstance.getPlayer().getAirports()) {
