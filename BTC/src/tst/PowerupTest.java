@@ -81,7 +81,7 @@ public class PowerupTest {
 	@Test
 	public void testGetEndTime() {
 		powerup.activateEffect();
-		assertTrue("", powerup.getEndTime() == powerup.getTimeActivated() + powerup.EFFECT_DURATIONS_MAP.get(PowerupEffect.SLOW_DOWN));
+		assertTrue("Test end time is correct", powerup.getEndTime() == powerup.getTimeActivated() + powerup.EFFECT_DURATIONS_MAP.get(PowerupEffect.SLOW_DOWN));
 		//changed powerup.EFFECT_DURATIONS_MAP to public
 	}
 	
@@ -97,14 +97,14 @@ public class PowerupTest {
 	public void testPowerupRemoved() {
 		player.addPowerup(powerup);
 		player.removePowerup(powerup);
-		assertTrue("", player.getPowerups().isEmpty());
+		assertTrue("Test if powerups successfully get removed", player.getPowerups().isEmpty());
 	}
 	
 	@Test 
 	public void testClearPowerups() {
 		player.addPowerup(powerup);
 		player.clearPowerups();
-		assertTrue("", player.getPowerups().isEmpty());
+		assertTrue("Tests players powerup list is empty", player.getPowerups().isEmpty());
 	}
 	
 //	@Test
@@ -112,7 +112,7 @@ public class PowerupTest {
 //		player.getAircraft().add(aircraft);
 //		player.addPowerup(powerup);
 //		powerup.activateEffect();
-//		assertTrue("", aircraft.getSpeedScale() < 1);
+//		assertTrue("Tests speed scale is less than 1 after halving", aircraft.getSpeedScale() < 1);
 //		//doesnt actually work because of the 'if multiplayer game' catch before the 
 //	}
 //	
@@ -120,7 +120,7 @@ public class PowerupTest {
 //	public void testHandleFog() {
 //		player.addPowerup(powerupfog);
 //		powerupfog.activateEffect();
-//		assertTrue("tests if airport is active", airport.isActive != false);
+//		assertTrue("tests if airport is not active", airport.isActive != false);
 //		// made handle fog public
 //		// doesn't work due to multiplayer game instance - requires effect to occur to other player
 //	}
@@ -129,7 +129,7 @@ public class PowerupTest {
 //	public void testRemoveFog() {
 //		player.addPowerup(powerupfog);
 //		powerupfog.deactivateEffect();
-//		assertTrue("", airport.isActive == true);
+//		assertTrue("test if airport returns to active state", airport.isActive == true);
 //		//doesnt work either
 //	}
 //	
