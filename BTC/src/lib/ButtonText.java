@@ -210,21 +210,21 @@ public class ButtonText {
 	public void draw() {
 		if (!available) {
 			graphics.setColour(colourUnavailable);
-		}
-		else if (isMouseOver()) {
+		} else if (isMouseOver()) {
 			graphics.setColour(colourHover);
 			hover = hover + ( 1 - hover ) / 5;
 		} else {
 			graphics.setColour(colourDefault);
 			hover -= hover / 5;
 		}
-		graphics.setColour( new org.newdawn.slick.Color(
-			colourDefault.r * ( 1 - hover ) + colourHover.r * hover,
-			colourDefault.g * ( 1 - hover ) + colourHover.g * hover,
-			colourDefault.b * ( 1 - hover ) + colourHover.b * hover
+		
+		graphics.setColour(new org.newdawn.slick.Color(
+			colourDefault.r * (1 - hover) + colourHover.r * hover,
+			colourDefault.g * (1 - hover) + colourHover.g * hover,
+			colourDefault.b * (1 - hover) + colourHover.b * hover
 
-		) );
-		// System.out.println( hover );
+		));
+		
 		graphics.setFont(font);
 		graphics.print(text, x + ox + (inset ? hover * 10 : 0), y + oy, size);
 	}
