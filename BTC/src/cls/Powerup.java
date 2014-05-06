@@ -36,7 +36,7 @@ public class Powerup implements Serializable {
 	 * <li>FOG - Adds a region of fog to the map, through which the player
 	 * 		can't see</li>
 	 * <li>SLOW_DOWN - Causes the opponent's aircraft to slow down</li>
-	 * <li>SPEED_UP - Causes the opponent's aircraft to speed up</li>
+	 * <li>SPEED_UP - Causes your aircraft to speed up</li>
 	 * <li>TRANSFER - Causes an aircraft to transfer between players</li>
 	 * </ul>
 	 * </p>
@@ -115,8 +115,8 @@ public class Powerup implements Serializable {
 		HashMap<PowerupEffect, Integer> playerAffectedMap =
 				new HashMap<PowerupEffect, Integer>();
 		playerAffectedMap.put(PowerupEffect.FOG, 1);
-		playerAffectedMap.put(PowerupEffect.SPEED_UP, 1);
-		playerAffectedMap.put(PowerupEffect.SLOW_DOWN, 0);
+		playerAffectedMap.put(PowerupEffect.SPEED_UP, 0);
+		playerAffectedMap.put(PowerupEffect.SLOW_DOWN, 1);
 		playerAffectedMap.put(PowerupEffect.TRANSFER, 0);
 		return playerAffectedMap;
 	}
