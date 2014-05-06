@@ -181,10 +181,11 @@ public class Title extends Scene {
 		graphics.setColour(Color.black);
 		graphics.print("Fly Hard", window.height()/3, yBorder);
 		graphics.setFont(Main.transSign);
-		graphics.setColour(Color.white);
+		graphics.setColour(Color.black);
 		graphics.printRight("Héros de l'avion", (window.width() - (window.height()/3) + 20), yBorder, 0, 0);
 		graphics.printRight("Flugzeug Flugzeug Revolution", (window.width() - (window.height()/3) + 20), yBorder + 20, 0, 0);
 		graphics.printRight("Tarina ja Kaksi Richards", (window.width() - (window.height()/3) + 20), yBorder + 40, 0, 0);
+		graphics.setColour(Color.white);
 		graphics.printRight("Solo", (window.width() - (window.height()/3) + 20) - 2, yBorder + 70, 0, 0);
 		graphics.printRight("Einzelspieler", (window.width() - (window.height()/3) + 20) - 4, yBorder + 85, 0, 0);
 		graphics.printRight("Yksinpeli", (window.width() - (window.height()/3) + 20) - 4, yBorder + 100, 0, 0);

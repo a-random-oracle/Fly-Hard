@@ -6,7 +6,9 @@ import org.newdawn.slick.Color;
 
 import btc.Main;
 import cls.Aircraft;
+import cls.FlightStrip;
 import cls.Vector;
+import cls.Player;
 import lib.SpriteAnimation;
 import lib.TextBox;
 import lib.jog.audio;
@@ -16,41 +18,49 @@ import lib.jog.graphics.Image;
 import lib.jog.window;
 
 public class GameOver extends Scene {
-	
+
 	/** Text box to write the details of the game failure */
 	private TextBox textBox;
-	
+
 	// Used to position the explosion, and provide graphical feedback of how and where the player failed
 	/** The first plane involved in the collision */
 	private Aircraft aircraft1;
-	
+	private FlightStrip flightStrip1;
+
 	/** The second plane involved in the collision */
 	private Aircraft aircraft2;
-	
+	private FlightStrip flightStrip2;
+
+
 	/** A vector storing the point which distances should be measured relative to */
 	private Vector origin;
-	
+
 	/** A random number of deaths caused by the crash */
 	private int deaths;
-	
+
 	/** The score the player achieved */
 	private int score;
-	
+
 	/** The position of the crash - the vector midpoint of the positions of the two crashed planes */
 	private Vector crash;
-	
+
 	/** A sprite animation to handle the frame by frame drawing of the explosion */
 	private SpriteAnimation explosionAnim;
-	
+
 	/** The explosion image to use for the animation */
 	private Image explosion;
-	
+
 	/** The value corresponding to the key which has most recently been pressed */
 	private int keyPressed;
-	
+
 	/** Timer to allow for explosion and plane to be shown for a period, followed by the text box */
 	private double timer;
+
+	private Player player;
 	
+	/** Integer offset to centre vertically */
+	private int yBorder = (window.height() - 440) / 2 - 20;
+
 	/**
 	 * Constructor for the Game Over scene.
 	 * @param plane1
@@ -60,26 +70,29 @@ public class GameOver extends Scene {
 	 * @param score
 	 * 			the score achieved by the player
 	 */
-	public GameOver(Aircraft plane1, Aircraft plane2, int score) {
+	public GameOver(Aircraft plane1, Aircraft plane2, FlightStrip fs1, FlightStrip fs2, int score, Player player) {
 		super();
-		
+		this.player = player;
 		// The number of frames in each dimension of the animation image
 		int framesAcross = 8;
 		int framesDown = 4;
-		
+
 		aircraft1 = plane1;
 		aircraft2 = plane2;
+		flightStrip1 = fs1;
+		flightStrip2 = fs2;
 		origin = new Vector(Game.getXOffsetDirect(), Game.getYOffsetDirect(), 0);
-		
+
 		if (aircraft1 != null && aircraft2 != null) {
 			crash = plane1.getPosition().add(new Vector((plane1.getPosition().getX()
 							- plane2.getPosition().getX()) / 2,
 					(plane1.getPosition().getY()
 							- plane2.getPosition().getY()) / 2, 0)).add(origin);
 		}
-		
+
+
 		this.score = score;
-		
+
 		// Load explosion animation image
 		explosion = graphics.newImage("gfx" + File.separator + "ani" + File.separator + "explosionFrames.png");
 
@@ -88,13 +101,19 @@ public class GameOver extends Scene {
 					.scaleBy(0.5).add(origin);
 			Vector explosionPos = midPoint.sub(new Vector(explosion.width()/(framesAcross*2),
 					explosion.height()/(framesDown*2), 0));
-			
+
 			explosionAnim = new SpriteAnimation(explosion,
 					(int)explosionPos.getX(), (int)explosionPos.getY(),
 					6, 16, framesAcross, framesDown, false);
+			if(fs1 != null){
+				flightStrip1 = fs1;
+			}
+			if(fs2 != null){
+				flightStrip2 = fs2;
+			}
 		}
 	}
-	
+
 	/**
 	 * Initialises the random number of deaths, timer, and text box with strings
 	 * to be written about the game failure.
@@ -103,27 +122,27 @@ public class GameOver extends Scene {
 	public void start() {
 		playSound(audio.newSoundEffect("sfx" + File.separator + "crash.ogg"));
 		deaths = 300 + Main.getRandom().nextInt(500);
-		timer = 0;
-		textBox = new lib.TextBox(Color.green, window.width() / 10, 186,
-				window.width() - ((window.width() / 10) * 2), window.height() - 96, 32);
-		
-		textBox.addText(String.valueOf(deaths) + " people died in the crash.");
-		textBox.delay(0.4);
-		textBox.addText("British Bearways is facing heavy legal pressure from the family and loved-ones of the dead and an investigation is underway.");
-		textBox.newline();
-		textBox.delay(0.8);
-		textBox.addText("The inquiry into your incompetence will lead to humanity discovering your true nature.");
-		textBox.newline();
-		textBox.delay(0.8);
-		textBox.addText("The guilt for the death you have caused and your failure to pass as a human will gnaw at you and you will revert to drinking in an attempt to cope.");
-		textBox.newline();
-		textBox.newline();
-		textBox.delay(0.8);
-		textBox.addText("With no income, there will be no way your family can survive the fast-approaching winter months.");
-		textBox.newline();
-		textBox.newline();
-		textBox.delay(0.8);
-		textBox.addText("Game Over.");
+//		timer = 0;
+//		textBox = new lib.TextBox(Color.green, window.width() / 10, 186,
+//				window.width() - ((window.width() / 10) * 2), window.height() - 96, 32);
+//
+//		textBox.addText(String.valueOf(deaths) + " people died in the crash.");
+//		textBox.delay(0.4);
+//		textBox.addText("British Bearways is facing heavy legal pressure from the family and loved-ones of the dead and an investigation is underway.");
+//		textBox.newline();
+//		textBox.delay(0.8);
+//		textBox.addText("The inquiry into your incompetence will lead to humanity discovering your true nature.");
+//		textBox.newline();
+//		textBox.delay(0.8);
+//		textBox.addText("The guilt for the death you have caused and your failure to pass as a human will gnaw at you and you will revert to drinking in an attempt to cope.");
+//		textBox.newline();
+//		textBox.newline();
+//		textBox.delay(0.8);
+//		textBox.addText("With no income, there will be no way your family can survive the fast-approaching winter months.");
+//		textBox.newline();
+//		textBox.newline();
+//		textBox.delay(0.8);
+//		textBox.addText("Game Over.");
 	}
 
 	/**
@@ -135,11 +154,16 @@ public class GameOver extends Scene {
 		if (aircraft1 != null && aircraft2 != null) {
 			if (explosionAnim.hasFinished()){
 				timer += timeDifference;
-				textBox.update(timeDifference);
 			} else {
 				explosionAnim.update(timeDifference);
 			}
 		}
+
+		for (FlightStrip fs : player.getFlightStrips()) {
+			fs.update(timeDifference);
+			System.out.println(fs.positionY);
+		}
+
 	}
 
 	@Override
@@ -173,18 +197,33 @@ public class GameOver extends Scene {
 	 * If explosion has finished, draw the textbox; otherwise, draw the planes and explosion.
 	 */
 	public void draw() {
-		graphics.setColour(graphics.green);
-		
-		if (aircraft1 != null && aircraft2 != null) {
-			graphics.printCentred(aircraft1.getName() + " crashed into " + aircraft2.getName()
-					+ ".", 0, 32, 2, window.width());
-		}
-		
-		graphics.printCentred("Total score: " + String.valueOf(score), 0, 64, 4, window.width());
 		
 		if (aircraft1 != null && aircraft2 != null) {
 			if (explosionAnim.hasFinished()) {
-				textBox.draw();
+				//textBox.draw();
+//				for (FlightStrip fs : player.getFlightStrips()) {
+//					fs.draw(16, 20, true);
+//				}
+				
+				graphics.setColour(graphics.safetyOrange);
+				graphics.rectangle(true, window.height()/3 - 40, yBorder - 2,
+						(window.width() - (2 * window.height()/3 - 80)), 70);
+				graphics.setColour(Color.black);
+				graphics.setFont(Main.menuTitleFont);
+				graphics.print("Game Over", window.height()/3,  yBorder);
+				graphics.setColour(graphics.safetyOrange);
+				graphics.setFont(Main.flightstripFontMid);
+				if (aircraft1 != null && aircraft2 != null) {
+					graphics.printCentred(aircraft1.getName() + " crashed into " + aircraft2.getName()
+							+ ".", window.width()/2, window.height()/4, 2, 0);
+				}
+
+				graphics.printCentred("Total score: " + String.valueOf(score), window.width()/2, window.height()/3, 4, 0);
+
+				
+				flightStrip1.draw(window.width()/2 - 180, window.height()/2, true);
+				flightStrip2.draw(window.width()/2 + 20, window.height()/2, true);
+				
 			} else {
 				aircraft1.draw(new Integer[] {255, 255, 255},
 						(int) aircraft1.getPosition().getZ(), origin);
@@ -198,10 +237,10 @@ public class GameOver extends Scene {
 				explosionAnim.draw();
 			}
 		}
-		
+
 		int opacity = (int)(255 * Math.sin(timer));
-		graphics.setColour(0, 128, 0, opacity);
-		graphics.printCentred("Press any key to continue", 0, window.height() - 256, 1, window.width());
+		graphics.setColour(graphics.safetyOrange);
+		graphics.printCentred("Press any key to continue", 0, 2 * window.height()/3, 1, window.width());
 	}
 
 	@Override

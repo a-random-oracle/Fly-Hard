@@ -702,6 +702,10 @@ public abstract class Game extends Scene {
 
 			Aircraft collidedWith = plane.updateCollisions(timeDifference,
 					getAllAircraft());
+			
+			FlightStrip fs1 = null, fs2 = null;
+			
+			
 
 			if (collidedWith != null) {
 				// Remove a life
@@ -713,8 +717,16 @@ public abstract class Game extends Scene {
 				// Draw the exploson animation
 				explodePlanes(plane, collidedWith);
 				
+				for (FlightStrip fs : player.getFlightStrips()) {
+					if (plane.equals(fs.getAircraft())) {
+						fs1 = fs;
+					} else if (collidedWith.equals(fs.getAircraft())) {
+						fs2 = fs;
+					}
+				}
+				
 				// Go to the game over check
-				gameOver(plane, collidedWith, false);
+				gameOver(plane, collidedWith, fs1, fs2, false);
 				
 				// Break the loop
 				return;
@@ -756,7 +768,7 @@ public abstract class Game extends Scene {
 	 * @param override - <code>true</code> if the game should exit regardless of
 	 * 						life values
 	 */
-	public void gameOver(Aircraft plane1, Aircraft plane2, boolean override) {
+	public void gameOver(Aircraft plane1, Aircraft plane2, FlightStrip fs1, FlightStrip fs2, boolean override) {
 		player.getAircraft().clear();
 
 		for (Airport airport : player.getAirports()) {
@@ -767,7 +779,7 @@ public abstract class Game extends Scene {
 		//playSound(audio.newSoundEffect("sfx" + File.separator + "crash.ogg"));
 
 		Main.closeScene();
-		Main.setScene(new GameOver(plane1, plane2, player.getScore()));
+		Main.setScene(new GameOver(plane1, plane2, fs1, fs2, player.getScore(), player));
 	}
 
 	/**

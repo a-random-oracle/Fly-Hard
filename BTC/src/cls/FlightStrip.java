@@ -20,26 +20,26 @@ public class FlightStrip implements Serializable {
 
 	/** Serialisation ID */
 	private static final long serialVersionUID = -7542014798949722639L;
-	
+
 	/** The array of background colours */
 	public static final Color[] BACKGROUND_COLOURS =
 			new Color[] {graphics.blue, graphics.red};
-	
+
 	/** The default width */
 	private static final int STANDARD_WIDTH = 160;
-	
+
 	/** The default height */
 	private static final int STANDARD_HEIGHT = 60;
-	
+
 	/** The default separation */
 	private static final int SEPARATION = 10;
-	
+
 	/** The colour to draw the strip background */
 	private Color background;
 
 	/** Whether the flight strip should be drawn or not */
 	private boolean isVisible;
-	
+
 	/** Whether the flight strip is active or not */
 	private boolean isActive;
 
@@ -47,17 +47,19 @@ public class FlightStrip implements Serializable {
     private Aircraft aircraft;
 
     /** The flight strip's vertical position */
-    private double positionY;
+    public double positionY;
+
+
 
     /** The flight strip's width */
     private double width;
 
     /** The flight strip's height */
     private double height;
-    
+
     /** The flight strip's vertical position */
     private double xOffset;
-    
+
     /** The flight strip's vertical position */
     private double yOffset;
 
@@ -79,7 +81,7 @@ public class FlightStrip implements Serializable {
     	this.xOffset = 0;
     	this.yOffset = 0;
     }
-    
+
     /**
      * Constructor for flight strips.
      * @param width - the width of the strip
@@ -100,7 +102,7 @@ public class FlightStrip implements Serializable {
     	this.xOffset = Double.NaN;
     	this.yOffset = Double.NaN;
     }
-    
+
     /**
      * Constructor for flight strips.
      * @param flightStrip - the flight strip to copy
@@ -113,14 +115,14 @@ public class FlightStrip implements Serializable {
         width = flightStrip.width;
         height = flightStrip.height;
     }
-    
-    
+
+
     /**
      * Updates the flight strip.
      */
     public void update(double dt) {
     	this.positionY = getNextSlot();
-    	
+
     	// If the mouse is hovering over the flight strip
     	if (isMouseOver()) {
     		isActive = true;
@@ -128,7 +130,7 @@ public class FlightStrip implements Serializable {
     		isActive = false;
     	}
     }
-    
+
     /**
      * Draws the flight strip.
      * @param xOffset - the horizontal offset from the window's left edge
@@ -137,19 +139,19 @@ public class FlightStrip implements Serializable {
     public void draw(double xOffset, double yOffset) {
     	this.xOffset = xOffset;
     	this.yOffset = yOffset;
-    	
+
     	if (isVisible) {
     		graphics.setFont(Main.mainFont);
     		drawHover();
-    		drawHighlight();
+    		drawHighlight(false);
     		drawOutline();
     		drawFlightNumber();
     		drawAirline();
     		drawAltitude();
     		drawRoute();
-    		drawStatus();
+    		drawStatus(false);
     		graphics.setFont(Main.mainFont);
-    		
+
     		if (isActive && Game.getInstance().getPlayer().equals(
         			Game.getInstance().getPlayerFromAircraft(aircraft))) {
     			graphics.setViewport(Game.getXOffset(), Game.getYOffset(),
@@ -161,23 +163,58 @@ public class FlightStrip implements Serializable {
     	}
     }
 
+  	public void draw(double x, double y, boolean crash) {
+
+			this.xOffset = x;
+			this.yOffset = y;
+        	if (isVisible) {
+        		graphics.setFont(Main.mainFont);
+        		drawHover();
+        		if(!crash){
+        			drawHighlight(false);
+        		} else {
+        			drawHighlight(true);
+        		}
+        		drawOutline();
+        		drawFlightNumber();
+        		drawAirline();
+        		drawAltitude();
+        		drawRoute();
+        		if(!crash){
+        			drawStatus(false);
+        		} else {
+        			drawStatus(true);
+        		}
+        		graphics.setFont(Main.mainFont);
+
+        		// if (isActive && Game.getInstance().getPlayer().equals(
+            // 			Game.getInstance().getPlayerFromAircraft(aircraft))) {
+        		// 	graphics.setViewport(Game.getXOffset(), Game.getYOffset(),
+        		// 			window.width() - (2 * Game.getXOffset()),
+        		// 			window.height() - (2 * Game.getYOffset()));
+        		// 	aircraft.drawFlightPath();
+        		// 	graphics.setViewport();
+        		// }
+        	}
+    }
+
     private void drawOutline() {
-        graphics.setColour(graphics.white);
+        graphics.setColour(Color.white);
         graphics.rectangle(true, xOffset, yOffset + positionY,
         		width, height);
         graphics.setColour(background);
-        graphics.rectangle(true, xOffset + 2, yOffset + positionY + 2,
-        		40, height - 4);
+        graphics.rectangle(true, xOffset, yOffset + positionY,
+        		40, height);
     }
 
     private void drawFlightNumber() {
-    	graphics.setColour(graphics.white);
+    	graphics.setColour(Color.white);
     	graphics.setFont(Main.flightstripFontSuper);
     	graphics.printCentred(aircraft.getName().substring(0,2),
-    			(xOffset + 22), (yOffset + positionY + 2), 1, 1);
+    			(xOffset + 20), (yOffset + positionY + 2), 1, 1);
     	graphics.setFont(Main.flightstripFontMid);
     	graphics.printCentred(aircraft.getName().substring(2,5),
-    			(xOffset + 22), (yOffset + positionY + 30), 1, 1);
+    			(xOffset + 20), (yOffset + positionY + 30), 1, 1);
     	graphics.setFont(Main.mainFont);
     }
 
@@ -191,7 +228,7 @@ public class FlightStrip implements Serializable {
     	graphics.print(String.format("%,dFT", (int) (aircraft.getPosition().getZ())),
     			(xOffset + 4 + 40), ((yOffset + positionY + height) - 30));
     }
-    
+
     private void drawRoute() {
     	graphics.print(aircraft.getFlightPlan()
     			.getOriginName().substring(0, 3).toUpperCase()
@@ -200,37 +237,57 @@ public class FlightStrip implements Serializable {
     			.getDestinationName().substring(0, 3).toUpperCase(),
     			(xOffset + (width/2) + 8), (yOffset + positionY + height - 45));
     }
-    
-    private void drawStatus() {
-    	graphics.setFont(Main.flightstripFontWarn);
-    	if (aircraft.isInDanger()) {
-    		graphics.setColour(graphics.red);
-    		graphics.rectangle(true, (xOffset + 42),
-    				(yOffset + positionY + height - 14),
-    				116, 12);
-    		
-    		graphics.setColour(graphics.white);
-            graphics.printCentred("WARNING", (xOffset + 100),
-            		(yOffset + positionY + height - 17), 1, 1);
 
-    	} else {
-    		graphics.setColour(graphics.green);
-    		graphics.rectangle(true, (xOffset + 42),
-    				(yOffset + positionY + height - 14),
-    				116, 12);
-    		
-    		graphics.setColour(graphics.black);
-            graphics.printCentred("ON COURSE", (xOffset + 100),
-            		(yOffset + positionY + height - 17), 1, 1);
+    private void drawStatus(boolean boom) {
+    	graphics.setFont(Main.flightstripFontWarn);
+    	if(!boom){
+	    	if (aircraft.isInDanger()) {
+	    		graphics.setColour(graphics.red);
+	    		graphics.rectangle(true, (xOffset + 40),
+	    				(yOffset + positionY + height - 12),
+	    				120, 12);
+
+	    		graphics.setColour(Color.white);
+	            graphics.printCentred("WARNING", (xOffset + 100),
+	            		(yOffset + positionY + height - 15), 1, 1);
+
+	    	} else {
+	    		graphics.setColour(graphics.green);
+	    		graphics.rectangle(true, (xOffset + 40),
+	    				(yOffset + positionY + height - 12),
+	    				120, 12);
+
+	    		graphics.setColour(graphics.black);
+	            graphics.printCentred("ON COURSE", (xOffset + 100),
+	            		(yOffset + positionY + height - 14), 1, 1);
+	    	}
+    	} else if (boom) {
+    		graphics.setColour(graphics.red);
+    		graphics.rectangle(true, (xOffset + 40),
+    				(yOffset + positionY + height - 12),
+    				120, 12);
+
+    		graphics.setColour(Color.white);
+            graphics.printCentred("CONTACT LOST", (xOffset + 100),
+            		(yOffset + positionY + height - 14), 1, 1);
     	}
-    	
+
     	graphics.setFont(Main.mainFont);
     	graphics.setColour(graphics.black);
     }
-    
-    private void drawHighlight() {
-    	if (aircraft.equals(Game.getInstance().getPlayer().getSelectedAircraft())) {
-    		graphics.setColour(background);
+
+    private void drawHighlight(boolean boom) {
+    	if (!boom) {
+	    	if (aircraft.equals(Game.getInstance().getPlayer().getSelectedAircraft())) {
+	    		graphics.setColour(background);
+	            graphics.rectangle(true, xOffset - 3, yOffset + positionY - 3,
+	            		width + 6, height + 6);
+	            graphics.setColour(Color.transparent);
+	            graphics.rectangle(true, xOffset - 1, yOffset + positionY - 1,
+	            		width + 2, height + 2);
+	    	}
+    	} else {
+    		graphics.setColour(graphics.red);
             graphics.rectangle(true, xOffset - 3, yOffset + positionY - 3,
             		width + 6, height + 6);
             graphics.setColour(Color.transparent);
@@ -238,7 +295,7 @@ public class FlightStrip implements Serializable {
             		width + 2, height + 2);
     	}
     }
-    
+
     private void drawHover() {
     	if (isActive) {
     		graphics.setColour(Color.gray);
@@ -249,8 +306,8 @@ public class FlightStrip implements Serializable {
             		width + 2, height + 2);
     	}
     }
-    
-    
+
+
     /**
      * Handles mouse press events.
      * @param key - the mouse key which was pressed
@@ -262,7 +319,7 @@ public class FlightStrip implements Serializable {
     		 Game.getInstance().getPlayer().setSelectedAircraft(aircraft);
     	}
     }
-    
+
     /**
      * Handles mouse release events.
      * <p>
@@ -273,7 +330,7 @@ public class FlightStrip implements Serializable {
      * @param y - the y position of the mouse
      */
     public void mouseReleased(int key, int mx, int my) {}
-    
+
     /**
      * Checks if the mouse is over the flight strip.
      * @return <code>true</code> if the mouse is over the flight strip,
@@ -288,8 +345,8 @@ public class FlightStrip implements Serializable {
     		return false;
     	}
     }
-    
-    
+
+
     /**
      * Gets the aircraft connected to the flight strip.
      * @return the aircraft connected to the flight strip
@@ -297,14 +354,14 @@ public class FlightStrip implements Serializable {
     public Aircraft getAircraft() {
     	return aircraft;
     }
-    
+
     /**
      * Gets the top of the next available slot for a flight strip.
      * @return the top of the next available slot for a flight strip
      */
     private double getNextSlot() {
     	double nextSlot = 0;
-    	
+
     	if (Game.getInstance() != null
     			&&  Game.getInstance().getPlayer() != null
     			&& Game.getInstance().getPlayer().getFlightStrips() != null) {
@@ -315,10 +372,10 @@ public class FlightStrip implements Serializable {
     			}
     		}
     	}
-    	
+
     	return nextSlot;
     }
-    
+
     /**
      * Shows strip for selected aircraft (prototyping only).
      * <p>
@@ -336,8 +393,8 @@ public class FlightStrip implements Serializable {
     public void hide() {
         isVisible = false;
     }
-    
-    
+
+
     /**
 	 * Clones the flight strip.
 	 */

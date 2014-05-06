@@ -22,7 +22,7 @@ public class Powerup implements Serializable {
 			setUpPlayerAffectedMap();
 	
 	/** The mapping between powerup effects and their durations */
-	private static HashMap<PowerupEffect, Integer> EFFECT_DURATIONS_MAP =
+	public static HashMap<PowerupEffect, Integer> EFFECT_DURATIONS_MAP =
 			setUpEffectDurationsMap();
 	
 	/**
@@ -36,7 +36,7 @@ public class Powerup implements Serializable {
 	 * <li>FOG - Adds a region of fog to the map, through which the player
 	 * 		can't see</li>
 	 * <li>SLOW_DOWN - Causes the opponent's aircraft to slow down</li>
-	 * <li>SPEED_UP - Causes the opponent's aircraft to speed up</li>
+	 * <li>SPEED_UP - Causes your aircraft to speed up</li>
 	 * <li>TRANSFER - Causes an aircraft to transfer between players</li>
 	 * </ul>
 	 * </p>
@@ -84,6 +84,17 @@ public class Powerup implements Serializable {
 	}
 	
 	/**
+	 * Constructor for specific powerups. Used in testing.
+	 * <p>
+	 * The constructed powerup will be assigned a random effect.
+	 * </p>
+	 */
+	public Powerup(PowerupEffect powerupEffect) {
+		this.effect = powerupEffect;
+		this.timeActivated = -1;
+	}
+	
+	/**
 	 * Constructor for powerups.
 	 * @param powerup - the powerup to copy
 	 */
@@ -104,8 +115,8 @@ public class Powerup implements Serializable {
 		HashMap<PowerupEffect, Integer> playerAffectedMap =
 				new HashMap<PowerupEffect, Integer>();
 		playerAffectedMap.put(PowerupEffect.FOG, 1);
-		playerAffectedMap.put(PowerupEffect.SPEED_UP, 1);
-		playerAffectedMap.put(PowerupEffect.SLOW_DOWN, 0);
+		playerAffectedMap.put(PowerupEffect.SPEED_UP, 0);
+		playerAffectedMap.put(PowerupEffect.SLOW_DOWN, 1);
 		playerAffectedMap.put(PowerupEffect.TRANSFER, 0);
 		return playerAffectedMap;
 	}
@@ -274,7 +285,7 @@ public class Powerup implements Serializable {
 	/**
 	 * Stops planes from taking off/landing.
 	 */
-	private void handleFog() {
+	public void handleFog() {
 		MultiPlayerGame gameInstance = ((MultiPlayerGame) Game.getInstance());
 		
 		for (Airport a : gameInstance.getPlayer().getAirports()) {

@@ -3,6 +3,8 @@ package cls;
 import java.io.Serializable;
 import java.util.ArrayList;
 
+import btc.Main;
+
 import scn.MultiPlayerGame;
 
 public class Player implements Serializable {
@@ -434,7 +436,9 @@ public class Player implements Serializable {
 	 */
 	public void addPowerup(Powerup powerup) {
 		// Play powerup sound
-		MultiPlayerGame.POWERUP_SOUND.play();
+		if (!Main.testing) {
+			MultiPlayerGame.POWERUP_SOUND.play();
+		}
 		
 		powerups.add(powerup);
 	}
