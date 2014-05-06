@@ -1,13 +1,17 @@
 package cls;
 
+import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
+
+import cls.Powerup.PowerupEffect;
 
 import btc.Main;
 import scn.Game;
 import lib.jog.graphics;
 import lib.jog.input;
 import lib.jog.window;
+import lib.jog.graphics.Image;
 import lib.jog.input.EventHandler;
 
 public class Airport extends Waypoint implements EventHandler, Serializable {
@@ -61,6 +65,13 @@ public class Airport extends Waypoint implements EventHandler, Serializable {
 	
 	/** The maximum number of aircraft the airport can hold */
 	private int hangarSize = 3;
+	
+	/** THe alpha of the fog effect rendered on an airport */
+	private double fogRender = 0;
+	
+	private static final Image FOG =
+			graphics.newImage("gfx" + File.separator + "apt"
+					+ File.separator + "fog.png");
 	
 	/**
 	 * Constructs an airport.
@@ -207,6 +218,18 @@ public class Airport extends Waypoint implements EventHandler, Serializable {
 					getArrivalsX() + (getArrivalsWidth() / 2),
 					getArrivalsY() + (getArrivalsHeight() / 2));
 		}
+		
+		boolean dec = true;
+		for (Powerup pp : Game.getInstance().getPlayerFromAirport(this).getPowerups()) {
+			if (pp.isActive() && pp.getEffect() == PowerupEffect.FOG) {
+				fogRender = fogRender + ( 1 - fogRender ) * 0.1;
+				dec = false;
+				break;
+			}
+		}
+		if (dec) fogRender -= fogRender * 0.04;
+		graphics.setColour( 255, 255, 255, fogRender * 255 );
+		if (fogRender>0.001) graphics.drawScaled( FOG, getLocationX(), getLocationY()-getMinScale()*FOG.height()/3, getMinScale());
 	}
 
 	/**
