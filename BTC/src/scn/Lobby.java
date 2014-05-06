@@ -1,5 +1,6 @@
 package scn;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -15,7 +16,9 @@ import cls.InputBox;
 import cls.Vector;
 import lib.jog.graphics;
 import lib.jog.input;
+import lib.jog.window;
 import lib.jog.audio.Sound;
+import lib.jog.graphics.Image;
 import lib.ButtonText;
 
 public class Lobby extends Scene {
@@ -42,7 +45,7 @@ public class Lobby extends Scene {
 	private static final Vector scoresTopRight = new Vector(0.93, 0.25, 0, true);
 
 	/** The coordinates of the input box */
-	private static final Vector nameEntryBoxPos = new Vector(0.50, 0.08, 0, true);
+	private static final Vector nameEntryBoxPos = new Vector(0.5, 0.92, 0, true);
 
 	/** The height to draw table rows */
 	private static final double rowHeight =
@@ -83,6 +86,13 @@ public class Lobby extends Scene {
 
 	/** The dynamic string of dots to display after text */
 	private String waitingForOpponentDots = "";
+	
+	private int yBorder = (window.height() - 440) / 2 - 20;
+
+	/** Declaring location of Multiplayer icon/graphics */
+	public static final Image MULTIPLAYER =
+			graphics.newImage("gfx" + File.separator + "pup"
+					+ File.separator + "multiplayer_512.png");
 
 
 	/**
@@ -116,7 +126,7 @@ public class Lobby extends Scene {
 
 		createGameButton = new ButtonText("Create Game", Main.menuMainFont, createGame,
 				(int) (nameEntryBoxPos.getX()
-						+ (nameEntryBox.getWidth() / 2) + Game.getXOffset() + 50),
+						+ (nameEntryBox.getWidth() / 2) + Game.getXOffset() + 20),
 				(int) (nameEntryBoxPos.getY() + Game.getYOffset() + 3),
 				CREATE_BUTTON_W, CREATE_BUTTON_H, 0, 0, 2);
 	}
@@ -305,7 +315,18 @@ public class Lobby extends Scene {
 
 	@Override
 	public void draw() {
+		
+		graphics.setColour(graphics.safetyOrange);
+		graphics.setFont(Main.menuTitleFont);
+		graphics.rectangle(true, window.height()/3 - 40, yBorder - 2, (window.width() - (2 * window.height()/3))/2 + 40, 70);
+		graphics.setColour(Color.black);
+		graphics.print("Multiplayer", window.height()/3, yBorder);
+//		graphics.setColour(graphics.safetyOrange);
+		graphics.drawScaled(MULTIPLAYER, window.height()/3 - 36, yBorder + 15, 0.0625);
+
+		
 		graphics.setFont(Main.menuMainFont);
+		graphics.setColour(Color.white);
 		// Draw the name entry label
 		graphics.printRight("Enter Name: ", (nameEntryBoxPos.getX()
 				- (nameEntryBox.getWidth() / 2) + Game.getXOffset()),
@@ -339,8 +360,8 @@ public class Lobby extends Scene {
 	 * Draws the table of available games.
 	 */
 	public void drawTable() {
-		// Draw the table in white
-		graphics.setColour(255, 255, 255);
+		// Draw the headings in white
+		graphics.setColour(Color.white);
 
 		// Draw the host name column label
 		graphics.print("Host Name", tableTopLeft.getX() + Game.getXOffset() + 5,
@@ -354,13 +375,18 @@ public class Lobby extends Scene {
 		// Draw the action column label
 		graphics.printRight("Action", tableTopRight.getX() + Game.getXOffset() - 5,
 				tableTopLeft.getY() + Game.getYOffset() - 30, 1, 0);
-
+		
+		// Draw the table in safety orange
+		graphics.setColour(graphics.safetyOrange);
+		
 		// Draw the table border
 		graphics.rectangle(false,
 				(tableTopLeft.getX() + Game.getXOffset()),
 				(tableTopLeft.getY() + Game.getYOffset()),
 				(tableTopRight.getX() - tableTopLeft.getX()),
 				(tableBottomRight.getY() - tableTopRight.getY()));
+		
+		
 
 		if (availablePlayers != null && availablePlayers.size() > 0) {
 			// Draw vertical lines below each player's row
@@ -373,6 +399,8 @@ public class Lobby extends Scene {
 								+ ((i + 1) * rowHeight)));
 			}
 
+			graphics.setColour(Color.white);
+			
 			Integer[] playerIDs = getAvailablePlayerIDs();
 
 			// Draw the player's names
@@ -399,8 +427,11 @@ public class Lobby extends Scene {
 			}
 		}
 		
-		// Draw the table in white
-		graphics.setColour(255, 255, 255);
+		// Draw the title in safety orange
+		graphics.setColour(graphics.safetyOrange);
+		
+		// Draw the title in super flightstrip font
+		graphics.setFont(Main.flightstripFontSuper);
 		
 		// Draw the high scores table heading
 		graphics.printCentred("High Scores",
@@ -409,7 +440,11 @@ public class Lobby extends Scene {
 				+ ((scoresTopLeft.getY() - nameEntryBoxPos.getY()) / 2)
 				+ Game.getYOffset(),
 				2, (scoresTopRight.getX() - scoresTopLeft.getX()));
-
+		
+		// Draw the headings in white
+		graphics.setColour(Color.white);
+		graphics.setFont(Main.menuMainFont);
+		
 		// Draw the rank column label
 		graphics.print("Rank", scoresTopLeft.getX() + Game.getXOffset() + 5,
 				scoresTopLeft.getY() + Game.getYOffset() - 30, 1);
@@ -421,7 +456,10 @@ public class Lobby extends Scene {
 		// Draw the score column label
 		graphics.printRight("Score", scoresTopRight.getX() + Game.getXOffset() - 5,
 				scoresTopLeft.getY() + Game.getYOffset() - 30, 1, 0);
-
+		
+		// Draw the table in safety orange
+		graphics.setColour(graphics.safetyOrange);
+		
 		// Draw the high scores table border
 		graphics.rectangle(false,
 				(scoresTopLeft.getX() + Game.getXOffset()),
@@ -433,6 +471,8 @@ public class Lobby extends Scene {
 			int i = 0;
 			for (Long score : highScores.descendingKeySet()) {
 				for (String name : highScores.get(score)) {
+					
+					graphics.setColour(Color.white);
 					// Draw the numbers
 					graphics.printRight(String.valueOf(i + 1),
 							(scoresTopLeft.getX() + Game.getXOffset()) + 35,
@@ -451,6 +491,7 @@ public class Lobby extends Scene {
 							(scoresTopLeft.getY() + Game.getYOffset()
 									+ ((i + 0.33) * rowHeight)) - 10, 1, 0);
 
+					graphics.setColour(graphics.safetyOrange);
 					// Draw vertical lines below each score
 					graphics.line((scoresTopLeft.getX() + Game.getXOffset()),
 							(scoresTopLeft.getY() + Game.getYOffset()
