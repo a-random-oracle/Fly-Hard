@@ -12,7 +12,7 @@ Mission Control
 | `Lobby`            | 85%        | Add yellow title | @mwuk |
 | `Credits`          | 95%        | Change game title/music? | @mwuk |
 | `SinglePlayerGame` | __99%__    | __Fix explosions__    | @RMCKirby |
-| `MultiPlayerGame`  | __100%__   | _Nothing_| _Nobody_ |
+| `MultiPlayerGame`  | __99%__   | __Fix explosions__ | @RMCKirby |
 | `Game`             | __100%__   | _Nothing_| _Nobody_ |
 | `GameOver`         | 90%        | __Fix explosions__ | @RMCKirby |
 | `GameOverMulti`    | __100%__        | _Nothing_ | _Nobody_ |
