@@ -54,6 +54,8 @@ public class Main implements input.EventHandler {
 
 	/** The default size of the gap between the window edge and the top edge of the screen */
 	public static final int HEIGHT_GAP = 30;
+	
+//	public static int yBorder = (window.height() - 440) / 2 - 20;
 
 	/** The standard font */
 	public static graphics.Font standardFont;

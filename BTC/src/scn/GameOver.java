@@ -57,6 +57,9 @@ public class GameOver extends Scene {
 	private double timer;
 
 	private Player player;
+	
+	/** Integer offset to centre vertically */
+	private int yBorder = (window.height() - 440) / 2 - 20;
 
 	/**
 	 * Constructor for the Game Over scene.
@@ -194,21 +197,26 @@ public class GameOver extends Scene {
 	 * If explosion has finished, draw the textbox; otherwise, draw the planes and explosion.
 	 */
 	public void draw() {
-		graphics.setColour(graphics.green);
-
+		graphics.setColour(graphics.safetyOrange);
+		graphics.rectangle(true, window.height()/3 - 40, yBorder,
+				(window.width() - (2 * window.height()/3 - 80)), 70);
+		graphics.setFont(Main.flightstripFontMid);
 		if (aircraft1 != null && aircraft2 != null) {
 			graphics.printCentred(aircraft1.getName() + " crashed into " + aircraft2.getName()
-					+ ".", 0, 32, 2, window.width());
+					+ ".", window.width()/2, window.height()/4, 2, 0);
 		}
 
-		graphics.printCentred("Total score: " + String.valueOf(score), 0, 64, 4, window.width());
+		graphics.printCentred("Total score: " + String.valueOf(score), window.width()/2, window.height()/3, 4, 0);
 
 		if (aircraft1 != null && aircraft2 != null) {
 			if (explosionAnim.hasFinished()) {
 				//textBox.draw();
-				for (FlightStrip fs : player.getFlightStrips()) {
-					fs.draw(16, 20, true);
-				}
+//				for (FlightStrip fs : player.getFlightStrips()) {
+//					fs.draw(16, 20, true);
+//				}
+				
+				flightStrip1.draw(window.width()/2 - 180, window.height()/2, true);
+				flightStrip2.draw(window.width()/2 + 20, window.height()/2, true);
 				
 			} else {
 				aircraft1.draw(new Integer[] {255, 255, 255},
@@ -225,8 +233,8 @@ public class GameOver extends Scene {
 		}
 
 		int opacity = (int)(255 * Math.sin(timer));
-		graphics.setColour(0, 128, 0, opacity);
-		graphics.printCentred("Press any key to continue", 0, window.height() - 256, 1, window.width());
+		graphics.setColour(graphics.safetyOrange);
+		graphics.printCentred("Press any key to continue", 0, 2 * window.height()/3, 1, window.width());
 	}
 
 	@Override

@@ -224,7 +224,7 @@ public class ButtonText {
 			colourDefault.b * ( 1 - hover ) + colourHover.b * hover
 
 		) );
-		System.out.println( hover );
+		// System.out.println( hover );
 		graphics.setFont(font);
 		graphics.print(text, x + ox + (inset ? hover * 10 : 0), y + oy, size);
 	}

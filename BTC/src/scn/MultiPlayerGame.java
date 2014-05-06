@@ -222,13 +222,13 @@ public class MultiPlayerGame extends Game {
 			exitingToGameOver = false;
 			
 			FlightStrip fs1 = null, fs2 = null;
-			for (FlightStrip fs : player.getFlightStrips()) {
-				if (passedCollidingAircraft[0].equals(fs.getAircraft())) {
-					fs1 = fs;
-				} else if (passedCollidingAircraft[1].equals(fs.getAircraft())) {
-					fs2 = fs;
-				}
-			}
+//			for (FlightStrip fs : player.getFlightStrips()) {
+//				if (passedCollidingAircraft[0].equals(fs.getAircraft())) {
+//					fs1 = fs;
+//				} else if (passedCollidingAircraft[1].equals(fs.getAircraft())) {
+//					fs2 = fs;
+//				}
+//			}
 			
 			
 			gameOver(passedCollidingAircraft[0],
