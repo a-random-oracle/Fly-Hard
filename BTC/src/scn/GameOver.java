@@ -198,8 +198,10 @@ public class GameOver extends Scene {
 	 */
 	public void draw() {
 		graphics.setColour(graphics.safetyOrange);
-		graphics.rectangle(true, window.height()/3 - 40, yBorder,
+		graphics.rectangle(true, window.height()/3 - 40, yBorder - 2,
 				(window.width() - (2 * window.height()/3 - 80)), 70);
+		graphics.setFont(Main.menuMainFont);
+		graphics.print("Game Over", window.height()/3,  yBorder);
 		graphics.setFont(Main.flightstripFontMid);
 		if (aircraft1 != null && aircraft2 != null) {
 			graphics.printCentred(aircraft1.getName() + " crashed into " + aircraft2.getName()
