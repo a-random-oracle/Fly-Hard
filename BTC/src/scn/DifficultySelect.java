@@ -152,10 +152,10 @@ public class DifficultySelect extends Scene {
 		graphics.print("Single Player", window.height()/3,
 				yBorder);
 		graphics.setFont(Main.transSign);
-		graphics.setColour(Color.white);
 		graphics.printRight("Solo", (window.width() - (window.height()/3) + 20), yBorder, 0, 0);
 		graphics.printRight("Einzelspieler", (window.width() - (window.height()/3) + 20), yBorder + 20, 0, 0);
 		graphics.printRight("Yksinpeli", (window.width() - (window.height()/3) + 20), yBorder + 40, 0, 0);
+		graphics.setColour(Color.white);
 		graphics.printRight("Facile", (window.width() - (window.height()/3) + 20), EASY_BUTTON_Y - 10, 0, 0);
 		graphics.printRight("Leicht", (window.width() - (window.height()/3) + 20), EASY_BUTTON_Y + 5, 0, 0);
 		graphics.printRight("Helppo", (window.width() - (window.height()/3) + 20), EASY_BUTTON_Y + 20, 0, 0);
