@@ -121,28 +121,6 @@ public class GameOver extends Scene {
 	@Override
 	public void start() {
 		playSound(audio.newSoundEffect("sfx" + File.separator + "crash.ogg"));
-		deaths = 300 + Main.getRandom().nextInt(500);
-//		timer = 0;
-//		textBox = new lib.TextBox(Color.green, window.width() / 10, 186,
-//				window.width() - ((window.width() / 10) * 2), window.height() - 96, 32);
-//
-//		textBox.addText(String.valueOf(deaths) + " people died in the crash.");
-//		textBox.delay(0.4);
-//		textBox.addText("British Bearways is facing heavy legal pressure from the family and loved-ones of the dead and an investigation is underway.");
-//		textBox.newline();
-//		textBox.delay(0.8);
-//		textBox.addText("The inquiry into your incompetence will lead to humanity discovering your true nature.");
-//		textBox.newline();
-//		textBox.delay(0.8);
-//		textBox.addText("The guilt for the death you have caused and your failure to pass as a human will gnaw at you and you will revert to drinking in an attempt to cope.");
-//		textBox.newline();
-//		textBox.newline();
-//		textBox.delay(0.8);
-//		textBox.addText("With no income, there will be no way your family can survive the fast-approaching winter months.");
-//		textBox.newline();
-//		textBox.newline();
-//		textBox.delay(0.8);
-//		textBox.addText("Game Over.");
 	}
 
 	/**
@@ -199,12 +177,7 @@ public class GameOver extends Scene {
 	public void draw() {
 		
 		if (aircraft1 != null && aircraft2 != null) {
-			if (explosionAnim.hasFinished()) {
-				//textBox.draw();
-//				for (FlightStrip fs : player.getFlightStrips()) {
-//					fs.draw(16, 20, true);
-//				}
-				
+			if (explosionAnim.hasFinished()) {				
 				graphics.setColour(graphics.safetyOrange);
 				graphics.rectangle(true, window.height()/3 - 40, yBorder - 2,
 						(window.width() - (2 * window.height()/3 - 80)), 70);
@@ -238,7 +211,6 @@ public class GameOver extends Scene {
 			}
 		}
 
-		int opacity = (int)(255 * Math.sin(timer));
 		graphics.setColour(graphics.safetyOrange);
 		graphics.printCentred("Press any key to continue", 0, 2 * window.height()/3, 1, window.width());
 	}
