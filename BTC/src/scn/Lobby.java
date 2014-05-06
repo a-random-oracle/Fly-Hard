@@ -436,7 +436,7 @@ public class Lobby extends Scene {
 		// Draw the high scores table heading
 		graphics.printCentred("High Scores",
 				scoresTopLeft.getX() + Game.getXOffset(),
-				nameEntryBoxPos.getY()
+				window.height()/5
 				+ ((scoresTopLeft.getY() - nameEntryBoxPos.getY()) / 2)
 				+ Game.getYOffset(),
 				2, (scoresTopRight.getX() - scoresTopLeft.getX()));
