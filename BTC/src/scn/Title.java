@@ -18,14 +18,8 @@ public class Title extends Scene {
 	/** The path to the user manual */
 	private final static String HELP_FILE_PATH = System.getProperty("user.dir") + "/user_manual.pdf";
 
-	/** The 'beep' played as the radar makes a sweep */
-	private audio.Sound beep;
-
 	/** A List of buttons, to hold declared buttons in the scene */
 	private lib.ButtonText[] buttons;
-
-	/** Holds the angle to draw the radar sweep at */
-	private double angle;
 
 	public static final Image SINGLE_PLAYER =
 			graphics.newImage("gfx" + File.separator + "pup"
@@ -46,6 +40,7 @@ public class Title extends Scene {
 	public static final Image EXIT =
 			graphics.newImage("gfx" + File.separator + "pup"
 					+ File.separator + "exit_512.png");
+	
 	/** Integer offset to centre the main menu */
 	private int yBorder = (window.height() - 440) / 2 - 20;
 	/**
@@ -67,8 +62,6 @@ public class Title extends Scene {
 	public void start() {
 		graphics.setFont(Main.engSignFont);
 		graphics.setColour(graphics.safetyOrange);
-		beep = audio.newSoundEffect("sfx" + File.separator + "beep.ogg");
-		beep.setVolume(0.2f);
 
 		buttons = new lib.ButtonText[5];
 
@@ -137,8 +130,7 @@ public class Title extends Scene {
 				window.height()/3 - 40, yBorder + 400,
 				window.width() - (2 * window.height()/3) + 80, 40, 40, -12);
 		buttons[4].setInset(true);
-
-		angle = 0;
+		
 	}
 
 	/**
@@ -148,15 +140,6 @@ public class Title extends Scene {
 	 */
 	@Override
 	public void update(double timeDifference) {
-		angle += timeDifference * (3d / 4d); //increase the angle of the radar sweep
-
-		//Check the angle of the radar sweep;
-		//If approaching the BTC title string, play the beep
-		double beepTimer = (angle * 4) + (Math.PI * 4 / 5);
-		beepTimer %= (2 * Math.PI);
-		if ( beepTimer <= 0.1 ) {
-			//playSound(beep); <- Driving me absolutely crazy so it can go for now.
-		}
 	}
 
 	/**
