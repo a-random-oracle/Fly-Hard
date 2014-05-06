@@ -107,6 +107,11 @@ public class GameOverMulti extends Scene {
 				+ hostPlayer.getPlanesTakenOff(), (window.width()/2 + window.height()/3)/2, yBorder + 240, 0, 0);
 		graphics.printCentred("Planes collided : "
 				+ hostPlayer.getPlanesCollided(), (window.width()/2 + window.height()/3)/2, yBorder + 280, 0, 0);
+		graphics.printRight("Final score :", (window.width()/2 + window.height()/3)/2 + 20, yBorder + 320, 0, 0);
+		graphics.setColour(graphics.safetyOrange);
+		graphics.print(Integer.toString(hostPlayer.getScore()), (int)((window.width()/2 + window.height()/3)/2 + 24), (int)(yBorder + 320));
+
+		
 	}
 
 	public void drawOpposingPlayerStats() {
@@ -123,7 +128,11 @@ public class GameOverMulti extends Scene {
 				+ opposingPlayer.getPlanesTakenOff(), (window.width()/2 + window.height()/3), yBorder + 240, 0, 0);
 		graphics.printCentred("Planes collided : "
 				+ opposingPlayer.getPlanesCollided(), (window.width()/2 + window.height()/3), yBorder + 280, 0, 0);
-	}
+		graphics.setColour(Color.white);
+		graphics.printRight("Final score :", (window.width()/2 + window.height()/3) + 20, yBorder + 320, 0, 0);
+		graphics.setColour(graphics.safetyOrange);
+		graphics.print(Integer.toString(opposingPlayer.getScore()), (int)((window.width()/2 + window.height()/3) + 24), (int)(yBorder + 320));
+}
 
 	@Override
 	public void mousePressed(int key, int x, int y) {}

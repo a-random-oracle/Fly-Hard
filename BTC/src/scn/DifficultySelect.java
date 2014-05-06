@@ -31,10 +31,16 @@ public class DifficultySelect extends Scene {
 	private final int HARD_BUTTON_Y = MEDIUM_BUTTON_Y + 80;
 
 	/** Images for menu icons */
-	public static final Image SINGLE_PLAYER =
+	public static final Image DIFF1 =
 			graphics.newImage("gfx" + File.separator + "pup"
-					+ File.separator + "singleplayer_512.png");
-
+					+ File.separator + "difficulty1_512.png");
+	public static final Image DIFF2 =
+			graphics.newImage("gfx" + File.separator + "pup"
+					+ File.separator + "difficulty2_512.png");
+	public static final Image DIFF3 =
+			graphics.newImage("gfx" + File.separator + "pup"
+					+ File.separator + "difficulty3_512.png");
+	
 	private lib.ButtonText[] buttons;
 
 
@@ -131,7 +137,6 @@ public class DifficultySelect extends Scene {
 		buttons[2] = new lib.ButtonText("Hard", hard,
 				HARD_BUTTON_X, HARD_BUTTON_Y, HARD_BUTTON_W, HARD_BUTTON_H, 40, -12);
 		buttons[2].setInset(true);
-
 	}
 
 	@Override
@@ -150,8 +155,11 @@ public class DifficultySelect extends Scene {
 		graphics.setColour(graphics.safetyOrange);
 		graphics.rectangle(true, window.height()/3 - 40, yBorder - 2,
 			(window.width() - (2 * window.height()/3 - 80)), 70);
+		graphics.drawScaled(DIFF1, window.height()/3 - 40, yBorder + 80, 0.0625);
+		graphics.drawScaled(DIFF2, window.height()/3 - 40, yBorder + 160, 0.0625);
+		graphics.drawScaled(DIFF3, window.height()/3 - 40, yBorder + 240, 0.0625);
 		graphics.setColour(Color.black);
-		graphics.drawScaled(SINGLE_PLAYER, window.height()/3 - 36, yBorder + 15, 0.0625);
+		
 		graphics.print("Single Player", window.height()/3,
 				yBorder);
 		graphics.setFont(Main.transSign);
