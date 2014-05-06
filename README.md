@@ -15,7 +15,7 @@ Mission Control
 | `MultiPlayerGame`  | __100%__   | _Nothing_| _Nobody_ |
 | `Game`             | __100%__   | _Nothing_| _Nobody_ |
 | `GameOver`         | 90%        | __Fix explosions__ | @RMCKirby |
-| `GameOverMulti`    | 90%        | Titles and buttons | @mwuk |
+| `GameOverMulti`    | __100%__        | _Nothing_ | _Nobody_ |
 
 ## DANGER ZONE
 

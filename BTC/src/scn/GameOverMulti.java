@@ -21,6 +21,9 @@ public class GameOverMulti extends Scene {
 	private int keyPressed;
 	
 	private ButtonText[] exitButtons;
+	
+	/** Integer offset to centre vertically */
+	private int yBorder = (window.height() - 440) / 2 - 20;
 
 	public GameOverMulti(Player hostPlayer, Player opposingPlayer) {
 		this.hostPlayer = hostPlayer;
@@ -49,15 +52,15 @@ public class GameOverMulti extends Scene {
 		};
 		//Instantiate and position the "return to lobby" button
 		exitButtons[0] = new ButtonText("Play Again", Main.flightstripFontMid,
-				returnToLobby, window.width()/2 - 100, window.height() - 50,
-				100, 60, 100, 10);
-		exitButtons[0].setInset(true);
+				returnToLobby, (window.width()/2 + window.height()/3)/2 - 40, window.height() - (yBorder/2) + 9,
+				80, 18, -1, -8);
+//		exitButtons[0].setInset(true);
 		
 		//Instantiate and position the "return to title" button
 		exitButtons[1] = new ButtonText("Return to Title", Main.flightstripFontMid,
-				returnToTitle, window.width()/2 + 80, window.height() - 50,
-				100, 60, 100, 10);
-		exitButtons[1].setInset(true);
+				returnToTitle, (window.width()/2 + window.height()/3) - 40, window.height() - (yBorder/2) + 9,
+				80, 18, -1, -8);
+//		exitButtons[1].setInset(true);
 	}
 
 	public void update(double timeDifference) {
@@ -66,7 +69,19 @@ public class GameOverMulti extends Scene {
 
 	public void draw() {
 		// draw a line separating  both player's stats
-		graphics.line(window.width() / 2, 20, window.width() / 2, window.height() - 20);
+		graphics.setColour(graphics.safetyOrange);
+		graphics.line(window.width() / 2, yBorder, window.width() / 2, window.height() - yBorder);
+		graphics.rectangle(true, window.height()/3 - 40, yBorder - 2,
+				(window.width() - (2 * window.height()/3 - 80)), 70);
+		graphics.setColour(Color.black);
+		graphics.setFont(Main.menuTitleFont);
+		if (hostPlayer.getPlanesCollided() < opposingPlayer.getPlanesCollided()) {
+			graphics.print("You Win!", window.height()/3,  yBorder);
+		} else if (hostPlayer.getPlanesCollided() > opposingPlayer.getPlanesCollided()) {
+			graphics.print("You Lose!", window.height()/3, yBorder);
+		} else {
+			graphics.print("Game Over", window.height()/3, yBorder);
+		}
 		// draw both player's statistics from the finished game
 		drawHostPlayerStats();
 		drawOpposingPlayerStats();
@@ -80,33 +95,34 @@ public class GameOverMulti extends Scene {
 	public void drawHostPlayerStats() {
 		graphics.setFont(Main.menuTitleFont);
 		graphics.setColour(graphics.safetyOrange);
-		graphics.printCentred(hostPlayer.getName(), window.width()/4, 10, 0, 0);
+		graphics.printCentred(hostPlayer.getName(), (window.width()/2 + window.height()/3)/2, yBorder + 80, 0, 0);
 		graphics.setFont(Main.menuMainFont);
 		graphics.setColour(Color.white);
+		graphics.printCentred("(you)", (window.width()/2 + window.height()/3)/2, yBorder + 125, 0, 0);
 		graphics.printCentred("Planes cleared from airspace : " 
-				+ hostPlayer.getPlanesCleared(), window.width()/4, 80, 0, 0);
+				+ hostPlayer.getPlanesCleared(), (window.width()/2 + window.height()/3)/2, yBorder + 160, 0, 0);
 		graphics.printCentred("Planes landed : "
-				+ hostPlayer.getPlanesLanded(), window.width()/4, 130, 0, 0);
+				+ hostPlayer.getPlanesLanded(), (window.width()/2 + window.height()/3)/2, yBorder + 200, 0, 0);
 		graphics.printCentred("Planes taken off : "
-				+ hostPlayer.getPlanesTakenOff(), window.width()/4, 180, 0, 0);
+				+ hostPlayer.getPlanesTakenOff(), (window.width()/2 + window.height()/3)/2, yBorder + 240, 0, 0);
 		graphics.printCentred("Planes collided : "
-				+ hostPlayer.getPlanesCollided(), window.width()/4, 230, 0, 0);
+				+ hostPlayer.getPlanesCollided(), (window.width()/2 + window.height()/3)/2, yBorder + 280, 0, 0);
 	}
 
 	public void drawOpposingPlayerStats() {
 		graphics.setFont(Main.menuTitleFont);
 		graphics.setColour(graphics.safetyOrange);
-		graphics.printCentred(opposingPlayer.getName(), 3 * window.width()/4, 10, 0, 0);
+		graphics.printCentred(opposingPlayer.getName(), (window.width()/2 + window.height()/3), yBorder  +80, 0, 0);
 		graphics.setFont(Main.menuMainFont);
 		graphics.setColour(Color.white);
 		graphics.printCentred("Planes cleared from airspace : " 
-				+ opposingPlayer.getPlanesCleared(), 3 * window.width()/4, 80, 0, 0);
+				+ opposingPlayer.getPlanesCleared(), (window.width()/2 + window.height()/3), yBorder + 160, 0, 0);
 		graphics.printCentred("Planes landed : "
-				+ opposingPlayer.getPlanesLanded(), 3 * window.width()/4, 130, 0, 0);
+				+ opposingPlayer.getPlanesLanded(), (window.width()/2 + window.height()/3), yBorder + 200, 0, 0);
 		graphics.printCentred("Planes taken off : "
-				+ opposingPlayer.getPlanesTakenOff(), 3 * window.width()/4, 180, 0, 0);
+				+ opposingPlayer.getPlanesTakenOff(), (window.width()/2 + window.height()/3), yBorder + 240, 0, 0);
 		graphics.printCentred("Planes collided : "
-				+ opposingPlayer.getPlanesCollided(), 3 * window.width()/4, 230, 0, 0);
+				+ opposingPlayer.getPlanesCollided(), (window.width()/2 + window.height()/3), yBorder + 280, 0, 0);
 	}
 
 	@Override
