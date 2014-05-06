@@ -17,6 +17,9 @@ Mission Control
 | `GameOver`         | 90%        | __Fix explosions__ | @RMCKirby |
 | `GameOverMulti`    | 90%        | Titles and buttons | @mwuk |
 
+## DANGER ZONE
+
+* Player lives (in MP) are currently (potentially) set to 3000. @a-random-oracle needs to change this.
 
 ----
 # Archive
