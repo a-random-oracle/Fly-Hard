@@ -574,6 +574,7 @@ public class MultiPlayerGame extends Game {
 
 				if (player.getName() != null) {
 					graphics.printCentred(player.getName(),
+//					graphics.printCentred("blue0",
 							(((window.width() - (2 * getXOffset()))
 									* (3d/7d)) / 2) + getXOffset(),
 									getYOffset() - 15, 1, 0);
@@ -583,6 +584,7 @@ public class MultiPlayerGame extends Game {
 
 				if (opposingPlayer.getName() != null) {
 					graphics.printCentred(opposingPlayer.getName(),
+//					graphics.printCentred("red0",
 							window.width() - ((((window.width()
 									- (2 * getXOffset()))
 									* (3d/7d)) / 2) + getXOffset()),
@@ -591,20 +593,22 @@ public class MultiPlayerGame extends Game {
 
 				break;
 			case 1:
-				graphics.setColour(graphics.blue);
+				graphics.setColour(graphics.red);
 
 				if (opposingPlayer.getName() != null) {
 					graphics.printCentred(player.getName(),
+//					graphics.printCentred("blue1",
 							window.width() - ((((window.width()
 									- (2 * getXOffset()))
 									* (3d/7d)) / 2) + getXOffset()),
 									getYOffset() - 15, 1, 0);
 				}
 
-				graphics.setColour(graphics.red);
+				graphics.setColour(graphics.blue);
 
 				if (player.getName() != null) {
 					graphics.printCentred(opposingPlayer.getName(),
+//					graphics.printCentred("red1",
 							(((window.width() - (2 * getXOffset()))
 									* (3d/7d)) / 2) + getXOffset(),
 									getYOffset() - 15, 1, 0);
