@@ -101,6 +101,7 @@ public class PowerupTest {
 		player.getAircraft().add(aircraft);
 		player.addPowerup(powerup);
 		powerup.activateEffect();
+		System.out.println(aircraft.getSpeedScale());
 		assertTrue("", aircraft.getSpeedScale() < 1);
 	}
 //	@Test
