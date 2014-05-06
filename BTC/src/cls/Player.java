@@ -459,7 +459,6 @@ public class Player implements Serializable {
 	}
 	
 	/**
-	 * Increases the player's score.
 	 * @param score - the amount to increase by
 	 */
 	public void increaseScore(int score) {
@@ -482,27 +481,6 @@ public class Player implements Serializable {
 		this.lives = lives;
 	}
 	
-	
-	
-	@Override
-	public String toString() {
-		return "Player [id=" + id
-				+ ", aircraft=" + aircraft.size()
-				+ ", compassClicked=" + compassClicked
-				+ ", waypointClicked=" + waypointClicked
-				+ ", flightGenerationTimeElapsed=" + flightGenerationTimeElapsed
-				+ ", controlAltitude=" + controlAltitude
-				+ ", score=" + score + "]";
-	}
-	
-	
-	/**
-	 * Clones the player.
-	 */
-	public Player clone() {
-		return new Player(this);
-	}
-
 	/**
 	 * Allows access to the number of collided planes.
 	 * @return - the number of collided planes
@@ -583,4 +561,48 @@ public class Player implements Serializable {
 		this.planesCleared = planesCleared;
 	}
 	
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + id;
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Player other = (Player) obj;
+		if (id != other.id)
+			return false;
+		return true;
+	}
+
+	@Override
+	public String toString() {
+		return "Player [id=" + id
+				+ ", aircraft=" + aircraft.size()
+				+ ", compassClicked=" + compassClicked
+				+ ", waypointClicked=" + waypointClicked
+				+ ", flightGenerationTimeElapsed=" + flightGenerationTimeElapsed
+				+ ", controlAltitude=" + controlAltitude
+				+ ", score=" + score + "]";
+	}
+	
+	
+	/**
+	 * Clones the player.
+	 */
+	public Player clone() {
+		return new Player(this);
+	}
+	
 }
+
+	
