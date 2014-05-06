@@ -1,12 +1,43 @@
 Mission Control
 ========
 
+## FINAL APPROACH
+
+## GUI (for Mark/Sam('s Manual))
+
+| Scene/File         | Completion | ToDo     | Assignee |
+| :---------         | :--------- | :------  | :------- |
+| `Title`            | __100%__   | _Nothing_| _Nobody_   |
+| `DifficultySelect` | _100%*_    | _Nothing_| _Nobody_   |
+| `Lobby`            | 85%        | Add yellow title | @mwuk |
+| `Credits`          | 95%        | Change game title/music? | @mwuk |
+| `SinglePlayerGame` | __99%__    | __Fix explosions__    | @RMCKirby |
+| `MultiPlayerGame`  | __100%__   | _Nothing_| _Nobody_ |
+| `Game`             | __100%__   | _Nothing_| _Nobody_ |
+| `GameOver`         | 90%        | __Fix explosions__ | @RMCKirby |
+| `GameOverMulti`    | 90%        | Titles and buttons | @mwuk |
+
+
+----
+# Archive
+
 ## Notices
+* Airspaces will adopt a zoning system a la [ice hockey](http://en.wikipedia.org/wiki/Ice_hockey_rink#Zones).
+* Planes can crash. I think? I don't know what happened or what year this is.
+* Points mean prizes. (Need to consider unit. Perhaps Jeremies?)
+* [Tim Time happened](https://github.com/MWUK/Fly-Hard/blob/master/Docs/Tim%20Time/28-2-14.md).
+* Super SEPR Saturday Shenanigans _also happened._
+* Please declare what classes you're working on, for the benefit of others who might be working concurrently, so as to avoid conflicts.
+ * Preferably via the table at the bottom.
+ * Or by messaging [Mark](http://github.com/MWUK) who'll update the table on your behalf.
+* Any issues with the Tasks table, change (if it is independent of others), or raise on Facebook/with dependent individual directly.
+* [Mark](https://github.com/MWUK) has started documenting all the [variables](https://github.com/MWUK/Fly-Hard/wiki/Variables) (inc. name changes amongst other info) because he really loathes fun and has developed sudden OCD.
+* The repo will be deleted/cleared periodically.
 * __Test as you go on!__ Testing should be implemented/considered as code is implemented.
 * __Please use issue numbers when committing changes/fixes relating to defined issues, it makes everything more trackable__ (also you don't have to be as descriptive, i.e. `Fixed #n` would be easier and as descriptive than `I fixed the issue where everything explodes if you click the middle mouse button`)
 * People should keep ideas for powerups. For example a power-up where all planes turn into Jeremies.
 
-## To Do
+## To Domark
 
 | Item | Remarks | Due |
 |:-----|:--------|----:|
@@ -36,16 +67,3 @@ _These are not final/rigid. Any issues, update/query as you wish :D_
 
 * `.classpath`s might be a little weird. Check yourself before you wreck yourself.
  * A copy should be on Facebook - just make sure you call the project 'Fly Hard'.
-
-## Archive
-* Airspaces will adopt a zoning system a la [ice hockey](http://en.wikipedia.org/wiki/Ice_hockey_rink#Zones).
-* Planes can crash. I think? I don't know what happened or what year this is.
-* Points mean prizes. (Need to consider unit. Perhaps Jeremies?)
-* [Tim Time happened](https://github.com/MWUK/Fly-Hard/blob/master/Docs/Tim%20Time/28-2-14.md).
-* Super SEPR Saturday Shenanigans _also happened._
-* Please declare what classes you're working on, for the benefit of others who might be working concurrently, so as to avoid conflicts.
- * Preferably via the table at the bottom.
- * Or by messaging [Mark](http://github.com/MWUK) who'll update the table on your behalf.
-* Any issues with the Tasks table, change (if it is independent of others), or raise on Facebook/with dependent individual directly.
-* [Mark](https://github.com/MWUK) has started documenting all the [variables](https://github.com/MWUK/Fly-Hard/wiki/Variables) (inc. name changes amongst other info) because he really loathes fun and has developed sudden OCD.
-* The repo will be deleted/cleared periodically.
