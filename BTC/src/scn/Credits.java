@@ -71,7 +71,7 @@ public class Credits extends Scene {
 		graphics.push();
 		graphics.translate(0, scrollPosition);
 		currentHeight += gap;
-		graphics.printCentred("Bear Traffic Controller", 0, currentHeight, 3, window.width());
+		graphics.printCentred("Fly Hard", 0, currentHeight, 3, window.width());
 		currentHeight += gap * 2;
 		
 		graphics.printCentred("Created by", 0, currentHeight, 2, window.width());

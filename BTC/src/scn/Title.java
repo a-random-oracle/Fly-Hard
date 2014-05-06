@@ -3,6 +3,7 @@ package scn;
 import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
 
 import org.newdawn.slick.Color;
 
@@ -107,8 +108,10 @@ public class Title extends Scene {
 			@Override
 			public void action() {
 				try {
-					Desktop.getDesktop().open(new File(HELP_FILE_PATH));
+					Desktop.getDesktop().browse(new java.net.URI("http://goa.lixquid.co.uk/"));
 				} catch (IOException e) {
+					e.printStackTrace();
+				} catch (URISyntaxException e) {
 					e.printStackTrace();
 				}
 			}

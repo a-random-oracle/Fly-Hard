@@ -70,7 +70,9 @@ public class ScoreTest {
 		
 		testPlayer.getAircraft().add(testAircraft);
 	}
-	
+	/**
+	 * Tests that score of a player starts at zero.
+	 */
 	@Test
 	public void scoreStartsAtZero() {
 		assertTrue("Score does not start at correct value", testPlayer.getScore() == 0);
@@ -85,6 +87,9 @@ public class ScoreTest {
 		assertTrue("Score not decremented successfully", testAircraft.getScore()==90);
 	}
 
+	/**
+	 * Tests that increase score method works correctly
+	 */
 	@Test
 	public void testAddScoreToPlayer() {
 		testPlayer.increaseScore(testAircraft.getScore());
