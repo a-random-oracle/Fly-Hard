@@ -676,9 +676,9 @@ public abstract class Game extends Scene {
 		case input.KEY_SPACE :
 			toggleManualControl(player);
 			break;
-		case input.KEY_LCRTL :
-			generateFlight(player);
-			break;
+//		case input.KEY_LCRTL :
+//			generateFlight(player);
+//			break;
 		case input.KEY_ESCAPE :
 			player.getAircraft().clear();
 			for (Airport airport : player.getAirports()) airport.clear();
