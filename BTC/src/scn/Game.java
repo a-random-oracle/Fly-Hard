@@ -695,41 +695,46 @@ public abstract class Game extends Scene {
 	 * @param timeDifference - the time since the last collision check
 	 */
 	protected void checkCollisions(double timeDifference) {
-		for (Aircraft plane : player.getAircraft()) {
-			if (plane.isFinished()) {
+		for (Aircraft aircraft : getAllAircraft()) {
+			if (aircraft.isFinished()) {
 				continue;
 			}
-
-			Aircraft collidedWith = plane.updateCollisions(timeDifference,
+			
+			Aircraft collidedWith = aircraft.updateCollisions(timeDifference,
 					getAllAircraft());
 			
 			FlightStrip fs1 = null, fs2 = null;
 			
-			
-
 			if (collidedWith != null) {
-				// Remove a life
-				player.setLives(player.getLives() - 1);
+				//call the explosion animation on the collided planes
+				explodePlanes(aircraft, collidedWith);
 				
-				// Apply a score penalty
-				player.decreaseScore(400);
-				
-				// Draw the exploson animation
-				explodePlanes(plane, collidedWith);
-				
-				for (FlightStrip fs : player.getFlightStrips()) {
-					if (plane.equals(fs.getAircraft())) {
-						fs1 = fs;
-					} else if (collidedWith.equals(fs.getAircraft())) {
-						fs2 = fs;
+				//Remove a life from the player
+				for (Aircraft plane : player.getAircraft()) {
+					if (plane.equals(aircraft) || plane.equals(collidedWith)) {
+						
+						//Remove a life from the player
+						player.setLives(player.getLives() - 1);
+						
+						// Apply a score penalty
+						player.decreaseScore(400);
+						
+						for (FlightStrip fs : player.getFlightStrips()) {
+							if (plane.equals(fs.getAircraft())) {
+								fs1 = fs;
+							} else if (collidedWith.equals(fs.getAircraft())) {
+								fs2 = fs;
+							}
+						}
+						
+						// Go to the game over check
+						gameOver(plane, collidedWith, fs1, fs2, false);
+						
+						// Break the loop
+						return;
 					}
 				}
 				
-				// Go to the game over check
-				gameOver(plane, collidedWith, fs1, fs2, false);
-				
-				// Break the loop
-				return;
 			}
 		}
 	}
