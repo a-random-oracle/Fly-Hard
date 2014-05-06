@@ -28,7 +28,7 @@ public class WaypointTest {
 		}
 		
 		SinglePlayerGame.createSinglePlayerGame(DifficultySetting.EASY);
-		testWaypoint = new Waypoint(10, 10, true, false);
+		testWaypoint = new Waypoint(10, 10, false, false);
 		resultVector = testWaypoint.getLocation();
 		comparisonVector = new Vector(10, 10, 0);
 		testWaypoint2 = new Waypoint(2, 2, true, false);
@@ -51,7 +51,7 @@ public class WaypointTest {
 	@Test
 	public void testIsEntryOrExit2() {
 		
-		assertTrue("Entry/Exit = true", testWaypoint.isEntryOrExit());
+		assertTrue("Entry/Exit = true", testWaypoint2.isEntryOrExit());
 	}
 
 	// Test mouseOver checking
