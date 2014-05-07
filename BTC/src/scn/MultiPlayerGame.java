@@ -351,6 +351,8 @@ public class MultiPlayerGame extends Game {
 						powerupPoints[i].setPowerup(null);
 					}
 				}
+				
+				deselectAircraft(player);
 			}
 		}
 	}
