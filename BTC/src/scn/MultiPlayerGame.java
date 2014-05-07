@@ -710,8 +710,7 @@ public class MultiPlayerGame extends Game {
 				endGameInstruction = "GAME_OVER_RECEIVED";
 			}
 			
-			// TODO <- add back in for release
-			//playSound(audio.newSoundEffect("sfx" + File.separator + "crash.ogg"));
+			playSound(audio.newSoundEffect("sfx" + File.separator + "crash.ogg"));
 			
 			// Perform a final update
 			NetworkManager.sendData(-1, player.clone());
