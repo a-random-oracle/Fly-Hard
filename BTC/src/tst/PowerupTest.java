@@ -2,14 +2,11 @@ package tst;
 
 import static org.junit.Assert.*;
 
-import java.util.ArrayList;
-
 import org.junit.Before;
 import org.junit.Test;
 
 import scn.Game.DifficultySetting;
 import scn.Game;
-import scn.MultiPlayerGame;
 import scn.SinglePlayerGame;
 
 import cls.Aircraft;
@@ -81,7 +78,7 @@ public class PowerupTest {
 	@Test
 	public void testGetEndTime() {
 		powerup.activateEffect();
-		assertTrue("Test end time is correct", powerup.getEndTime() == powerup.getTimeActivated() + powerup.EFFECT_DURATIONS_MAP.get(PowerupEffect.SLOW_DOWN));
+		assertTrue("Test end time is correct", powerup.getEndTime() == powerup.getTimeActivated() + Powerup.EFFECT_DURATIONS_MAP.get(PowerupEffect.SLOW_DOWN));
 		//changed powerup.EFFECT_DURATIONS_MAP to public
 	}
 	

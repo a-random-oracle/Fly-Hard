@@ -10,7 +10,6 @@ import cls.FlightStrip;
 import cls.Vector;
 import cls.Player;
 import lib.SpriteAnimation;
-import lib.TextBox;
 import lib.jog.audio;
 import lib.jog.audio.Sound;
 import lib.jog.graphics;
@@ -18,10 +17,6 @@ import lib.jog.graphics.Image;
 import lib.jog.window;
 
 public class GameOver extends Scene {
-
-	/** Text box to write the details of the game failure */
-	private TextBox textBox;
-
 	// Used to position the explosion, and provide graphical feedback of how and where the player failed
 	/** The first plane involved in the collision */
 	private Aircraft aircraft1;
@@ -34,9 +29,6 @@ public class GameOver extends Scene {
 
 	/** A vector storing the point which distances should be measured relative to */
 	private Vector origin;
-
-	/** A random number of deaths caused by the crash */
-	private int deaths;
 
 	/** The score the player achieved */
 	private int score;
@@ -52,9 +44,6 @@ public class GameOver extends Scene {
 
 	/** The value corresponding to the key which has most recently been pressed */
 	private int keyPressed;
-
-	/** Timer to allow for explosion and plane to be shown for a period, followed by the text box */
-	private double timer;
 
 	private Player player;
 	
@@ -130,9 +119,7 @@ public class GameOver extends Scene {
 	@Override
 	public void update(double timeDifference) {
 		if (aircraft1 != null && aircraft2 != null) {
-			if (explosionAnim.hasFinished()){
-				timer += timeDifference;
-			} else {
+			if (!explosionAnim.hasFinished()) {
 				explosionAnim.update(timeDifference);
 			}
 		}

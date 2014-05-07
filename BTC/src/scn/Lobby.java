@@ -86,8 +86,6 @@ public class Lobby extends Scene {
 
 	/** The dynamic string of dots to display after text */
 	private String waitingForOpponentDots = "";
-	
-	private int yBorder = (window.height() - 440) / 2 - 20;
 
 	/** Declaring location of Multiplayer icon/graphics */
 	public static final Image MULTIPLAYER =

@@ -360,7 +360,7 @@ public class Powerup implements Serializable {
 			});
 			
 			// Reset the selected aircraft
-			gameInstance.deselectAircraft(gameInstance.getPlayer());
+			gameInstance.getPlayer().setSelectedAircraft(null);
 			
 			// Apply a score bonus for transferring an aircraft
 			gameInstance.getPlayer().increaseScore(300);

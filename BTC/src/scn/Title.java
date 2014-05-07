@@ -7,7 +7,6 @@ import java.net.URISyntaxException;
 
 import org.newdawn.slick.Color;
 
-import lib.jog.audio;
 import lib.jog.audio.Sound;
 import lib.jog.graphics.Image;
 import lib.jog.graphics;
@@ -16,9 +15,6 @@ import lib.jog.window;
 import btc.Main;
 
 public class Title extends Scene {
-	/** The path to the user manual */
-	private final static String HELP_FILE_PATH = System.getProperty("user.dir") + "/user_manual.pdf";
-
 	/** A List of buttons, to hold declared buttons in the scene */
 	private lib.ButtonText[] buttons;
 
