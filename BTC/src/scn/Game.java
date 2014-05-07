@@ -604,7 +604,7 @@ public abstract class Game extends Scene {
 					}
 				} else {
 					//if (player.getSelectedAircraft().isManuallyControlled()) {
-					//	toggleManualControl(player);
+					//      toggleManualControl(player);
 					//} else {
 					deselectAircraft(player); //TODO <- check that removing this is OK
 					//}
@@ -676,9 +676,9 @@ public abstract class Game extends Scene {
 		case input.KEY_SPACE :
 			toggleManualControl(player);
 			break;
-//		case input.KEY_LCRTL :
-//			generateFlight(player);
-//			break;
+			//              case input.KEY_LCRTL :
+			//                      generateFlight(player);
+			//                      break;
 		case input.KEY_ESCAPE :
 			player.getAircraft().clear();
 			for (Airport airport : player.getAirports()) airport.clear();
@@ -695,44 +695,50 @@ public abstract class Game extends Scene {
 	 * @param timeDifference - the time since the last collision check
 	 */
 	protected void checkCollisions(double timeDifference) {
-		for (Aircraft plane : player.getAircraft()) {
-			if (plane.isFinished()) {
+		for (Aircraft aircraft : getAllAircraft()) {
+			if (aircraft.isFinished()) {
 				continue;
 			}
 
-			Aircraft collidedWith = plane.updateCollisions(timeDifference,
+			Aircraft collidedWith = aircraft.updateCollisions(timeDifference,
 					getAllAircraft());
-			
+
 			FlightStrip fs1 = null, fs2 = null;
-			
-			
 
 			if (collidedWith != null) {
-				// Remove a life
-				player.setLives(player.getLives() - 1);
-				
-				// Apply a score penalty
-				player.decreaseScore(400);
-				
-				// Draw the exploson animation
-				explodePlanes(plane, collidedWith);
-				
-				for (FlightStrip fs : player.getFlightStrips()) {
-					if (plane.equals(fs.getAircraft())) {
-						fs1 = fs;
-					} else if (collidedWith.equals(fs.getAircraft())) {
-						fs2 = fs;
+				//call the explosion animation on the collided planes
+				explodePlanes(aircraft, collidedWith);
+
+				//Remove a life from the player
+				for (Aircraft plane : player.getAircraft()) {
+					if (plane.equals(aircraft) || plane.equals(collidedWith)) {
+
+						//Remove a life from the player
+						player.setLives(player.getLives() - 1);
+
+						// Apply a score penalty
+						player.decreaseScore(400);
+
+						for (FlightStrip fs : player.getFlightStrips()) {
+							if (plane.equals(fs.getAircraft())) {
+								fs1 = fs;
+							} else if (collidedWith.equals(fs.getAircraft())) {
+								fs2 = fs;
+							}
+						}
+
+						// Go to the game over check
+						gameOver(plane, collidedWith, fs1, fs2, false);
+
+						// Break the loop
+						return;
 					}
 				}
-				
-				// Go to the game over check
-				gameOver(plane, collidedWith, fs1, fs2, false);
-				
-				// Break the loop
-				return;
+
 			}
 		}
 	}
+
 
 	public void explodePlanes(Aircraft plane1, Aircraft plane2) {
 		// The number of frames in each dimension of the animation image
@@ -740,11 +746,11 @@ public abstract class Game extends Scene {
 		int framesDown = 4;
 
 		/*Vector crash = plane1.getPosition().add(
-				new Vector((plane1.getPosition().getX()
-						- plane2.getPosition().getX()) / 2,
-						(plane1.getPosition().getY()
-								- plane2.getPosition().getY()) / 2, 0))
-								.add(origin);*/
+                                    new Vector((plane1.getPosition().getX()
+                                                    - plane2.getPosition().getX()) / 2,
+                                                    (plane1.getPosition().getY()
+                                                                    - plane2.getPosition().getY()) / 2, 0))
+                                                                    .add(origin);*/
 
 		// Load explosion animation image
 		Image explosion = graphics.newImage("gfx" + File.separator
@@ -766,7 +772,7 @@ public abstract class Game extends Scene {
 	 * @param plane1 - the first plane involved in the collision
 	 * @param plane2 - the second plane in the collision
 	 * @param override - <code>true</code> if the game should exit regardless of
-	 * 						life values
+	 *                                              life values
 	 */
 	public void gameOver(Aircraft plane1, Aircraft plane2, FlightStrip fs1, FlightStrip fs2, boolean override) {
 		player.getAircraft().clear();
@@ -790,7 +796,7 @@ public abstract class Game extends Scene {
 		if (!Main.testing) {
 			music.stop();
 		}
-		
+
 		instance = null;
 	}
 
@@ -916,7 +922,7 @@ public abstract class Game extends Scene {
 		String carrierTag = "";
 
 		// Assign a random airline to the flight and generate tag for flightName.
-		switch(Main.getRandom().nextInt(8)) {		//Generates random number between 0-5
+		switch(Main.getRandom().nextInt(8)) {           //Generates random number between 0-5
 		case 0:
 			carrier = "Doge Air";
 			carrierTag = "DG";
@@ -1012,7 +1018,7 @@ public abstract class Game extends Scene {
 			player.setSelectedAircraft(null);
 		}
 
-		player.setSelectedWaypoint(null); 
+		player.setSelectedWaypoint(null);
 		player.setSelectedPathpoint(-1);
 	}
 
@@ -1090,7 +1096,7 @@ public abstract class Game extends Scene {
 	 * Returns whether a given name is an airport or not.
 	 * @param name - the name to test
 	 * @return <code>true</code> if the name matches an airport name,
-	 * 			otherwise <code>false</code>
+	 *                      otherwise <code>false</code>
 	 */
 	public Airport getAirportFromName(String name) {
 		for (Airport airport : player.getAirports()) {
@@ -1111,7 +1117,7 @@ public abstract class Game extends Scene {
 	 * @param y - the y position of the mouse
 	 * @param aircraft - the aircraft whose compass region should be checked
 	 * @return <code>true</code> if the compass has been clicked,
-	 * 			otherwise <code>false</code>
+	 *                      otherwise <code>false</code>
 	 */
 	protected boolean compassClicked(int x, int y, Aircraft aircraft) {
 		if (aircraft != null) {
@@ -1129,7 +1135,7 @@ public abstract class Game extends Scene {
 	 * @param y - the y position of the mouse
 	 * @param player - the player whose aircraft should be checked
 	 * @return <code>true</code> if an aircraft has been clicked,
-	 * 			otherwise <code>false</code>
+	 *                      otherwise <code>false</code>
 	 */
 	protected boolean aircraftClicked(int x, int y, Player player) {
 		return (findClickedAircraft(x, y, player) != null);
@@ -1141,7 +1147,7 @@ public abstract class Game extends Scene {
 	 * @param y - the y position of the mouse
 	 * @param player - the player whose aircraft should be checked
 	 * @return if an aircraft was clicked, returns the corresponding aircraft object,
-	 * 			otherwise returns null
+	 *                      otherwise returns null
 	 */
 	protected Aircraft findClickedAircraft(int x, int y, Player player) {
 		for (Aircraft a : player.getAircraft()) {
@@ -1158,7 +1164,7 @@ public abstract class Game extends Scene {
 	 * @param y - the y position of the mouse
 	 * @param player - the player whose waypoints should be searched
 	 * @return <code>true</code> if a waypoint in an aircraft's flight plan
-	 * 			has been clicked, otherwise <code>false</code>
+	 *                      has been clicked, otherwise <code>false</code>
 	 */
 	protected boolean waypointInFlightplanClicked(int x, int y,
 			Aircraft aircraft, Player player) {
@@ -1173,7 +1179,7 @@ public abstract class Game extends Scene {
 	 * @param y - the y position of the mouse
 	 * @param player - the player whose waypoints should be searched
 	 * @return if a waypoint was clicked, returns the corresponding waypoint object,
-	 * 			otherwise returns null
+	 *                      otherwise returns null
 	 */
 	protected Waypoint findClickedWaypoint(int x, int y, Player player) {
 		for (Waypoint w : player.getWaypoints()) {

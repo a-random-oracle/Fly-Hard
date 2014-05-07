@@ -107,7 +107,7 @@ public class DifficultySelect extends Scene {
 		buttons[0] = new lib.ButtonText("Easy", easy,
 				EASY_BUTTON_X, EASY_BUTTON_Y, EASY_BUTTON_W, EASY_BUTTON_H, 40, -12);
 		buttons[0].setInset(true);
-		
+
 		lib.ButtonText.Action medium = new lib.ButtonText.Action() {
 			@Override
 			public void action() {
@@ -122,7 +122,7 @@ public class DifficultySelect extends Scene {
 		buttons[1] = new lib.ButtonText("Medium", medium,
 				MEDIUM_BUTTON_X, MEDIUM_BUTTON_Y, MEDIUM_BUTTON_W, MEDIUM_BUTTON_H, 40, -12);
 		buttons[1].setInset(true);
-		
+
 		lib.ButtonText.Action hard = new lib.ButtonText.Action() {
 			@Override
 			public void action() {
