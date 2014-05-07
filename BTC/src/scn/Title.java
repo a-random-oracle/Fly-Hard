@@ -232,7 +232,6 @@ public class Title extends Scene {
 	@Override
 	public void keyReleased(int key) {
 		// Exit if ESC key pressed
-		// Added for testing TODO - remove this for release
 		if (key == input.KEY_ESCAPE) {
 			Main.quit();
 		}

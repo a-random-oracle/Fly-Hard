@@ -33,7 +33,7 @@ public class Main implements input.EventHandler {
 	 */
 	public static void main(String[] args) {
 		Main.testing = false;
-		new Main(false);
+		new Main(true);
 	}
 
 
