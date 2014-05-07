@@ -140,11 +140,12 @@ public abstract class Game extends Scene {
 					+ "apt" + File.separator + "Airport.png");
 
 			// Load in music
-			music = audio.newMusic("sfx" + File.separator + "Gypsy_Shoegazer.ogg");
+			music = audio.newMusic("sfx" + File.separator + "retro-90s-arcade-machine.ogg");
 
 			// Start the music
-			//music.play(); TODO <- add this back in for release
-
+			music.setVolume(0.5f);
+			music.play();
+			
 			explosionAnimations = new ArrayList<SpriteAnimation>();
 		}
 
