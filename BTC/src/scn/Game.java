@@ -460,7 +460,7 @@ public abstract class Game extends Scene {
 
 		graphics.print(locationWaypoints[0].getName().toUpperCase(),
 				locationWaypoints[0].getLocation().getX() + 9,
-				locationWaypoints[0].getLocation().getY() - 6); // TODO Consider more cases
+				locationWaypoints[0].getLocation().getY() - 6); 
 		graphics.print(locationWaypoints[1].getName().toUpperCase(),
 				locationWaypoints[1].getLocation().getX() + 9,
 				locationWaypoints[1].getLocation().getY() - 16);
@@ -493,7 +493,7 @@ public abstract class Game extends Scene {
 
 		graphics.printCentred(locationWaypoints[4].getName().toUpperCase(),
 				locationWaypoints[4].getLocation().getX(),
-				locationWaypoints[4].getLocation().getY() + 15, 1, 0); // TODO Consider more cases
+				locationWaypoints[4].getLocation().getY() + 15, 1, 0);
 		graphics.printCentred(locationWaypoints[5].getName().toUpperCase(),
 				locationWaypoints[5].getLocation().getX(),
 				locationWaypoints[5].getLocation().getY() + 15, 1, 0);
@@ -604,11 +604,7 @@ public abstract class Game extends Scene {
 						toggleManualControl(player);
 					}
 				} else {
-					//if (player.getSelectedAircraft().isManuallyControlled()) {
-					//      toggleManualControl(player);
-					//} else {
-					deselectAircraft(player); //TODO <- check that removing this is OK
-					//}
+					deselectAircraft(player);
 				}
 			}
 		}
