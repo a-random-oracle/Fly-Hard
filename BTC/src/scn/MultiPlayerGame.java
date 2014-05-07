@@ -465,7 +465,7 @@ public class MultiPlayerGame extends Game {
 	}
 
 	private void drawLives() { 
-		graphics.setColour(Color.green);
+		graphics.setColour(Color.white);
 		
 		String livesString =
 				String.format("%6d", player.getLives());
@@ -501,7 +501,7 @@ public class MultiPlayerGame extends Game {
 	}
 
 	private void drawScore() {
-		graphics.setColour(Color.green);
+		graphics.setColour(Color.white);
 		
 		String scoreString =
 				String.format("%6d", player.getScore());
@@ -537,7 +537,7 @@ public class MultiPlayerGame extends Game {
 	}
 
 	private void drawFlightStrips() {
-		graphics.setColour(Color.green);
+		graphics.setColour(Color.white);
 		
 		switch (playerPosition) {
 		case 0:
