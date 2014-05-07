@@ -139,7 +139,6 @@ public class GameOver extends Scene {
 
 		for (FlightStrip fs : player.getFlightStrips()) {
 			fs.update(timeDifference);
-			System.out.println(fs.positionY);
 		}
 
 	}

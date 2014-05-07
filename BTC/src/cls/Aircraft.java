@@ -855,7 +855,6 @@ public class Aircraft implements Serializable {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-			System.out.println(currentRouteStage);
 			System.exit(-1);
 		}
 		

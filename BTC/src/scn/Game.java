@@ -210,7 +210,6 @@ public abstract class Game extends Scene {
 				if (player.getAircraft().get(i).isCrashed()) {
 					// Add to the players collided aircraft
 					player.setPlanesCollided(player.getPlanesCollided() + 1);
-					System.out.println(player.getID() + " : planes collided: " + player.getPlanesCollided());
 				}
 
 				if (player.getAircraft().get(i).isAtDestination()) {
@@ -218,11 +217,9 @@ public abstract class Game extends Scene {
 							.getDestinationAirport() != null) {
 						// Add to the players landed plane count
 						player.setPlanesLanded(player.getPlanesLanded() + 1);
-						System.out.println(player.getID() + " : planes landed : " + player.getPlanesLanded());
 					} else {
 						// Cleared
 						player.setPlanesCleared(player.getPlanesCleared() + 1);
-						System.out.println(player.getID() + " : planes cleared: " + player.getPlanesCleared());
 					}
 				}
 

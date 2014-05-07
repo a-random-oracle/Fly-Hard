@@ -636,7 +636,6 @@ public class Lobby extends Scene {
 			@Override
 			public void action() {
 				selectGame(id);
-				System.out.println("Selected client: " + id);
 			}
 		};
 	}
