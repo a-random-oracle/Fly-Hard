@@ -752,6 +752,9 @@ public abstract class Game extends Scene {
 		// Load explosion animation image
 		Image explosion = graphics.newImage("gfx" + File.separator
 				+ "ani" + File.separator + "explosionFrames.png");
+		
+		//Play the crashing sound
+		playSound(audio.newSoundEffect("sfx" + File.separator + "crash.ogg"));
 
 		Vector midPoint = plane1.getPosition().add(plane2.getPosition())
 				.scaleBy(0.5);
@@ -778,8 +781,7 @@ public abstract class Game extends Scene {
 			airport.clear();
 		}
 
-		// TODO <- add back in for release
-		//playSound(audio.newSoundEffect("sfx" + File.separator + "crash.ogg"));
+		playSound(audio.newSoundEffect("sfx" + File.separator + "crash.ogg"));
 
 		Main.closeScene();
 		Main.setScene(new GameOver(plane1, plane2, fs1, fs2, player.getScore(), player));
