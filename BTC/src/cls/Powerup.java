@@ -257,11 +257,9 @@ public class Powerup implements Serializable {
 		switch (effect) {
 		case FOG:
 			handleFog();
-			System.out.println("FOG");
 			break;
 		case TRANSFER:
 			handleTransfer();
-			System.out.println("TRANSFER");
 			break;
 		default:
 			break;
@@ -275,7 +273,6 @@ public class Powerup implements Serializable {
 		switch (effect) {
 		case FOG:
 			removeFog();
-			System.out.println("FOG");
 			break;
 		default:
 			break;

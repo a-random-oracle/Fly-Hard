@@ -38,17 +38,13 @@ public class SpriteAnimation {
 	public SpriteAnimation(Image image, int x, int y, int fps, int frameCount, int framesWide, int framesHigh, boolean looping) {
 		this.image = image;
 		imageWidth = image.width();
-		System.out.println("-----");
 		imageHeight = image.height();
-		System.out.println("-----");
 		this.x = x;
 		this.y = y;
 		this.frameCount = frameCount;
 		currentFrame = 0;
 		spriteWidth = imageWidth / framesWide;
 		spriteHeight = imageHeight / framesHigh;
-		System.out.println("Image Dimensions: " + imageWidth + ", " + imageHeight);
-		System.out.println("Frame Dimensions: " + spriteWidth + ", " + spriteHeight);
 		framePeriod = 1.0/fps;
 		gameTime = 0;
 		quads = new Quad[frameCount];
@@ -87,7 +83,6 @@ public class SpriteAnimation {
 		gameTime += time_difference;
 		if (gameTime > framePeriod) { // frame period exceeded
 			gameTime = 0; //reset timer
-			System.out.print(currentFrame + ", ");
 			currentFrame++; //increment frame
 			if (currentFrame >= frameCount) {
 				if (!isLooping) {

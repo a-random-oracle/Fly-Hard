@@ -53,7 +53,7 @@ public abstract class NetworkManager {
 			new TreeMap<Long, byte[]>();
 	
 	/** Whether to output data to the standard output */
-	private static boolean verbose = true;
+	private static boolean verbose = false;
 
 	
 	/**
