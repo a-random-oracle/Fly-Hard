@@ -30,22 +30,22 @@ public class Lobby extends Scene {
 	private static final int CREATE_BUTTON_H = 32;
 
 	/** Coordinates for the top left of the game selection table */
-	private static final Vector tableTopLeft = new Vector(0.07, 0.25, 0, true);
+	private static final Vector tableTopLeft = new Vector(0.07, 0.30, 0, true);
 
 	/** Coordinates for the top right of the game selection table */
-	private static final Vector tableTopRight = new Vector(0.60, 0.25, 0, true);
+	private static final Vector tableTopRight = new Vector(0.60, 0.30, 0, true);
 
 	/** Coordinates for the bottom right of the game selection table */
-	private static final Vector tableBottomRight = new Vector(0.60, 0.90, 0, true);
+	private static final Vector tableBottomRight = new Vector(0.60, 0.95, 0, true);
 	
 	/** Coordinates for the top left of the high scores table */
-	private static final Vector scoresTopLeft = new Vector(0.65, 0.25, 0, true);
+	private static final Vector scoresTopLeft = new Vector(0.65, 0.30, 0, true);
 
 	/** Coordinates for the top right of the high scores table */
-	private static final Vector scoresTopRight = new Vector(0.93, 0.25, 0, true);
+	private static final Vector scoresTopRight = new Vector(0.93, 0.30, 0, true);
 
 	/** The coordinates of the input box */
-	private static final Vector nameEntryBoxPos = new Vector(0.5, 0.92, 0, true);
+	private static final Vector nameEntryBoxPos = new Vector((1d/3d), 0.15, 0, true);
 
 	/** The height to draw table rows */
 	private static final double rowHeight =
@@ -125,8 +125,7 @@ public class Lobby extends Scene {
 		};
 
 		createGameButton = new ButtonText("Create Game", Main.menuMainFont, createGame,
-				(int) (nameEntryBoxPos.getX()
-						+ (nameEntryBox.getWidth() / 2) + Game.getXOffset() + 20),
+				(int) (3 * window.width()/4),
 				(int) (nameEntryBoxPos.getY() + Game.getYOffset() + 3),
 				CREATE_BUTTON_W, CREATE_BUTTON_H, 0, 0, 2);
 	}
@@ -318,11 +317,11 @@ public class Lobby extends Scene {
 		
 		graphics.setColour(graphics.safetyOrange);
 		graphics.setFont(Main.menuTitleFont);
-		graphics.rectangle(true, window.height()/3 - 40, yBorder - 2, (window.width() - (2 * window.height()/3))/2 + 40, 70);
+		graphics.rectangle(true, window.height()/3 - 40, 10, (window.width() - (2 * window.height()/3)) + 80, 70);
 		graphics.setColour(Color.black);
-		graphics.print("Multiplayer", window.height()/3, yBorder);
+		graphics.print("Multiplayer", window.height()/3, 12);
 //		graphics.setColour(graphics.safetyOrange);
-		graphics.drawScaled(MULTIPLAYER, window.height()/3 - 36, yBorder + 15, 0.0625);
+		graphics.drawScaled(MULTIPLAYER, window.height()/3 - 36, 25, 0.0625);
 
 		
 		graphics.setFont(Main.menuMainFont);
@@ -345,11 +344,9 @@ public class Lobby extends Scene {
 			
 			graphics.printCentred(waitingForOpponentDots.replace(".", " ")
 					+ " Waiting for an opponent to join " + waitingForOpponentDots,
-					tableTopLeft.getX() + Game.getXOffset(),
-					nameEntryBoxPos.getY()
-					+ ((tableTopLeft.getY() - nameEntryBoxPos.getY()) / 2)
-					+ Game.getYOffset() - 10,
-					2, (tableTopRight.getX() - tableTopLeft.getX()));
+					nameEntryBoxPos.getX(),
+					(nameEntryBoxPos.getY() + Game.getYOffset() + 30),
+					2, 0);
 		}
 
 		// Draw the available games table
@@ -435,11 +432,11 @@ public class Lobby extends Scene {
 		
 		// Draw the high scores table heading
 		graphics.printCentred("High Scores",
-				scoresTopLeft.getX() + Game.getXOffset(),
-				window.height()/5
+				(scoresTopLeft.getX() + scoresTopRight.getX())/2,
+				window.height()/7
 				+ ((scoresTopLeft.getY() - nameEntryBoxPos.getY()) / 2)
 				+ Game.getYOffset(),
-				2, (scoresTopRight.getX() - scoresTopLeft.getX()));
+				2, 0);
 		
 		// Draw the headings in white
 		graphics.setColour(Color.white);

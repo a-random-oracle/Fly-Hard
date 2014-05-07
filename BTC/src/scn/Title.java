@@ -41,7 +41,7 @@ public class Title extends Scene {
 	public static final Image EXIT =
 			graphics.newImage("gfx" + File.separator + "pup"
 					+ File.separator + "exit_512.png");
-	
+
 	/** Integer offset to centre the main menu */
 	private int yBorder = (window.height() - 440) / 2 - 20;
 	/**
@@ -133,7 +133,7 @@ public class Title extends Scene {
 				window.height()/3 - 40, yBorder + 400,
 				window.width() - (2 * window.height()/3) + 80, 40, 40, -12);
 		buttons[4].setInset(true);
-		
+
 	}
 
 	/**

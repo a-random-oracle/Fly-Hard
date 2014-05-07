@@ -52,13 +52,13 @@ public class GameOverMulti extends Scene {
 		};
 		//Instantiate and position the "return to lobby" button
 		exitButtons[0] = new ButtonText("Play Again", Main.flightstripFontMid,
-				returnToLobby, (window.width()/2 + window.height()/3)/2 - 40, window.height() - (yBorder/2) + 9,
+				returnToLobby, (window.width()/2 + window.height()/3) - 40, window.height() - (yBorder/2) + 9,
 				80, 18, -1, -8);
 //		exitButtons[0].setInset(true);
 		
 		//Instantiate and position the "return to title" button
 		exitButtons[1] = new ButtonText("Return to Title", Main.flightstripFontMid,
-				returnToTitle, (window.width()/2 + window.height()/3) - 40, window.height() - (yBorder/2) + 9,
+				returnToTitle, (window.width()/2 + window.height()/3)/2 - 40, window.height() - (yBorder/2) + 9,
 				80, 18, -1, -8);
 //		exitButtons[1].setInset(true);
 	}
