@@ -1,5 +1,4 @@
 # Build path and files #
-/src
 *.class
 
 # Classpath #
@@ -8,3 +7,4 @@
 # Package Files #
 *.war
 *.ear
+/bin/
